@@ -1,11 +1,13 @@
-# プレプリントの書誌情報（公開前にすべて変更してください）
+# Edit every placeholder before publishing. This file describes the PAPER, not the toolkit.
 schema_version: 1
 title: "Untitled Preprint"
 authors:
-  - name: "Replace with author name"
+  # Use given_names + family_names for people; name for a research group/entity.
+  - given_names: "Replace with a given name"
+    family_names: "Replace with a family name"
     orcid: null
 abstract: "Replace with an abstract."
 keywords: []
-version: "v0"
+version: "v0" # v0 is a draft. Use v1, v2, v1.1, etc. for public releases.
 paper: "paper/paper.pdf"
-license: "UNSPECIFIED"
+license: "UNSPECIFIED" # e.g. CC-BY-4.0 (different from toolkit's MIT license)

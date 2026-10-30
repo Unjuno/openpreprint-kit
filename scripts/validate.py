@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate OpenPreprint Kit metadata and, in strict mode, the release PDF.
+"""Validate OpenPreprint Kit metadata, or a complete release with --strict.
 
 Runtime: Python >= 3.10 and PyYAML >= 6.0.2.
 This script does not issue or verify cryptographic timestamps.
@@ -16,10 +16,12 @@ import yaml
 
 ROOT = Path(__file__).resolve().parent.parent
 METADATA = ROOT / "preprint.yaml"
-VERSION_RE = re.compile(r"^v\d+(?:\.\d+){0,2}$")
+VERSION_RE = re.compile(r"^v(?:0|[1-9]\d*)(?:\.(?:0|[1-9]\d*)){0,2}$")
 PLACEHOLDERS = {
     "Untitled Preprint",
     "Replace with author name",
+    "Replace with a given name",
+    "Replace with a family name",
     "Replace with an abstract.",
     "UNSPECIFIED",
 }
@@ -29,13 +31,25 @@ def is_nonblank(value: object) -> bool:
     return isinstance(value, str) and bool(value.strip())
 
 
+def valid_orcid(value: str) -> bool:
+    match = re.fullmatch(r"(?:https://orcid\.org/)?(\d{4}-\d{4}-\d{4}-[\dX]{4})", value)
+    if match is None:
+        return False
+    digits = match.group(1).replace("-", "")
+    total = 0
+    for digit in digits[:15]:
+        total = (total + int(digit)) * 2
+    check = (12 - total % 11) % 11
+    return digits[-1] == ("X" if check == 10 else str(check))
+
+
 def validate(strict: bool) -> int:
     errors: list[str] = []
     warnings: list[str] = []
     try:
         with METADATA.open("r", encoding="utf-8") as handle:
             data = yaml.safe_load(handle)
-    except (OSError, yaml.YAMLError) as exc:
+    except (OSError, yaml.YAMLError, UnicodeError) as exc:
         print(f"ERROR: cannot read preprint.yaml: {exc}", file=sys.stderr)
         return 1
 
@@ -59,13 +73,28 @@ def validate(strict: bool) -> int:
         errors.append("authors must be a non-empty list")
     else:
         for index, author in enumerate(authors):
-            if not isinstance(author, dict) or not is_nonblank(author.get("name")):
-                errors.append(f"authors[{index}].name must be a non-empty string")
-            elif author["name"] in PLACEHOLDERS:
-                (errors if strict else warnings).append(f"authors[{index}].name is a placeholder")
-            orcid = author.get("orcid") if isinstance(author, dict) else None
+            if not isinstance(author, dict):
+                errors.append(f"authors[{index}] must be a mapping")
+                continue
+            name = author.get("name")
+            family = author.get("family_names")
+            given = author.get("given_names")
+            if name is not None:
+                if not is_nonblank(name) or family is not None or given is not None:
+                    errors.append(f"authors[{index}] must have either name OR family_names/given_names")
+                elif name in PLACEHOLDERS:
+                    (errors if strict else warnings).append(f"authors[{index}].name is a placeholder")
+            else:
+                if not is_nonblank(family) or not is_nonblank(given):
+                    errors.append(f"authors[{index}] requires family_names and given_names")
+                for field, value in (("family_names", family), ("given_names", given)):
+                    if isinstance(value, str) and value in PLACEHOLDERS:
+                        (errors if strict else warnings).append(f"authors[{index}].{field} is a placeholder")
+            orcid = author.get("orcid")
             if orcid is not None and not is_nonblank(orcid):
                 errors.append(f"authors[{index}].orcid must be null or a non-empty string")
+            elif isinstance(orcid, str) and not valid_orcid(orcid):
+                errors.append(f"authors[{index}].orcid must be a valid ORCID (checksum included)")
 
     keywords = data.get("keywords")
     if not isinstance(keywords, list) or not all(is_nonblank(x) for x in keywords):
@@ -73,7 +102,7 @@ def validate(strict: bool) -> int:
 
     version = data.get("version")
     if is_nonblank(version) and not VERSION_RE.fullmatch(version):
-        errors.append("version must look like v1 or v1.2.3")
+        errors.append("version must look like v1 or v1.2.3 (without leading zeros)")
     if strict and version == "v0":
         errors.append("v0 is a draft version; set a public release version")
 
