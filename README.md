@@ -1,42 +1,95 @@
 # OpenPreprint Kit
 
-GitHub をプレプリントの公開場所として使うための、再利用可能なリポジトリテンプレートです。
+**Open-source GitHub template for publishing one research preprint per public repository.**
 
-> **開発初期版:** 現在含まれるのは構成ファイルとメタデータ検証機能です。暗号学的タイムスタンプ、一般公開時刻の独立証明、DOI 発行、長期保存、引用ファイル自動生成は**未実装**です。
+OpenPreprint Kit supports GitHub-based preprints with metadata validation, version-specific Releases, citation files and offline checksum verification.
 
-## 目的
+> **Evidence limitation:** This early version does NOT provide an independent cryptographic timestamp, independently verified first-publication time, author identity proof, DOI or long-term off-GitHub preservation. See [Threat model](docs/THREAT_MODEL.md).
 
-- **1 論文 = 1 Public Repository** として公開・版管理する。
-- GitHub Releases で版ごとの PDF とメタデータを管理する。
-- 公開前に論文のメタデータと PDF を検査する。
-- 将来的に外部時刻認証・第三者検証・引用情報の自動生成を追加する。
+## 1. Create a research repository
 
-## 最初の使い方
-
-1. GitHub 上でこのリポジトリを Template repository に設定する（Settings → General → Template repository）。
-2. 論文ごとに **Use this template** から新しい Public Repository を作成する。
-3. `preprint.yaml` にタイトル、著者、概要、ライセンスなどを記入する。
-4. `paper/paper.pdf` を追加する。
-5. 以下のコマンドで公開前チェックを実行する。
+1. Click **Use this template → Create a new repository**. The owner must first enable **Settings → General → Template repository**.
+2. Create a **Public** repository for one paper.
+3. Edit `preprint.yaml`: paper title, authors, abstract, keywords, version, paper license.
+4. Add the final PDF to `paper/paper.pdf` (or change its location in `preprint.yaml`).
+5. Check before publishing:
 
 ```bash
 python3 -m pip install -r requirements.txt
 python3 scripts/validate.py --strict
+python3 -m unittest discover -s tests -v
 ```
 
-`--strict` を付けない場合、PDF 未登録やプレースホルダーは警告として扱い、編集中のテンプレートも検査できます。GitHub Actions はこの下書き用検査を実行します。
+The template deliberately starts with `v0`, placeholder data and no PDF, so strict validation and publishing **fail by default**. Use an explicit public version (v1, v2 or v1.1) only when ready to publish.
 
-**注意:** 現時点では、検証に成功しても時刻の存在証明や公開証明は作成されません。公開日時の保証として扱わないでください。
+## 2. Preview and verify a release bundle
 
-## 設計方針
+```bash
+python3 scripts/prepare_release.py --output dist
+python3 scripts/verify_release.py dist
+```
 
-- GitHub 以外の専用サーバー・データベースを必須にしない。
-- 証明書の検証は GitHub に依存せず実施できるようにする（将来実装）。
-- Git の Author Date / Committer Date は任意に指定できるため、時刻の証拠として使用しない。
-- 論文そのもののライセンスと、このツールのソフトウェアライセンスを分離する。
+Seven assets are created:
 
-開発段階・未実装項目は [`docs/ROADMAP.md`](docs/ROADMAP.md) を参照してください。
+| File | Purpose |
+|---|---|
+| `paper.pdf` | Byte-for-byte PDF selected in metadata |
+| `preprint-metadata.json` | Scholarly metadata, version, source claim and PDF SHA-256 |
+| `CITATION.cff` | Machine-readable CFF 1.2.0 citation metadata |
+| `citation.bib` | BibTeX citation, no fabricated publication year |
+| `manifest.json` | SHA-256 digests and byte sizes |
+| `SHA256SUMS` | Conventional checksums, including manifest |
+| `RELEASE_NOTES.md` | Version information, paper license and evidence notice |
 
-## ライセンス
+The manifest is **unsigned**: checksums alone do not establish a trusted publication time, authentic authorship or who first uploaded the paper. The offline verifier needs only Python's standard library.
 
-このリポジトリ内のソフトウェアとテンプレート自体は MIT License です。**利用者が追加する論文本文・図表・研究データの利用条件は、各研究者が別に指定**してください。`preprint.yaml` の `license` は論文に適用するライセンスの識別子です。
+## 3. Publish on GitHub (manual, public disclosure)
+
+1. In your **paper repository** enable **Settings → General → Releases → Enable release immutability** before publishing. The workflow asks you to acknowledge this setting but cannot verify the administration setting itself.
+2. Open **Actions → Publish preprint release → Run workflow** on the default branch.
+3. Check `acknowledge_immutable_enabled` after verifying the setting and press Run workflow.
+4. After strict checks pass, the workflow creates a **draft Release**, uploads seven assets, downloads them again and compares bytes before publication.
+5. Inspect the Release page, including the **Immutable** label and release attestation when enabled.
+
+**Publication happens automatically when this manually dispatched workflow succeeds. Do not run it unless the paper is ready for public disclosure.** Failed runs can leave an unpublished draft; inspect and clean up manually before retrying. Never overwrite old public versions: increment the version instead.
+
+## 4. Verify downloaded assets
+
+Download all seven assets of a versioned GitHub Release into an empty directory:
+
+```bash
+python3 scripts/verify_release.py /path/to/downloaded-assets
+python3 scripts/verify_release.py /path/to/downloaded-assets \
+  --expected-paper-sha256 YOUR_SEPARATELY_TRUSTED_64_HEX_DIGIT_HASH
+```
+
+A SHA-256 digest obtained from a separate trusted channel permits stronger integrity checking. If GitHub issued an immutable release attestation, verify it with `gh release verify TAG` and/or `gh release verify-asset TAG paper.pdf`.
+
+## 5. Metadata example
+
+```yaml
+schema_version: 1
+title: "Example preprint"
+authors:
+  - given_names: "Jane"
+    family_names: "Doe"
+    orcid: "0000-0002-1825-0097"
+  - name: "Research Group"
+abstract: "A short abstract."
+keywords: ["mathematics", "physics"]
+version: "v1"
+paper: "paper/paper.pdf"
+license: "CC-BY-4.0"
+```
+
+For a person use `given_names` and `family_names`. `name` represents a team or other entity; the older one-string `name` field is retained for compatibility but **should not be used for personal names** if they can be separated.
+
+The generated `CITATION.cff` is included as a Release asset, **not automatically written to the repository root**, so GitHub's built-in Cite this repository widget is not yet enabled.
+
+## 6. License and technical design
+
+Toolkit code: **MIT**. The paper and datasets have **their own** license set by the researcher (for example CC BY 4.0).
+
+Python ≥ 3.10, PyYAML ≥ 6.0.2, GitHub Actions and GitHub CLI on the hosted Ubuntu runner. GitHub Actions checkout/setup-python dependencies are pinned to immutable commits; PyYAML is constrained to major version 6, not a hash-locked wheel.
+
+See [Roadmap](docs/ROADMAP.md) and [Threat model](docs/THREAT_MODEL.md).
