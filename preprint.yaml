@@ -1,0 +1,11 @@
+# プレプリントの書誌情報（公開前にすべて変更してください）
+schema_version: 1
+title: "Untitled Preprint"
+authors:
+  - name: "Replace with author name"
+    orcid: null
+abstract: "Replace with an abstract."
+keywords: []
+version: "v0"
+paper: "paper/paper.pdf"
+license: "UNSPECIFIED"
