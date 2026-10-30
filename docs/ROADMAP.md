@@ -1,39 +1,70 @@
-# OpenPreprint Kit development roadmap
+# OpenPreprint Kit — 完成条件付きロードマップ
 
-## v0: Template foundations — implemented
-- [x] Template-ready repository layout. Owner must still enable the **Template repository** setting.
-- [x] Paper title, version, license, author name fields, optional ORCID format/checksum.
-- [x] Python draft and strict validation; read-only CI.
-- [x] Documentation of existence-time versus public-availability-time evidence.
+更新: 2026-10-31。**現状は v0.2 開発版であり、製品全体の完成ではありません。**
+「コードがある」「自動試験が通る」「実際の外部サービスで運用確認済み」を区別します。
 
-## v0.1: Release publication — implemented in code; real-paper exercise pending
-- [x] Manual-only `workflow_dispatch` publisher, public/default-branch checks.
-- [x] Publication blocked for draft metadata and missing PDF.
-- [x] Deterministic PDF, machine metadata, CITATION.cff, BibTeX and release notes.
-- [x] SHA-256 manifest and independently runnable, standard-library-only verifier.
-- [x] Create draft -> upload all assets -> download and compare -> publish.
-- [x] Reject release versions with an existing tag in the normal workflow.
-- [x] Full-SHA pinned checkout and Python setup.
-- [x] Unit tests for tampering, path traversal, draft blocking and reproducibility.
-- [ ] Full end-to-end test with an actual research paper (not available in template).
-- [ ] Upstream CFF schema validation and independent generated citation parsing.
-- [ ] Automated verification of immutable-release administration setting (requires appropriate admin read permission).
+## 目的と v1.0 の完成条件
 
-## v0.2: Independent existence timestamp — not implemented
-- [ ] Choose RFC 3161 TSA and establish trusted key/certificate policy.
-- [ ] Request a timestamp for fixed release content digest **before publication**.
-- [ ] Validate signature, certificate chain, revocation status, time accuracy and hash match.
-- [ ] Attach timestamp proof and verification material to the draft bundle.
-- [ ] Test forgery, expired certificates, wrong digest and clock-boundary cases.
+誰でもテンプレートを複製し、1論文1公開リポジトリで、版の固定、引用、内容検証、
+独立したTSAへの存在時刻の照会を実行できること。未設定・検証失敗時は公開を停止し、
+保証していない事項を成功表示しないこと。一般公開時刻の独立観測は別の証拠です。
 
-## v0.3: Independent publication evidence and preservation — not implemented
-- [ ] An independent observer fetches public Release URL and signs an observation containing digest and time.
-- [ ] Optional outside-GitHub archival copy, DOI registration and GitHub Pages.
-- [ ] Handle deletion, rehosting and GitHub outage in the evidence model.
+| 段階 | 状態 | 成果物 | 完了判定・残る条件 |
+|---|---|---|---|
+| M0 / v0.1 公開の土台 | 実装・単体試験済み | PDF、書誌情報、CFF/BibTeX、固定manifest、Releaseフロー | 実論文によるRelease試験はM2へ引継ぎ。CFFの外部スキーマ検証もM2で行う |
+| M1 / v0.2 存在時刻の証拠 | 今回実装・ローカル暗号試験済み | RFC 3161要求/取込/HTTPS送信/オフライン検証、CA固定、CRL検証、公開ゲート | 一時CAで正常・異常系を確認。公開TSAの実接続を済ませたという意味ではない |
+| M2 / v0.3 実運用の成立確認 | 未完了 | 採用TSAの運用設定、実論文での公開記録、運用手順 | 下記M2受入チェックをすべて満たす |
+| M3 / v0.4 一般公開の独立観測 | 未着手 | 別管理主体が公開URLから取得し署名する観測記録 | 内容・URL・観測時刻を結びつけ、非公開/404/改変/観測者偽装を拒否。GitHub Actions自身を独立観測者と称しない |
+| M4 / v0.5 閲覧・引用・保存 | 未着手 | Pages、版ごとの引用、任意DOI、外部保存 | 過去版URLを保持し、GitHub削除後も保存コピーと証拠を取得できる |
+| M5 / v1.0 一般利用向け完成 | 未完了 | 再利用試験、互換性表、障害/鍵更新手順、セキュリティレビュー | 下記v1.0チェックを満たし、未達条件をリリースノートで隠さない |
 
-## Design constraints
+## 今回の実装範囲（M1）
 
-- One Public Repository per preprint.
-- A release may include a GitHub-generated attestation if immutable releases are enabled, but GitHub is not an independent timestamp authority.
-- A hash without external authentication establishes **only internal consistency**.
-- Authors and license belong to the research output; the toolkit's MIT license must not be applied automatically to the research content.
+- [x] SHA-256で固定manifestを対象とするRFC 3161要求。ランダム128-bit nonce。
+- [x] HTTPSによる要求送信。PDF本体は送らない。リダイレクト、平文HTTP、URL内資格情報を拒否。
+- [x] TSA応答の取り込みと再検証。署名・imprint・nonce・policy OID・証明書連鎖を検査。
+- [x] 独立に選択したCA PEMファイルのSHA-256を固定。同梱ルートを自動で信頼しない。
+- [x] 現在の証明書有効性、署名時点の有効期間、現在有効な全連鎖CRLを検査。
+- [x] accuracy未記載は不明として扱う。公開時刻・著作者資格と混同しない。
+- [x] 取得/検証失敗時はRelease作成に進まない。ダウンロードした証拠も公開前に再検証。
+- [x] ORCID不正文字、booleanスキーマ、Unicodeタグ、ゼロ版、空白付き雛形、null著者名、JSON重複キーを拒否。
+- [x] 署名を実際に発行する一時CA/TSAによる試験。秘密鍵は一時ディレクトリのみ。
+- [ ] 採用する公開TSAに対するHTTPS実接続、運用方針・時刻精度・CRL入手性の確認（M2）。
+
+## M2 受入チェック — 次に実行する順序
+
+1. **TSA選定**: HTTPS POST、SHA-256、nonce、署名者証明書、policy OID、時刻精度、
+   全発行者CRL、料金・利用制限・継続運用を確認。未確認の無料サービスを自動採用しない。
+2. **信頼設定**: CAの出所と指紋を独立確認し、`timestamp-policy.json` を設定。
+   CRLの更新・配布方法を決め、期限切れで本当に公開が止まることを確認。
+3. **無機密サンプル**: 公開してよい合成データで実TSAから取得し、別環境で検証する。
+   これは本当の論文公開ではない。結果・実行条件・TSAを記録する。
+4. **論文の公開**: 完成したPDF、実著者、論文ライセンスを設定。Template/Immutable設定を確認。
+   draftの9資産を検証後に公開し、GitHubの `immutable: true` とattestationを確認する。
+5. **独立な再検証**: 別環境で9資産を取得し、別途入手したpolicy/CA/CRLで検証。
+   改変PDF、違うCA、失効、通信障害、既存版への再公開を拒否することを確認。
+6. **引用の適合性**: CFFの公式スキーマ、BibTeXパーサー、論文としての表示・引用を検査。
+   現在のRelease添付CFFだけでは、リポジトリ直下の「Cite this repository」は有効にならない。
+
+## v1.0 受入チェック
+
+- [ ] 空のTemplateから、別々の2リポジトリで同じ手順を再現できる。
+- [ ] v1→v2の更新でv1のPDF・証拠・引用情報が変わらない。
+- [ ] 未設定・不正入力・取得不能を正常終了に見せず、復旧手順がある。
+- [ ] PDFの構文検査、ファイル容量上限、研究データ/ソフトウェアのライセンス分離が明確。
+- [ ] 依存パッケージのハッシュ固定・更新手順とActionsのセキュリティレビューを実施。
+- [ ] TSA鍵失効、CA更新、CRL期限切れ、証明書満了、GitHub停止時の検証方針が文書化されている。
+- [ ] 外部のコードレビューを受け、重大な指摘を解消している。
+- [ ] 長期検証に必要な失効証拠保存・再タイムスタンプが設計/試験されている。
+
+## 判定の意味
+
+**PASS**: 指定環境・指定入力の機能試験が成功。暗号方式全体の安全性を統計的に証明したわけではない。
+**FAIL**: 不正な証拠を受理する、または想定した正常入力を拒否する再現可能な不具合。
+**未確認**: 実TSA・実論文・独立観測・長期運用など、まだ試験していない項目。
+
+主な不確かさは、TSAの時計と運用、CA/CRLの出所、検証機の時計、GitHubの可用性です。
+トークン内accuracyはTSAが署名した精度の申告であり、本プロジェクトが測定した値ではありません。
+測定データがないため、合成標準不確かさや包含係数を算出したとは主張しません。
+
+関連分野: 学術出版（版と引用）、暗号学/PKI（署名と信頼）、分散システム/アーカイブ（独立観測と保存）。

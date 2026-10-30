@@ -16,7 +16,7 @@ import yaml
 
 ROOT = Path(__file__).resolve().parent.parent
 METADATA = ROOT / "preprint.yaml"
-VERSION_RE = re.compile(r"^v(?:0|[1-9]\d*)(?:\.(?:0|[1-9]\d*)){0,2}$")
+VERSION_RE = re.compile(r"^v(?:0|[1-9][0-9]*)(?:\.(?:0|[1-9][0-9]*)){0,2}$")
 PLACEHOLDERS = {
     "Untitled Preprint",
     "Replace with author name",
@@ -32,7 +32,7 @@ def is_nonblank(value: object) -> bool:
 
 
 def valid_orcid(value: str) -> bool:
-    match = re.fullmatch(r"(?:https://orcid\.org/)?(\d{4}-\d{4}-\d{4}-[\dX]{4})", value)
+    match = re.fullmatch(r"(?:https://orcid\.org/)?([0-9]{4}-[0-9]{4}-[0-9]{4}-[0-9]{3}[0-9X])", value)
     if match is None:
         return False
     digits = match.group(1).replace("-", "")
@@ -57,7 +57,7 @@ def validate(strict: bool) -> int:
         errors.append("preprint.yaml must contain a YAML mapping")
         data = {}
 
-    if data.get("schema_version") != 1:
+    if type(data.get("schema_version")) is not int or data["schema_version"] != 1:
         errors.append("schema_version must equal 1")
 
     for field in ("title", "abstract", "version", "paper", "license"):
@@ -65,7 +65,7 @@ def validate(strict: bool) -> int:
             errors.append(f"{field} must be a non-empty string")
 
     for field in ("title", "abstract", "license"):
-        if isinstance(data.get(field), str) and data[field] in PLACEHOLDERS:
+        if isinstance(data.get(field), str) and data[field].strip() in PLACEHOLDERS:
             (errors if strict else warnings).append(f"{field} is still a placeholder")
 
     authors = data.get("authors")
@@ -79,16 +79,16 @@ def validate(strict: bool) -> int:
             name = author.get("name")
             family = author.get("family_names")
             given = author.get("given_names")
-            if name is not None:
+            if "name" in author:
                 if not is_nonblank(name) or family is not None or given is not None:
                     errors.append(f"authors[{index}] must have either name OR family_names/given_names")
-                elif name in PLACEHOLDERS:
+                elif name.strip() in PLACEHOLDERS:
                     (errors if strict else warnings).append(f"authors[{index}].name is a placeholder")
             else:
                 if not is_nonblank(family) or not is_nonblank(given):
                     errors.append(f"authors[{index}] requires family_names and given_names")
                 for field, value in (("family_names", family), ("given_names", given)):
-                    if isinstance(value, str) and value in PLACEHOLDERS:
+                    if isinstance(value, str) and value.strip() in PLACEHOLDERS:
                         (errors if strict else warnings).append(f"authors[{index}].{field} is a placeholder")
             orcid = author.get("orcid")
             if orcid is not None and not is_nonblank(orcid):
@@ -103,7 +103,7 @@ def validate(strict: bool) -> int:
     version = data.get("version")
     if is_nonblank(version) and not VERSION_RE.fullmatch(version):
         errors.append("version must look like v1 or v1.2.3 (without leading zeros)")
-    if strict and version == "v0":
+    if strict and isinstance(version, str) and re.fullmatch(r"v0(?:\.0){0,2}", version):
         errors.append("v0 is a draft version; set a public release version")
 
     filename = data.get("paper")
