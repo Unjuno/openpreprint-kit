@@ -1,0 +1,25 @@
+name: Public research review
+description: Review a particular preprint version; not a certification
+title: '[review] '
+body:
+  - type: markdown
+    attributes:
+      value: 'Public comments are not confidential peer review. Disclose AI assistance. Never upload third-party private material.'
+  - type: input
+    id: version
+    attributes:
+      label: Release tag and PDF SHA-256
+    validations:
+      required: true
+  - type: textarea
+    id: conflicts
+    attributes:
+      label: Expertise, declared identity, conflicts and AI assistance
+    validations:
+      required: true
+  - type: textarea
+    id: report
+    attributes:
+      label: Methods, reproducibility, evidence, limitations and requested changes
+    validations:
+      required: true

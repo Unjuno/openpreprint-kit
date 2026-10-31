@@ -1,0 +1,23 @@
+name: Software defect
+description: Reproducible tool failure using nonsensitive data
+title: '[bug] '
+body:
+  - type: markdown
+    attributes:
+      value: 'Do not post secrets or confidential research. Read SECURITY.md first.'
+  - type: input
+    id: commit
+    attributes:
+      label: Affected commit and runtime
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Minimal reproduction, expected and actual result
+    validations:
+      required: true
+  - type: textarea
+    id: regression
+    attributes:
+      label: Proposed regression test and sanitized logs
