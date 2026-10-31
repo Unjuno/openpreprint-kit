@@ -38,7 +38,7 @@ Files: docs/REVIEW_POLICY.md, docs/RELEASE_READINESS.md, docs/OPERATIONS.md,
 SECURITY.md, CONTRIBUTING.md, .github/ISSUE_TEMPLATE/*, README.md, docs/ROADMAP.md.
 - [x] Document who must act, required permissions, acceptance evidence, recovery, and limits.
 - [x] Run full local suite (88 tests pass) and source checks.
-- [ ] Verify final remote CI and integrate only passing changes.
+- [x] Verify final remote CI and integrate only passing changes (PR #4; main 3ac7b93, run 41175798809).
 
 ## Execution ledger
 Baseline: GitHub bdfe0d5, parent RFC3161 commit 27a8d9f. Existing remote CI passed.
@@ -48,3 +48,5 @@ Ruling: keep reviews as a separately validated, append-only operational record; 
 change existing timestamp bundle format or imply records are signed by the original TSA.
 
 Local evidence: /mnt/data/opk-final-tests.txt, 88/88 PASS; Python3.13.5 / OpenSSL3.5.5. No public TSA or actual paper was used. Independent reviewer unavailable; handoff in RELEASE_READINESS.md.
+
+Post-integration: replaced deprecated Actions runtimes with upstream full-SHA pins for checkout7.0.1, setup-python7.1.0 and upload-artifact7.0.2. This configuration-only maintenance change receives its own CI run before merge.
