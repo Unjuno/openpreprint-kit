@@ -147,7 +147,7 @@ def create_bundle(output: Path, repository: str | None, commit: str | None) -> N
         f"Paper license: {metadata['license']}\n\n"
         f"Paper SHA-256: {paper_sha}\n\n"
         "This release includes machine-readable citation metadata and a checksum manifest.\n"
-        "**No independently trusted timestamp or independent public-access proof is included.**\n"
+        "**Checksums alone are not time evidence. Verify any timestamp.tsq/timestamp.tsr sidecars with an independently selected trust policy. Public access time is not proven.**\n"
     )
     (output / "RELEASE_NOTES.md").write_text(notes, encoding="utf-8")
 

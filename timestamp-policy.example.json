@@ -1,0 +1,9 @@
+{
+  "schema_version": 1,
+  "tsa_url": "https://tsa.example.invalid/",
+  "ca_file": "trust/tsa-ca.pem",
+  "ca_sha256": "REPLACE_WITH_INDEPENDENTLY_VERIFIED_PEM_FILE_SHA256",
+  "crl_file": "trust/tsa-crls.pem",
+  "policy_oid": "1.2.3.4.1",
+  "timeout_seconds": 30
+}

@@ -2,7 +2,6 @@ __pycache__/
 *.py[cod]
 .pytest_cache/
 .venv/
-/dist/
 *.aux
 *.bbl
 *.blg
@@ -11,3 +10,8 @@ __pycache__/
 *.log
 *.out
 *.synctex.gz
+
+/dist/
+*.key
+*.p12
+*.pfx

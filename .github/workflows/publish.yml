@@ -18,7 +18,8 @@ concurrency:
 
 jobs:
   publish:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
     permissions:
       contents: write # Only this manually triggered job may create a draft/publish a Release.
     steps:
@@ -52,6 +53,12 @@ jobs:
           python -m unittest discover -s tests -v
           python scripts/prepare_release.py --output dist --repository "$PREPRINT_REPOSITORY" --commit "$PREPRINT_COMMIT"
           python scripts/verify_release.py dist
+      - name: Obtain and verify RFC 3161 evidence before creating a Release
+        run: |
+          set -euo pipefail
+          test -f timestamp-policy.json || { echo 'Configure timestamp-policy.json and independently trusted CA/CRLs first.' >&2; exit 1; }
+          python scripts/timestamp.py stamp dist --policy timestamp-policy.json
+          python scripts/timestamp.py verify dist --policy timestamp-policy.json
       - name: Create draft, verify download, then publish
         env:
           GH_TOKEN: ${{ github.token }}
@@ -70,11 +77,17 @@ jobs:
           gh release create "$TAG" \
             dist/paper.pdf dist/preprint-metadata.json dist/CITATION.cff \
             dist/citation.bib dist/manifest.json dist/SHA256SUMS dist/RELEASE_NOTES.md \
+            dist/timestamp.tsq dist/timestamp.tsr \
             --draft --target "$GITHUB_SHA" --title "$TITLE ($TAG)" \
             --notes-file dist/RELEASE_NOTES.md
           mkdir -p downloaded-release
           gh release download "$TAG" --dir downloaded-release
           diff -qr dist downloaded-release
           python scripts/verify_release.py downloaded-release
+          python scripts/timestamp.py verify downloaded-release --policy timestamp-policy.json
           gh release edit "$TAG" --draft=false
+          if [ "$(gh api "repos/$GITHUB_REPOSITORY/releases/tags/$TAG" --jq .immutable)" != "true" ]; then
+            echo "::error::Release is already public, but GitHub did not confirm immutability. Inspect settings immediately."
+            exit 1
+          fi
           echo "Published: https://github.com/$GITHUB_REPOSITORY/releases/tag/$TAG"

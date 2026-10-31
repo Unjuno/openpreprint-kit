@@ -29,7 +29,18 @@ def sha256_file(path: Path) -> str:
 
 
 EXPECTED_FILES = set(PAYLOAD_FILES) | {"manifest.json", "SHA256SUMS"}
+EVIDENCE_FILES = {"timestamp.tsq", "timestamp.tsr"}
 HEX_SHA256 = re.compile(r"^[0-9a-f]{64}$")
+
+
+def unique_object(pairs: list[tuple]) -> dict:
+    """Reject ambiguous JSON rather than silently using the last duplicate key."""
+    result = {}
+    for key, value in pairs:
+        if key in result:
+            raise ValueError(f"duplicate JSON key: {key}")
+        result[key] = value
+    return result
 
 
 def verify(folder: Path, expected_paper_sha256: str | None) -> list[str]:
@@ -37,21 +48,21 @@ def verify(folder: Path, expected_paper_sha256: str | None) -> list[str]:
     if not folder.is_dir() or folder.is_symlink():
         return ["bundle must be a real directory"]
     actual_files = {item.name for item in folder.iterdir()}
-    if actual_files != EXPECTED_FILES:
+    if actual_files not in (EXPECTED_FILES, EXPECTED_FILES | EVIDENCE_FILES):
         errors.append(f"unexpected bundle contents; missing={sorted(EXPECTED_FILES - actual_files)}, extra={sorted(actual_files - EXPECTED_FILES)}")
         return errors
-    for name in EXPECTED_FILES:
+    for name in actual_files:
         item = folder / name
         if item.is_symlink() or not item.is_file():
             errors.append(f"asset {name} must be a regular, non-symlink file")
     if errors:
         return errors
     try:
-        manifest = json.loads((folder / "manifest.json").read_text(encoding="utf-8"))
-        metadata = json.loads((folder / "preprint-metadata.json").read_text(encoding="utf-8"))
-    except (OSError, json.JSONDecodeError, UnicodeError) as exc:
+        manifest = json.loads((folder / "manifest.json").read_text(encoding="utf-8"), object_pairs_hook=unique_object)
+        metadata = json.loads((folder / "preprint-metadata.json").read_text(encoding="utf-8"), object_pairs_hook=unique_object)
+    except (OSError, ValueError, UnicodeError) as exc:
         return [f"invalid JSON: {exc}"]
-    if not isinstance(manifest, dict) or manifest.get("schema_version") != 1 or manifest.get("algorithm") != "sha256":
+    if not isinstance(manifest, dict) or type(manifest.get("schema_version")) is not int or manifest["schema_version"] != 1 or manifest.get("algorithm") != "sha256":
         return ["unsupported manifest schema or algorithm"]
     contents = manifest.get("files")
     if not isinstance(contents, dict) or set(contents) != set(PAYLOAD_FILES):
@@ -109,6 +120,8 @@ def main() -> int:
         print("PASS: paper.pdf matches separately supplied SHA-256 fingerprint")
     else:
         print("WARNING: no independent trusted fingerprint supplied; authenticity NOT established")
+    if (arguments.directory / "timestamp.tsr").exists():
+        print("NOTE: timestamp files present but NOT verified; use timestamp.py verify with an independent trust policy")
     print("NOTE: existence time, public availability and authorship are NOT verified")
     return 0
 
