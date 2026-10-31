@@ -51,15 +51,23 @@ jobs:
         run: |
           set -euo pipefail
           python -m unittest discover -s tests -v
+          python scripts/research_record.py
           python scripts/prepare_release.py --output dist --repository "$PREPRINT_REPOSITORY" --commit "$PREPRINT_COMMIT"
           python scripts/verify_release.py dist
+      - name: Verify publication preconditions through GitHub API
+        env:
+          GH_TOKEN: ${{ secrets.OPK_ADMIN_READ_TOKEN }}
+        run: |
+          set -euo pipefail
+          TAG="$(python -c 'import json; print(json.load(open("dist/preprint-metadata.json", encoding="utf-8"))["version"])')"
+          python scripts/preflight.py --repository "$GITHUB_REPOSITORY" --version "$TAG" --commit "$GITHUB_SHA"
       - name: Obtain and verify RFC 3161 evidence before creating a Release
         run: |
           set -euo pipefail
           test -f timestamp-policy.json || { echo 'Configure timestamp-policy.json and independently trusted CA/CRLs first.' >&2; exit 1; }
           python scripts/timestamp.py stamp dist --policy timestamp-policy.json
           python scripts/timestamp.py verify dist --policy timestamp-policy.json
-      - name: Create draft, verify download, then publish
+      - name: Create draft and verify downloaded evidence
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
@@ -85,6 +93,16 @@ jobs:
           diff -qr dist downloaded-release
           python scripts/verify_release.py downloaded-release
           python scripts/timestamp.py verify downloaded-release --policy timestamp-policy.json
+      - name: Recheck immutability immediately before promotion
+        env:
+          GH_TOKEN: ${{ secrets.OPK_ADMIN_READ_TOKEN }}
+        run: python scripts/preflight.py --repository "$GITHUB_REPOSITORY" --immutable-only
+      - name: Publish verified draft
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          TAG="$(python -c 'import json; print(json.load(open("dist/preprint-metadata.json", encoding="utf-8"))["version"])')"
           gh release edit "$TAG" --draft=false
           if [ "$(gh api "repos/$GITHUB_REPOSITORY/releases/tags/$TAG" --jq .immutable)" != "true" ]; then
             echo "::error::Release is already public, but GitHub did not confirm immutability. Inspect settings immediately."

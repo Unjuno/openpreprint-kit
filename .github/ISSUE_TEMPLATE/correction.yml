@@ -1,0 +1,32 @@
+name: Correction, concern or retraction request
+description: Preserve the original scholarly record and state the reason
+title: '[notice] '
+body:
+  - type: input
+    id: version
+    attributes:
+      label: Affected release tag and PDF SHA-256
+    validations:
+      required: true
+  - type: dropdown
+    id: kind
+    attributes:
+      label: Notice type
+      options:
+        - Correction
+        - Expression of concern
+        - Retraction
+    validations:
+      required: true
+  - type: textarea
+    id: reason
+    attributes:
+      label: Reason, public supporting evidence and proposed next action
+    validations:
+      required: true
+  - type: textarea
+    id: conflict
+    attributes:
+      label: Role and conflicts of interest
+    validations:
+      required: true
