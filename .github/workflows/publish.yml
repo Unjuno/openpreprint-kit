@@ -43,7 +43,7 @@ jobs:
         with:
           python-version: '3.12'
       - name: Install dependencies
-        run: python -m pip install -r requirements.txt
+        run: python -m pip install -r requirements.txt -r requirements-publication-checks.txt
       - name: Test, build, and verify release assets locally
         env:
           PREPRINT_REPOSITORY: ${{ github.repository }}
@@ -54,6 +54,7 @@ jobs:
           python scripts/research_record.py
           python scripts/prepare_release.py --output dist --repository "$PREPRINT_REPOSITORY" --commit "$PREPRINT_COMMIT"
           python scripts/verify_release.py dist
+          python scripts/citation_validation.py dist
       - name: Verify publication preconditions through GitHub API
         env:
           GH_TOKEN: ${{ secrets.OPK_ADMIN_READ_TOKEN }}
@@ -92,6 +93,7 @@ jobs:
           gh release download "$TAG" --dir downloaded-release
           diff -qr dist downloaded-release
           python scripts/verify_release.py downloaded-release
+          python scripts/citation_validation.py downloaded-release
           python scripts/timestamp.py verify downloaded-release --policy timestamp-policy.json
       - name: Recheck immutability immediately before promotion
         env:

@@ -25,6 +25,18 @@ class WorkflowTests(unittest.TestCase):
         self.assertLess(text.index(needle), text.index("--draft=false"))
         self.assertIn("dist/timestamp.tsq dist/timestamp.tsr", text)
 
+    def test_external_citation_validation_blocks_timestamp_and_release(self):
+        text = (ROOT / ".github/workflows/publish.yml").read_text()
+        self.assertIn("citation_validation.py dist", text)
+        self.assertLess(text.index("citation_validation.py dist"), text.index("timestamp.py stamp"))
+        self.assertIn("requirements-publication-checks.txt", text)
+
+    def test_quality_ci_installs_external_citation_validators(self):
+        for name in ("validate.yml", "quality.yml"):
+            text = (ROOT / ".github/workflows" / name).read_text()
+            self.assertIn("requirements-publication-checks.txt", text)
+        self.assertIn("cffconvert==2.0.0", (ROOT / "requirements-publication-checks.txt").read_text())
+
     def test_only_manual_dispatch_with_minimum_permissions(self):
         workflow = self.workflow()
         self.assertEqual(set(workflow["on"]), {"workflow_dispatch"})
