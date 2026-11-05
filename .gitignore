@@ -18,3 +18,9 @@ __pycache__/
 
 /site/
 /downloaded-release/
+
+# Defense in depth only: private originals and openings belong OUTSIDE this repository.
+/private/
+/health/
+/secrets/
+*.opk-private.json

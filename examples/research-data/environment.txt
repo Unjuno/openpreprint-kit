@@ -1,0 +1,2 @@
+Synthetic demonstration: Python >=3.10; csv and statistics standard-library modules.
+This file is a declared environment, not an attestation of an actual execution.
