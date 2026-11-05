@@ -53,6 +53,15 @@ class WorkflowTests(unittest.TestCase):
                     if "run" in step:
                         self.assertNotIn("${{", step["run"])
 
+    def test_dependency_update_prs_are_configured(self):
+        config = yaml.safe_load((ROOT / ".github/dependabot.yml").read_text(encoding="utf-8"))
+        self.assertEqual(config["version"], 2)
+        updates = {row["package-ecosystem"]: row for row in config["updates"]}
+        for ecosystem in ("pip", "github-actions"):
+            self.assertEqual(updates[ecosystem]["directory"], "/")
+            self.assertEqual(updates[ecosystem]["schedule"]["interval"], "weekly")
+            self.assertGreaterEqual(updates[ecosystem]["open-pull-requests-limit"], 1)
+
     def test_example_policy_is_nonoperational_and_has_no_private_keys(self):
         example = ROOT / "timestamp-policy.example.json"
         self.assertTrue(example.is_file())
