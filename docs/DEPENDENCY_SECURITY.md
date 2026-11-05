@@ -27,3 +27,13 @@ packages resolved by pip. Python 3.10/3.12 release CI must pass after any change
 **Still required for v1.0:** resolved transitive versions and **distribution SHA-256 hashes**,
 SBOM, vulnerability scanning, key rotation/patch policy, and a separate independent security review.
 Version equality in requirements is *not* a complete supply-chain lock.
+
+
+## Automated update workflow
+
+`.github/dependabot.yml` requests weekly update PRs for pinned Python packages
+and pinned GitHub Actions. Dependency changes must pass both CI Python environments,
+receive human code review, and be merged deliberately. No automatic merging.
+Dependabot version updates do not themselves enable vulnerability alerts or
+Dependabot security updates: administrators must configure repository security
+settings. A clean Dependabot check is not an independent penetration test.
