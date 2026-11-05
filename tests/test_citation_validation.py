@@ -27,7 +27,11 @@ class CitationValidationTests(unittest.TestCase):
         }
         (self.folder / "CITATION.cff").write_text(yaml.safe_dump(self.valid_cff), encoding="utf-8")
         (self.folder / "citation.bib").write_text("@misc{sample_v1, title={Sample}, author={Doe, Jane}, note={v1}}\n", encoding="utf-8")
-        (self.folder / "preprint-metadata.json").write_text(json.dumps({"title": "Sample", "version": "v1"}), encoding="utf-8")
+        self.metadata = {
+            "title": "Sample", "version": "v1", "license": "CC-BY-4.0",
+            "authors": [{"family_names": "Doe", "given_names": "Jane"}],
+        }
+        (self.folder / "preprint-metadata.json").write_text(json.dumps(self.metadata), encoding="utf-8")
         self.fake_bib = SimpleNamespace(loads=lambda x: SimpleNamespace(entries=[{
             "ENTRYTYPE": "misc", "title": "Sample", "author": "Doe, Jane", "note": "v1"}]))
 
@@ -60,6 +64,30 @@ class CitationValidationTests(unittest.TestCase):
         (self.folder / "CITATION.cff").write_text(yaml.safe_dump(cff), encoding="utf-8")
         with self.assertRaisesRegex(ValueError, "title"):
             self.validated()
+
+    def test_license_conflict_is_rejected(self):
+        cff = dict(self.valid_cff, license="MIT")
+        (self.folder / "CITATION.cff").write_text(yaml.safe_dump(cff), encoding="utf-8")
+        with self.assertRaisesRegex(ValueError, "license"):
+            self.validated()
+
+    def test_author_conflict_is_rejected(self):
+        cff = dict(self.valid_cff, authors=[{"name": "Impostor Group"}])
+        (self.folder / "CITATION.cff").write_text(yaml.safe_dump(cff), encoding="utf-8")
+        with self.assertRaisesRegex(ValueError, "authors"):
+            self.validated()
+
+    @unittest.skipUnless(importlib.util.find_spec("bibtexparser") and shutil.which("cffconvert"),
+                         "actual external citation validators unavailable in local environment")
+    def test_generated_publication_bundle_passes_real_schema(self):
+        import test_release
+        fixture = test_release.ReleaseBundleTests(methodName="test_roundtrip_and_citation_files")
+        fixture.setUp()
+        try:
+            fixture.make_bundle()
+            self.validate_citations(fixture.bundle)
+        finally:
+            fixture.tearDown()
 
     def test_bibtex_symlink_is_rejected(self):
         (self.folder / "citation.bib").unlink()

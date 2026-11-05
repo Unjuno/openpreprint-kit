@@ -25,6 +25,25 @@ def read_text(path: Path) -> str:
     return path.read_text(encoding="utf-8")
 
 
+def expected_authors(metadata_authors: object) -> list[dict]:
+    if not isinstance(metadata_authors, list) or not metadata_authors:
+        raise ValueError("publication authors must be a non-empty list")
+    output = []
+    for author in metadata_authors:
+        if not isinstance(author, dict):
+            raise ValueError("publication authors must be structured objects")
+        if "name" in author:
+            parsed = {"name": author["name"]}
+        else:
+            parsed = {"family-names": author.get("family_names"),
+                      "given-names": author.get("given_names")}
+        if author.get("orcid"):
+            value = author["orcid"]
+            parsed["orcid"] = value if value.startswith("https://orcid.org/") else "https://orcid.org/" + value
+        output.append(parsed)
+    return output
+
+
 def validate_citations(folder: Path) -> None:
     folder = folder.resolve()
     cff_path = folder / "CITATION.cff"
@@ -37,9 +56,13 @@ def validate_citations(folder: Path) -> None:
         raise ValueError("CFF must contain valid version 1.2.0 metadata")
     if not isinstance(metadata, dict):
         raise ValueError("publication metadata must be a JSON object")
-    for field in ("title", "version"):
-        if cff.get(field) != metadata.get(field):
+    for field in ("title", "version", "abstract", "license"):
+        if (field in metadata or field in cff) and cff.get(field) != metadata.get(field):
             raise ValueError(f"citation {field} does not match the fixed publication metadata")
+    if "keywords" in metadata and cff.get("keywords", []) != metadata["keywords"]:
+        raise ValueError("citation keywords do not match the publication metadata")
+    if cff.get("authors") != expected_authors(metadata.get("authors")):
+        raise ValueError("citation authors do not match the fixed publication metadata")
     try:
         result = subprocess.run(
             ["cffconvert", "--validate", "-i", str(cff_path)],
