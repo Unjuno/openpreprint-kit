@@ -6,6 +6,17 @@
 [完成判定表](docs/RELEASE_READINESS.md)と[ロードマップ](docs/ROADMAP.md)に未達条件を示します。
 論文の版番号（v1、v2）とキットのソフトウェア版番号は別です。
 
+## 論文と根拠資料を一緒に検証する
+
+`research.json` に公開データ・解析コード・環境・手順・記録を明示し、論文の版と
+PDFハッシュに結び付けます。データ目録とZIPもRFC 3161の証明対象に含めます。
+非公開の健康記録はGitに入れず、ローカルで秘密nonce付きの照合証拠だけを作成します。
+編集の物理的禁止ではなく、独立した証拠との照合による改変検出です。
+
+詳しい操作・公開/非公開の境界・訂正履歴は [データと非公開記録の手順](docs/RESEARCH_DATA.md)。
+合成例は [research.jsonの例](examples/research-data/research.json)。既定の空目録は
+「資料の宣言なし」であり、科学的な完全性を保証しません。
+
 ## 機能と限界
 
 | 機能 | 状態 |
@@ -52,13 +63,14 @@ python scripts/timestamp.py verify dist --policy timestamp-policy.json
 短命なtokenをActions secret **OPK_ADMIN_READ_TOKEN**へ設定します。ソースやチャットには貼りません。
 完成原稿だけを対象にActions → Publish preprint releaseを手動起動します。
 
-PDF構造/メタデータ検査 → bundle → CFF/BibTeXスキーマ検査 → APIで公開前条件確認 → TSA → draft → 9資産を再取得・検証 →
+PDF構造/メタデータ検査 → bundle → CFF/BibTeXスキーマ検査 → APIで公開前条件確認 → TSA → draft → 11資産（旧形式は9資産）を再取得・検証 →
 immutability再確認 → 公開 → 公開後確認。権限不足・API障害・証明不成立では停止します。
 確認と公開は原子的ではありません。公開後の失敗で公開を巻き戻せたとは主張しません。
 [運用手順](docs/OPERATIONS.md)に復旧方法と必要権限を記載しています。
 
-9資産はPDF、metadata JSON、CITATION.cff、BibTeX、manifest、SHA256SUMS、Release説明、
-RFC 3161要求と応答です。旧7資産も整合検査できます。添付CFFだけではリポジトリの引用ウィジェットは設定されません。
+11資産はPDF、metadata JSON、CITATION.cff、BibTeX、manifest、SHA256SUMS、Release説明、
+research-manifest.json、research-data.zip、RFC 3161要求と応答です。
+研究目録のない旧9資産と、時刻証明を付ける前の旧7資産も整合検査できます。添付CFFだけではリポジトリの引用ウィジェットは設定されません。
 `time_attestation: null`は時刻証拠をJSON内に埋め込まない意味で、外部sidecarを検証して判断します。
 
 ## レビューと訂正
@@ -90,3 +102,14 @@ python -m unittest discover -s tests -v
 存在時刻、一般公開時刻、著作者資格、科学的正しさは別です。[脅威モデル](docs/THREAT_MODEL.md)を参照してください。
 学術出版（版・引用）、暗号学/PKI（署名・信頼）、保存・分散システム（独立観測）を分離しています。
 ツールはMIT。論文・図表・データの利用条件は研究者が別に指定してください。
+
+### データ検証の追加コマンド
+
+```bash
+python scripts/research_bundle.py
+python scripts/verify_release.py downloaded-release --expected-manifest-sha256 TRUSTED_MANIFEST_DIGEST
+```
+
+論文だけのfingerprintではデータを認証できません。上のdigestは、検証対象そのものから
+無検証でコピーするのではなく、独立に信頼できる経路で取得してください。
+実際の健康記録や秘密receiptを公開リポジトリ・Issue・チャットへ送らないでください。

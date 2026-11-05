@@ -77,6 +77,10 @@ def create_bundle(output: Path, repository: str | None, commit: str | None) -> N
     with (ROOT / "preprint.yaml").open(encoding="utf-8") as source:
         metadata = yaml.safe_load(source)
     paper_path = (ROOT / metadata["paper"]).resolve()
+    research = {}
+    if (ROOT / "research.json").exists() or (ROOT / "research.json").is_symlink():
+        from research_bundle import build_research
+        research = build_research(ROOT, sha256_file(paper_path), metadata["version"])
     output = output.resolve()
     if output == ROOT or output == paper_path or output == ROOT / "paper":
         raise ValueError("output cannot overwrite the repository or paper")
@@ -151,14 +155,20 @@ def create_bundle(output: Path, repository: str | None, commit: str | None) -> N
     )
     (output / "RELEASE_NOTES.md").write_text(notes, encoding="utf-8")
 
+    for name, data in research.items():
+        (output / name).write_bytes(data)
+    if research:
+        from research_bundle import verify_research
+        verify_research(output, record)
+    payload_files = (*PAYLOAD_FILES, *research)
     files = {
         filename: {
             "sha256": sha256_file(output / filename),
             "size_bytes": (output / filename).stat().st_size,
         }
-        for filename in PAYLOAD_FILES
+        for filename in payload_files
     }
-    manifest = {"schema_version": 1, "algorithm": "sha256", "files": files}
+    manifest = {"schema_version": 2 if research else 1, "algorithm": "sha256", "files": files}
     (output / "manifest.json").write_text(
         json.dumps(manifest, sort_keys=True, indent=2) + "\n", encoding="utf-8"
     )
@@ -167,7 +177,7 @@ def create_bundle(output: Path, repository: str | None, commit: str | None) -> N
     (output / "SHA256SUMS").write_text(
         "".join(f"{sums[name]}  {name}\n" for name in sorted(sums)), encoding="ascii"
     )
-    print(f"PASS: created {len(PAYLOAD_FILES) + 2} release assets in {output}")
+    print(f"PASS: created {len(payload_files) + 2} release assets in {output}")
     print("WARNING: these files are not a cryptographic timestamp or publication proof")
 
 
@@ -179,7 +189,7 @@ def main() -> int:
     arguments = parser.parse_args()
     try:
         create_bundle(arguments.output, arguments.repository, arguments.commit)
-    except (OSError, ValueError, yaml.YAMLError, KeyError) as exc:
+    except (OSError, ValueError, TypeError, RecursionError, yaml.YAMLError, KeyError) as exc:
         print(f"FAIL: {exc}", file=sys.stderr)
         return 1
     return 0

@@ -56,3 +56,15 @@ Scientific merit, human identity, ethics approval, rights and formal editorial d
 Read SECURITY.md before reporting sensitive problems. Use synthetic data, a failing regression
 test, a reviewed fix and a full green suite. Never call self-review an independent security audit.
 See RELEASE_READINESS.md for the conditions blocking v1.0 and OPERATIONS.md for recovery.
+
+## Research package and private openings
+
+Schema 2 binds research-manifest.json and research-data.zip along with the paper.
+A pinned paper digest alone does not bind these assets: verify a separately trusted
+manifest digest or RFC 3161 token. The declared provenance graph is not executed.
+Private record commitments use a secret random opening and opaque id, not a public
+raw health-data hash. Keep original files and receipts outside Git and apply external
+access control, encryption and backups. Metadata/count/linkage inference remains.
+The public/non-sensitive approval flag is a human assertion, not a DLP classifier.
+Stored ZIP entries are bounded and checked without extraction; the kit never runs
+bundled code. These changes do not establish archival trust after certificate expiry.

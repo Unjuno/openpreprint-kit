@@ -1,0 +1,60 @@
+{
+  "schema_version": 1,
+  "artifacts": [
+    {
+      "id": "measurements",
+      "kind": "dataset",
+      "visibility": "public",
+      "path": "examples/research-data/measurements.csv",
+      "version": "1",
+      "title": "Synthetic measurements",
+      "description": "Columns: time_s in seconds, value dimensionless. Two invented rows.",
+      "license": "CC0-1.0",
+      "sensitivity": "non-sensitive",
+      "publication_approved": true
+    },
+    {
+      "id": "analysis-code",
+      "kind": "code",
+      "visibility": "public",
+      "path": "examples/research-data/analyze.py",
+      "version": "1",
+      "title": "Mean calculation",
+      "description": "Reads the synthetic CSV and prints its arithmetic mean.",
+      "license": "MIT",
+      "sensitivity": "non-sensitive",
+      "publication_approved": true
+    },
+    {
+      "id": "environment",
+      "kind": "environment",
+      "visibility": "public",
+      "path": "examples/research-data/environment.txt",
+      "version": "1",
+      "title": "Declared demonstration environment",
+      "description": "Python and standard-library modules used by the demonstration.",
+      "license": "CC0-1.0",
+      "sensitivity": "non-sensitive",
+      "publication_approved": true
+    }
+  ],
+  "activities": [
+    {
+      "id": "mean-analysis",
+      "inputs": [
+        "measurements"
+      ],
+      "outputs": [
+        "paper"
+      ],
+      "code": [
+        "analysis-code"
+      ],
+      "environment": [
+        "environment"
+      ],
+      "command": "python examples/research-data/analyze.py",
+      "description": "Declared relation to the paper; the packager does not execute this command."
+    }
+  ]
+}
