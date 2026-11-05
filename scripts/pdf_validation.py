@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Bounded PDF publication preflight (structure only, never a malware scan).
 
-Requires pypdf==5.9.0. An accepted PDF is still UNTRUSTED to renderers.
+Requires pypdf==6.21.4. An accepted PDF is still UNTRUSTED to renderers.
 """
 
 from __future__ import annotations

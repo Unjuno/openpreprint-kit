@@ -34,6 +34,11 @@ class PdfPublicationTests(unittest.TestCase):
         return subprocess.run([sys.executable, str(self.root / "scripts" / "validate.py"), "--strict"],
                               capture_output=True, text=True, timeout=12, check=False)
 
+    def test_dependency_manifest_uses_known_patched_pypdf(self):
+        requirements = (ROOT / "requirements.txt").read_text(encoding="utf-8")
+        self.assertIn("pypdf==6.21.4", requirements,
+                      "Unpatched PDF parser versions are forbidden for publication")
+
     def test_valid_structural_pdf_passes(self):
         write_pdf(self.paper)
         result = self.run_strict()

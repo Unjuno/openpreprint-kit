@@ -6,7 +6,7 @@
 
 **Architecture:** Extend the existing strict validator through a focused PDF preflight module and publish-only citation schema checks. Keep normal draft validation non-blocking and the offline hash verifier independent of citation/PDF parsing.
 
-**Tech Stack:** Python ≥3.10, pypdf 5.9.0, PyYAML 6.0.3, asn1crypto 1.5.1, cffconvert 2.0.0, bibtexparser 1.4.3, GitHub Actions Ubuntu 24.04.
+**Tech Stack:** Python ≥3.10, pypdf 6.21.4, PyYAML 6.0.3, asn1crypto 1.5.1, cffconvert 2.0.0, bibtexparser 1.4.3, GitHub Actions Ubuntu 24.04.
 
 **Spec:** docs/superpowers/specs/2026-11-06-publication-preflight-design.md
 

@@ -8,7 +8,7 @@ A GitHub-derived research repository must not publish a formally invalid, encryp
 - The draft template remains valid without any PDF; strict publication validation fails closed.
 - No external SaaS, credentials, or real paper upload in tests. Do not claim that syntax checking proves scientific merit, PDF/A archival conformance, or security of all PDF readers.
 - Hard maximum of 25 MiB and 500 pages for preprints, with explicit guidance for archives of larger data.
-- Use pypdf 5.9.0 strict reading; forbid encrypted documents and interactive actions (OpenAction, JavaScript, Launch, RichMedia, embedded files, AcroForm, additional actions) found via bounded structural scan.
+- Use pypdf 6.21.4 strict reading; forbid encrypted documents and interactive actions (OpenAction, JavaScript, Launch, RichMedia, embedded files, AcroForm, additional actions) found via bounded structural scan.
 - Apply guard to publication, not harmless draft edits. Cover encrypted, corrupt, malicious, oversized, and valid files with tests.
 - Validate generated CITATION.cff against official CFF 1.2.0 schema using cffconvert, and BibTeX through an independent parser. Never invent publication year.
 

@@ -34,7 +34,7 @@ python scripts/verify_release.py dist
 python scripts/citation_validation.py dist
 ```
 
-Python 3.10以上、OpenSSL 3、PyYAML 6.0.3、asn1crypto 1.5.1、pypdf 5.9.0を使用します。
+Python 3.10以上、OpenSSL 3、PyYAML 6.0.3、asn1crypto 1.5.1、pypdf 6.21.4を使用します。
 公開前の引用書式検査にはcffconvert 2.0.0、bibtexparser 1.4.3も使用します。
 ハッシュ整合検査と研究記録/読者ページの処理はPython標準ライブラリで動作します。
 

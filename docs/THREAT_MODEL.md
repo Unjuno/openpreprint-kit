@@ -44,7 +44,7 @@ notices remains an open acceptance item. Public repositories cannot provide conf
 Generated HTML escapes metadata and reports, runs no scripts, uses version-specific links,
 retains original paper assets and labels timestamp verification as NOT_VERIFIED. It does not
 render Markdown/HTML as executable content. Links can become stale; no external archive is created.
-Strict publication PDF preflight uses pypdf 5.9.0 for structural parsing and bounded traversal,
+Strict publication PDF preflight uses pypdf 6.21.4 for structural parsing and bounded traversal,
 with a 25 MiB/500-page ceiling and rejection of encryption/active or embedded content indicators.
 This cannot certify complete PDF/A conformance or that third-party PDF renderers have no vulnerabilities.
 Independent CFF 1.2.0 schema and BibTeX parser checks run before publication, but
