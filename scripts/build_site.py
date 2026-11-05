@@ -82,6 +82,33 @@ def build_site(bundle: Path, root: Path, output: Path, repository: str) -> None:
         notices.append(f'<article><h3>{escape(event["kind"])}</h3><p>{escape(event["summary"])}</p>'
                        f'<p>Claimed actor: {escape(event["actor"])} · Claimed UTC: {escape(event["recorded_at"])}</p>'
                        f'<p>Declared conflicts: {escape(event["conflicts"])}</p>{replacement_html}{"".join(reports)}</article>')
+    research_html = ''
+    if (bundle / 'research-manifest.json').is_file():
+        from research_bundle import read_json as read_research_json
+        inventory = read_research_json(bundle / 'research-manifest.json')
+        artifact_rows = []
+        for item in inventory['artifacts']:
+            if item['visibility'] == 'private':
+                detail = 'NOT_PUBLIC: original and secret opening remain with the custodian.'
+                heading = item['id']
+                fingerprint = 'Private commitment (not a raw file hash): ' + item['commitment']['digest']
+            else:
+                heading = item['id'] + ' — ' + item['title'] + ' — data version ' + item['version']
+                detail = item['description'] + ' | license: ' + item['license'] + ' | ' + item['archive_path']
+                fingerprint = 'SHA-256: ' + item['sha256'] + ' | bytes: ' + str(item['size_bytes'])
+            artifact_rows.append('<article><h3>' + escape(heading) + '</h3><p>Kind: ' + escape(item['kind']) +
+                                 '</p><p>' + escape(detail) + '</p><code>' + escape(fingerprint) + '</code></article>')
+        activity_rows = []
+        for activity in inventory['activities']:
+            details = {key: activity[key] for key in ('inputs', 'outputs', 'code', 'environment', 'command', 'description')}
+            activity_rows.append('<h3>' + escape(activity['id']) + '</h3><pre>' +
+                                 escape(json.dumps(details, ensure_ascii=False, indent=2)) + '</pre>')
+        research_html = ('<h2>Research data and declared provenance</h2>'
+                         '<p><strong>DECLARED_NOT_EXECUTED</strong>: declared input/output links are not proof that an analysis ran or is correct.</p>'
+                         '<p>Inventory and archive are bound to this paper version by the release manifest. '
+                         'Private record contents and clinical event times are not public or verified here.</p>' +
+                         (''.join(artifact_rows) or '<p>No research assets declared for this version.</p>') +
+                         ''.join(activity_rows))
     title = escape(metadata['title'])
     html = f'''<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
@@ -99,7 +126,7 @@ def build_site(bundle: Path, root: Path, output: Path, repository: str) -> None:
 <h2>Integrity and time evidence</h2><p>PDF SHA-256: <code>{digest}</code></p>
 <p>Bundled checksums matched when this page was built; authenticity requires a separately trusted source.</p>
 <p>Timestamp status: <strong>NOT_VERIFIED</strong> by this page. Downloaded timestamp files, if listed, must be verified with an independently selected CA/CRL policy. General public availability time and authorship are not proven.</p>
-<ul>{rows}</ul><h2>Review and post-publication notices</h2>
+<ul>{rows}</ul>{research_html}<h2>Review and post-publication notices</h2>
 {''.join(notices) if notices else '<p>No records for these exact paper bytes.</p>'}
 <p><a href="research-record.json">Unsigned operational record snapshot</a>. This snapshot is not covered by the original paper timestamp. Consult the repository for later notices; a downloaded page can become stale.</p>
 <h2>BibTeX</h2><pre>{escape((bundle/'citation.bib').read_text(encoding='utf-8'))}</pre></main>

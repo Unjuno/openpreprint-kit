@@ -29,6 +29,8 @@ jobs:
         run: openssl version
       - name: Validate draft metadata
         run: python scripts/validate.py
+      - name: Validate declared research assets (never private originals)
+        run: python scripts/research_bundle.py
       - name: Validate review records and preserve existing history
         env:
           BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}

@@ -83,10 +83,13 @@ jobs:
             echo "Tag $TAG already exists. A release cannot reuse a historical tag." >&2
             exit 1
           fi
-          gh release create "$TAG" \
-            dist/paper.pdf dist/preprint-metadata.json dist/CITATION.cff \
-            dist/citation.bib dist/manifest.json dist/SHA256SUMS dist/RELEASE_NOTES.md \
-            dist/timestamp.tsq dist/timestamp.tsr \
+          ASSETS=(dist/paper.pdf dist/preprint-metadata.json dist/CITATION.cff
+                  dist/citation.bib dist/manifest.json dist/SHA256SUMS dist/RELEASE_NOTES.md
+                  dist/timestamp.tsq dist/timestamp.tsr)
+          if [ -f dist/research-manifest.json ]; then
+            ASSETS+=(dist/research-manifest.json dist/research-data.zip)
+          fi
+          gh release create "$TAG" "${ASSETS[@]}" \
             --draft --target "$GITHUB_SHA" --title "$TITLE ($TAG)" \
             --notes-file dist/RELEASE_NOTES.md
           mkdir -p downloaded-release
