@@ -2,7 +2,7 @@
 
 **GitHubを論文公開の本体にする、再利用可能なプレプリント公開キット。**
 
-現行ソフトウェアはv0.3統合候補です。**一般利用向けv1.0の運用受入は未完了**です。
+現行ソフトウェアはv0.3を拡張中です。**一般利用向けv1.0の運用受入は未完了**です。
 [完成判定表](docs/RELEASE_READINESS.md)と[ロードマップ](docs/ROADMAP.md)に未達条件を示します。
 論文の版番号（v1、v2）とキットのソフトウェア版番号は別です。
 
@@ -10,8 +10,8 @@
 
 | 機能 | 状態 |
 |---|---|
-| メタデータ、ORCID、PDF存在/ヘッダー検査 | 実装。ORCID本人確認や完全なPDF構文検査ではない |
-| CFF/BibTeX、metadata、manifest、SHA-256 | 決定的生成とオフライン整合検査 |
+| メタデータ、ORCID、PDF構造検査 | 開発中。公開時は25 MiB以下・500ページ以下、非暗号化、対話型機能なしのPDFを要求。PDF/A認証やマルウェア検査ではない |
+| CFF/BibTeX、metadata、manifest、SHA-256 | 決定的生成・ハッシュ照合。発行前に外部CFFスキーマとBibTeXパーサーも実行 |
 | RFC 3161 | 要求、HTTPS送信、署名/連鎖/nonce/OID/現在のCRLの検証 |
 | GitHub公開 | 手動起動。公開前APIガードとdraft再ダウンロード検証 |
 | レビュー/応答/訂正/懸念/撤回 | 版とPDF/報告書ハッシュに結合。CIで既存記録の変更を拒否 |
@@ -26,14 +26,16 @@ Use this templateからPublic Repositoryを作ります。`preprint.yaml`と`pap
 初期状態は仮データとv0であり、そのまま公開できません。
 
 ```bash
-python -m pip install -r requirements.txt
+python -m pip install -r requirements.txt -r requirements-publication-checks.txt
 python scripts/validate.py --strict
 python scripts/research_record.py
 python scripts/prepare_release.py --output dist
 python scripts/verify_release.py dist
+python scripts/citation_validation.py dist
 ```
 
-Python 3.10以上、OpenSSL 3、PyYAML 6、asn1crypto 1.5.1を使用します。
+Python 3.10以上、OpenSSL 3、PyYAML 6.0.3、asn1crypto 1.5.1、pypdf 5.9.0を使用します。
+公開前の引用書式検査にはcffconvert 2.0.0、bibtexparser 1.4.3も使用します。
 ハッシュ整合検査と研究記録/読者ページの処理はPython標準ライブラリで動作します。
 
 ## 時刻証明と公開
@@ -50,7 +52,7 @@ python scripts/timestamp.py verify dist --policy timestamp-policy.json
 短命なtokenをActions secret **OPK_ADMIN_READ_TOKEN**へ設定します。ソースやチャットには貼りません。
 完成原稿だけを対象にActions → Publish preprint releaseを手動起動します。
 
-検査 → bundle → APIで公開前条件確認 → TSA → draft → 9資産を再取得・検証 →
+PDF構造/メタデータ検査 → bundle → CFF/BibTeXスキーマ検査 → APIで公開前条件確認 → TSA → draft → 9資産を再取得・検証 →
 immutability再確認 → 公開 → 公開後確認。権限不足・API障害・証明不成立では停止します。
 確認と公開は原子的ではありません。公開後の失敗で公開を巻き戻せたとは主張しません。
 [運用手順](docs/OPERATIONS.md)に復旧方法と必要権限を記載しています。

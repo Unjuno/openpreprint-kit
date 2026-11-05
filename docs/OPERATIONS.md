@@ -18,7 +18,10 @@ python scripts/validate.py --strict
 python scripts/research_record.py
 python scripts/prepare_release.py --output dist
 python scripts/verify_release.py dist
+python scripts/citation_validation.py dist
 ```
+公開前に pypdf で構造・暗号化/対話型内容・25 MiB/500ページ上限を確認する。
+本検査はPDF/A認定でもマルウェア検査でもない。PDFは必ず隔離した環境で閲覧する。
 GitHub ActionsのPublishを手動起動すると、APIで公開リポジトリ、現在の既定ブランチ、
 immutability、版の未使用を確認する。その後TSAで証明し、draftを作成する。
 ダウンロードした資産を再検査し、immutabilityを再確認してから公開する。

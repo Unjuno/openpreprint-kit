@@ -122,7 +122,13 @@ def validate(strict: bool) -> int:
                     signature = handle.read(5)
                 if signature != b"%PDF-":
                     errors.append(f"paper does not start with the PDF signature: {filename}")
-                if resolved.stat().st_size < 10:
+                elif strict:
+                    try:
+                        from pdf_validation import inspect_pdf
+                        inspect_pdf(resolved)
+                    except (ValueError, ImportError) as exc:
+                        errors.append(f"PDF publication preflight failed: {exc}")
+                elif resolved.stat().st_size < 10:
                     errors.append(f"paper PDF is too short: {filename}")
             except OSError as exc:
                 errors.append(f"cannot inspect paper PDF: {exc}")

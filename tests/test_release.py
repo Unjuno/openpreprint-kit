@@ -13,6 +13,8 @@ import unittest
 
 import yaml
 
+from pdf_fixture import write_pdf
+
 SOURCE_ROOT = Path(__file__).resolve().parents[1]
 
 
@@ -22,11 +24,11 @@ class ReleaseBundleTests(unittest.TestCase):
         self.root = Path(self.temporary.name)
         (self.root / "scripts").mkdir()
         (self.root / "paper").mkdir()
-        for file in ("validate.py", "prepare_release.py", "verify_release.py"):
+        for file in ("validate.py", "prepare_release.py", "verify_release.py", "pdf_validation.py"):
             shutil.copy2(SOURCE_ROOT / "scripts" / file, self.root / "scripts" / file)
         self.paper = self.root / "paper" / "paper.pdf"
-        # This stub is sufficient for signature checks; PDF rendering is not tested.
-        self.paper.write_bytes(b"%PDF-1.7\n% Unit test fixture\n%%EOF\n")
+        # A valid syntactic fixture is needed now that publication requires PDF parsing.
+        write_pdf(self.paper)
         self.metadata = {
             "schema_version": 1,
             "title": "A test preprint on {physics} & mathematics",
