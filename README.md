@@ -32,6 +32,33 @@ patient identification, and not a medical-content certification.
 
 Full usage and threat model: [Research objects and privacy](docs/RESEARCH_OBJECTS.md).
 
+
+## Verified delivery, recovery and independent observation (completion work)
+
+The opt-in `scripts/preserve.py` makes a deterministic, allowlisted ZIP of
+release assets and publicly available verification snapshots. Extraction is
+verified against an independently retained SHA-256 and **separately selected
+TSA trust policy**; no secret key or medical original may enter a public ZIP.
+`--integrity-only` clearly disclaims the authenticity of time evidence.
+
+The opt-in `scripts/observation.py` permits an external organization to
+anonymously retrieve and sign the exact public Release assets, under its own
+Ed25519 witness key. Only an out-of-band pinned public key authenticates that
+claim; the witness's clock is self-reported and **first publication is not
+proven**. `scripts/acceptance.py` generates two synthetic research versions,
+obtains real RFC 3161 evidence and tests restore and tamper rejection without
+publishing research or patient originals.
+
+Published dependencies for CI are SHA-256-locked in `requirements.lock` and
+`requirements-build.lock` (Python 3.10/3.12 hosted runner compatibility must
+be verified in CI). Owners can use `scripts/owner_setup.py` to inspect and
+**explicitly** enable public repo template / immutable release settings.
+Detailed commands and limitations: [Preservation & witness](docs/PRESERVATION_AND_WITNESS.md).
+
+**This is not a v1.0 production readiness certification.** Real author-approved
+publications, independent reviewer/witness custody, long-term escrow and
+clinical privacy/legal acceptance remain distinct operational gates.
+
 ## 機能と限界
 
 | 機能 | 状態 |

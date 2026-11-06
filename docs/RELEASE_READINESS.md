@@ -28,3 +28,33 @@
 未実施の公開を「E2E成功」、自己署名試験を「公共認証局で実証」、レビューの存在を
 「査読済み」、ハッシュ一致を「論文が正しい」、HTTP到達時刻を「初公開時刻」と表示しない。
 実装できない権限操作や外部手続は、担当者・必要な操作・完了証拠を明記して残す。
+
+
+## 2026-11-06: Verified public TSA and portable recovery acceptance
+
+- **G2 synthetic external TSA:** An actual FreeTSA issuance for synthetic v1/v2
+  was observed with pinned CA PEM SHA-256
+  `2151b61137ffa86bf664691ba67e7da0b19f98c758e3d228d5d8ebf27e044438`
+  and explicit OID `1.2.3.4.1`. Validity and current full-chain CRLs were
+  verified. Accuracy absent -> no exact signed time-error bound.
+- **G3 still NOT MET:** no real author-approved GitHub immutable Release, no
+  two independent template-derived repositories with real versioned assets.
+- **G4/G5 still NOT MET:** no genuine human peer review or independent software
+  security/privacy audit. Generated review records are not certifications.
+- **G6 partial:** sha256-hash locked build/runtime dependencies, PDF and citation
+  validation, archive restoration tests. CI Python 3.10/3.12 is the final check.
+  Full historic LTV and signature renewal not implemented.
+- **G7 partial:** separate-key Ed25519 public witness CLI and portable retention
+  archive implemented; **not** yet exercised against a truly public immutable
+  Release by a separately managed observer, no external durable escrow.
+- A synthetic data exercise established v1 and v2 time-anchored research-object
+  bundles, tamper rejection and byte-identical recovery on an alternate machine.
+  Source: the test-run audit report and separately verified ZIP digests.
+- A 14-day GitHub Actions artifact is NOT an external permanent repository.
+- `is_template` and `has_pages` require administrator action; do not equate
+  availability of a CLI with actual setting activation.
+- Production v1.0 remains BLOCKED until remaining G3/G4/G5/G7 conditions have
+  dated evidence from responsible external parties.
+
+The standalone helper details and safe CLI are in
+[PRESERVATION_AND_WITNESS.md](PRESERVATION_AND_WITNESS.md).
