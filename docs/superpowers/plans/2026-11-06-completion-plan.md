@@ -27,7 +27,7 @@ restore; confusing CI artifacts with permanent archival; confidential-key leakag
 - [x] T4: Generate hash locks for supported Python runtimes and validate installs.
 - [x] T5: Add optional signed public observation and a verification/renewal procedure;
   clearly separate who observed availability from who authenticated a timestamp.
-- [ ] T6: Update release-readiness ledger, verify source identity, CI, and merge only
+- [x] T6: Update release-readiness ledger, verify source identity, CI, and merge only
   tested changes. Preserve evidence and name authorization-only blockers precisely.
 
 Preflight: preserve consumes verify_release.verify and timestamp.verify_proof unchanged.

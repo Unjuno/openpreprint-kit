@@ -13,10 +13,7 @@ class LiveWorkflowTests(unittest.TestCase):
         self.workflow=yaml.load(self.raw,Loader=yaml.BaseLoader)
 
     def test_manual_synthetic_only(self):
-        self.assertIn('workflow_dispatch',self.workflow['on'])
-        if 'push' in self.workflow['on']:
-            self.assertEqual(self.workflow['on']['push']['branches'],['feature/completion-20261106'])
-            self.assertEqual(self.workflow['on']['push']['paths'],['.github/workflows/live-acceptance.yml'])
+        self.assertEqual(set(self.workflow['on']),{'workflow_dispatch'})
         self.assertEqual(self.workflow['permissions'],{'contents':'read'})
         self.assertNotIn('gh release create',self.raw)
         self.assertNotIn('gh release edit',self.raw)

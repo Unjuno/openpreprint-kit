@@ -2,9 +2,6 @@ name: Live acceptance (synthetic only)
 
 on:
   workflow_dispatch:
-  push:
-    branches: [feature/completion-20261106]
-    paths: [.github/workflows/live-acceptance.yml]
 
 permissions:
   contents: read
