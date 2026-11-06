@@ -24,12 +24,33 @@ jobs:
       - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
         with:
           python-version: '3.12'
-      - name: Prepare reproducible dependency downloads
+      - name: Install isolated runtime and collect reproducible dependencies
         run: |
           set -euo pipefail
+          python -m venv "$RUNNER_TEMP/opk-live"
+          source "$RUNNER_TEMP/opk-live/bin/activate"
+          python -m pip install -r requirements.txt -r requirements-publication-checks.txt wheel typing_extensions
           mkdir -p acceptance/wheels
-          python -m pip download --dest acceptance/wheels -r requirements.txt -r requirements-publication-checks.txt
-          python -m pip download --dest acceptance/wheels --only-binary=:all: --no-deps --platform manylinux2014_x86_64 --python-version 313 --implementation cp --abi cp313 PyYAML==6.0.3
+          python -m pip download --dest acceptance/wheels -r requirements.txt -r requirements-publication-checks.txt wheel typing_extensions
+          python -m pip download --dest acceptance/wheels --only-binary=:all: --no-deps --platform manylinux2014_x86_64 --python-version 313 --implementation cp --abi cp313 PyYAML==6.0.3 pyrsistent==0.20.0 charset_normalizer==3.5.2
+          python - <<'PY'
+          import importlib.metadata as m, json, re, pathlib, urllib.request
+          output=pathlib.Path('acceptance')
+          lines=[]; build=[]
+          for dist in sorted(m.distributions(),key=lambda d:d.metadata['Name'].lower()):
+              name=dist.metadata['Name']; version=dist.version
+              if name.lower()=='pip': continue
+              if not re.fullmatch(r'[A-Za-z0-9_.-]+',name+version): raise ValueError('invalid package name')
+              with urllib.request.urlopen(f'https://pypi.org/pypi/{name}/{version}/json',timeout=30) as r:
+                  data=json.load(r)
+              hashes=sorted({x['digests']['sha256'] for x in data['urls']})
+              if not hashes: raise ValueError('missing distribution hashes')
+              line=name+'=='+version+' \\\n'+''.join('    --hash=sha256:'+h+(' \\\n' if i<len(hashes)-1 else '\n') for i,h in enumerate(hashes))
+              lines.append(line)
+              if name.lower() in {'setuptools','wheel','packaging'}: build.append(line)
+          (output/'requirements.lock').write_text('# Resolved isolated Python 3.12 environment; all distribution hashes from PyPI.\n'+''.join(lines))
+          (output/'requirements-build.lock').write_text('# Bootstrap these before --no-build-isolation installation.\n'+''.join(build))
+          PY
       - name: Fetch public trust material and pin official CA
         run: |
           set -euo pipefail
@@ -37,21 +58,18 @@ jobs:
           curl --proto '=https' --tlsv1.2 --fail --max-time 45 https://freetsa.org/files/cacert.pem -o acceptance/trust/ca.pem
           echo '2151b61137ffa86bf664691ba67e7da0b19f98c758e3d228d5d8ebf27e044438  acceptance/trust/ca.pem' | sha256sum -c -
           curl --proto '=https' --tlsv1.2 --fail --max-time 45 https://www.freetsa.org/crl/root_ca.crl -o acceptance/trust/crl.pem
-          openssl x509 -in acceptance/trust/ca.pem -noout -subject -dates -fingerprint -sha256 > acceptance/trust/ca-info.txt
           openssl crl -in acceptance/trust/crl.pem -noout -lastupdate -nextupdate -issuer > acceptance/trust/crl-info.txt
-      - name: Request actual external timestamp for synthetic test bytes
+          python - <<'PY'
+          import json, pathlib
+          p={'schema_version':1,'tsa_url':'https://freetsa.org/tsr','ca_file':'ca.pem','ca_sha256':'2151b61137ffa86bf664691ba67e7da0b19f98c758e3d228d5d8ebf27e044438','crl_file':'crl.pem','policy_oid':'1.2.3.4.1','timeout_seconds':45}
+          pathlib.Path('acceptance/trust/policy.json').write_text(json.dumps(p,sort_keys=True,indent=2)+'\n')
+          PY
+      - name: Real TSA, research versions, tamper checks and recovery
         run: |
           set -euo pipefail
-          printf '%s\n' 'OpenPreprint Kit synthetic acceptance probe. No patient data. Not a research result.' > acceptance/synthetic.txt
-          openssl ts -query -data acceptance/synthetic.txt -sha256 -cert -out acceptance/request.tsq
-          curl --proto '=https' --tlsv1.2 --fail --max-time 45 -H 'Content-Type: application/timestamp-query' -H 'Accept: application/timestamp-reply' --data-binary @acceptance/request.tsq https://freetsa.org/tsr -o acceptance/response.tsr
-          openssl ts -reply -in acceptance/response.tsr -text > acceptance/token-info.txt
-          cat acceptance/trust/ca.pem acceptance/trust/crl.pem > acceptance/trust/store.pem
-          openssl ts -verify -queryfile acceptance/request.tsq -in acceptance/response.tsr -CAfile acceptance/trust/store.pem -crl_check_all -auth_level 2 2>&1 | tee acceptance/verification.txt
-          openssl version > acceptance/runtime.txt
-          python --version >> acceptance/runtime.txt
-          sha256sum acceptance/*.* > acceptance/checksums.txt
-      - name: Retain probe evidence even when verification fails
+          source "$RUNNER_TEMP/opk-live/bin/activate"
+          python scripts/acceptance.py live --out acceptance/evidence --policy acceptance/trust/policy.json | tee acceptance/live-report.json
+      - name: Retain real evidence even when verification fails
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
