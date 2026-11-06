@@ -18,3 +18,11 @@ __pycache__/
 
 /site/
 /downloaded-release/
+
+# Private material must NEVER enter a public repository
+/private/
+/health-records/
+/medical-records/
+/secrets/
+*.pem.key
+*.patient

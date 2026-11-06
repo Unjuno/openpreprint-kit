@@ -24,7 +24,7 @@ class ReleaseBundleTests(unittest.TestCase):
         self.root = Path(self.temporary.name)
         (self.root / "scripts").mkdir()
         (self.root / "paper").mkdir()
-        for file in ("validate.py", "prepare_release.py", "verify_release.py", "pdf_validation.py"):
+        for file in ("validate.py", "prepare_release.py", "verify_release.py", "pdf_validation.py", "research_package.py", "verify_research.py"):
             shutil.copy2(SOURCE_ROOT / "scripts" / file, self.root / "scripts" / file)
         self.paper = self.root / "paper" / "paper.pdf"
         # A valid syntactic fixture is needed now that publication requires PDF parsing.

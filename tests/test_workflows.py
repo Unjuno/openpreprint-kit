@@ -12,6 +12,17 @@ class WorkflowTests(unittest.TestCase):
         # BaseLoader preserves YAML 1.2-like 'on', unlike SafeLoader YAML 1.1 booleans.
         return yaml.load((ROOT / ".github/workflows/publish.yml").read_text(), Loader=yaml.BaseLoader)
 
+    def test_research_inputs_checked_and_archive_uploaded(self):
+        publisher = (ROOT / '.github/workflows/publish.yml').read_text()
+        validator = (ROOT / '.github/workflows/validate.yml').read_text()
+        self.assertIn('research_package.py --check', publisher)
+        self.assertIn('research_package.py --check', validator)
+        self.assertIn('commitment_history.py --base-sha', validator)
+        self.assertIn('dist/research-assets.tar', publisher)
+        self.assertIn('dist/research-assets.json', publisher)
+        self.assertLess(publisher.index('research_package.py --check'), publisher.index('timestamp.py stamp'))
+        self.assertIn('verify_release.py downloaded-release', publisher)
+
     def test_timestamp_precedes_draft_creation(self):
         text = (ROOT / ".github/workflows/publish.yml").read_text()
         self.assertIn("timestamp.py stamp", text)

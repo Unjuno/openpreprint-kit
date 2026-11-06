@@ -6,6 +6,32 @@
 [完成判定表](docs/RELEASE_READINESS.md)と[ロードマップ](docs/ROADMAP.md)に未達条件を示します。
 論文の版番号（v1、v2）とキットのソフトウェア版番号は別です。
 
+## Public research objects and private-record verification (research extension)
+
+A Release can now bind the paper to explicit **public data**, **analysis code**,
+**supplementary protocols** and **anonymous private-record commitments**.
+Declare public files and their licenses in `research-assets.yaml` and run:
+
+```bash
+python scripts/research_package.py --check
+```
+
+When declared research objects exist, the Release adds `research-assets.json`
+and deterministic `research-assets.tar`; both are hashed in the same main
+manifest that is subsequently timestamped. `verify_release.py` checks every
+inner file without unpacking the archive to disk. Readers see the declared
+data/code relationships and verification digests in the static page.
+
+**Health/medical records must NEVER be pushed to public GitHub.** Locally
+create a *per-record* HMAC-SHA256 receipt with `scripts/private_seal.py`,
+store the 256-bit secret key and original outside the repository, and include
+only its anonymous JSON receipt. A third-party verifier requires the original
+and corresponding key, plus independently verified Release and timestamp
+proofs. This is **tamper-evidence, not literal tamper-prevention**, not
+patient identification, and not a medical-content certification.
+
+Full usage and threat model: [Research objects and privacy](docs/RESEARCH_OBJECTS.md).
+
 ## 機能と限界
 
 | 機能 | 状態 |
