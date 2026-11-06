@@ -39,3 +39,23 @@
 PASSは指定入力・環境での機能試験成功、FAILは再現可能な不具合、未確認は未試験を意味する。
 TSA時計、CA/CRLの出所、検証機時計、GitHub可用性の不確かさが残る。
 時刻トークンのaccuracyはTSAの署名した申告で、本キットが測定した誤差ではない。
+
+## 2026-11-06 — research objects and confidential commitments
+
+- [x] Optional public research-data, analysis-code and protocol inventory with
+      individual SHA-256, licenses, explicit public-confirmation flags and
+      declared dependency relationships.
+- [x] Deterministic TAR archive + JSON catalog, both signed indirectly through
+      the same immutable manifest and RFC 3161 token as the paper.
+- [x] Private-record HMAC-SHA256 receipts with per-record 256-bit offline keys;
+      no raw records or keys are uploaded.
+- [x] Standard-library offline TAR member verifier, safe bounds, tampering and
+      privacy regression tests; static reader catalog display.
+- [ ] Real TSA + immutable Release using a synthetic paper/data/private receipt;
+      the full external system integration is not yet demonstrated.
+- [ ] Independent medical/privacy threat assessment, access control, legal and
+      retention policy; no real patient material should be used in CI.
+- [ ] Off-GitHub archival and independent public-availability observation.
+
+See `docs/RESEARCH_OBJECTS.md`; a green CI proves behavior in the test environment,
+not the accuracy of medical records or a real-world public availability time.

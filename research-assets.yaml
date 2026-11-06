@@ -1,0 +1,17 @@
+# Explicit opt-in for every *public* research asset. Never put patient/clinical records here.
+schema_version: 1
+public_assets: []
+# Example:
+#  - path: data/synthetic.csv
+#    role: dataset
+#    description: "Fully synthetic example; no individuals represented"
+#    license: CC0-1.0
+#    public_confirmed: true
+#  - path: analysis/reproduce.py
+#    role: analysis_code
+#    description: "Script reproducing this paper's published figures"
+#    license: MIT
+#    public_confirmed: true
+relations: []
+# All anonymized evidence/commitments/<random-id>.json receipts are included automatically.
+# Original private records and their 256-bit keys MUST remain outside this repository.
