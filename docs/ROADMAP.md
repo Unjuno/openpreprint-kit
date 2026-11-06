@@ -59,3 +59,26 @@ TSA時計、CA/CRLの出所、検証機時計、GitHub可用性の不確かさ�
 
 See `docs/RESEARCH_OBJECTS.md`; a green CI proves behavior in the test environment,
 not the accuracy of medical records or a real-world public availability time.
+
+
+## 2026-11-06 — Verified timestamp, portable preservation, witness/owner tooling
+
+- [x] Real external FreeTSA evidence for TWO synthetic paper/data/code/private
+  HMAC commitment versions; OpenSSL full-chain current CRL/CA/nonce/OID validation.
+- [x] Separate machine restoration of byte-identical v1/v2 evidence archives
+  with independently pinned ZIP digests and independently selected trust policy.
+- [x] Preserve v1 when v2 is created; reject changed paper, wrong archive pin,
+  ZIP traversal, duplicate members, symlinks and secret files.
+- [x] CLI for explicit owner changes to immutable Releases and toolkit template
+  setting (default read-only). Actual owner activation is not assumed.
+- [x] CLI for external Ed25519-signed anonymous public Release observation,
+  externally pinned public key and independent TSA verification.
+- [x] Hash-locked dependency and CI plan; real clean CI install required to
+  claim support for Python 3.10 / 3.12.
+- [ ] Actual real author-approved immutable Release; confirm GitHub published
+  assets, version continuity, off-repo verification and independent observer.
+- [ ] Off-GitHub external custodian with tested recovery and retention; independent
+  reviewer and long-term timestamp/signature-renewal policy.
+
+These are concrete acceptance tests, not a promise that an external operator
+will remain available forever. See [PRESERVATION_AND_WITNESS.md](PRESERVATION_AND_WITNESS.md).
