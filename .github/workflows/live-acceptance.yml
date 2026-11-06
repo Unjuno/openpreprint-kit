@@ -1,0 +1,61 @@
+name: Live acceptance (synthetic only)
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [feature/completion-20261106]
+    paths: [.github/workflows/live-acceptance.yml]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: opk-live-acceptance
+  cancel-in-progress: false
+
+jobs:
+  public-tsa:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: '3.12'
+      - name: Prepare reproducible dependency downloads
+        run: |
+          set -euo pipefail
+          mkdir -p acceptance/wheels
+          python -m pip download --dest acceptance/wheels -r requirements.txt -r requirements-publication-checks.txt
+          python -m pip download --dest acceptance/wheels --only-binary=:all: --no-deps --platform manylinux2014_x86_64 --python-version 313 --implementation cp --abi cp313 PyYAML==6.0.3
+      - name: Fetch public trust material and pin official CA
+        run: |
+          set -euo pipefail
+          mkdir -p acceptance/trust
+          curl --proto '=https' --tlsv1.2 --fail --max-time 45 https://freetsa.org/files/cacert.pem -o acceptance/trust/ca.pem
+          echo '2151b61137ffa86bf664691ba67e7da0b19f98c758e3d228d5d8ebf27e044438  acceptance/trust/ca.pem' | sha256sum -c -
+          curl --proto '=https' --tlsv1.2 --fail --max-time 45 https://www.freetsa.org/crl/root_ca.crl -o acceptance/trust/crl.pem
+          openssl x509 -in acceptance/trust/ca.pem -noout -subject -dates -fingerprint -sha256 > acceptance/trust/ca-info.txt
+          openssl crl -in acceptance/trust/crl.pem -noout -lastupdate -nextupdate -issuer > acceptance/trust/crl-info.txt
+      - name: Request actual external timestamp for synthetic test bytes
+        run: |
+          set -euo pipefail
+          printf '%s\n' 'OpenPreprint Kit synthetic acceptance probe. No patient data. Not a research result.' > acceptance/synthetic.txt
+          openssl ts -query -data acceptance/synthetic.txt -sha256 -cert -out acceptance/request.tsq
+          curl --proto '=https' --tlsv1.2 --fail --max-time 45 -H 'Content-Type: application/timestamp-query' -H 'Accept: application/timestamp-reply' --data-binary @acceptance/request.tsq https://freetsa.org/tsr -o acceptance/response.tsr
+          openssl ts -reply -in acceptance/response.tsr -text > acceptance/token-info.txt
+          cat acceptance/trust/ca.pem acceptance/trust/crl.pem > acceptance/trust/store.pem
+          openssl ts -verify -queryfile acceptance/request.tsq -in acceptance/response.tsr -CAfile acceptance/trust/store.pem -crl_check_all -auth_level 2 2>&1 | tee acceptance/verification.txt
+          openssl version > acceptance/runtime.txt
+          python --version >> acceptance/runtime.txt
+          sha256sum acceptance/*.* > acceptance/checksums.txt
+      - name: Retain probe evidence even when verification fails
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: live-acceptance-${{ github.sha }}
+          path: acceptance/
+          retention-days: 14
+          if-no-files-found: error
