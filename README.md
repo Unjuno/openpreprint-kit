@@ -91,6 +91,20 @@ Detailed commands and limitations: [Preservation & witness](docs/PRESERVATION_AN
 publications, independent reviewer/witness custody, long-term escrow and
 clinical privacy/legal acceptance remain distinct operational gates.
 
+## Independent archive custody and read-only audits (development feature)
+
+An independent archivist can use `scripts/custody.py` to deposit multiple
+versioned `.opk.zip` archives, requiring an **out-of-band digest for every ZIP**,
+a separately selected RFC 3161 trust policy, and exact repository/version
+identity. `deposit` never overwrites existing custody; `audit` requires an
+**out-of-band SHA-256 of the custody catalog** and re-verifies every version
+without calling GitHub. It refuses missing versions, changed archives,
+symlinks, modified catalog, and stale CRL evidence.
+
+This tool does not establish the operator's independence, long-term retention,
+confidential health-data storage, or third-party auditing. For operator commands,
+trust boundaries and recovery see [Custody runbook](docs/CUSTODY.md).
+
 ## 機能と限界
 
 | 機能 | 状態 |

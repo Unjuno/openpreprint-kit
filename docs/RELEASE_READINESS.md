@@ -81,3 +81,16 @@ TSA and Ed25519 keys and must pass in both supported GitHub Python runners.
 This removes a usability gap; it does **not** close G3, G4, G5 or G7 without
 external operational evidence. A verified witness assertion is not proof of
 its operator's genuine independence or of first public availability.
+
+## 2026-11-08 — Custodial audit code, not a custody service
+
+The `custody.py` CLI now supports external-pin-controlled, multi-version
+archive deposit and read-only integrity/RFC 3161 audits. The cryptographic
+checks include all archived assets and re-check the independently selected
+TSA certificate chain and CRLs. An absent or modified version fails.
+
+**G7 REMAINS BLOCKED**: no independent off-GitHub custodian has contracted
+for retention, published externally verified restored evidence, performed
+ongoing audits or established service/incident obligations. CLI installation
+is not an operational attestation, and this milestone does not clear human
+peer review, clinical privacy approval or certified long-term validation.
