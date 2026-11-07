@@ -9,6 +9,7 @@ from pathlib import Path
 import tarfile
 
 import yaml
+from yaml_strict import safe_load_unique
 from verify_research import (ALLOWED_ROLES, ARCHIVE, CATALOG, ID_RE, MAX_FILES,
                              MAX_SINGLE_BYTES, MAX_TOTAL_BYTES, RELATIONS, path_ok, receipt_ok)
 
@@ -24,7 +25,7 @@ def collect(root: Path) -> tuple[list[dict], list[dict], dict[str, Path]] | None
         return None
     if cfg_file.is_symlink() or not cfg_file.is_file():
         raise ValueError('research configuration must be a regular file')
-    config = yaml.safe_load(cfg_file.read_text('utf-8'))
+    config = safe_load_unique(cfg_file.read_text('utf-8'))
     if (not isinstance(config, dict) or set(config) != {'schema_version', 'public_assets', 'relations'}
             or type(config['schema_version']) is not int or config['schema_version'] != 1
             or not isinstance(config['public_assets'], list) or not isinstance(config['relations'], list)):

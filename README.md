@@ -1,5 +1,7 @@
 # OpenPreprint Kit
 
+**v1.0 release decision:** [2026-11-08 audit](docs/AUDIT_2026-11-08.md) · [objective acceptance gates](docs/V1_ACCEPTANCE.md). Not yet production-ready: no approved actual Releases, independent public witness or external custodian.
+
 **GitHubを論文公開の本体にする、再利用可能なプレプリント公開キット。**
 
 現行ソフトウェアはv0.3を拡張中です。**一般利用向けv1.0の運用受入は未完了**です。

@@ -43,6 +43,25 @@ class HardeningTests(unittest.TestCase):
         self.h.metadata["authors"][0]["name"] = None
         self.assert_invalid_metadata()
 
+    def test_duplicate_preprint_license_key_is_rejected(self):
+        self.h.write_metadata()
+        metadata_file = self.h.root / "preprint.yaml"
+        metadata_file.write_text(metadata_file.read_text(encoding="utf-8") + "\nlicense: CC-BY-4.0\n", encoding="utf-8")
+        result = self.h.run_script("validate.py", "--strict")
+        self.assertNotEqual(result.returncode, 0, result.stdout)
+        self.assertIn("duplicate", result.stderr.lower())
+
+    def test_duplicate_nested_author_name_is_rejected(self):
+        self.h.write_metadata()
+        metadata_file = self.h.root / "preprint.yaml"
+        source = metadata_file.read_text(encoding="utf-8")
+        source = source.replace("given_names: Jane", "given_names: Jane\n  given_names: Janet", 1)
+        self.assertIn("given_names: Janet", source)
+        metadata_file.write_text(source, encoding="utf-8")
+        result = self.h.run_script("validate.py", "--strict")
+        self.assertNotEqual(result.returncode, 0, result.stdout)
+        self.assertIn("duplicate", result.stderr.lower())
+
     def test_duplicate_manifest_key_is_rejected(self):
         self.h.make_bundle()
         path = self.h.bundle / "manifest.json"

@@ -16,6 +16,7 @@ import shutil
 import sys
 
 import yaml
+from yaml_strict import safe_load_unique
 
 from validate import ROOT, validate
 from research_package import collect, create_research
@@ -76,7 +77,7 @@ def create_bundle(output: Path, repository: str | None, commit: str | None) -> N
         raise ValueError("strict validation failed; release bundle not built")
 
     with (ROOT / "preprint.yaml").open(encoding="utf-8") as source:
-        metadata = yaml.safe_load(source)
+        metadata = safe_load_unique(source)
     paper_path = (ROOT / metadata["paper"]).resolve()
     # Validate public disclosure declarations and private receipt formats before creating dist.
     research_plan = collect(ROOT)
