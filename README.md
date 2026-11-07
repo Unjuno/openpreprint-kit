@@ -43,7 +43,10 @@ TSA trust policy**; no secret key or medical original may enter a public ZIP.
 
 The opt-in `scripts/observation.py` permits an external organization to
 anonymously retrieve and sign the exact public Release assets, under its own
-Ed25519 witness key. Only an out-of-band pinned public key authenticates that
+Ed25519 witness key. The optional `--timestamp-observation` additionally
+obtains an external RFC 3161 token covering **both the signed observation and
+its Ed25519 signature**. A verifier can require that token and must specify
+the expected repository/tag when using the CLI. Only an out-of-band pinned public key authenticates that
 claim; the witness's clock is self-reported and **first publication is not
 proven**. `scripts/acceptance.py` generates two synthetic research versions,
 obtains real RFC 3161 evidence and tests restore and tamper rejection without
