@@ -71,3 +71,13 @@ This work is an implementation and test milestone for G7; it does **not** clear
 G3/G4/G5/G7 operational acceptance. An independent witness and long-term
 archive custodian have still not executed the required tests. CLI verification
 requires out-of-band `--expected-repository` and `--expected-version`.
+
+## 2026-11-08 — One-command offline verification
+
+The unified `scripts/verify_evidence.py` CLI composes integrity, release time,
+expected source identity and—only when explicitly requested—signed and
+RFC 3161-timestamped witness evidence. Tests use an ephemeral real OpenSSL
+TSA and Ed25519 keys and must pass in both supported GitHub Python runners.
+This removes a usability gap; it does **not** close G3, G4, G5 or G7 without
+external operational evidence. A verified witness assertion is not proof of
+its operator's genuine independence or of first public availability.

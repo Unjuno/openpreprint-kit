@@ -6,6 +6,35 @@
 [完成判定表](docs/RELEASE_READINESS.md)と[ロードマップ](docs/ROADMAP.md)に未達条件を示します。
 論文の版番号（v1、v2）とキットのソフトウェア版番号は別です。
 
+## One-command offline verification (two explicit evidence scopes)
+
+`verify_evidence.py` composes SHA-256 content verification, a separately trusted
+RFC 3161 timestamp, and (optionally) an Ed25519-signed **and RFC 3161-timestamped**
+independent-witness record. The verifier never fetches URLs; download and
+separately pin the evidence and trust policy before running it.
+
+```bash
+# Content and existence-time evidence only — NOT evidence of public access.
+python scripts/verify_evidence.py --scope existence \
+  --bundle downloaded-release --policy /trusted/timestamp-policy.json \
+  --repository OWNER/PAPER --version v1
+
+# Signed public-retrieval ASSERTION, matched to all the same Release bytes.
+python scripts/verify_evidence.py --scope public-observation \
+  --bundle downloaded-release --policy /trusted/timestamp-policy.json \
+  --repository OWNER/PAPER --version v1 \
+  --witness /trusted/witness-v1 \
+  --observer-public-key /trusted/witness-public.pem \
+  --observer-public-key-sha256 INDEPENDENTLY_PINNED_SHA256
+```
+
+Both commands return structured JSON. `verdict: PASS` applies only to the
+requested `scope`; first-publication time, author identity, scientific validity
+and genuine witness independence remain `NOT_PROVEN`/`NOT_VERIFIED`. For the
+health-record original, verification still requires the private HMAC key and
+separate authorized disclosure via `private_seal.py`: this command never reads
+or uploads a patient's original record. See [operational detail](docs/PRESERVATION_AND_WITNESS.md).
+
 ## Public research objects and private-record verification (research extension)
 
 A Release can now bind the paper to explicit **public data**, **analysis code**,
