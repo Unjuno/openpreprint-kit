@@ -101,7 +101,7 @@ class ObserverTests(unittest.TestCase):
         observation = self.out / 'observation.json'
         data = json.loads(observation.read_text(encoding='utf-8'))
         data['public_availability'] = 'INDEPENDENTLY_PROVEN'
-        observation.write_text(json.dumps(data, sort_keys=True, indent=2) + '\\n', encoding='utf-8')
+        observation.write_text(json.dumps(data, sort_keys=True, indent=2) + '\n', encoding='utf-8')
         self.module().sign(self.key, observation, self.out / 'observation.sig')
         with self.assertRaisesRegex(ValueError, 'overstates proof'):
             self.check()
@@ -111,7 +111,7 @@ class ObserverTests(unittest.TestCase):
         observation = self.out / 'observation.json'
         data = json.loads(observation.read_text(encoding='utf-8'))
         data['timestamp_verified'] = False
-        observation.write_text(json.dumps(data, sort_keys=True, indent=2) + '\\n', encoding='utf-8')
+        observation.write_text(json.dumps(data, sort_keys=True, indent=2) + '\n', encoding='utf-8')
         self.module().sign(self.key, observation, self.out / 'observation.sig')
         with self.assertRaisesRegex(ValueError, 'overstates proof'):
             self.check()
@@ -121,7 +121,7 @@ class ObserverTests(unittest.TestCase):
         observation = self.out / 'observation.json'
         data = json.loads(observation.read_text(encoding='utf-8'))
         data['witness_clock'] = 'TRUSTED_ATOMIC_CLOCK'
-        observation.write_text(json.dumps(data, sort_keys=True, indent=2) + '\\n', encoding='utf-8')
+        observation.write_text(json.dumps(data, sort_keys=True, indent=2) + '\n', encoding='utf-8')
         self.module().sign(self.key, observation, self.out / 'observation.sig')
         with self.assertRaisesRegex(ValueError, 'overstates proof'):
             self.check()
