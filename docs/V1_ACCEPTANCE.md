@@ -10,7 +10,7 @@ The kit is **not** a scholarly journal, formal peer-review certification, author
 
 | Gate | Owner | Verifiable acceptance | Status (2026-11-08) |
 |---|---|---|---|
-| G0: code/security | Engineer + human reviewer | Python 3.10/3.12 Ubuntu 24.04; **0 failed mandatory tests**, no skipped mandatory checks; distribution-hash locks and pinned Actions; 0 unresolved critical/high issues; RED→GREEN for repairs. | PARTIAL; baseline 213 tests green; YAML fix requires new-head CI |
+| G0: code/security | Engineer + human reviewer | Python 3.10/3.12 Ubuntu 24.04; **0 failed mandatory tests**, no skipped mandatory checks; distribution-hash locks and pinned Actions; 0 unresolved critical/high issues; RED→GREEN for repairs. | PARTIAL: 216 tests green in each Python 3.10/3.12 job ([CI 42408857827](https://github.com/Unjuno/openpreprint-kit/actions/runs/42408857827)); independent security sign-off remains a separate G7 gate |
 | G1: owner configuration | GitHub repository owner | Template enabled; 2 distinct public template-derived paper repos; immutable Releases enabled **before** publication; protected branch, required CI and human PR review readback. | BLOCKED |
 | G2: versioned publishing | Publisher + independent verifier | **2 repositories × 2 versions = 4** immutable Releases, including >=1 author-approved genuine paper; check every asset and GitHub attestation; v1 bytes unchanged after v2. | BLOCKED: 0 Releases |
 | G3: trusted TSA | TSA policy custodian + verifier | All 4 bundles validate signed imprint/nonce/OID/chain/current CRL under independently pinned CA; >=20 tamper/expired/revoked/wrong-policy samples produce **0 false PASS**; unknown accuracy labeled unknown. | PARTIAL: synthetic FreeTSA v1/v2 verified |
