@@ -82,3 +82,18 @@ not the accuracy of medical records or a real-world public availability time.
 
 These are concrete acceptance tests, not a promise that an external operator
 will remain available forever. See [PRESERVATION_AND_WITNESS.md](PRESERVATION_AND_WITNESS.md).
+
+## 2026-11-08 — signed witness receipt time anchoring
+
+- [x] RFC 3161 verification over arbitrary SHA-256 digests without weakening the
+      original Release manifest validation.
+- [x] Optional independently timestamped witness receipt binds both
+      observation JSON and Ed25519 signature in a domain-separated digest.
+- [x] Strict validation of the witness's expected repository/version and the
+      source identity claimed by the timestamped paper metadata.
+- [x] Reject partial/forged witness tokens, changed signatures, extra claims,
+      TSA failure, and untimestamped receipts when strict verification is requested.
+- [ ] Independent operator must actually run the observer on an anonymously
+      accessible, immutable GitHub Release and retain its own keys/evidence.
+- [ ] Independent storage custodian, human scholarly review and long-term
+      signature-renewal process remain operational blockers.

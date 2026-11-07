@@ -27,13 +27,53 @@ import urllib.request
 
 from preflight import validate_repository
 from verify_release import EXPECTED_FILES, EVIDENCE_FILES, RESEARCH_FILES, sha256_file, unique_object, verify
-from timestamp import load_policy, read_regular, verify_proof
+from timestamp import (load_policy, make_query_for_digest, post_query, read_regular,
+                       verify_digest, verify_proof)
 
 VERSION_RE = re.compile(r'v(?:0|[1-9][0-9]*)(?:\.(?:0|[1-9][0-9]*)){0,2}\Z', re.ASCII)
 SHA_RE = re.compile(r'[0-9a-f]{64}\Z', re.ASCII)
 BUNDLE_ALLOWED = EXPECTED_FILES | RESEARCH_FILES | EVIDENCE_FILES
 LIMIT = 128 * 1024 * 1024
 HOSTS = {'github.com', 'release-assets.githubusercontent.com', 'objects.githubusercontent.com'}
+OBSERVATION_STAMP_FILES = {'observation.tsq', 'observation.tsr'}
+OBSERVATION_FIELDS = {
+    'schema_version', 'signature_algorithm', 'repository', 'version',
+    'anonymous_https', 'observed_interval_start_utc', 'observed_interval_end_utc',
+    'timestamp_verified', 'manifest_sha256', 'paper_sha256', 'files',
+    'public_availability', 'first_publication', 'authorship', 'witness_clock',
+}
+
+
+def receipt_digest(data: bytes, signature: bytes) -> bytes:
+    """Domain-separated SHA-256 of BOTH the signed observation and its Ed25519 signature.
+
+    The RFC 3161 response is not included, avoiding circular evidence. Without
+    the signature in this digest, a witness could sign the statement after it
+    was time-stamped and misrepresent when the signature existed.
+    """
+    if (type(data) is not bytes or type(signature) is not bytes
+            or not 0 < len(data) <= 65536 or not 0 < len(signature) <= 65536):
+        raise ValueError('invalid bound observation or signature')
+    envelope = (b'OpenPreprintKit-ObservationReceipt-v1\0' +
+                len(data).to_bytes(8, 'big') + data +
+                len(signature).to_bytes(8, 'big') + signature)
+    return hashlib.sha256(envelope).digest()
+
+
+def assert_source_identity(bundle: Path, repository: str, version: str) -> None:
+    """The fetched paper must declare the GitHub repository and tag being observed."""
+    metadata = json.loads(read_regular(bundle / 'preprint-metadata.json'),
+                          object_pairs_hook=unique_object)
+    if not isinstance(metadata, dict):
+        raise ValueError('source identity mismatch: invalid paper metadata')
+    source = metadata.get('source_claim')
+    if (not isinstance(source, dict) or
+            not isinstance(source.get('repository'), str) or
+            source['repository'].lower() != repository.lower() or
+            metadata.get('version') != version):
+        raise ValueError('source identity mismatch: release does not declare requested repository/version')
+
+
 
 
 def safe_https(url: str) -> bool:
@@ -112,7 +152,8 @@ def download_bundle(repository: str, version: str, root: Path, fetcher=None) -> 
 
 
 def record_public(repository: str, version: str, output: Path, policy_path: Path,
-                  private_key: Path, fetcher=None) -> dict:
+                  private_key: Path, fetcher=None, *, stamp_observation: bool = False,
+                  tsa_exchange=None) -> dict:
     validate_repository(repository)
     if not VERSION_RE.fullmatch(version) or not any(int(n) for n in version[1:].split('.')):
         raise ValueError('invalid release version for witness')
@@ -127,6 +168,7 @@ def record_public(repository: str, version: str, output: Path, policy_path: Path
         started=datetime.now(timezone.utc)
         bundle=stage/'bundle'
         download_bundle(repository,version,bundle,fetcher)
+        assert_source_identity(bundle, repository, version)
         timestamp=verify_proof(bundle,read_regular(bundle/'timestamp.tsq'),read_regular(bundle/'timestamp.tsr'),policy)
         completed=datetime.now(timezone.utc)
         files={p.name:{'sha256':sha256_file(p),'size_bytes':p.stat().st_size} for p in sorted(bundle.iterdir())}
@@ -141,31 +183,59 @@ def record_public(repository: str, version: str, output: Path, policy_path: Path
                   'witness_clock':'SELF_REPORTED_NOT_A_TRUSTED_TIMESTAMP'}
         (stage/'observation.json').write_text(json.dumps(evidence,sort_keys=True,indent=2)+'\n',encoding='utf-8')
         sign(private_key,stage/'observation.json',stage/'observation.sig')
+        witness_timestamp = None
+        if stamp_observation:
+            bound_digest = receipt_digest(read_regular(stage/'observation.json', 65536),
+                                          read_regular(stage/'observation.sig', 65536))
+            query = make_query_for_digest(bound_digest, policy)
+            response = (tsa_exchange(query) if tsa_exchange is not None else
+                        post_query(policy['tsa_url'], query, policy['timeout_seconds']))
+            if not isinstance(response, bytes):
+                raise ValueError('TSA response must be bytes')
+            witness_timestamp = verify_digest(bound_digest, query, response, policy)
+            (stage/'observation.tsq').write_bytes(query)
+            (stage/'observation.tsr').write_bytes(response)
         os.rename(stage,output)
     return {'status':'PASS','timestamp_verified':True,'repository':repository,'version':version,
-            'signature':'SIGNED_BY_WITNESS','public_observation':'WITNESS_CLAIM_NOT_FIRST_PUBLICATION_PROOF'}
+            'signature':'SIGNED_BY_WITNESS','public_observation':'WITNESS_CLAIM_NOT_FIRST_PUBLICATION_PROOF',
+            'observation_timestamp': 'VERIFIED' if witness_timestamp else 'NOT_PRESENT',
+            'observation_tsa_time_utc': witness_timestamp['tsa_time_utc'] if witness_timestamp else None}
 
 
 def verify_public(root: Path, public_key: Path, expected_pubkey_sha256: str,
-                  policy_path: Path) -> dict:
+                  policy_path: Path, *, require_observation_timestamp: bool = False,
+                  expected_repository: str | None = None,
+                  expected_version: str | None = None) -> dict:
     if root.is_symlink() or not root.is_dir(): raise ValueError('witness evidence must be a directory')
     if not isinstance(expected_pubkey_sha256,str) or not SHA_RE.fullmatch(expected_pubkey_sha256):
         raise ValueError('externally pinned observer public-key SHA-256 is mandatory')
     if public_key.is_symlink() or not public_key.is_file(): raise ValueError('invalid external observer key')
     if sha256_file(public_key) != expected_pubkey_sha256: raise ValueError('observer public-key pin mismatch')
-    if {p.name for p in root.iterdir()} != {'bundle','observation.json','observation.sig'}:
-        raise ValueError('unexpected external-witness evidence files')
+    actual_members = {p.name for p in root.iterdir()}
+    plain_members = {'bundle', 'observation.json', 'observation.sig'}
+    stamped = actual_members == (plain_members | OBSERVATION_STAMP_FILES)
+    if actual_members != plain_members and not stamped:
+        raise ValueError('unexpected or partial external-witness timestamp evidence')
+    if require_observation_timestamp and not stamped:
+        raise ValueError('observation timestamp is required by verification policy')
     for name in ('observation.json','observation.sig'):
         path=root/name
         if path.is_symlink() or not path.is_file() or path.stat().st_size>65536:
             raise ValueError('invalid external-witness evidence member')
     signed = json.loads((root/'observation.json').read_text(encoding='utf-8'),object_pairs_hook=unique_object)
-    if not isinstance(signed,dict) or signed.get('schema_version')!=1 or signed.get('signature_algorithm')!='Ed25519':
+    if (not isinstance(signed, dict) or set(signed) != OBSERVATION_FIELDS or
+            type(signed.get('schema_version')) is not int or signed['schema_version'] != 1 or
+            signed.get('signature_algorithm') != 'Ed25519'):
         raise ValueError('unsupported external-witness observation schema')
     verify_signature(public_key,root/'observation.json',root/'observation.sig')
     repository=signed.get('repository'); version=signed.get('version')
     validate_repository(repository)
     if not isinstance(version,str) or not VERSION_RE.fullmatch(version): raise ValueError('invalid signed release version')
+    if (expected_repository is not None and (not isinstance(expected_repository, str) or
+            repository.lower() != expected_repository.lower())):
+        raise ValueError('witness observation identity mismatch: repository')
+    if expected_version is not None and version != expected_version:
+        raise ValueError('witness observation identity mismatch: release version')
     # Verify the semantics of the signed claim, not merely its Ed25519
     # signature. A signer must not silently upgrade retrieval into a
     # trusted-clock, first-publication or independent availability proof.
@@ -193,6 +263,7 @@ def verify_public(root: Path, public_key: Path, expected_pubkey_sha256: str,
     bundle=root/'bundle'
     failures=verify(bundle,None)
     if failures: raise ValueError('witness bundle integrity failed: '+'; '.join(failures))
+    assert_source_identity(bundle, repository, version)
     actual={p.name:{'sha256':sha256_file(p),'size_bytes':p.stat().st_size} for p in bundle.iterdir()}
     if actual != signed.get('files') or signed.get('manifest_sha256')!=actual['manifest.json']['sha256'] or signed.get('paper_sha256')!=actual['paper.pdf']['sha256']:
         raise ValueError('witness assertion does not match fetched content')
@@ -200,12 +271,22 @@ def verify_public(root: Path, public_key: Path, expected_pubkey_sha256: str,
     timestamp=verify_proof(bundle,read_regular(bundle/'timestamp.tsq'),read_regular(bundle/'timestamp.tsr'),policy)
     if timestamp['manifest_sha256']!=signed['manifest_sha256']:
         raise ValueError('timestamp of another version was substituted')
+    witness_time = None
+    if stamped:
+        bound_digest = receipt_digest(read_regular(root/'observation.json', 65536),
+                                      read_regular(root/'observation.sig', 65536))
+        witness_time = verify_digest(bound_digest,
+                                     read_regular(root/'observation.tsq'),
+                                     read_regular(root/'observation.tsr'), policy)
     return {'status':'PASS','signature':'VERIFIED','timestamp':'VERIFIED',
             'repository':repository,'version':version,
             'public_observation':'WITNESS_CLAIM_NOT_FIRST_PUBLICATION_PROOF',
             'observed_interval_start_utc':times[0].isoformat(),
             'observed_interval_end_utc':times[1].isoformat(),
-            'observer_key_sha256':expected_pubkey_sha256}
+            'observer_key_sha256':expected_pubkey_sha256,
+            'observation_timestamp': 'VERIFIED' if witness_time else 'NOT_PRESENT',
+            'observation_tsa_time_utc': witness_time['tsa_time_utc'] if witness_time else None,
+            'observation_accuracy_microseconds': witness_time['accuracy_microseconds'] if witness_time else None}
 
 
 def main() -> int:
@@ -214,17 +295,27 @@ def main() -> int:
     p.add_argument('--repository'); p.add_argument('--version'); p.add_argument('--out',type=Path)
     p.add_argument('--observation',type=Path); p.add_argument('--signing-key',type=Path)
     p.add_argument('--public-key',type=Path); p.add_argument('--expected-public-key-sha256')
+    p.add_argument('--expected-repository', help='expected GitHub OWNER/REPO (required for verify CLI)')
+    p.add_argument('--expected-version', help='expected GitHub release tag (required for verify CLI)')
+    p.add_argument('--timestamp-observation',action='store_true',help='also timestamp signed witness statement using selected TSA')
+    p.add_argument('--require-observation-timestamp',action='store_true',help='reject legacy untimestamped witness statements')
     p.add_argument('--policy',type=Path,required=True)
     a=p.parse_args()
     try:
         if a.operation=='record':
             if not a.repository or not a.version or not a.out or not a.signing_key:
                 raise ValueError('record requires --repository, --version, --out and --signing-key')
-            result=record_public(a.repository,a.version,a.out,a.policy,a.signing_key)
+            result=record_public(a.repository,a.version,a.out,a.policy,a.signing_key,
+                                 stamp_observation=a.timestamp_observation)
         else:
             if not a.observation or not a.public_key or not a.expected_public_key_sha256:
                 raise ValueError('verify requires --observation, --public-key and --expected-public-key-sha256')
-            result=verify_public(a.observation,a.public_key,a.expected_public_key_sha256,a.policy)
+            if not a.expected_repository or not a.expected_version:
+                raise ValueError('verify requires --expected-repository and --expected-version to prevent evidence substitution')
+            result=verify_public(a.observation,a.public_key,a.expected_public_key_sha256,a.policy,
+                                 require_observation_timestamp=a.require_observation_timestamp,
+                                 expected_repository=a.expected_repository,
+                                 expected_version=a.expected_version)
         print(json.dumps(result,sort_keys=True,indent=2)); return 0
     except (OSError,ValueError,KeyError,TypeError,subprocess.TimeoutExpired,urllib.error.URLError) as exc:
         print('FAIL: '+str(exc),file=sys.stderr); return 1

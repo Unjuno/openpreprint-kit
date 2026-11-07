@@ -58,3 +58,16 @@
 
 The standalone helper details and safe CLI are in
 [PRESERVATION_AND_WITNESS.md](PRESERVATION_AND_WITNESS.md).
+
+## 2026-11-08 — witness evidence verification enhancement
+
+Witness tooling can now request a second RFC 3161 timestamp **for the signed
+witness statement itself**, not just the original paper manifest. This adds a
+verifiable TSA upper bound on the signed witness statement's existence, even
+when the witness's local clock is untrusted. It does not authenticate the
+observation's truth, first public availability, or witness independence.
+
+This work is an implementation and test milestone for G7; it does **not** clear
+G3/G4/G5/G7 operational acceptance. An independent witness and long-term
+archive custodian have still not executed the required tests. CLI verification
+requires out-of-band `--expected-repository` and `--expected-version`.

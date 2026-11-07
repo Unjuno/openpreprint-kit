@@ -70,12 +70,15 @@ python scripts/observation.py record \
   --repository OWNER/PAPER --version v1 \
   --out /secure/public-observation-v1 \
   --policy /trusted/timestamp-policy.json \
-  --signing-key /secure/witness-private.key
+  --signing-key /secure/witness-private.key \
+  --timestamp-observation
 
 python scripts/observation.py verify \
   --observation /secure/public-observation-v1 \
   --public-key /secure/witness-public.pem \
   --expected-public-key-sha256 OUT_OF_BAND_PUBLIC_KEY_DIGEST \
+  --expected-repository OWNER/PAPER --expected-version v1 \
+  --require-observation-timestamp \
   --policy /trusted/timestamp-policy.json
 ```
 
@@ -84,6 +87,38 @@ these exact bytes in its recorded interval**, conditional on the key and
 clock being authentic. It does not prove the **first** publication time or
 exclude earlier/different copies. A compromised or dishonest witness can sign
 a false assertion. Do not label this `FIRST_PUBLISHED_AT`.
+
+
+### Independently timestamp the signed observation itself
+
+`--timestamp-observation` (optional, network required) creates two additional
+files in the witness package: `observation.tsq` and `observation.tsr`. It
+requests RFC 3161 evidence over a **domain-separated, length-prefixed SHA-256
+of both `observation.json` AND `observation.sig`**. The TSA token is not included
+in its own hash. The verifier uses independently approved CA/CRL material and
+checks the nonce, signed digest, policy, CMS chain, certificate validity and
+current CRLs. If any check fails, no witness package is finalized.
+
+The timestamp establishes that the **signed witness assertion existed no later
+than the TSA timestamp** (subject to the selected TSA policy, clock and signed
+accuracy). It does **not** independently confirm the witness fetched the URL:
+that fact depends on the witness's honesty, custody and control of its signing
+key. A dishonest witness can timestamp a false claim. Nor does it establish the
+*first* moment GitHub made the asset accessible. The observer's self-reported
+start/end interval is distinct from the TSA's time; if `accuracy` is absent,
+report precision as unknown rather than assuming seconds.
+
+The additional `.tsq` and `.tsr` are all-or-nothing. Old Ed25519-only witness
+records remain verifiable with `observation_timestamp=NOT_PRESENT`, but
+`--require-observation-timestamp` explicitly rejects them. The verification
+CLI also requires `--expected-repository` and `--expected-version` from an
+**out-of-band trusted source**, blocking substitution of a perfectly signed
+receipt for a different paper. The signed publication metadata must declare
+the same repository and version. These two requirements are intentionally
+fail-closed. Neither witness private keys nor patient data are included.
+
+Run an independently operated observer and TSA validation with a synthetic
+public Release before using this with researcher-approved contents.
 
 ## Synthetic end-to-end verification
 

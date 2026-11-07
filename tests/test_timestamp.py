@@ -357,6 +357,49 @@ class TimestampTests(unittest.TestCase):
         self.assert_rejected(self.command("request", "--out", self.query))
 
 
+class ArbitraryDigestTests(unittest.TestCase):
+    """The same stringent TSA checks must work for signed observer receipts."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = tempfile.TemporaryDirectory()
+        cls.top = Path(cls.temporary.name)
+        cls.authority = Authority(cls.top / "tsa")
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.temporary.cleanup()
+
+    def test_digest_timestamp_is_checked_and_wrong_digest_rejected(self):
+        sys.path.insert(0, str(ROOT / "scripts"))
+        import timestamp
+        digest = hashlib.sha256(b"witness-observation + witness-signature").digest()
+        policy = timestamp.load_policy(self._policy())
+        query = timestamp.make_query_for_digest(digest, policy)
+        with tempfile.TemporaryDirectory() as temp:
+            base = Path(temp)
+            request, response = base / "receipt.tsq", base / "receipt.tsr"
+            request.write_bytes(query)
+            self.authority.sign(request, response)
+            signed = response.read_bytes()
+            report = timestamp.verify_digest(digest, query, signed, policy)
+            self.assertEqual(report["message_sha256"], digest.hex())
+            with self.assertRaises(ValueError):
+                timestamp.verify_digest(hashlib.sha256(b"different receipt").digest(),
+                                        query, signed, policy)
+
+    def _policy(self):
+        path = self.top / "policy.json"
+        path.write_text(json.dumps(self.authority.policy()), encoding="utf-8")
+        return path
+
+    def test_non_sha256_digest_is_rejected(self):
+        sys.path.insert(0, str(ROOT / "scripts"))
+        import timestamp
+        with self.assertRaises(ValueError):
+            timestamp.make_query_for_digest(b"not-a-32-byte-digest", self.authority.policy())
+
+
 class TransportTests(unittest.TestCase):
     def module(self):
         self.assertTrue(SCRIPT.is_file(), "RFC 3161 transport is not implemented")

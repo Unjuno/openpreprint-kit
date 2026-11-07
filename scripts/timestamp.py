@@ -93,16 +93,23 @@ def check_bundle(folder: Path) -> None:
         raise ValueError("; ".join(errors))
 
 
-def make_query(folder: Path, policy: dict) -> bytes:
-    check_bundle(folder)
+def make_query_for_digest(digest: bytes, policy: dict) -> bytes:
+    """Request a TSA timestamp on an already computed SHA-256 message digest."""
+    if type(digest) is not bytes or len(digest) != hashlib.sha256().digest_size:
+        raise ValueError("timestamp message imprint must be a 32-byte SHA-256 digest")
     return tsp.TimeStampReq({
         "version": "v1",
         "message_imprint": {"hash_algorithm": {"algorithm": "sha256"},
-                            "hashed_message": hashlib.sha256(read_regular(folder / "manifest.json")).digest()},
+                            "hashed_message": digest},
         "req_policy": policy["policy_oid"],
         "nonce": secrets.randbits(128) | (1 << 127),
         "cert_req": True,
     }).dump()
+
+
+def make_query(folder: Path, policy: dict) -> bytes:
+    check_bundle(folder)
+    return make_query_for_digest(hashlib.sha256(read_regular(folder / "manifest.json")).digest(), policy)
 
 
 def openssl(args: list[str], timeout: int, env: dict | None = None) -> str:
@@ -128,7 +135,18 @@ def accuracy_us(info) -> int | None:
 
 
 def verify_proof(folder: Path, query: bytes, response: bytes, policy: dict) -> dict:
+    """Verify a published bundle and its matching RFC 3161 evidence."""
     check_bundle(folder)
+    digest = hashlib.sha256(read_regular(folder / "manifest.json")).digest()
+    result = verify_digest(digest, query, response, policy)
+    result["manifest_sha256"] = digest.hex()  # Backward-compatible release report field.
+    return result
+
+
+def verify_digest(digest: bytes, query: bytes, response: bytes, policy: dict) -> dict:
+    """Verify an arbitrary *precomputed* SHA-256 digest under an explicit TSA trust policy."""
+    if type(digest) is not bytes or len(digest) != hashlib.sha256().digest_size:
+        raise ValueError("timestamp message imprint must be a 32-byte SHA-256 digest")
     if not 0 < len(query) <= LIMIT or not 0 < len(response) <= LIMIT:
         raise ValueError("empty or oversized timestamp proof")
     try:
@@ -143,13 +161,12 @@ def verify_proof(folder: Path, query: bytes, response: bytes, policy: dict) -> d
         if content["content_type"].native != "tst_info":
             raise ValueError("timestamp must contain TSTInfo")
         info = content["content"].parsed
-        digest = hashlib.sha256(read_regular(folder / "manifest.json")).digest()
         for item in (request, info):
             imprint = item["message_imprint"]
             if (item["version"].native != "v1"
                     or imprint["hash_algorithm"]["algorithm"].native != "sha256"
                     or imprint["hashed_message"].native != digest):
-                raise ValueError("timestamp imprint does not match the SHA-256 manifest")
+                raise ValueError("timestamp imprint does not match the expected SHA-256 digest")
         nonce = request["nonce"].native
         if (type(nonce) is not int or nonce.bit_length() != 128
                 or info["nonce"].native != nonce or request["cert_req"].native is not True):
@@ -186,7 +203,7 @@ def verify_proof(folder: Path, query: bytes, response: bytes, policy: dict) -> d
     upper = generated + timedelta(microseconds=accuracy) if accuracy is not None else None
     return {
         "schema_version": 1, "status": "VERIFIED", "basis": "caller_supplied_trust_policy",
-        "manifest_sha256": digest.hex(), "ca_sha256": policy["ca_sha256"],
+        "message_sha256": digest.hex(), "ca_sha256": policy["ca_sha256"],
         "policy_oid": policy["policy_oid"], "tsa_time_utc": generated.isoformat(),
         "accuracy_microseconds": accuracy,
         "existence_upper_bound_utc": upper.isoformat() if upper else None,
