@@ -120,6 +120,49 @@ fail-closed. Neither witness private keys nor patient data are included.
 Run an independently operated observer and TSA validation with a synthetic
 public Release before using this with researcher-approved contents.
 
+## Unified offline verification and explicit evidence level
+
+The operator can verify exact Release bytes, the selected TSA's signature,
+and optionally the signed and timestamped independent witness in **one command**.
+Download a complete immutable Release **anonymously** and choose the CA/CRL
+trust material separately; never trust a root because it is included in an
+archive. Select a recognized public version and explicitly state which GitHub
+repository was expected:
+
+```bash
+python scripts/verify_evidence.py \
+  --scope existence --bundle downloaded-release \
+  --repository OWNER/PAPER --version v1 \
+  --policy /trusted/timestamp-policy.json \
+  --expected-paper-sha256 OPTIONAL_OUT_OF_BAND_SHA256
+
+python scripts/verify_evidence.py \
+  --scope public-observation --bundle downloaded-release \
+  --repository OWNER/PAPER --version v1 \
+  --policy /trusted/timestamp-policy.json \
+  --witness /trusted/public-observation-v1 \
+  --observer-public-key /trusted/witness-public.pem \
+  --observer-public-key-sha256 INDEPENDENTLY_PINNED_PUBLIC_KEY_SHA256
+```
+
+`public-observation` **requires** the witness receipt itself to have been
+RFC 3161 timestamped and verifies every exact Release asset, including the
+original timestamp request and response. If two valid timestamp tokens refer
+to the same paper but different downloaded Release asset bytes, verification
+fails. `existence` scope does not attempt to authenticate a public-access
+assertion. A success always includes `first_publication: NOT_PROVEN`,
+`operator_independence: NOT_VERIFIED`, `authorship: NOT_PROVEN` and
+`scientific_correctness: NOT_PROVEN`. The observation clock remains
+self-reported even when the signed statement was subsequently timestamped.
+
+**Limitations:** This verifier is offline and cannot audit the witness's
+identity, organizational independence, conduct, or the reliability of its
+self-reported observation time. An Ed25519 signature plus a TSA token attests
+to a **statement's existence before a TSA time**, conditional on independently
+trusted keys; it is not a proof of first public availability. Private health
+records and HMAC keys are **never** Release assets; verify them separately
+under patient-specific permissions using `private_seal.py`.
+
 ## Synthetic end-to-end verification
 
 `python scripts/acceptance.py fixture --out /tmp/opk-v1 --version v1`

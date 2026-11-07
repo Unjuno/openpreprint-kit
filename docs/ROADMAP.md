@@ -97,3 +97,16 @@ will remain available forever. See [PRESERVATION_AND_WITNESS.md](PRESERVATION_AN
       accessible, immutable GitHub Release and retain its own keys/evidence.
 - [ ] Independent storage custodian, human scholarly review and long-term
       signature-renewal process remain operational blockers.
+
+## 2026-11-08 — Explicit evidence-scope verifier
+
+- [x] Test-first offline `verify_evidence.py` that rejects mixed paper/witness
+  copies, missing trusted TSA proof, wrong repository/version and witness key pin.
+- [x] Existence-only scope does not claim public access; witness scope requires
+  a separately pinned Ed25519 observer key and timestamped signed observation.
+- [x] Outputs parseable JSON with `verdict`, `scope`, and explicit independent
+  operator, authorship, scientific truth and first-publication disclaimers.
+- [ ] Real author-approved immutable GitHub Release, independent witness
+  operator, independent storage custodian and documented external audit.
+
+`PASS` in the chosen scope does not certify compliance with G3/G4/G5/G7.
