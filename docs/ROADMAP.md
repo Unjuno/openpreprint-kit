@@ -110,3 +110,19 @@ will remain available forever. See [PRESERVATION_AND_WITNESS.md](PRESERVATION_AN
   operator, independent storage custodian and documented external audit.
 
 `PASS` in the chosen scope does not certify compliance with G3/G4/G5/G7.
+
+## 2026-11-08 — Independent custodian audit implementation
+
+- [x] Bounded multi-version ZIP deposit with out-of-band input archive pins,
+  exact repository/tag binding and complete RFC 3161 verification.
+- [x] Deterministic catalog that must be pinned **outside** the custody store.
+- [x] Read-only auditor verifies complete archive inventory, exact ZIP bytes,
+  valid source metadata, and independently trusted TSA/CRL evidence per version.
+- [x] Fail on missing/extra historical versions, tampering, symlinks,
+  duplicate tags, stale CRLs and invalid trust sources; cannot overwrite deposit.
+- [ ] ACTUAL independent custodian, retention policy, periodic audits, access
+  controls, off-GitHub replication and owner-approved published Release.
+- [ ] Full LTV/historical revocation archival and renewal after TSA compromise.
+
+A PASS from `custody.py` is a *local audit result*, not certification of the
+custodian or its future survival. See [CUSTODY.md](CUSTODY.md).
