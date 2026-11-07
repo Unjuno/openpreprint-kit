@@ -166,7 +166,19 @@ def verify_public(root: Path, public_key: Path, expected_pubkey_sha256: str,
     repository=signed.get('repository'); version=signed.get('version')
     validate_repository(repository)
     if not isinstance(version,str) or not VERSION_RE.fullmatch(version): raise ValueError('invalid signed release version')
-    if signed.get('anonymous_https') is not True or signed.get('first_publication')!='NOT_PROVEN' or signed.get('authorship')!='NOT_PROVEN':
+    # Verify the semantics of the signed claim, not merely its Ed25519
+    # signature. A signer must not silently upgrade retrieval into a
+    # trusted-clock, first-publication or independent availability proof.
+    expected_claims = {
+        'anonymous_https': True,
+        'timestamp_verified': True,
+        'public_availability': 'WITNESS_ASSERTS_ANONYMOUS_RETRIEVAL',
+        'first_publication': 'NOT_PROVEN',
+        'authorship': 'NOT_PROVEN',
+        'witness_clock': 'SELF_REPORTED_NOT_A_TRUSTED_TIMESTAMP',
+    }
+    if any(type(signed.get(key)) is not type(value) or signed.get(key) != value
+           for key, value in expected_claims.items()):
         raise ValueError('witness statement overstates proof')
     times=[]
     for name in ('observed_interval_start_utc','observed_interval_end_utc'):

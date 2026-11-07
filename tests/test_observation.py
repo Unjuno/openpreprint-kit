@@ -94,6 +94,38 @@ class ObserverTests(unittest.TestCase):
         with self.assertRaises(ValueError): self.record()
         self.assertEqual((self.out/'keep').read_text(),'untouched')
 
+    def test_signed_observation_rejects_overstated_public_availability(self):
+        # A compromised or careless signer must not be able to promote an
+        # assertion of retrieval into a stronger, unsupported claim.
+        self.record()
+        observation = self.out / 'observation.json'
+        data = json.loads(observation.read_text(encoding='utf-8'))
+        data['public_availability'] = 'INDEPENDENTLY_PROVEN'
+        observation.write_text(json.dumps(data, sort_keys=True, indent=2) + '\n', encoding='utf-8')
+        self.module().sign(self.key, observation, self.out / 'observation.sig')
+        with self.assertRaisesRegex(ValueError, 'overstates proof'):
+            self.check()
+
+    def test_signed_observation_rejects_false_timestamp_verified(self):
+        self.record()
+        observation = self.out / 'observation.json'
+        data = json.loads(observation.read_text(encoding='utf-8'))
+        data['timestamp_verified'] = False
+        observation.write_text(json.dumps(data, sort_keys=True, indent=2) + '\n', encoding='utf-8')
+        self.module().sign(self.key, observation, self.out / 'observation.sig')
+        with self.assertRaisesRegex(ValueError, 'overstates proof'):
+            self.check()
+
+    def test_signed_observation_rejects_clock_precision_overclaim(self):
+        self.record()
+        observation = self.out / 'observation.json'
+        data = json.loads(observation.read_text(encoding='utf-8'))
+        data['witness_clock'] = 'TRUSTED_ATOMIC_CLOCK'
+        observation.write_text(json.dumps(data, sort_keys=True, indent=2) + '\n', encoding='utf-8')
+        self.module().sign(self.key, observation, self.out / 'observation.sig')
+        with self.assertRaisesRegex(ValueError, 'overstates proof'):
+            self.check()
+
     def test_no_authorship_claim(self):
         self.record(); data=json.loads((self.out/'observation.json').read_text())
         self.assertEqual(data['authorship'],'NOT_PROVEN')
