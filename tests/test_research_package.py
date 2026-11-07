@@ -111,6 +111,16 @@ class ResearchBundleTests(unittest.TestCase):
         self.assertNotEqual(result.returncode, 0)
         self.assertIn('public_confirmed', result.stderr)
 
+    def test_duplicate_public_confirmation_is_rejected(self):
+        path = self.root / "research-assets.yaml"
+        source = path.read_text(encoding="utf-8")
+        self.assertIn("public_confirmed: true", source)
+        source = source.replace("  public_confirmed: true", "  public_confirmed: false\n  public_confirmed: true", 1)
+        path.write_text(source, encoding="utf-8")
+        result = self.run_script("research_package.py", "--check")
+        self.assertNotEqual(result.returncode, 0, result.stdout)
+        self.assertIn("duplicate", result.stderr.lower())
+
     def test_unlisted_data_is_rejected_to_prevent_incomplete_catalog(self):
         (self.root / 'data' / 'unlisted.csv').write_text('secret?\n', encoding='utf-8')
         result = self.run_script('prepare_release.py', '--output', self.bundle)

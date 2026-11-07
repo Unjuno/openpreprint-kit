@@ -13,6 +13,7 @@ import subprocess
 import sys
 
 import yaml
+from yaml_strict import safe_load_unique
 
 MAX_CITATION_BYTES = 1024 * 1024
 
@@ -49,7 +50,7 @@ def validate_citations(folder: Path) -> None:
     cff_path = folder / "CITATION.cff"
     bib_path = folder / "citation.bib"
     metadata_path = folder / "preprint-metadata.json"
-    cff = yaml.safe_load(read_text(cff_path))
+    cff = safe_load_unique(read_text(cff_path))
     bib_text = read_text(bib_path)
     metadata = json.loads(read_text(metadata_path))
     if not isinstance(cff, dict) or cff.get("cff-version") != "1.2.0":

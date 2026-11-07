@@ -13,6 +13,7 @@ import re
 import sys
 
 import yaml
+from yaml_strict import safe_load_unique
 
 ROOT = Path(__file__).resolve().parent.parent
 METADATA = ROOT / "preprint.yaml"
@@ -48,7 +49,7 @@ def validate(strict: bool) -> int:
     warnings: list[str] = []
     try:
         with METADATA.open("r", encoding="utf-8") as handle:
-            data = yaml.safe_load(handle)
+            data = safe_load_unique(handle)
     except (OSError, yaml.YAMLError, UnicodeError) as exc:
         print(f"ERROR: cannot read preprint.yaml: {exc}", file=sys.stderr)
         return 1

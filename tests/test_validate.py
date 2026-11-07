@@ -17,6 +17,7 @@ class ValidatePreprintTest(unittest.TestCase):
         (self.root / "scripts").mkdir()
         (self.root / "paper").mkdir()
         shutil.copy2(SOURCE_ROOT / "scripts" / "validate.py", self.root / "scripts" / "validate.py")
+        shutil.copy2(SOURCE_ROOT / "scripts" / "yaml_strict.py", self.root / "scripts" / "yaml_strict.py")
         shutil.copy2(SOURCE_ROOT / "preprint.yaml", self.root / "preprint.yaml")
 
     def tearDown(self):
