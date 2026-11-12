@@ -124,5 +124,91 @@ class FirstPaperSelfApplicationTests(unittest.TestCase):
         self.assertIn('symlink', result.stderr.lower())
 
 
+class ExportCandidateTests(unittest.TestCase):
+    """The draft candidate exported to TSA is the validated, exact self-application bundle."""
+
+    def setUp(self):
+        import test_release
+        self.helper = test_release.ReleaseBundleTests()
+        self.helper.setUp()
+        self.addCleanup(self.helper.tearDown)
+        self.helper.make_bundle()
+        self.bundle = self.helper.bundle
+        self.destination = self.helper.root / 'detached-candidate'
+        sys.path.insert(0, str(ROOT / 'scripts'))
+        import first_paper_selftest
+        self.module = first_paper_selftest
+
+    def test_exported_candidate_preserves_every_verified_byte(self):
+        self.module.export_candidate(self.bundle, self.destination)
+        self.assertEqual(
+            {p.name: p.read_bytes() for p in self.bundle.iterdir()},
+            {p.name: p.read_bytes() for p in self.destination.iterdir()},
+        )
+        from verify_release import verify
+        self.assertEqual(verify(self.destination, None), [])
+
+    def test_never_overwrites_a_preexisting_destination(self):
+        self.destination.mkdir()
+        important = self.destination / 'existing.txt'
+        important.write_text('important old data', encoding='utf-8')
+        with self.assertRaisesRegex(ValueError, 'already exists'):
+            self.module.export_candidate(self.bundle, self.destination)
+        self.assertEqual(important.read_text(encoding='utf-8'), 'important old data')
+
+    def test_invalid_candidate_is_not_exported(self):
+        (self.bundle / 'paper.pdf').write_bytes(b'corrupt')
+        with self.assertRaisesRegex(ValueError, 'integrity'):
+            self.module.export_candidate(self.bundle, self.destination)
+        self.assertFalse(self.destination.exists())
+
+    def test_symlinked_target_does_not_escape_or_get_overwritten(self):
+        self.destination.symlink_to(self.helper.root)
+        with self.assertRaisesRegex(ValueError, 'already exists'):
+            self.module.export_candidate(self.bundle, self.destination)
+        self.assertTrue(self.destination.is_symlink())
+
+    def test_output_path_is_not_placed_under_the_source_bundle(self):
+        with self.assertRaisesRegex(ValueError, 'outside'):
+            self.module.export_candidate(self.bundle, self.bundle / 'export')
+
+
+class FirstPaperLiveTimestampWorkflowTests(unittest.TestCase):
+    def test_new_workflow_stamps_only_draft_and_verifies_in_fresh_runner(self):
+        import yaml
+        workflow = ROOT / '.github' / 'workflows' / 'first-paper-live-timestamp.yml'
+        self.assertTrue(workflow.is_file())
+        parsed = yaml.load(workflow.read_text('utf-8'), Loader=yaml.BaseLoader)
+        self.assertEqual(parsed['permissions'], {'contents': 'read'})
+        self.assertEqual(set(parsed['on']), {'push', 'workflow_dispatch'})
+        self.assertEqual(parsed['on']['push']['branches'], ['main'])
+        self.assertIn('first-paper-live-timestamp.yml', ' '.join(parsed['on']['push']['paths']))
+        stamp = parsed['jobs']['stamp-draft']
+        restore = parsed['jobs']['fresh-verify']
+        self.assertEqual(restore['needs'], ['stamp-draft'])
+        self.assertIn('timestamp.py stamp', str(stamp))
+        self.assertIn('timestamp.py verify', str(stamp))
+        self.assertIn('preserve.py pack', str(stamp))
+        self.assertIn("preservation['timestamp']=='VERIFIED'", str(stamp))
+        self.assertNotIn("preservation['timestamp_verified']", str(stamp))
+        self.assertIn('preserve.py restore', str(restore))
+        self.assertIn('timestamp.py verify', str(restore))
+        self.assertIn('download-artifact@', str(restore))
+        self.assertNotIn('contents: write', workflow.read_text('utf-8'))
+        self.assertNotIn('gh release create', workflow.read_text('utf-8'))
+        self.assertNotIn('GH_TOKEN', workflow.read_text('utf-8'))
+        for job in parsed['jobs'].values():
+            self.assertLessEqual(int(job['timeout-minutes']), 15)
+            for step in job['steps']:
+                if 'uses' in step:
+                    self.assertRegex(step['uses'], r'@[0-9a-f]{40}
+    unittest.main()
+)
+                if 'run' in step:
+                    self.assertNotIn('
+    unittest.main()
++'{{', step['run'])
+
+
 if __name__ == '__main__':
     unittest.main()
