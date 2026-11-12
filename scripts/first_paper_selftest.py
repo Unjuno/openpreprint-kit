@@ -17,6 +17,7 @@ import sys
 import tempfile
 
 from pdf_validation import inspect_pdf
+from verify_release import verify as verify_bundle
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_MANUSCRIPT = ROOT / 'manuscripts' / 'openpreprint-kit'
@@ -68,7 +69,37 @@ def validate_input_tree(root: Path) -> None:
                 raise ValueError('unsafe manuscript input: ' + str(path))
 
 
-def perform(manuscript: Path, paper: Path) -> dict:
+def export_candidate(bundle: Path, destination: Path) -> None:
+    """Export an *unapproved* intact candidate without overwriting earlier evidence.
+
+    The caller has already proved that publication of the original draft is
+    blocked. This exports only the verified, provisional release candidate; it
+    does NOT create a public GitHub Release or grant the proposed license.
+    """
+    bundle = bundle.absolute()
+    destination = destination.absolute()
+    if destination.is_relative_to(bundle):
+        raise ValueError('draft candidate destination must be outside the source bundle')
+    if destination.exists() or destination.is_symlink():
+        raise ValueError('draft candidate destination already exists')
+    if (not destination.parent.is_dir() or destination.parent.is_symlink()
+            or bundle.is_symlink() or not bundle.is_dir()):
+        raise ValueError('candidate source/destination directory is not safe')
+    problems = verify_bundle(bundle, None)
+    if problems:
+        raise ValueError('candidate bundle integrity failed: ' + '; '.join(problems))
+    with tempfile.TemporaryDirectory(prefix='.opk-candidate-', dir=destination.parent) as temporary:
+        intermediate = Path(temporary) / 'candidate'
+        shutil.copytree(bundle, intermediate)
+        copied_problems = verify_bundle(intermediate, None)
+        if copied_problems:
+            raise ValueError('copied candidate integrity failed: ' + '; '.join(copied_problems))
+        if destination.exists() or destination.is_symlink():
+            raise ValueError('draft candidate destination already exists')
+        os.rename(intermediate, destination)
+
+
+def perform(manuscript: Path, paper: Path, export_to: Path | None = None) -> dict:
     validate_input_tree(manuscript)
     if paper.is_symlink() or not paper.is_file():
         raise ValueError('paper PDF must be a real, non-symlink file')
@@ -137,6 +168,9 @@ def perform(manuscript: Path, paper: Path) -> dict:
                 raise ValueError(f'{case} was rejected for the wrong reason: {rejected.stderr[-400:]}')
             negatives[case] = True
 
+        if export_to is not None:
+            export_candidate(root / 'bundle', export_to)
+
         return {
             'schema_version': 1,
             'scope': 'LOCAL_SELF_APPLICATION_ONLY',
@@ -154,6 +188,8 @@ def perform(manuscript: Path, paper: Path) -> dict:
             'draft_publication_blocked': True,
             'citation_schema_validated': True,
             'bundle_integrity_verified': True,
+            'provisional_bundle_exported': export_to is not None,
+            'provisional_metadata_not_a_license_grant': True,
             'timestamp_verified': False,
             'release_published': False,
             'author_approved': False,
@@ -170,11 +206,13 @@ def main() -> int:
     parser.add_argument('--paper-pdf', type=Path, required=True,
                         help='Actual typeset PDF of the first paper, not an unrelated synthetic PDF')
     parser.add_argument('--report', type=Path, help='New JSON report path; existing files are never overwritten')
+    parser.add_argument('--export-candidate', type=Path,
+                        help='Opt-in export of checked UNAPPROVED bundle for draft-only TSA exercise')
     args = parser.parse_args()
     try:
         if args.report and (args.report.exists() or args.report.is_symlink()):
             raise ValueError('report already exists; refusing overwrite')
-        result = perform(args.manuscript, args.paper_pdf)
+        result = perform(args.manuscript, args.paper_pdf, export_to=args.export_candidate)
         text = json.dumps(result, ensure_ascii=False, sort_keys=True, indent=2) + '\n'
         if args.report:
             with args.report.open('x', encoding='utf-8') as stream:
