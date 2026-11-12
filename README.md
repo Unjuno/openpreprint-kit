@@ -1,5 +1,9 @@
 # OpenPreprint Kit
 
+## First paper: approved v1 manuscript, not yet a published Release (2026-11-13)
+
+The [first OpenPreprint Kit manuscript](manuscripts/openpreprint-kit/README.md) is now prepared with user-confirmed display author **Unjuno** and manuscript licence **CC BY 4.0**. The kit itself is the study's subject and first self-application test. Its v1 candidate must receive a **new** timestamp because the older draft's signed digest refers to different bytes. The manuscript remains **unreviewed and without an immutable GitHub Release**; author identity and ownership are not independently authenticated. The reusable template root remains v0/UNSPECIFIED.
+
 ## GitHub-only publication and preservation (2026-11-12)
 
 **Online publication and replicated preservation are GitHub-native.** Each paper
