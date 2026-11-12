@@ -61,6 +61,12 @@ class FirstPaperSelfApplicationTests(unittest.TestCase):
         self.assertNotIn('gh release create', content)
         self.assertNotIn('GH_TOKEN', content)
 
+    def test_workflow_explicitly_installs_pandoc_required_lmodern_style(self):
+        workflow = ROOT / '.github' / 'workflows' / 'first-paper-selftest.yml'
+        content = workflow.read_text('utf-8')
+        self.assertIn(' lmodern', content,
+                      'XeLaTeX needs lmodern.sty; --no-install-recommends skips the required Ubuntu package')
+
     def test_does_not_replace_existing_report(self):
         output = self.root / 'existing.json'
         output.write_text('important existing evidence', encoding='utf-8')

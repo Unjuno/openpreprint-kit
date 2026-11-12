@@ -39,7 +39,7 @@ jobs:
         run: |
           set -euo pipefail
           sudo apt-get update -qq
-          sudo apt-get install -y --no-install-recommends pandoc texlive-xetex fonts-noto-cjk fonts-liberation fonts-dejavu-core
+          sudo apt-get install -y --no-install-recommends pandoc texlive-xetex lmodern fonts-noto-cjk fonts-liberation fonts-dejavu-core
       - name: Typeset actual first paper and run the kit against it
         shell: bash
         run: |
