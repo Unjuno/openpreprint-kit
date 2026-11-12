@@ -67,3 +67,7 @@ The mirror read-only `verify --require-source-release` option independently GETs
 ## 2026-11-12 — automated CodeQL scan (G0/G7 supporting evidence)
 
 The pinned `github/codeql-action` workflow runs Python `security-extended` queries on PRs, pushes to `main`, a weekly schedule and explicit dispatch. The report is uploaded to GitHub Code Scanning using only `contents: read`, `actions: read` and `security-events: write`; it does not consume clinical records or repository secrets. A successful scan means the scanner executed successfully, **not** that no vulnerabilities exist, that Code Scanning alerts are resolved, or that G7 independent security/privacy review is fulfilled. Operators must separately review alerts and retain assessment evidence.
+
+## 2026-11-12 — forward renewal implementation (G7 partial only)
+
+New `scripts/renewal.py` can issue an opt-in fresh RFC 3161 timestamp over an explicit SHA-256-linked statement about an already verified preservation ZIP, verify a 1..16-step chain with independently selected current TSA trust policies, and export/recover deterministic public-only ZIP assets suitable for separate GitHub Immutable Releases. Real ephemeral OpenSSL CA/TSA tests cover two different CA roots, corruption, archive pin mismatch and absent proof. This **does not** constitute RFC 4998 ERS, historical CRL/LTV validation, provider-independent custody, any public Release issuance or independent security review. G7 stays BLOCKED until actual independent review and sustained algorithm/CA lifecycle evidence.
