@@ -5,7 +5,7 @@
 **Online publication and replicated preservation are GitHub-native.** Each paper
 has versioned immutable GitHub Releases; separate GitHub evidence repositories
 store verified research-object ZIPs and pinned custody catalogs as immutable
-Releases. `scripts/github_mirror.py` provides offline `plan`, explicit
+Releases. `scripts/github_mirror.py` (optionally use `verify --require-source-release` to verify that original immutable Releases and their bytes remain publicly available) provides offline `plan`, explicit
 owner-authenticated `publish --apply`, and credential-free anonymous `verify`
 with independently supplied SHA-256 pins and a separately trusted RFC 3161
 policy. See [GitHub-only preservation](docs/GITHUB_PRESERVATION.md). **No Google

@@ -37,6 +37,7 @@ class FakeGitHub:
         self.source_assets = {}
         self.source_missing = False
         self.source_corrupt = False
+        self.source_immutable = True
 
     def tools(self):
         self.calls.append(('tools',))
@@ -44,10 +45,12 @@ class FakeGitHub:
     def api(self, method, path, data=None, *, allow_missing=False):
         self.calls.append((method, path))
         main = 'repos/' + self.mirror
+        if self.source and path == 'repos/' + self.source:
+            return {'full_name': self.source, 'private': False}
         if self.source and path.startswith('repos/' + self.source + '/releases/tags/'):
             version=path.rsplit('/',1)[-1]
             if self.source_missing: return None
-            return {'tag_name':version,'draft':False,'immutable':True,
+            return {'tag_name':version,'draft':False,'immutable':self.source_immutable,
                     'assets':[{'name':n} for n in self.source_assets[version]]}
         if method != 'GET':
             raise AssertionError('unexpected mutable GitHub API call: ' + method)
@@ -144,11 +147,12 @@ class GithubMirrorTests(unittest.TestCase):
         return self.module().publish(self.source,self.mirror,self.store,self.catalog_pin,
                                      self.policy,self.output,self.remote)
 
-    def verify(self,pin=None,tag=None):
+    def verify(self,pin=None,tag=None,require_source_release=False):
         receipt_pin=pin if pin is not None else hashlib.sha256(self.remote.files['github-mirror-receipt.json']).hexdigest()
         tag=tag if tag is not None else self.remote.created
         return self.module().verify_mirror(self.source,self.mirror,tag,self.catalog_pin,
-                         receipt_pin,self.policy,self.fetched,self.remote)
+                         receipt_pin,self.policy,self.fetched,self.remote,
+                         require_source_release=require_source_release)
 
     def test_offline_plan_does_not_need_network_and_is_deterministic(self):
         m=self.module()
@@ -177,6 +181,38 @@ class GithubMirrorTests(unittest.TestCase):
         self.assertEqual(result['operator_independence'],'NOT_PROVEN')
         self.assertEqual((self.fetched/'v1.opk.zip').read_bytes(),self.entries[0][1].read_bytes())
         self.assertEqual((self.fetched/'v2.opk.zip').read_bytes(),self.entries[1][1].read_bytes())
+
+    def test_strict_verify_checks_actual_public_source_bytes(self):
+        report = self.publish()
+        before_verify = len(self.remote.calls)
+        result = self.verify(pin=report['receipt_sha256'], require_source_release=True)
+        self.assertEqual(result['status'], 'PASS')
+        self.assertEqual(result['source_publication'], 'PUBLIC_IMMUTABLE_ASSETS_MATCH')
+        self.assertEqual(result['github_attestation'], 'NOT_VERIFIED_BY_ANONYMOUS_MODE')
+        self.assertFalse(any(c[0] == 'command' for c in self.remote.calls[before_verify:]))
+
+    def test_strict_verify_rejects_deleted_public_source_release(self):
+        report = self.publish()
+        self.remote.source_missing = True
+        with self.assertRaisesRegex(ValueError, 'source Release'):
+            self.verify(pin=report['receipt_sha256'], require_source_release=True)
+        self.assertFalse(self.fetched.exists())
+        result = self.verify(pin=report['receipt_sha256'], require_source_release=False)
+        self.assertEqual(result['source_publication'], 'NOT_CHECKED')
+
+    def test_strict_verify_rejects_wrong_source_payload(self):
+        report = self.publish()
+        self.remote.source_corrupt = True
+        with self.assertRaisesRegex(ValueError, 'source Release asset mismatch'):
+            self.verify(pin=report['receipt_sha256'], require_source_release=True)
+        self.assertFalse(self.fetched.exists())
+
+    def test_strict_verify_rejects_mutable_source_release(self):
+        report = self.publish()
+        self.remote.source_immutable = False
+        with self.assertRaisesRegex(ValueError, 'source Release'):
+            self.verify(pin=report['receipt_sha256'], require_source_release=True)
+        self.assertFalse(self.fetched.exists())
 
     def test_wrong_catalog_pin_stops_before_any_write(self):
         with self.assertRaisesRegex(ValueError,'catalog SHA-256'):
