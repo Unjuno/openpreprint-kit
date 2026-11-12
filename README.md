@@ -149,6 +149,10 @@ trust boundaries and recovery see [Custody runbook](docs/CUSTODY.md).
 | 実TSA・実論文での運用、独立レビュー | 合成データで外部TSA検証済み。実論文公開・独立レビューは未実施 |
 | 公開観測・保管、DOI、長期保存 | 観測/保管CLIは実装済み。独立運用・DOI・長期保証は未達 |
 
+## Forward timestamp renewal (experimental)
+
+`scripts/renewal.py` can re-timestamp a verified public preservation ZIP and the complete preceding RFC 3161 renewal evidence, keeping original immutable Releases byte-for-byte. A separately pinned deterministic renewal ZIP can be published in a **new** immutable GitHub Release. **This is not RFC 4998 ERS or historical long-term signature validation**. See [forward renewal procedure](docs/FORWARD_RENEWAL.md).
+
 ## 利用開始
 
 配布元のSettings → General → Template repositoryを有効にし、論文ごとに

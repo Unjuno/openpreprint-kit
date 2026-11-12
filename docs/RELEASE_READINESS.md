@@ -109,3 +109,7 @@ GitHub-wide outage. G5 requires genuine tested offline export and recovery;
 independently managed operators and historical certificate/CRL renewal still
 require evidence. The current test suite mocks GitHub writes and cannot
 certify an actual public mirror. See [GITHUB_PRESERVATION.md](GITHUB_PRESERVATION.md).
+
+## 2026-11-12: Forward existence-time evidence renewal
+
+The new `renewal.py` provides independently pinned linked RFC 3161 re-attestation of the **exact** original preservation archive and prior tokens, with a verified ZIP for separate GitHub Releases. Both source and renewal CA/CRL chains must verify **currently**; expired or revoked older proofs remain blockers. RFC 4998 evidence records, historical LTV validation, key compromise tolerance and real independently managed operations remain **NOT ESTABLISHED**.

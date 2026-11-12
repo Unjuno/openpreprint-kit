@@ -97,3 +97,7 @@ For **offline disaster recovery after an actual export**, take the verified stor
 - Changing the paper invalidates SHA-256, and the timestamp signature binds the original manifest. An anonymous verifier cannot infer who authored the study or that a healthcare observation is accurate.
 - TSA trust root/CRL and expected SHA-256 values must remain out of band. Unknown TSA accuracy is not zero. Certificate expiry, revocation, renewal and multi-year continuity are separate obligations.
 - A green unit test in which GitHub traffic is mocked is **not** evidence that a real mirror Release was published. Closing v1.0 G1/G2/G4/G5/G7 requires dated owner and separately administered operator evidence, not the script's existence.
+
+## Forward timestamp re-attestation (separate immutable Release)
+
+Existing source and mirror Release assets are never modified to add newer time evidence. When current original TSA validation still passes, use [forward renewal](FORWARD_RENEWAL.md) to produce a separately pinned ZIP of new linked RFC 3161 attestations. Publish it under a **new** immutable GitHub tag and independently re-download/restore it. This is an additional timestamp, **not** a completed RFC 4998 Evidence Record or a substitute for independently managed custody.
