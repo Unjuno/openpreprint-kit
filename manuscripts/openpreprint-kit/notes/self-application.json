@@ -21,7 +21,7 @@
     },
     {
       "returncode": 1,
-      "stderr": "FAIL: invalid JSON: Extra data: line 36 column 1 (char 1060)\n",
+      "stderr": "FAIL: invalid JSON: Extra data: line 35 column 1 (char 1059)\n",
       "stdout": "",
       "test": "changed_manifest"
     },
@@ -52,7 +52,7 @@
   "input_assets": 7,
   "kit_baseline": "940d0d06d957cd0708f644a595911bdbc3fffa64",
   "license_granted": false,
-  "manifest_sha256": "a8b95ecc7c26533904c22c5e582429bcc2582c6e075ac3b29338f26cc353d541",
+  "manifest_sha256": "9cf6a972e5a6b2e62f188a8b60a2ec6ee9e47b37a7dcfd68516e4acb9c6715ed",
   "metadata_is_provisional": true,
   "paper_pdf_sha256": "2ca537ba5318c9181ba286c12a040ddddd802eed42bd5b5b670a1dd9b8f9ca6a",
   "schema_version": 1,

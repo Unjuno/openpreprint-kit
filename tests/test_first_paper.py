@@ -2,6 +2,9 @@
 import importlib.util
 import pathlib
 import unittest
+import subprocess
+import sys
+import tempfile
 
 PATH = pathlib.Path(__file__).resolve().parents[1]/'manuscripts/openpreprint-kit/analysis/summarize_ci.py'
 
@@ -35,3 +38,11 @@ class FirstPaperEvidenceTests(unittest.TestCase):
         m=self.load(); result=m.inspect_archive(PATH.parents[1]/'data')
         self.assertEqual(result['tests'],274)
         self.assertEqual(result['evaluated_commit'],'940d0d06d957cd0708f644a595911bdbc3fffa64')
+
+    def test_exported_csv_matches_retained_data_with_portable_lf(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            output=pathlib.Path(temporary)/'counts.csv'
+            result=subprocess.run([sys.executable,str(PATH),'--csv',str(output)],capture_output=True,text=True)
+            self.assertEqual(result.returncode,0,result.stderr)
+            self.assertNotIn(b'\r',output.read_bytes())
+            self.assertEqual(output.read_bytes(),(PATH.parents[1]/'data/test-counts.csv').read_bytes())

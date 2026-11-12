@@ -66,7 +66,7 @@ def main() -> int:
         result=inspect_archive(a.data)
         if a.csv:
             with a.csv.open('x',newline='',encoding='utf-8') as f:
-                w=csv.writer(f);w.writerow(['module','test_count']);w.writerows(result['modules'].items())
+                w=csv.writer(f,lineterminator='\n');w.writerow(['module','test_count']);w.writerows(result['modules'].items())
         print(json.dumps(result,ensure_ascii=False,sort_keys=True,indent=2))
         return 0
     except (OSError,ValueError,KeyError,UnicodeError) as exc:
