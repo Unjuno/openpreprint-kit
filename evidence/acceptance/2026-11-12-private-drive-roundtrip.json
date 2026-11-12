@@ -1,0 +1,64 @@
+{
+  "checked_at_utc": "2026-11-12T08:25:06.073098+00:00",
+  "crl_source": "retained signed CRL, unexpired at verification; no fresh distribution check",
+  "future_retention": "NOT_PROVEN",
+  "github_contact_during_restore": false,
+  "human_data_used": false,
+  "independent_custodian": "NOT_ESTABLISHED",
+  "network_during_restore": false,
+  "schema_version": 1,
+  "scope": "PRIVATE_GOOGLE_DRIVE_ROUNDTRIP_OF_SYNTHETIC_EVIDENCE",
+  "status": "PASS",
+  "versions": [
+    {
+      "archive_sha256": "9cc27ae375d901b979e9806366e5b75b2ac7da7a6e4c72b6a25affba45b866f0",
+      "content_byte_equality": true,
+      "download_size_bytes": 28821,
+      "google_drive_shared": false,
+      "timestamp_result": {
+        "accuracy_microseconds": null,
+        "authorship": "NOT_PROVEN",
+        "basis": "caller_supplied_trust_policy",
+        "ca_sha256": "2151b61137ffa86bf664691ba67e7da0b19f98c758e3d228d5d8ebf27e044438",
+        "certificate_time_policy": "valid_now_and_at_token_time",
+        "existence_upper_bound_utc": null,
+        "manifest_sha256": "e0b2eb2c5fae9b0c1e6a2566a55b180ae44f00ce05ccff53355a32fcf6c82217",
+        "message_sha256": "e0b2eb2c5fae9b0c1e6a2566a55b180ae44f00ce05ccff53355a32fcf6c82217",
+        "openssl": "OpenSSL 3.5.5 27 Jan 2026 (Library: OpenSSL 3.5.5 27 Jan 2026)",
+        "policy_oid": "1.2.3.4.1",
+        "public_availability": "NOT_PROVEN",
+        "revocation": "checked_current_crls_full_chain",
+        "schema_version": 1,
+        "status": "VERIFIED",
+        "tsa_time_utc": "2026-11-06T07:57:55+00:00",
+        "verified_at_utc": "2026-11-12T08:25:05.430780+00:00"
+      },
+      "version": "v1"
+    },
+    {
+      "archive_sha256": "f8150b8272c68ee412cd7620ce0e0d7924e2e38627f033b0b49d13ed6d030672",
+      "content_byte_equality": true,
+      "download_size_bytes": 28821,
+      "google_drive_shared": false,
+      "timestamp_result": {
+        "accuracy_microseconds": null,
+        "authorship": "NOT_PROVEN",
+        "basis": "caller_supplied_trust_policy",
+        "ca_sha256": "2151b61137ffa86bf664691ba67e7da0b19f98c758e3d228d5d8ebf27e044438",
+        "certificate_time_policy": "valid_now_and_at_token_time",
+        "existence_upper_bound_utc": null,
+        "manifest_sha256": "0b59afa1732b66701b9fc462c4a4bfe097548b8766cffa945435061dee06d39d",
+        "message_sha256": "0b59afa1732b66701b9fc462c4a4bfe097548b8766cffa945435061dee06d39d",
+        "openssl": "OpenSSL 3.5.5 27 Jan 2026 (Library: OpenSSL 3.5.5 27 Jan 2026)",
+        "policy_oid": "1.2.3.4.1",
+        "public_availability": "NOT_PROVEN",
+        "revocation": "checked_current_crls_full_chain",
+        "schema_version": 1,
+        "status": "VERIFIED",
+        "tsa_time_utc": "2026-11-06T07:57:58+00:00",
+        "verified_at_utc": "2026-11-12T08:25:05.990196+00:00"
+      },
+      "version": "v2"
+    }
+  ]
+}

@@ -46,3 +46,18 @@ class AcceptanceFixtureTests(unittest.TestCase):
     def test_fixture_contains_no_user_files(self):
         r=self.run_fixture(); self.assertEqual(r.returncode,0,r.stderr)
         self.assertEqual({p.name for p in (self.root/'v1').iterdir()},{'bundle','fixture-report.json','site'})
+
+    def test_opt_in_source_export_is_allowlisted_and_contains_no_secrets(self):
+        r = subprocess.run([sys.executable, str(SCRIPT), 'fixture', '--out', str(self.root/'source-demo'), '--version', 'v1', '--export-source'], capture_output=True, text=True, timeout=30)
+        self.assertEqual(r.returncode, 0, r.stderr)
+        source = self.root/'source-demo'/'source'
+        files = {str(p.relative_to(source)) for p in source.rglob('*') if p.is_file()}
+        public = {'preprint.yaml', 'research-assets.yaml', 'paper/paper.pdf', 'data/synthetic.csv', 'analysis/reproduce.py'}
+        receipts = {p for p in files if p.startswith('evidence/commitments/') and p.endswith('.json')}
+        self.assertEqual(files, public | receipts)
+        self.assertEqual(len(receipts), 1)
+        for p in source.rglob('*'):
+            if p.is_file():
+                self.assertNotIn(b'NO_PATIENT_PRIVATE_FIXTURE', p.read_bytes())
+                self.assertNotIn(b'PRIVATE KEY', p.read_bytes())
+        self.assertFalse(list(source.rglob('*.key')))
