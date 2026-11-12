@@ -4,7 +4,7 @@
 
 **GitHubを論文公開の本体にする、再利用可能なプレプリント公開キット。**
 
-現行ソフトウェアはv0.3を拡張中です。**一般利用向けv1.0の運用受入は未完了**です。
+現行ソフトウェアは受入試験中の開発版です。**一般利用向けv1.0の運用受入は未完了**です。
 [完成判定表](docs/RELEASE_READINESS.md)と[ロードマップ](docs/ROADMAP.md)に未達条件を示します。
 論文の版番号（v1、v2）とキットのソフトウェア版番号は別です。
 
@@ -36,6 +36,18 @@ and genuine witness independence remain `NOT_PROVEN`/`NOT_VERIFIED`. For the
 health-record original, verification still requires the private HMAC key and
 separate authorized disclosure via `private_seal.py`: this command never reads
 or uploads a patient's original record. See [operational detail](docs/PRESERVATION_AND_WITNESS.md).
+
+## Operational pilot — next owner action
+
+A reviewed owner-authenticated execution of [the synthetic publication pilot](docs/OPERATIONAL_PILOT.md)
+creates two **new** `opk-demo-*` template repositories, publishes v1/v2 with
+immutable Release + asset attestations, anonymously re-downloads and verifies
+every byte, and restores all four evidence archives. `scripts/pilot.py` defaults
+to a **no-I/O plan**; only `--publish-synthetic` authorizes public changes.
+It never reads a user's real paper or patient records and never claims that its
+own retrieval is an independent witness. Existing destinations are refused.
+
+[2026-11-12 evidence and remaining boundaries](docs/STATUS_2026-11-12.md).
 
 ## Public research objects and private-record verification (research extension)
 
@@ -117,8 +129,8 @@ trust boundaries and recovery see [Custody runbook](docs/CUSTODY.md).
 | GitHub公開 | 手動起動。公開前APIガードとdraft再ダウンロード検証 |
 | レビュー/応答/訂正/懸念/撤回 | 版とPDF/報告書ハッシュに結合。CIで既存記録の変更を拒否 |
 | 読者ページ | 静的HTML生成。撤回・懸念を明示。自動デプロイなし |
-| 実TSA・実論文での運用、独立レビュー | 未確認/未実施 |
-| 独立公開時刻観測、DOI、長期保存 | 未実装 |
+| 実TSA・実論文での運用、独立レビュー | 合成データで外部TSA検証済み。実論文公開・独立レビューは未実施 |
+| 公開観測・保管、DOI、長期保存 | 観測/保管CLIは実装済み。独立運用・DOI・長期保証は未達 |
 
 ## 利用開始
 
@@ -153,13 +165,13 @@ python scripts/timestamp.py verify dist --policy timestamp-policy.json
 短命なtokenをActions secret **OPK_ADMIN_READ_TOKEN**へ設定します。ソースやチャットには貼りません。
 完成原稿だけを対象にActions → Publish preprint releaseを手動起動します。
 
-PDF構造/メタデータ検査 → bundle → CFF/BibTeXスキーマ検査 → APIで公開前条件確認 → TSA → draft → 9資産を再取得・検証 →
+PDF構造/メタデータ検査 → bundle → CFF/BibTeXスキーマ検査 → APIで公開前条件確認 → TSA → draft → 全公開資産を再取得・検証 →
 immutability再確認 → 公開 → 公開後確認。権限不足・API障害・証明不成立では停止します。
 確認と公開は原子的ではありません。公開後の失敗で公開を巻き戻せたとは主張しません。
 [運用手順](docs/OPERATIONS.md)に復旧方法と必要権限を記載しています。
 
 9資産はPDF、metadata JSON、CITATION.cff、BibTeX、manifest、SHA256SUMS、Release説明、
-RFC 3161要求と応答です。旧7資産も整合検査できます。添付CFFだけではリポジトリの引用ウィジェットは設定されません。
+RFC 3161要求と応答です。研究データ等を含む場合はJSONカタログとTARを加えた11資産です。旧7資産も整合検査できます。添付CFFだけではリポジトリの引用ウィジェットは設定されません。
 `time_attestation: null`は時刻証拠をJSON内に埋め込まない意味で、外部sidecarを検証して判断します。
 
 ## レビューと訂正

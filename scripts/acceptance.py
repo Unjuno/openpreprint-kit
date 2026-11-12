@@ -27,7 +27,7 @@ def run(script: Path, *args: object, expected: int = 0) -> str:
     return result.stdout
 
 
-def fixture(output: Path, version: str) -> dict:
+def fixture(output: Path, version: str, *, export_source: bool = False) -> dict:
     if version not in ('v1','v2'): raise ValueError('synthetic acceptance supports only v1 and v2')
     if output.exists() or output.is_symlink(): raise ValueError('fixture output must not exist')
     output.parent.mkdir(parents=True,exist_ok=True)
@@ -91,6 +91,15 @@ def fixture(output: Path, version: str) -> dict:
         # All exports are allowlisted; temporary source/private directories are destroyed.
         output.mkdir()
         shutil.copytree(bundle,output/'bundle'); shutil.copytree(site,output/'site')
+        if export_source:
+            public_paths = ['preprint.yaml', 'research-assets.yaml', 'paper/paper.pdf',
+                            'data/synthetic.csv', 'analysis/reproduce.py', str(receipt.relative_to(repo))]
+            for relative in public_paths:
+                destination = output / 'source' / relative
+                destination.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copyfile(repo / relative, destination)
+            report['source_export'] = 'ALLOWLISTED_SYNTHETIC_ONLY'
+            report['source_files'] = sorted(public_paths)
         (output/'fixture-report.json').write_text(json.dumps(report,sort_keys=True,indent=2)+'\n',encoding='utf-8')
     return report
 
@@ -143,10 +152,12 @@ def main() -> int:
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument('operation',choices=['fixture','live']); p.add_argument('--out',required=True,type=Path)
     p.add_argument('--version',default='v1',choices=['v1','v2']); p.add_argument('--policy',type=Path)
+    p.add_argument('--export-source', action='store_true', help='fixture only: export allowlisted synthetic source; never original/private key')
     a=p.parse_args()
     try:
-        if a.operation=='fixture': report=fixture(a.out,a.version)
+        if a.operation=='fixture': report=fixture(a.out,a.version,export_source=a.export_source)
         else:
+            if a.export_source: raise ValueError('--export-source is only valid with fixture')
             if a.policy is None: raise ValueError('live acceptance requires --policy')
             report=live(a.out,a.policy)
         print(json.dumps(report,sort_keys=True,indent=2)); return 0
