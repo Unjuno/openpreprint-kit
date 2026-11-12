@@ -1,4 +1,5 @@
-# PROPOSAL FOR LOCAL VALIDATION ONLY. This is not a license grant or author approval.
+# Historical preapproval candidate, superseded on 2026-11-13 by canonical preprint.yaml.
+# Never publish or attest this file as separate author consent.
 schema_version: 1
 title: 'OpenPreprint Kit: GitHub上の論文・研究データを検証可能にする公開キット'
 authors:
