@@ -15,7 +15,7 @@ The kit is **not** a scholarly journal, formal peer-review certification, author
 | G2: versioned publishing | Publisher + independent verifier | **2 repositories × 2 versions = 4** immutable Releases, including >=1 author-approved genuine paper; check every asset and GitHub attestation; v1 bytes unchanged after v2. | BLOCKED: 0 Releases |
 | G3: trusted TSA | TSA policy custodian + verifier | All 4 bundles validate signed imprint/nonce/OID/chain/current CRL under independently pinned CA; >=20 tamper/expired/revoked/wrong-policy samples produce **0 false PASS**; unknown accuracy labeled unknown. | PARTIAL: synthetic FreeTSA v1/v2 verified |
 | G4: public witness | External operator, **not** author/GitHub Actions | Anonymous GET of all 4 published Releases using separately controlled host/Ed25519 key, signed receipt plus optional RFC 3161 receipt timestamp; second verifier checks out-of-band key pin and exact assets. | BLOCKED |
-| G5: durable custody | Independent off-GitHub custodian | >=2 copies in separate credential domains; SHA-256 catalog pin held out of band; **4** archives restored on a fresh machine with GitHub unavailable; incident, renewal and annual re-audit schedules committed. | BLOCKED: local CLI alone |
+| G5: GitHub-native custody and offline portability | Separate GitHub archival operator + offline recovery verifier | All 4 immutable source versions replicated to another GitHub repository with distinct credentials; pinned catalog/receipt SHA-256 independently retained; all 4 archives anonymously downloaded and restored on a fresh machine offline after export. Operational retention and annual audit schedules required. GitHub-wide availability is NOT guaranteed. | BLOCKED: no real GitHub mirror or external operator |
 | G6: research governance | Author + human editorial/privacy lead | Real copyright/consent/COI review; no patient originals or secrets published; 1 human review process, 1 correction and 1 retraction exercise with history unchanged. | BLOCKED |
 | G7: independent security and long-term plan | Unrelated software/privacy reviewer | Signed security/privacy assessment for GitHub permissions, YAML/PDF/archives, TSA chain and historical CRLs, witness key and confidential data; renewal/re-timestamping documented and tested; high/critical issues fixed. | BLOCKED |
 
@@ -25,7 +25,7 @@ The kit is **not** a scholarly journal, formal peer-review certification, author
 
 **H (falsifiable hypothesis):** Four immutable releases, verified independently on two environments (8 release verifications total), yield no erroneous acceptance of 20 intentionally modified/unauthorized samples. All historical releases retain original bytes.
 
-**T (minimum verification):** 2 repo × 2 releases, >=8 off-machine bundle checks, 4 signed witness observations, 4 off-GitHub restorations, 20 intentionally invalid cases, one real author-approved manuscript, one human-led correction/retraction rehearsal and one independent security/privacy review. Fail fast on any false acceptance or leaked secret.
+**T (minimum verification):** 2 repo × 2 releases, >=8 off-machine bundle checks, 4 signed witness observations, 4 offline restorations from GitHub-exported archives, 20 intentionally invalid cases, one real author-approved manuscript, one human-led correction/retraction rehearsal and one independent security/privacy review. Fail fast on any false acceptance or leaked secret.
 
 **D (decision):** `PASS` iff all gates independently evidenced. `FAIL` if any tamper/secret leak is incorrectly accepted. `UNCERTAIN/BLOCKED` for missing owner permissions, TSA precision, witness independence or custody evidence. Do not silently downgrade validation.
 
@@ -38,7 +38,7 @@ The kit is **not** a scholarly journal, formal peer-review certification, author
 1. Close YAML duplicate-key ambiguity with test-first patch and CI.
 2. Owner enables template, immutable Releases, branch checks; retain readback, **without sharing tokens in chat**.
 3. Publish two synthetic repository version sequences then one author-approved real paper; verify attestations, historical stability, citations and downloadability.
-4. Obtain independently operated witness + separate off-GitHub custodian, with actual signed receipts and recovery evidence.
+4. Obtain an independently operated witness, a separately administered GitHub archive repository, and a tested offline export/restore with digest pins; a second GitHub repo is not another cloud failure domain.
 5. Run consent, review, correction, retraction and external security/privacy gates.
 6. Implement/test renewal, historical revocation evidence and durable discovery/identifiers; re-run all gates before v1.0 declaration.
 
