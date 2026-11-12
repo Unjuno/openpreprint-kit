@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""Run the actual first manuscript through OPK locally; never publish or timestamp.
+"""Run an author-metadata-confirmed manuscript through OPK; do not publish or timestamp.
 
-This is an editorial candidate test, not an author-approved release or a proof
-of public availability. Requires the same hash-locked dependencies as OPK.
+User-confirmed display author/license are not signed legal identity attestations.
+Requires the same hash-locked dependencies as OPK.
 """
 from __future__ import annotations
 
@@ -18,10 +18,15 @@ import tempfile
 
 from pdf_validation import inspect_pdf
 from verify_release import verify as verify_bundle
+from yaml_strict import safe_load_unique
+import yaml
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_MANUSCRIPT = ROOT / 'manuscripts' / 'openpreprint-kit'
 PINNED_BASELINE = '940d0d06d957cd0708f644a595911bdbc3fffa64'
+CONFIRMED_AUTHOR = 'Unjuno'
+CONFIRMED_LICENSE = 'CC-BY-4.0'
+CONFIRMED_VERSION = 'v1'
 NEGATIVE_CASES = {
     'changed_pdf': ('paper.pdf', 'checksum/size mismatch'),
     'changed_research': ('research-assets.tar', 'checksum/size mismatch'),
@@ -70,18 +75,17 @@ def validate_input_tree(root: Path) -> None:
 
 
 def export_candidate(bundle: Path, destination: Path) -> None:
-    """Export an *unapproved* intact candidate without overwriting earlier evidence.
+    """Export a verified publication candidate without overwriting evidence.
 
-    The caller has already proved that publication of the original draft is
-    blocked. This exports only the verified, provisional release candidate; it
-    does NOT create a public GitHub Release or grant the proposed license.
+    This function creates NO GitHub Release, signature, or independent approval.
+    The manuscript's author/license are declared, not independently authenticated.
     """
     bundle = bundle.absolute()
     destination = destination.absolute()
     if destination.is_relative_to(bundle):
         raise ValueError('draft candidate destination must be outside the source bundle')
     if destination.exists() or destination.is_symlink():
-        raise ValueError('draft candidate destination already exists')
+        raise ValueError('candidate destination already exists')
     if (not destination.parent.is_dir() or destination.parent.is_symlink()
             or bundle.is_symlink() or not bundle.is_dir()):
         raise ValueError('candidate source/destination directory is not safe')
@@ -95,7 +99,7 @@ def export_candidate(bundle: Path, destination: Path) -> None:
         if copied_problems:
             raise ValueError('copied candidate integrity failed: ' + '; '.join(copied_problems))
         if destination.exists() or destination.is_symlink():
-            raise ValueError('draft candidate destination already exists')
+            raise ValueError('candidate destination already exists')
         os.rename(intermediate, destination)
 
 
@@ -132,11 +136,32 @@ def perform(manuscript: Path, paper: Path, export_to: Path | None = None) -> dic
                 summary.get('skipped') != 0):
             raise ValueError('pinned first-paper CI baseline is inconsistent')
 
-        draft = run_script(root, 'validate.py', '--strict', success=False)
-        if ('v0 is a draft version' not in draft.stderr or
-                'license is still a placeholder' not in draft.stderr):
-            raise ValueError('the unapproved first-paper draft did not fail the intended publication gates')
-        copy_regular(manuscript / 'proposed-preprint.yaml', root / 'preprint.yaml')
+        # User explicitly confirmed author display name, licence and v1. This
+        # software can check the declaration, not the account holder's identity.
+        config_path = root / 'preprint.yaml'
+        approved_text = config_path.read_text(encoding='utf-8')
+        metadata = safe_load_unique(approved_text)
+        if (not isinstance(metadata, dict) or metadata.get('authors') != [{'name': CONFIRMED_AUTHOR, 'orcid': None}]
+                or metadata.get('license') != CONFIRMED_LICENSE or metadata.get('version') != CONFIRMED_VERSION):
+            raise ValueError('first-paper author, license or version differs from approved publication metadata')
+        asset_declaration = safe_load_unique((root / 'research-assets.yaml').read_text(encoding='utf-8'))
+        if (not isinstance(asset_declaration, dict)
+                or any(item.get('license') != CONFIRMED_LICENSE
+                       for item in asset_declaration.get('public_assets', [])
+                       if isinstance(item, dict) and item.get('role') == 'supplementary')):
+            raise ValueError('first-paper supplementary assets have an unapproved license')
+        # Preserve the old safety gate as a negative control: revoked/draft
+        # metadata must fail strict validation, while canonical v1 must pass.
+        unapproved = {**metadata, 'version': 'v0', 'license': 'UNSPECIFIED'}
+        try:
+            config_path.write_text(yaml.safe_dump(unapproved, allow_unicode=True), encoding='utf-8')
+            rejected = run_script(root, 'validate.py', '--strict', success=False)
+            if ('v0 is a draft version' not in rejected.stderr
+                    or 'license is still a placeholder' not in rejected.stderr):
+                raise ValueError('unapproved manuscript metadata unexpectedly passed publication gates')
+        finally:
+            config_path.write_text(approved_text, encoding='utf-8')
+        run_script(root, 'validate.py', '--strict')
         prepared = run_script(root, 'prepare_release.py', '--output', str(root / 'bundle'))
         if 'PASS:' not in prepared.stdout:
             raise ValueError('release bundle was not constructed')
@@ -175,7 +200,7 @@ def perform(manuscript: Path, paper: Path, export_to: Path | None = None) -> dic
             'schema_version': 1,
             'scope': 'LOCAL_SELF_APPLICATION_ONLY',
             'verdict': 'PASS',
-            'manuscript': 'OpenPreprint Kit first technical report (DRAFT)',
+            'manuscript': 'OpenPreprint Kit first technical report (APPROVED METADATA; NO RELEASE)',
             'baseline_commit': PINNED_BASELINE,
             'baseline_tests': summary['tests'],
             'baseline_modules': len(summary['modules']),
@@ -185,15 +210,19 @@ def perform(manuscript: Path, paper: Path, export_to: Path | None = None) -> dic
             'manifest_sha256': digest_file(root / 'bundle' / 'manifest.json'),
             'public_research_assets': len(assets['entries']),
             'negative_cases': negatives,
-            'draft_publication_blocked': True,
+            'unapproved_draft_rejected': True,
+            'draft_publication_blocked': True, # retained backwards-compatible gate label
             'citation_schema_validated': True,
             'bundle_integrity_verified': True,
             'provisional_bundle_exported': export_to is not None,
-            'provisional_metadata_not_a_license_grant': True,
+            'approved_version': CONFIRMED_VERSION,
+            'approved_license': CONFIRMED_LICENSE,
+            'author_display_name': CONFIRMED_AUTHOR,
+            'approval_basis': 'USER_CONFIRMED_2026_11_13_NOT_INDEPENDENT_ID_VERIFICATION',
             'timestamp_verified': False,
             'release_published': False,
-            'author_approved': False,
-            'license_granted': False,
+            'author_approved': True,
+            'license_granted': True,
             'independent_witness': False,
             'independent_review': False,
             'pdf_matches_markdown': 'NOT_INDEPENDENTLY_PROVEN',
@@ -207,7 +236,7 @@ def main() -> int:
                         help='Actual typeset PDF of the first paper, not an unrelated synthetic PDF')
     parser.add_argument('--report', type=Path, help='New JSON report path; existing files are never overwritten')
     parser.add_argument('--export-candidate', type=Path,
-                        help='Opt-in export of checked UNAPPROVED bundle for draft-only TSA exercise')
+                        help='Opt-in export of approved-metadata bundle; this does not publish a Release')
     args = parser.parse_args()
     try:
         if args.report and (args.report.exists() or args.report.is_symlink()):
@@ -219,7 +248,7 @@ def main() -> int:
                 stream.write(text)
         print(text, end='')
         return 0
-    except (OSError, ValueError, UnicodeError, KeyError, subprocess.TimeoutExpired) as exc:
+    except (OSError, ValueError, UnicodeError, KeyError, yaml.YAMLError, subprocess.TimeoutExpired) as exc:
         print('FAIL: first-paper self-application: ' + str(exc), file=sys.stderr)
         return 1
 
