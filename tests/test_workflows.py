@@ -64,6 +64,27 @@ class WorkflowTests(unittest.TestCase):
                     if "run" in step:
                         self.assertNotIn("${{", step["run"])
 
+    def test_codeql_scans_python_on_pr_push_and_weekly_schedule(self):
+        path = ROOT / '.github/workflows/security-codeql.yml'
+        self.assertTrue(path.exists(), 'CodeQL security workflow is mandatory')
+        config = yaml.load(path.read_text(encoding='utf-8'), Loader=yaml.BaseLoader)
+        self.assertEqual(set(config['on']), {'push', 'pull_request', 'schedule', 'workflow_dispatch'})
+        self.assertIn('main', config['on']['push']['branches'])
+        self.assertIn('main', config['on']['pull_request']['branches'])
+        self.assertTrue(config['on']['schedule'])
+        job = config['jobs']['scan']
+        self.assertEqual(job['permissions']['contents'], 'read')
+        self.assertEqual(job['permissions']['security-events'], 'write')
+        self.assertEqual(job['permissions']['actions'], 'read')
+        self.assertLessEqual(int(job['timeout-minutes']), 15)
+        self.assertEqual(job['runs-on'], 'ubuntu-24.04')
+        steps = job['steps']
+        self.assertIn('github/codeql-action/init@', steps[1]['uses'])
+        self.assertIn('github/codeql-action/analyze@', steps[2]['uses'])
+        self.assertEqual(steps[1]['with']['languages'], 'python')
+        self.assertEqual(steps[1]['with']['queries'], 'security-extended')
+        self.assertNotIn('secrets.', path.read_text())
+
     def test_dependency_update_prs_are_configured(self):
         config = yaml.safe_load((ROOT / ".github/dependabot.yml").read_text(encoding="utf-8"))
         self.assertEqual(config["version"], 2)

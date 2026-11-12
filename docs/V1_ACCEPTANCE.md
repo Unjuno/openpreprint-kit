@@ -63,3 +63,7 @@ retention, renewal, and future availability require recorded evidence.
 ## 2026-11-12 — source Release provenance check for mirrors
 
 The mirror read-only `verify --require-source-release` option independently GETs each original source Release from GitHub, checks `immutable=true`, confirms the exact asset inventory and compares every asset byte against the pinned archive. Failures do not leave a partially verified output. Without the flag, disaster recovery remains possible when a source repository disappears, but the output explicitly records `source_publication=NOT_CHECKED`. Anonymous mode does **not** cryptographically verify GitHub/Sigstore release attestations, so G2 still requires `gh release verify` and independent attestation evidence. Neither mode establishes operator independence.
+
+## 2026-11-12 — automated CodeQL scan (G0/G7 supporting evidence)
+
+The pinned `github/codeql-action` workflow runs Python `security-extended` queries on PRs, pushes to `main`, a weekly schedule and explicit dispatch. The report is uploaded to GitHub Code Scanning using only `contents: read`, `actions: read` and `security-events: write`; it does not consume clinical records or repository secrets. A successful scan means the scanner executed successfully, **not** that no vulnerabilities exist, that Code Scanning alerts are resolved, or that G7 independent security/privacy review is fulfilled. Operators must separately review alerts and retain assessment evidence.
