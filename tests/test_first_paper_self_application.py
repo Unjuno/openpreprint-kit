@@ -79,6 +79,12 @@ class FirstPaperSelfApplicationTests(unittest.TestCase):
         self.assertIn(' texlive-lang-chinese', content,
                       'Ubuntu 24.04 places ctexhook.sty in texlive-lang-chinese')
 
+    def test_workflow_installs_pzdr_font_metrics(self):
+        workflow = ROOT / '.github' / 'workflows' / 'first-paper-selftest.yml'
+        content = workflow.read_text('utf-8')
+        self.assertIn(' texlive-fonts-recommended', content,
+                      'Ubuntu 24.04 needs TeX zapfding/pzdr font metrics')
+
     def test_does_not_replace_existing_report(self):
         output = self.root / 'existing.json'
         output.write_text('important existing evidence', encoding='utf-8')
