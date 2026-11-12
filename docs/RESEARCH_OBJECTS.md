@@ -111,7 +111,7 @@ clinical event happened or supplies long-term trusted revocation evidence.
 
 - Document the storage/retention/access-control rules for medical originals and
   keys outside GitHub, with user consent and applicable legal review.
-- Keep a verified off-GitHub copy of the research bundle; GitHub can disappear.
+- Mirror the verified research bundle in a separate immutable GitHub Release with a separately retained SHA-256 pin; for a GitHub-wide outage, retain an authenticated offline export that can be restored without GitHub. No Drive backend is required.
 - Preserve earlier receipts and Release assets; corrections must be appended
   as new receipts and new paper versions, not destructive edits.
 - Before claiming independent publication-time proof, deploy a **separate

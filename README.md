@@ -1,5 +1,22 @@
 # OpenPreprint Kit
 
+## GitHub-only publication and preservation (2026-11-12)
+
+**Online publication and replicated preservation are GitHub-native.** Each paper
+has versioned immutable GitHub Releases; separate GitHub evidence repositories
+store verified research-object ZIPs and pinned custody catalogs as immutable
+Releases. `scripts/github_mirror.py` provides offline `plan`, explicit
+owner-authenticated `publish --apply`, and credential-free anonymous `verify`
+with independently supplied SHA-256 pins and a separately trusted RFC 3161
+policy. See [GitHub-only preservation](docs/GITHUB_PRESERVATION.md). **No Google
+Drive runtime integration is necessary.** The prior one-off Drive test is only
+historical evidence, not the supported architecture.
+
+A second GitHub repository is still dependent on GitHub's platform and does
+not by itself prove independent custody or full-site disaster recovery. Such
+claims require an operator-controlled offline export, independently held hashes
+and an actual restore test. The v1.0 acceptance gates remain strict.
+
 **v1.0 release decision:** [2026-11-08 audit](docs/AUDIT_2026-11-08.md) · [objective acceptance gates](docs/V1_ACCEPTANCE.md). Not yet production-ready: no approved actual Releases, independent public witness or external custodian.
 
 **GitHubを論文公開の本体にする、再利用可能なプレプリント公開キット。**

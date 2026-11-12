@@ -126,3 +126,16 @@ will remain available forever. See [PRESERVATION_AND_WITNESS.md](PRESERVATION_AN
 
 A PASS from `custody.py` is a *local audit result*, not certification of the
 custodian or its future survival. See [CUSTODY.md](CUSTODY.md).
+
+## 2026-11-12 — GitHub-native evidence mirror
+
+- [x] Code: mirror an independently pinned, timestamp-verified multi-version
+  custody snapshot to a second GitHub repository's immutable Release; verify
+  via anonymous HTTPS, SHA-256 pins and RFC 3161, with no Drive runtime.
+- [ ] Operations: an owner with authenticated GitHub CLI actually publishes
+  a mirror, and an independently managed observer verifies the public bytes.
+- [ ] Durability: separate account custody and verified offline export/restore
+  are evidenced; GitHub-wide failure remains a common-mode risk.
+
+See [GitHub preservation](GITHUB_PRESERVATION.md). Do not call the code's
+unit tests evidence of a real third-party archive or completed v1.0.

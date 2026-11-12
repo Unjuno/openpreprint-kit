@@ -94,3 +94,18 @@ for retention, published externally verified restored evidence, performed
 ongoing audits or established service/incident obligations. CLI installation
 is not an operational attestation, and this milestone does not clear human
 peer review, clinical privacy approval or certified long-term validation.
+
+## 2026-11-12 — GitHub-only archival backend
+
+**Canonical online storage:** source immutable paper Releases and a second GitHub
+repository's immutable evidence mirror Releases (scripts/github_mirror.py).
+No Google Drive integration or second cloud provider is required. The verifier
+uses anonymous HTTPS and out-of-band SHA-256 catalog and receipt pins.
+Mirror publication preflights the **actual published source** and its GitHub
+release/asset attestations, then audits every replica with real RFC 3161 checks.
+
+A mirror under the same GitHub service does **not** establish resilience to a
+GitHub-wide outage. G5 requires genuine tested offline export and recovery;
+independently managed operators and historical certificate/CRL renewal still
+require evidence. The current test suite mocks GitHub writes and cannot
+certify an actual public mirror. See [GITHUB_PRESERVATION.md](GITHUB_PRESERVATION.md).
