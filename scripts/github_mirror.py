@@ -182,7 +182,8 @@ class AnonymousGateway(GitHubGateway):
     """Read public repository metadata anonymously, without GitHub CLI auth."""
     def api(self, method: str, path: str, data=None, *, allow_missing: bool = False):
         if method != 'GET' or data is not None or not re.fullmatch(
-                r'repos/[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+(?:/releases/tags/opk-custody-[0-9a-f]{24})?',
+                r'repos/[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+'
+                r'(?:/releases/tags/(?:opk-custody-[0-9a-f]{24}|v[0-9]+(?:\.[0-9]+){0,2}))?',
                 path, re.ASCII):
             raise ValueError('anonymous verifier supports only public GitHub repository/release GET')
         endpoint = 'https://api.github.com/' + path
@@ -267,12 +268,18 @@ def _check_remote(gateway, source: str, mirror: str, tag: str, catalog_pin: str,
 
 
 def _verify_public_source(gateway, source: str, storage: Path,
-                          entries: list[dict], policy: Path) -> None:
+                          entries: list[dict], policy: Path, *,
+                          verify_attestations: bool = True) -> None:
     """Require each archived version to be an actual immutable public source Release.
 
     An offline, self-consistent custody archive does not by itself prove that
     its contents were ever anonymously available from the claimed GitHub repo.
     """
+    # Anonymous source checks validate public bytes, NOT Sigstore attestations.
+    info = gateway.api('GET', f'repos/{source}')
+    if (not isinstance(info, dict) or info.get('private') is not False
+            or str(info.get('full_name','')).lower() != source.lower()):
+        raise ValueError('source Release repository must be public and match expected identity')
     with tempfile.TemporaryDirectory(prefix='.opk-source-check-') as tempdir:
         base=Path(tempdir)
         for item in entries:
@@ -291,7 +298,8 @@ def _verify_public_source(gateway, source: str, storage: Path,
                     or any(not isinstance(a,dict) or not isinstance(a.get('name'),str) for a in listed)
                     or {a['name'] for a in listed} != names):
                 raise ValueError('source Release asset inventory mismatch: '+version)
-            gateway.command(['release','verify',version,'--repo',source,'--format','json'])
+            if verify_attestations:
+                gateway.command(['release','verify',version,'--repo',source,'--format','json'])
             for item_path in files:
                 if item_path.is_symlink() or not item_path.is_file():
                     raise ValueError('unsafe source Release bundle file')
@@ -300,7 +308,8 @@ def _verify_public_source(gateway, source: str, storage: Path,
                 if (not isinstance(actual,bytes) or len(actual)!=expected_size
                         or hashlib.sha256(actual).hexdigest()!=sha256_file(item_path)):
                     raise ValueError('source Release asset mismatch: '+version+'/'+item_path.name)
-                gateway.command(['release','verify-asset',version,str(item_path),'--repo',source])
+                if verify_attestations:
+                    gateway.command(['release','verify-asset',version,str(item_path),'--repo',source])
 
 
 def publish(source: str, mirror: str, storage: Path, catalog_pin: str,
@@ -400,7 +409,8 @@ def publish(source: str, mirror: str, storage: Path, catalog_pin: str,
 
 
 def verify_mirror(source: str, mirror: str, tag: str, catalog_pin: str,
-                  receipt_pin: str, policy: Path, output: Path, gateway=None) -> dict:
+                  receipt_pin: str, policy: Path, output: Path, gateway=None, *,
+                  require_source_release: bool = False) -> dict:
     layout=plan(source,mirror,catalog_pin)
     if tag!=layout['tag']:
         raise ValueError('source repository/catalog and mirror tag identity mismatch')
@@ -414,12 +424,19 @@ def verify_mirror(source: str, mirror: str, tag: str, catalog_pin: str,
         result=_check_remote(gateway,source,mirror,tag,catalog_pin,receipt_pin,policy,stage)
         if result.get('status')!='PASS':
             raise ValueError('remote custody audit failed')
+        if require_source_release:
+            entries = _read_catalog(stage, catalog_pin, source)
+            _verify_public_source(gateway, source, stage, entries, policy,
+                                  verify_attestations=False)
         if output.exists() or output.is_symlink():
             raise ValueError('mirror audit output appeared concurrently')
         os.rename(stage,output)
     return {'status':'PASS','source_repository':source,'mirror_repository':mirror,'tag':tag,
             'catalog_sha256':catalog_pin,'receipt_sha256':receipt_pin,
             'archive_count':result['archive_count'],'timestamp':result['timestamp'],
+            'source_publication': ('PUBLIC_IMMUTABLE_ASSETS_MATCH' if require_source_release
+                                   else 'NOT_CHECKED'),
+            'github_attestation':'NOT_VERIFIED_BY_ANONYMOUS_MODE',
             'operator_independence':'NOT_PROVEN','durability':'NOT_PROVEN',
             'github_wide_disaster_recovery':'NOT_PROVEN'}
 
@@ -435,22 +452,27 @@ def main() -> int:
     parser.add_argument('--out',type=Path)
     parser.add_argument('--tag')
     parser.add_argument('--receipt-sha256')
+    parser.add_argument('--require-source-release', action='store_true',
+                        help='also anonymously verify original immutable Releases and exact assets')
     parser.add_argument('--apply',action='store_true')
     args=parser.parse_args()
     try:
         if args.operation=='plan':
-            if any((args.store,args.policy,args.out,args.tag,args.receipt_sha256,args.apply)):
+            if any((args.store,args.policy,args.out,args.tag,args.receipt_sha256,
+                    args.apply,args.require_source_release)):
                 raise ValueError('plan requires only source/mirror/catalog SHA-256 and makes no changes')
             result=plan(args.source,args.mirror,args.catalog_sha256)
         elif args.operation=='publish':
-            if not args.apply or args.store is None or args.policy is None or args.out is None or args.tag or args.receipt_sha256:
+            if (not args.apply or args.store is None or args.policy is None or args.out is None
+                    or args.tag or args.receipt_sha256 or args.require_source_release):
                 raise ValueError('publish requires --apply, --store, --policy and --out')
             result=publish(args.source,args.mirror,args.store,args.catalog_sha256,args.policy,args.out)
         else:
             if not args.tag or not args.receipt_sha256 or args.policy is None or args.out is None or args.apply or args.store:
                 raise ValueError('verify requires --tag, --receipt-sha256, --policy and new --out')
             result=verify_mirror(args.source,args.mirror,args.tag,args.catalog_sha256,
-                                 args.receipt_sha256,args.policy,args.out)
+                                 args.receipt_sha256,args.policy,args.out,
+                                 require_source_release=args.require_source_release)
         print(json.dumps(result,ensure_ascii=False,sort_keys=True,indent=2)); return 0
     except (OSError,ValueError,TypeError,KeyError,RuntimeError,urllib.error.URLError) as exc:
         print(json.dumps({'status':'FAIL','error':str(exc)[:800],

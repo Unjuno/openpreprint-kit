@@ -59,3 +59,7 @@ is still one hosting provider. The existing GitHub-unavailable restoration test
 requires an *actual exported* store and separately held hashes on an offline
 machine; it does not demand any specific second cloud vendor. Human custody,
 retention, renewal, and future availability require recorded evidence.
+
+## 2026-11-12 — source Release provenance check for mirrors
+
+The mirror read-only `verify --require-source-release` option independently GETs each original source Release from GitHub, checks `immutable=true`, confirms the exact asset inventory and compares every asset byte against the pinned archive. Failures do not leave a partially verified output. Without the flag, disaster recovery remains possible when a source repository disappears, but the output explicitly records `source_publication=NOT_CHECKED`. Anonymous mode does **not** cryptographically verify GitHub/Sigstore release attestations, so G2 still requires `gh release verify` and independent attestation evidence. Neither mode establishes operator independence.

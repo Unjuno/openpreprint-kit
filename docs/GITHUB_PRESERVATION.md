@@ -6,7 +6,7 @@
 
 1. **Paper repository (`OWNER/PAPER`):** GitHub source code and **immutable Releases** per version (`v1`, `v2`, ...). Each Release contains PDF, public research data, analysis code, manifest, RFC 3161 request/response, checksums and citation information. Never publish raw patient/health records or HMAC/Ed25519 private keys.
 2. **Mirror repository (`ARCHIVER/EVIDENCE`):** a *different* public GitHub repository whose immutable Releases contain exact, verified preservation ZIPs for one or more versions, `custody.json`, and an inventory receipt. Every snapshot gets a new tag derived from the pinned custody catalog; existing tags/releases are never modified.
-3. **Verifier:** anonymously downloads mirrored assets over restricted HTTPS, checks **two hashes obtained out of band** (`catalog_sha256` and `receipt_sha256`), validates original paper/version/commit and RFC 3161 with an independently selected TSA trust policy, and restores archives to a new directory. `verify` **does not require `gh` or a login**.
+3. **Verifier:** anonymously downloads mirrored assets over restricted HTTPS, checks **two hashes obtained out of band** (`catalog_sha256` and `receipt_sha256`), validates original paper/version/commit and RFC 3161 with an independently selected TSA trust policy, and restores archives to a new directory. `verify` **does not require `gh` or a login**. With `--require-source-release`, it also checks that original GitHub Releases remain public and immutable, and every asset byte agrees with the pinned mirror. This validates HTTPS bytes and GitHub API metadata, **not** Sigstore attestations.
 4. **Owner/publisher:** performs opt-in mirror publication with `gh` credentials. The default `plan` operation has no filesystem or network effects.
 
 A second GitHub repository **is not a second cloud provider or an independently verified custodian**. A different GitHub organization/account creates an additional credential domain only when it actually has separately managed credentials and custodians. All GitHub Releases may become inaccessible during a platform-wide GitHub outage. A separately retained ZIP and digest can be validated offline; this does not require Drive or another cloud service, but someone must actually store that offline copy. No ten-year availability claim is made without operational evidence.
@@ -77,7 +77,8 @@ python scripts/github_mirror.py verify \
   --catalog-sha256 OUT_OF_BAND_CATALOG_SHA256 \
   --receipt-sha256 OUT_OF_BAND_RECEIPT_SHA256 \
   --policy /trusted/timestamp-policy.json \
-  --out /safe/new-downloaded-store
+  --out /safe/new-downloaded-store \
+  --require-source-release
 
 python scripts/custody.py audit \
   --repository OWNER/PAPER \
@@ -85,6 +86,8 @@ python scripts/custody.py audit \
   --catalog-sha256 OUT_OF_BAND_CATALOG_SHA256 \
   --policy /trusted/timestamp-policy.json
 ```
+
+**Verification scope:** Without `--require-source-release`, output reports `source_publication=NOT_CHECKED`; this permits a mirror-only recovery if the original repository is unavailable. With this flag, `source_publication=PUBLIC_IMMUTABLE_ASSETS_MATCH` requires all live source Releases and every original asset to match the mirrored bytes. Both modes report `github_attestation=NOT_VERIFIED_BY_ANONYMOUS_MODE`; the authenticated publisher separately runs `gh release verify`/`gh release verify-asset`. For G2 acceptance, an independent verifier also needs genuine GitHub attestation evidence and an externally approved TSA policy. The anonymous check does **not** establish independent custody or first-publication time.
 
 For **offline disaster recovery after an actual export**, take the verified store and its out-of-band hash to a machine without GitHub access and invoke `custody.py audit` followed by `preserve.py restore` for each archive. If the only surviving copy was on GitHub and GitHub itself is unavailable, recovery is not possible; don't call that case `PASS`.
 
