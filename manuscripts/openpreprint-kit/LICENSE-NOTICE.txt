@@ -1,0 +1,5 @@
+Manuscript: editorial draft, all rights reserved pending author approval.
+CC-BY-4.0 in proposed-preprint.yaml is a local schema-validation proposal, not a grant.
+New analysis scripts: MIT, as in the toolkit LICENSE.
+Retained test log: generated from the cited MIT-licensed project; retain its attribution.
+No original medical records, HMAC keys, or signing keys are part of this package.
