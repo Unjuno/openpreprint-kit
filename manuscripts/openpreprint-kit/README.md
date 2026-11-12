@@ -61,6 +61,28 @@ python scripts/verify_release.py candidate-bundle
 
 `notes/self-application.json`には今回の試験結果とPDF/manifestの指紋を記録しました。原稿自身の指紋を原稿内に書く循環を避けるため、この生成後の記録は論文の入力研究アーカイブには含めません。原稿を変えたら再試験して別記録を作成してください。
 
+## 第1論文を最初の受入テストとしてCI実行する
+
+この短報は単なる機能紹介ではなく、**キットで実際の原稿・実際の研究資産を処理する自己適用試験**でもある。GitHub Actions
+[`first-paper-selftest.yml`](../../.github/workflows/first-paper-selftest.yml)は、原稿や検証スクリプトの変更時および手動実行時に、Pandoc/XeLaTeXで本稿を組版し、次を検査する。
+
+1. 原本のCIログを保存済みSHA-256で照合し、評価対象274件・26モジュールを再集計する。
+2. 著者・利用条件が未承認の草稿を厳格公開検査が拒否することを確認する。
+3. **一時ディレクトリだけ**で提案メタデータを用いて候補バンドルを作成し、PDF・研究資産7点・CFF/BibTeXを検証する。これを承認とみなさない。
+4. PDF・データ・manifestの変更と引用の欠落について、4件すべてで拒否を確認する。
+5. `LOCAL_SELF_APPLICATION_ONLY`と明示したJSON結果を保存する。実際のTSA発行、Immutable Release公開、独立観測がない限り、`existence`や`public-observation`の合格とは表示しない。
+
+ローカルで同じ試験を行うコマンド（論文用のPDFはPandoc等で組版する）。
+
+```bash
+python scripts/first_paper_selftest.py \
+  --manuscript manuscripts/openpreprint-kit \
+  --paper-pdf /path/to/first-paper-draft.pdf \
+  --report /tmp/first-paper-selftest.json
+```
+
+このコマンド自体は任意の適正な構造のPDFを受け取るので、**本文がMarkdownと意味的に一致することまで証明できない**。GitHub Actionsでは同じジョブ内で対象`paper.md`を組版することで入力を固定する。CIのPDFとJSONは14日間の短期成果物であり、**正式な論文Releaseではない**。第三者査読や論文ライセンス承認も行わない。
+
 ## 正式公開に移る条件
 
 著者・ライセンス確定、専用リポジトリとImmutable Releases設定、信頼根を別途確認したRFC 3161取得、全資産の再取得検証が必要です。公開通知はこの正式な論文Releaseを対象とし、草稿掲載を公開完了とは扱いません。独立観測・独立監査・学術査読は引き続き別の工程です。
