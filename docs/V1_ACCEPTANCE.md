@@ -43,3 +43,19 @@ The kit is **not** a scholarly journal, formal peer-review certification, author
 6. Implement/test renewal, historical revocation evidence and durable discovery/identifiers; re-run all gates before v1.0 declaration.
 
 Audit evidence: [AUDIT_2026-11-08.md](AUDIT_2026-11-08.md). Tracking: GitHub issue #5. This gate supersedes broad implementation-stage checkboxes as the **v1.0 production decision**.
+
+## 2026-11-12 — GitHub-only online storage decision
+
+**Online publication and replication backend: GitHub Releases only.**
+`github_mirror.py` allows an existing public source Release's verified custody
+store to be mirrored into a **different** immutable GitHub Release. Anonymous
+recovery is verified with separately pinned catalog and receipt hashes and a
+separately approved TSA policy. Google Drive is not a required acceptance
+mechanism. This supersedes any implied Drive preference in earlier notes.
+
+**G5 is NOT automatically satisfied by a second GitHub repository.**
+Separate-owner GitHub mirroring reduces repository/account-specific risk, but
+is still one hosting provider. The existing GitHub-unavailable restoration test
+requires an *actual exported* store and separately held hashes on an offline
+machine; it does not demand any specific second cloud vendor. Human custody,
+retention, renewal, and future availability require recorded evidence.

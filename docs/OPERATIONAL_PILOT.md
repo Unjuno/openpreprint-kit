@@ -90,3 +90,20 @@ Primary interfaces: [repo create](https://cli.github.com/manual/gh_repo_create),
 [release verify](https://cli.github.com/manual/gh_release_verify),
 [asset verify](https://cli.github.com/manual/gh_release_verify-asset),
 [immutable release API](https://docs.github.com/en/rest/repos/repos#enable-immutable-releases).
+
+## 5. GitHub-only evidence mirrors (supersedes external cloud examples)
+
+After the synthetic pilot actually publishes v1/v2, build the verified multi-version
+custody store using each version's `evidence.opk.zip` and its independently
+computed SHA-256. On a separately managed GitHub archive account, create a
+public mirror repository and enable immutable Releases. Run
+`github_mirror.py plan`, then `publish --apply`, with the exact source repository,
+catalog SHA-256 and independent TSA policy. The mirror Release contains
+`custody.json`, the exact v1/v2 ZIPs and a digest-bound receipt. Anonymous
+`github_mirror.py verify` reconstructs the local evidence store and checks
+both SHA-256 pins and RFC 3161. Details:
+[GITHUB_PRESERVATION.md](GITHUB_PRESERVATION.md).
+
+No Google Drive account or integration is part of the supported publishing
+pipeline. GitHub-wide outages remain a common-mode risk; export the verified
+local store for offline disaster-recovery testing if that guarantee is required.
