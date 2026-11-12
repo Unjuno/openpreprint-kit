@@ -1,116 +1,43 @@
-# 最初の短報：OpenPreprint Kitの自己適用
+# 第1論文：OpenPreprint Kitを自身に適用する受入テスト
 
-[短報草稿](paper.md)はOpenPreprint Kit自体の設計と検証を記述する、3ページ相当の日本語技術報告です。評価対象は **940d0d06d957cd0708f644a595911bdbc3fffa64** に固定します。自身の論文、試験ログ、データ、再計算コードをキットへ渡す最初の実利用ケースです。
+**論文v1の著者表示はUnjuno、本文・原稿のライセンスはCC BY 4.0です。2026年11月13日に利用者が確認しました。** この確認はチャット上の申告であり、署名付き本人確認・権利調査・査読を意味しません。
 
-## 状態と公開境界
+**公開状態：未査読のv1候補。専用GitHubリポジトリのImmutable Releaseは未発行。** [本文](paper.md)、[正式候補メタデータ](preprint.yaml)、[資産別ライセンス通知](LICENSE-NOTICE.txt)が現在の入力です。`proposed-preprint.yaml`は承認前の履歴であり、正式候補には使用しません。
 
-- **編集草稿・未査読。正式な論文Releaseではありません。** 原稿をmain/PRへ置くこと、CI artifacts、PDFの生成を不変Releaseの公開と混同しません。
-- 本文の著者表示はプロジェクトアカウントUnjunoという名義案です。所属・学位・ORCIDは推測していません。
-- `preprint.yaml` は意図的に **v0 / UNSPECIFIED**。著者と利用条件の確認がないまま公開されないよう、厳格な公開検査では停止します。
-- `proposed-preprint.yaml` は **ローカル検証専用のメタデータ案**。CC-BY-4.0は提案であって、この草稿による利用許諾ではありません。候補バンドルは公開承認を代行しません。
-- ルートのキット用テンプレートを本論文で上書きしません。正式公開時は専用の論文リポジトリを用意し、このディレクトリの入力を対応するルートの場所へ展開します。現時点で専用リポジトリは未作成です。
-- Google Driveは使いません。オンラインの原稿・データ・公開証拠はGitHubに置きます。秘密鍵・個人の健康記録は含めません。
+評価対象の実装コミットは `940d0d06d957cd0708f644a595911bdbc3fffa64` に固定しています。保存済みCIログ274件・26モジュール、集計データ、再実行コードを、現在のキットのテスト件数とは区別して報告します。
 
-## データを再集計する
+## 原稿・データの再現
 
-Python 3.10以降の標準ライブラリだけで実行できます。
+Python 3.10以上で、まず証拠ログとCSVを検証できます。
 
 ```bash
 python manuscripts/openpreprint-kit/analysis/summarize_ci.py
 ```
 
-`data/baseline-ci.txt.gz` の圧縮前後のSHA-256、試験名の一意性、末尾の総数と成功状態を検査し、274件・26モジュールを再集計します。`data/provenance.json`に出所と対象コミットを、`data/test-counts.csv`に全内訳を記録しています。原ログは品質CI 43222595349の保存物です。実行時間を性能ベンチマークには用いません。
-
-## PDFを生成する
-
-必要な組版環境: Pandoc、XeLaTeX、Noto Serif CJK JP、Liberation Serif、DejaVu Sans Mono。フォントファイル自体は配布しません。組版ツールとフォント差によりPDFのバイト列は変わり得るため、正式版は生成したPDFそのものをハッシュで固定します。
+PDF組版にはPandoc、XeLaTeX、Noto Serif CJK JP、Liberation Serif、DejaVu Sans Monoなどが必要です。フォント自体は再配布しません。`SOURCE_DATE_EPOCH`は組版用の固定値であり、TSA時刻ではありません。
 
 ```bash
-cd manuscripts/openpreprint-kit
-SOURCE_DATE_EPOCH=1794441600 pandoc paper.md --from markdown \
-  --pdf-engine=xelatex --output paper-draft.pdf
-```
-
-SOURCE_DATE_EPOCHは再現可能な組版用定数であり、存在時刻の証拠ではありません。`paper.md`ではLaTeXのページ表示用OpenActionを付与しないよう明示しています。初回にこの設定が検査で拒否されたため、PDF検査を弱めず組版側を修正しました。
-
-## キットへの自己適用
-
-専用の一時ディレクトリへキットの`scripts/`をコピーし、次のように配置します。
-
-```text
-work/
-  scripts/                 # 固定したキットのソース
-  paper/paper.pdf           # 実際に組版した短報
-  data/                     # 本ディレクトリのdata一式
-  analysis/summarize_ci.py
-  supplements/paper.md
-  supplements/LICENSE-NOTICE.txt
-  preprint.yaml
-  research-assets.yaml
-```
-
-通常は草稿の`preprint.yaml`を使うため公開検査が止まります。**スキーマとバンドル処理だけを試験する場合**、一時ディレクトリに限って`proposed-preprint.yaml`を`preprint.yaml`として配置します。著者・ライセンスの承認、TSA発行、GitHub公開は行われません。
-
-```bash
-python scripts/prepare_release.py --output candidate-bundle
-python scripts/citation_validation.py candidate-bundle
-python scripts/verify_release.py candidate-bundle
-```
-
-これらのコマンドは元データと各候補ファイルの内容整合性を検査するだけです。時刻証拠がないものに`existence`や`public-observation`のPASSを与えてはいけません。PDF変更・研究データ変更・manifest変更・ファイル欠落が拒否されることも別コピーで試します。
-
-`notes/self-application.json`には今回の試験結果とPDF/manifestの指紋を記録しました。原稿自身の指紋を原稿内に書く循環を避けるため、この生成後の記録は論文の入力研究アーカイブには含めません。原稿を変えたら再試験して別記録を作成してください。
-
-## 第1論文を最初の受入テストとしてCI実行する
-
-この短報は単なる機能紹介ではなく、**キットで実際の原稿・実際の研究資産を処理する自己適用試験**でもある。GitHub Actions
-[`first-paper-selftest.yml`](../../.github/workflows/first-paper-selftest.yml)は、原稿や検証スクリプトの変更時および手動実行時に、Pandoc/XeLaTeXで本稿を組版し、次を検査する。
-
-1. 原本のCIログを保存済みSHA-256で照合し、評価対象274件・26モジュールを再集計する。
-2. 著者・利用条件が未承認の草稿を厳格公開検査が拒否することを確認する。
-3. **一時ディレクトリだけ**で提案メタデータを用いて候補バンドルを作成し、PDF・研究資産7点・CFF/BibTeXを検証する。これを承認とみなさない。
-4. PDF・データ・manifestの変更と引用の欠落について、4件すべてで拒否を確認する。
-5. `LOCAL_SELF_APPLICATION_ONLY`と明示したJSON結果を保存する。実際のTSA発行、Immutable Release公開、独立観測がない限り、`existence`や`public-observation`の合格とは表示しない。
-
-ローカルで同じ試験を行うコマンド（論文用のPDFはPandoc等で組版する）。
-
-```bash
+export SOURCE_DATE_EPOCH=1794528000
+pandoc manuscripts/openpreprint-kit/paper.md --from markdown \
+  --pdf-engine=xelatex --output first-paper-v1.pdf
 python scripts/first_paper_selftest.py \
   --manuscript manuscripts/openpreprint-kit \
-  --paper-pdf /path/to/first-paper-draft.pdf \
-  --report /tmp/first-paper-selftest.json
+  --paper-pdf first-paper-v1.pdf \
+  --report first-paper-v1-selftest.json
 ```
 
-このコマンド自体は任意の適正な構造のPDFを受け取るので、**本文がMarkdownと意味的に一致することまで証明できない**。GitHub Actionsでは同じジョブ内で対象`paper.md`を組版することで入力を固定する。CIのPDFとJSONは14日間の短期成果物であり、**正式な論文Releaseではない**。第三者査読や論文ライセンス承認も行わない。
+自己適用はPDF構造、v1の著者名・ライセンス、保持CIログの指紋と件数、7つの公開研究入力、CFF/BibTeX、PDF・データ・manifestの改変と引用欠落を検査します。承認前へ戻した`v0`/`UNSPECIFIED`の厳格公開拒否も負の対照として再試験します。`--export-candidate NEW_DIRECTORY`を付けると検証済み候補を**新規ディレクトリのみ**に書き出します。
 
-## 正式公開に移る条件
+ユーザーが指定した著者名とライセンスは承認済みですが、コードによる検査は著作権の真正性や査読を証明しません。元リポジトリのテンプレート`preprint.yaml`は引き続き`v0`/`UNSPECIFIED`であり、本論文のv1をルートへ上書きしてはいけません。
 
-著者・ライセンス確定、専用リポジトリとImmutable Releases設定、信頼根を別途確認したRFC 3161取得、全資産の再取得検証が必要です。公開通知はこの正式な論文Releaseを対象とし、草稿掲載を公開完了とは扱いません。独立観測・独立監査・学術査読は引き続き別の工程です。
+## 承認後の外部RFC 3161時刻証明
 
+GitHub Actions [第1論文実TSAワークフロー](../../.github/workflows/first-paper-live-timestamp.yml) は、上記v1本文を再組版し、外部FreeTSAから**内容を固定した新しいRFC 3161証明**を取得し、別ランナーでCA/CRLを取得し直してZIP全資産を再検証します。2026年11月12日の未承認draftに付与された旧時刻証拠は、変更後のv1へ流用できません。
 
-## 編集草稿に対する実TSA検証（正式公開とは別）
+合格できる範囲は `APPROVED_MANUSCRIPT_EXISTENCE_ONLY` です。論文の存在時刻の証拠と、GitHubへの**正式な公開開始時刻**は異なります。証拠の保管先となるGitHub Actions artifactは14日間の短期成果物であり、永久保存ではありません。
 
-[`first-paper-live-timestamp.yml`](../../.github/workflows/first-paper-live-timestamp.yml)は、
-このドキュメントに記録された自己適用試験の次の段階を実施する。ワークフロー初回導入時の
-`main`プッシュ（当該ワークフローの変更に限る）と、所有者による手動実行を受け付ける。
+## GitHub上での正式発行に必要な条件
 
-1. 既存の日本語PDF組版環境で**実際の本稿**を再生成し、CI原ログ・7資産・4異常系と
-   「未承認草稿は公開不可」の確認を通過させる。
-2. `first_paper_selftest.py --export-candidate`で検証済みの候補バンドルだけを専用の
-   一時ディレクトリに出力する。候補の`v1`と`CC-BY-4.0`は**検査用の提案値**であり、
-   著者の承認・本文ライセンスの許諾を示すものではない。
-3. 検証者がハッシュで固定したFreeTSAの公開CAと有効な署名付きCRLを用い、
-   *候補バンドル全体を拘束するmanifest*にRFC 3161時刻証拠を付与して検証する。
-   `.tsq`/`.tsr`と候補全資産を改変検出可能なZIPに保存する。
-4. 別のGitHub Actionsランナーが別途CA/CRLを取得し直し、前段ジョブの出力として
-   別経路で得たZIPのSHA-256を使い、ZIPの復元・原稿PDF・研究資産・引用・TSA署名を再検証する。
-5. **GitHub Actions artifacts（14日間保持）**に、実行結果と時刻証拠のスナップショットを残す。
-   これは独立の外部保管やGitHub Immutable Releaseの代わりではない。
+論文専用の公開GitHubリポジトリを作り、Immutable Releasesを有効化し、作成したv1のPDF・研究データ・引用情報・RFC 3161証拠を添付してから、匿名再ダウンロードとハッシュの再検証を実行します。別のGitHubリポジトリへのミラーと第三者による署名付き観測は独立した工程です。
 
-**合格の範囲：** `DRAFT_EXISTENCE_ONLY`。TSAが署名したのは本文の**編集草稿を含む候補バンドルの指紋**である。
-実際の一般公開開始日時、著作権者の承認、独立観測、査読、正式な論文Releaseは証明されない。
-TSAのCAハッシュ・失効情報が合わない場合やサーバー不達時は**失敗として停止**する。
-失敗に合わせて信頼根のハッシュを書き換えたり、自己署名証明書へ自動フォールバックしたりしない。
-
-**正式発行**は引き続き著者/本文ライセンスの決定、専用論文リポジトリ、
-Immutable Releases設定、実際の公開後の再取得と署名付き観測が条件である。
+**オンライン配布・ミラーはGitHubを使用します。** Google Driveの利用、実患者原本、非公開HMAC鍵や署名秘密鍵のアップロードはありません。AI支援の原稿であること、未査読であること、独立の著作者本人確認をしていないことを、本文でも明示します。
