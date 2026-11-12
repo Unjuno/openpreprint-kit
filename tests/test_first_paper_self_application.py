@@ -73,6 +73,12 @@ class FirstPaperSelfApplicationTests(unittest.TestCase):
         self.assertIn(' texlive-lang-cjk', content,
                       'Ubuntu 24.04 needs texlive-lang-cjk for xeCJK.sty')
 
+    def test_workflow_installs_ctexhook_dependency(self):
+        workflow = ROOT / '.github' / 'workflows' / 'first-paper-selftest.yml'
+        content = workflow.read_text('utf-8')
+        self.assertIn(' texlive-lang-chinese', content,
+                      'Ubuntu 24.04 places ctexhook.sty in texlive-lang-chinese')
+
     def test_does_not_replace_existing_report(self):
         output = self.root / 'existing.json'
         output.write_text('important existing evidence', encoding='utf-8')
