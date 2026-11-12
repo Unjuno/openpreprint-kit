@@ -1,3 +1,9 @@
+> **GitHub-only online publication/storage policy (2026-11-12):**
+> The primary paper and mirrored custody snapshots are stored as immutable
+> **GitHub Releases**, not Google Drive or any required second cloud vendor.
+> This document remains applicable to optional **offline exports** that can be
+> restored if GitHub is inaccessible. See [GitHub preservation](GITHUB_PRESERVATION.md).
+
 # Independent multi-version custody and recurring audit
 
 **Engineering support is implemented; real off-GitHub custody is not thereby established.**
