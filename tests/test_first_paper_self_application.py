@@ -44,9 +44,66 @@ class FirstPaperSelfApplicationTests(unittest.TestCase):
         self.assertTrue(all(info['negative_cases'].values()))
         self.assertFalse(info['timestamp_verified'])
         self.assertFalse(info['release_published'])
-        self.assertFalse(info['author_approved'])
-        self.assertFalse(info['license_granted'])
+        self.assertTrue(info['author_approved'])
+        self.assertTrue(info['license_granted'])
+        self.assertEqual(info['approved_version'], 'v1')
+        self.assertEqual(info['approved_license'], 'CC-BY-4.0')
+        self.assertEqual(info['approval_basis'], 'USER_CONFIRMED_2026_11_13_NOT_INDEPENDENT_ID_VERIFICATION')
+        self.assertEqual(info['author_display_name'], 'Unjuno')
+        self.assertTrue(info['unapproved_draft_rejected'])
         self.assertEqual(info['pdf_matches_markdown'], 'NOT_INDEPENDENTLY_PROVEN')
+
+    def test_canonical_metadata_has_author_and_license_approval(self):
+        import yaml
+        meta=yaml.safe_load((SOURCE/'preprint.yaml').read_text('utf-8'))
+        self.assertEqual(meta['authors'], [{'name':'Unjuno','orcid':None}])
+        self.assertEqual(meta['license'], 'CC-BY-4.0')
+        self.assertEqual(meta['version'], 'v1')
+
+    def test_kit_root_is_still_an_unapproved_template(self):
+        import yaml
+        meta=yaml.safe_load((ROOT/'preprint.yaml').read_text('utf-8'))
+        self.assertEqual(meta['version'],'v0')
+        self.assertEqual(meta['license'],'UNSPECIFIED')
+
+    def test_rights_notice_is_consistent_with_metadata(self):
+        import yaml
+        notice=(SOURCE/'LICENSE-NOTICE.txt').read_text('utf-8')
+        self.assertIn('CC BY 4.0', notice)
+        self.assertIn('Unjuno', notice)
+        catalog=yaml.safe_load((SOURCE/'research-assets.yaml').read_text('utf-8'))
+        for asset in catalog['public_assets']:
+            if asset['role']=='supplementary':
+                self.assertEqual(asset['license'],'CC-BY-4.0')
+
+    def test_mislabeled_author_is_refused(self):
+        manuscript=self.root/'different-author'
+        shutil.copytree(SOURCE,manuscript)
+        p=manuscript/'preprint.yaml'
+        p.write_text(p.read_text('utf-8').replace('name: Unjuno','name: DifferentParty'),encoding='utf-8')
+        result=self.execute(manuscript=manuscript)
+        self.assertNotEqual(result.returncode,0)
+        self.assertIn('approved',result.stderr.lower())
+
+    def test_mislabeled_license_is_refused(self):
+        manuscript=self.root/'different-license'
+        shutil.copytree(SOURCE,manuscript)
+        p=manuscript/'preprint.yaml'
+        p.write_text(p.read_text('utf-8').replace('CC-BY-4.0','CC-BY-NC-4.0'),encoding='utf-8')
+        result=self.execute(manuscript=manuscript)
+        self.assertNotEqual(result.returncode,0)
+        self.assertIn('approved',result.stderr.lower())
+
+    def test_invalid_license_on_supplement_is_refused(self):
+        manuscript=self.root/'bad-supplement-license'
+        shutil.copytree(SOURCE,manuscript)
+        p=manuscript/'research-assets.yaml'
+        original=p.read_text('utf-8')
+        self.assertIn('license: CC-BY-4.0',original)
+        p.write_text(original.replace('license: CC-BY-4.0','license: CC-BY-NC-4.0',1),encoding='utf-8')
+        result=self.execute(manuscript=manuscript)
+        self.assertNotEqual(result.returncode,0)
+        self.assertIn('license',result.stderr.lower())
 
     def test_workflow_generates_actual_manuscript_pdf_without_publishing(self):
         workflow = ROOT / '.github' / 'workflows' / 'first-paper-selftest.yml'
@@ -125,7 +182,7 @@ class FirstPaperSelfApplicationTests(unittest.TestCase):
 
 
 class ExportCandidateTests(unittest.TestCase):
-    """The draft candidate exported to TSA is the validated, exact self-application bundle."""
+    """The v1 manuscript candidate exported to TSA is the validated, exact self-application bundle."""
 
     def setUp(self):
         import test_release
@@ -174,7 +231,7 @@ class ExportCandidateTests(unittest.TestCase):
 
 
 class FirstPaperLiveTimestampWorkflowTests(unittest.TestCase):
-    def test_new_workflow_stamps_only_draft_and_verifies_in_fresh_runner(self):
+    def test_new_workflow_stamps_approved_metadata_and_verifies_in_fresh_runner(self):
         import yaml
         workflow = ROOT / '.github' / 'workflows' / 'first-paper-live-timestamp.yml'
         self.assertTrue(workflow.is_file())
@@ -183,10 +240,14 @@ class FirstPaperLiveTimestampWorkflowTests(unittest.TestCase):
         self.assertEqual(set(parsed['on']), {'push', 'workflow_dispatch'})
         self.assertEqual(parsed['on']['push']['branches'], ['main'])
         self.assertIn('first-paper-live-timestamp.yml', ' '.join(parsed['on']['push']['paths']))
-        stamp = parsed['jobs']['stamp-draft']
+        stamp = parsed['jobs']['stamp-v1']
         restore = parsed['jobs']['fresh-verify']
-        self.assertEqual(restore['needs'], ['stamp-draft'])
+        self.assertEqual(restore['needs'], ['stamp-v1'])
         self.assertIn('timestamp.py stamp', str(stamp))
+        self.assertIn('APPROVED_MANUSCRIPT_EXISTENCE_ONLY', str(stamp))
+        self.assertIn('author_approved', str(stamp))
+        self.assertIn('license_granted', str(stamp))
+        self.assertIn('APPROVED_MANUSCRIPT_EXISTENCE_ONLY', str(restore))
         self.assertIn('timestamp.py verify', str(stamp))
         self.assertIn('preserve.py pack', str(stamp))
         self.assertIn("preservation['timestamp']=='VERIFIED'", str(stamp))
