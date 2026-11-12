@@ -201,13 +201,9 @@ class FirstPaperLiveTimestampWorkflowTests(unittest.TestCase):
             self.assertLessEqual(int(job['timeout-minutes']), 15)
             for step in job['steps']:
                 if 'uses' in step:
-                    self.assertRegex(step['uses'], r'@[0-9a-f]{40}
-    unittest.main()
-)
+                    self.assertRegex(step['uses'], r'@[0-9a-f]{40}$')
                 if 'run' in step:
-                    self.assertNotIn('
-    unittest.main()
-+'{{', step['run'])
+                    self.assertNotIn('$'+'{{', step['run'])
 
 
 if __name__ == '__main__':
