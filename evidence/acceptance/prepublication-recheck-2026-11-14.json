@@ -1,0 +1,85 @@
+{
+  "schema_version": 1,
+  "record_kind": "MANUAL_INTERNAL_READ_ONLY_CRYPTO_RECHECK_NOT_AN_ATTESTATION",
+  "observed_at_utc": "2026-11-13T16:10:38.653896+00:00",
+  "recorded_on_jst": "2026-11-14",
+  "repository": "Unjuno/openpreprint-kit",
+  "tested_source_sha": "f878210bdaafb68799045504ce56b22bfb11ab76",
+  "execution": {
+    "platform": "Linux arm64 (authorized Desktop Commander isolated workspace)",
+    "python": "3.12.3",
+    "openssl": "3.0.13",
+    "asn1crypto": "1.5.1 (lock-pinned PyPI wheel SHA256 verified before extraction)",
+    "shell": "bash",
+    "github_repository_creation": false,
+    "publication_attempted": false,
+    "operator_type": "INTERNAL_REEXECUTION",
+    "operator_independence": "NOT_ESTABLISHED",
+    "independent_security_audit": false
+  },
+  "approved_pdf": {
+    "path": "manuscripts/openpreprint-kit/approved-v1/paper.pdf",
+    "sha256": "0860b735379fb1b9b223f5d535442dae8421f456d7ae1c6bf6ce8d3141a1b07c",
+    "size_bytes": 187502,
+    "result": "PASS"
+  },
+  "archived_prepublication_evidence": {
+    "path": "evidence/first-paper/approved-v1/prepublication.opk.zip",
+    "sha256": "3e78455af37a0872d994d9d3c12eca6a1db1568a86671d55aa71ac020aa76a3d",
+    "size_bytes": 248319,
+    "preservation_restore": "PASS",
+    "restored_paper_sha256": "0860b735379fb1b9b223f5d535442dae8421f456d7ae1c6bf6ce8d3141a1b07c",
+    "manifest_sha256": "cf5945ce23fc253d00ed60da072fb90eb226f607f944d8a521b5f39bbbe858b2",
+    "source_claim": null,
+    "source_claim_basis": "Prepublication proof only. No paper GitHub Release or public source commit is claimed."
+  },
+  "timestamp": {
+    "signed_timestamp_utc": "2026-11-12T18:26:50+00:00",
+    "signed_accuracy_microseconds": null,
+    "existence_upper_bound_utc": null,
+    "rfc3161_verdict": "VERIFIED",
+    "ca_sha256": "2151b61137ffa86bf664691ba67e7da0b19f98c758e3d228d5d8ebf27e044438",
+    "policy_oid": "1.2.3.4.1",
+    "crl": "fresh downloaded signed CRL checked under separately pinned CA; currently valid for this run",
+    "trust_provenance": "Project-pinned FreeTSA CA, separately fetched from the archived ZIP; no independent human trust endorsement",
+    "revocation": "checked_current_crls_full_chain"
+  },
+  "negative_tests": [
+    {
+      "id": "T1",
+      "attack": "Wrong independently retained original archive SHA-256",
+      "verdict": "REJECTED",
+      "evidence": "archive does not match the independently retained SHA-256"
+    },
+    {
+      "id": "T2",
+      "attack": "Modify a paper.pdf ZIP member and recompute outer ZIP SHA-256",
+      "verdict": "REJECTED",
+      "evidence": "invalid preservation file entry"
+    },
+    {
+      "id": "T3",
+      "attack": "Replace CA SHA-256 trust pin with zero digest in a separate policy file",
+      "verdict": "REJECTED",
+      "evidence": "CA bundle SHA-256 does not match the independently trusted pin"
+    }
+  ],
+  "negative_cases": 3,
+  "false_acceptances_observed": 0,
+  "acceptance_status": {
+    "draft_existence_evidence": "REVALIDATED",
+    "first_publication_time": "NOT_PROVEN",
+    "public_release": "NOT_PERFORMED",
+    "independent_witness": "NOT_PERFORMED",
+    "full_G3": "NOT_MET",
+    "P1": "BLOCKED",
+    "P4": "NO_GO"
+  },
+  "limitations": [
+    "Real prepublication evidence only, not a public immutable Release.",
+    "CA policy is project-pinned and no independent human operator signed this report.",
+    "Current CRL verification is not historical long-term validation.",
+    "Three negative tests do not satisfy the canonical 20-case/4-publication acceptance matrix.",
+    "Unsigned manual report; source snapshot and external raw transcripts must be retained separately for stronger audit claims."
+  ]
+}
