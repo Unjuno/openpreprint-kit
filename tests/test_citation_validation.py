@@ -48,7 +48,8 @@ class CitationValidationTests(unittest.TestCase):
     def test_valid_cff_and_bibtex_pass(self):
         proc = self.validated()
         self.assertIn("--validate", proc.call_args.args[0])
-        self.assertIn(str(self.folder / "CITATION.cff"), proc.call_args.args[0])
+        self.assertEqual(Path(proc.call_args.args[0][-1]).resolve(),
+                         (self.folder / "CITATION.cff").resolve())
 
     def test_windows_venv_cffconvert_is_found_without_path_activation(self):
         # Reproduce the reported incident: venv/Scripts contains cffconvert,
