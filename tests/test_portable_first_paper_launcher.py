@@ -60,7 +60,7 @@ class PortableFirstPaperLauncherTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as folder:
             base = Path(folder) / "owner-evidence"
             work = launcher.allocate_workspace(base)
-            self.assertEqual(work.parent, base)
+            self.assertEqual(work.parent.resolve(), base.resolve())
             self.assertTrue(work.is_dir())
             with self.assertRaisesRegex(ValueError, "outside the toolkit"):
                 launcher.allocate_workspace(ROOT / "disallowed-evidence")
