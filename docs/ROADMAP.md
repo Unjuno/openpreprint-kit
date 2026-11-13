@@ -1,141 +1,100 @@
-# OpenPreprint Kit — 完成条件付きロードマップ
+# OpenPreprint Kit — 完成までの確定ロードマップ
 
-更新: 2026-11-06。ソフトウェアv0.3継続開発。**運用完成ではない**。
-機能の追加と、実際のサービス・実論文による運用実証を別々に管理する。
+版: 2026-11-13 / 対象: 第1論文v1とキットv1.0.0。**ロードマップの確定は製品完成を意味しない。**
 
-| 段階 | 実装・確認状態 | 完了条件 |
+## 1. 目的・決定済み事項
+
+論文・公開研究データ・解析コードをGitHubで版ごとに発行し、取得者が内容、存在時刻の証拠、公開観測の署名を区別して検証できる再利用可能なキットを完成させる。最初の実利用対象はOpenPreprint Kit自身の短報とする。
+
+著者表示 **Unjuno**、本文 **CC BY 4.0**、論文版 **v1** は承認済み。再承認を要求しない。論文v1とソフトウェアv1.0.0は別の版である。ツール本体のMITと論文・データの資産別ライセンスは分離する。
+
+オンラインの公開・複製先は **GitHubのみ**。Google Driveを必須条件に戻さない。GitHubからのエクスポートを使うオフライン復元は必要だが、特定の別クラウドは要求しない。**Desktop Commanderおよび利用者端末への遠隔操作は使用しない。** 所有者が自ら実行する場合と、接続済みGitHubツールで許可された操作だけを扱う。秘密情報をチャットへ要求しない。
+
+## 2. 文書の役割と現在地
+
+- [V1_ACCEPTANCE.md](V1_ACCEPTANCE.md): 合格条件G0〜G7の唯一の規範。
+- 本書: 作業順・依存関係・責任・停止条件。
+- [RELEASE_READINESS.md](RELEASE_READINESS.md): 証拠付きの現状。Issue #5はその索引であり、別の基準を作らない。
+- [release-status.json](../evidence/acceptance/release-status.json): 2026-11-13に確認した状態のスナップショット。手動管理の観測記録であり、署名された認証や自動判定器ではない。
+
+確認対象main: `7b1fc1d34ede8aebeb01bd869350ef2140be528e`。第1論文の承認・組版・実TSA・別ランナー検証は実施済み。公開コードPR #29は未マージ。開発リポジトリのReleaseは0件、Template設定は無効。論文専用公開先での発行は未実証。**最初の停止点は追加機能ではなく、公開経路の確定と所有者権限による実行である。**
+
+## 3. 完成を四つに分ける
+
+| 到達点 | 終了条件 | 完了しても主張しないこと |
 |---|---|---|
-| M0 公開の土台 | メタデータ、CFF/BibTeX、manifest、Release処理を実装 | 実論文での公開と外部書式検証はM2/G6へ |
-| M1 存在時刻証拠 | RFC3161、CA pin、nonce/OID、署名、現在と署名時点の証明書有効性、現在の全連鎖CRLを実装 | 一時CA試験と公開TSAの実証を混同しない |
-| M2 実運用確認 | 公開前APIガードを追加。実TSA・実論文は未確認 | 信頼設定、公開TSA、2複製リポジトリでv1→v2、別環境検証 |
-| M3 一般公開の独立観測 | 未実装 | 別管理主体が公開URLを取得して内容と時刻を署名。Actions自身を独立観測者と称さない |
-| M4 閲覧・レビュー・保存 | 静的読者ページ、レビュー/応答/訂正/懸念/撤回、追記型記録を実装 | 人間の運用試験、Pages配備、任意DOI、GitHub外の保存・復元 |
-| M5 v1.0受入 | 未達 | 下記の必須ゲートを満たし、独立レビューの重大指摘を解消 |
+| P1 第1論文の発行 | 専用公開リポジトリのv1が不変Releaseとして存在。全資産を匿名再取得し、ハッシュ・新しいTSA証拠・GitHub attestationを検証 | 独立査読、観測者の独立性、キット全体の完成 |
+| P2 再利用・版管理の受入 | G1〜G3を満たす2論文リポジトリ・各2版、別環境8回の検証、20件以上の異常系で誤受理0件 | 母集団の不具合率ゼロ、永続保存 |
+| P3 独立運用の受入 | G4・G5の観測・GitHub複製・オフライン復元を別管理主体が実行 | GitHub全体の無停止、将来10年の実測保証 |
+| P4 キットv1.0.0 | G0〜G7すべての証拠と責任者承認があり、固定コミットからソフトウェアReleaseを発行 | 医療システム適合、著作者本人確認、科学的正しさの保証 |
 
-## 今回の運用拡張
-- [x] APIで公開前にimmutable設定・既定ブランチ・版重複を確認。権限不足や障害では停止。
-- [x] レビュー記録の対象版/PDFハッシュ、報告のハッシュ、利益相反、申告日時を検査。
-- [x] baseコミットに対して既存記録の削除・書換えを拒否。管理者の全履歴書換え耐性ではない。
-- [x] 静的HTML、原版ダウンロード、引用、撤回/懸念表示。内容はescapeしJavaScriptを実行しない。
-- [x] 問題・レビュー・訂正のIssueフォーム、PRチェック、修正ループ、秘密情報の報告方針。
-- [x] 同一CIで検査したソースとログを保存。14日artifactを永続アーカイブと呼ばない。
+P1をP4の全条件待ちにしない。未査読プレプリントはその状態を表示して発行できる。一方、P1だけでP4をPASSにしない。
 
-## 次の実行順と必要な担当
-1. 開発担当がCIと差分を確認し、検証済みの実装だけを統合する。
-2. 運用責任者がTSA、公開CA/CRLの出所、policy OID、時計精度、利用条件を確認し、信頼設定を承認する。
-3. 管理者がTemplate/Immutable、読取token、branch ruleset、人間のPRレビューを設定する。
-4. 著者が公開許諾済みPDF・著者情報・ライセンスを設定。合成データの実TSA試験後に本番公開する。
-5. 別環境で9資産を検証し、訂正・撤回・障害復旧・バックアップ復元を実施する。
-6. 独立したエンジニアがセキュリティレビューを行い、全重大指摘を回帰テスト付きで解消する。
+## 4. 実行タスクと依存関係
 
-**G6の進捗:** 公開時のpypdf strict構造検査、容量・ページ数・対話型機能制限、公式cffconvertと独立BibTeXパーサーによる公開前検査を追加（GitHub CIの実行結果が合格してから確定）。
-**依然として未達:** PDF/A/PDF仕様の網羅的適合性、依存配布物のhash lock、
-長期失効証拠保存/再タイムスタンプ、独立公開観測、DOI・外部保存。
-今回のテスト成功だけでこれらを完了扱いにしない。
+担当は役割で定義する。独立担当者が未選任なら、その作業はBLOCKED。架空の担当者やAIの自己承認で埋めない。
 
-最終判断は[RELEASE_READINESS.md](RELEASE_READINESS.md)のG1〜G7を用いる。
-[OPERATIONS.md](OPERATIONS.md)に失敗時の処置、[REVIEW_POLICY.md](REVIEW_POLICY.md)に人間の判断を記載。
+| ID | 作業・担当 | 前提 | 終了証拠 |
+|---|---|---|---|
+| R00 | 文書とIssue #5を本基準へ統一 / 開発担当 | 今回の要件 | 文書PR、矛盾とリンクの確認記録。実装完了は主張しない |
+| R01 | 承認済みPDF・資産・公開コードを固定 / 開発担当、所有者 | R00 | PDF指紋、ソースSHA、PR #29の差分レビュー・最終CI・統合後CI、公開対象一覧 |
+| R02 | 権限・リポジトリ作成方式・信頼設定を確定 / 所有者、TSA運用担当 | R00。R01と並行可 | Template・公開範囲・不変設定・ブランチ保護・必須レビューの読戻し、CA指紋と署名付きCRL、実行担当の承諾 |
+| R03 | 第1論文v1を発行・再取得 / 所有者、検証担当 | R01、R02 | Release URL・ID・タグ・コミット、全資産、GitHub証明検証、匿名取得、TSA再検証、復元結果。これでP1 |
+| R04 | 2リポジトリ各2版を実証 / 開発担当、別の利用担当 | R03 | 本短報を含む最低4 Release、テンプレート生成の来歴、v2後も同一のv1指紋、引用・データ関係の再検証 |
+| R05 | 異常系と別環境検証 / 検証担当 | R04。ケース設計はR01と並行可 | 8回以上の正常検証と20件以上の不正入力の結果、失敗理由、実通信/模擬通信の区別。これでP2 |
+| R06 | 公開観測・署名 / 独立観測者、別の検証担当 | R04。担当選任はR01から | 4版の匿名取得記録、別管理Ed25519鍵、鍵指紋の別経路確認、署名付き観測とTSA証拠 |
+| R07 | GitHub複製・オフライン復元 / 別管理保管者 | R04。R06と並行可 | 4版の不変ミラー、別保管した指紋、GitHub不通状態での4復元、保管・鍵更新・障害対応責任。R06と合わせP3 |
+| R08 | 人間の運用・独立監査・証拠更新 / 著者、編集担当、外部監査者 | 対象範囲の策定・選任はR01から。実試験はR03〜R07後 | G6・G7の署名付きレビュー、訂正・撤回演習、失効/期限/更新試験、重大・高リスクの未解決指摘0件 |
+| R09 | 最終受入・キット発行 / 所有者、リリース判定担当 | R05〜R08、G0〜G7全PASS | 固定SHAの全CI、全ゲートの承認台帳、v1.0.0不変Releaseと再取得検証。これでP4 |
 
-PASSは指定入力・環境での機能試験成功、FAILは再現可能な不具合、未確認は未試験を意味する。
-TSA時計、CA/CRLの出所、検証機時計、GitHub可用性の不確かさが残る。
-時刻トークンのaccuracyはTSAの署名した申告で、本キットが測定した誤差ではない。
+**最短の依存経路:** R01とR02 → R03 → R04 → R05/R06/R07 → R08の最終承認 → R09。独立担当者の選任は後回しにせずR01時点で始める。R06・R07・監査準備は可能な範囲で並行する。
 
-## 2026-11-06 — research objects and confidential commitments
+### R01の期限付き入力
 
-- [x] Optional public research-data, analysis-code and protocol inventory with
-      individual SHA-256, licenses, explicit public-confirmation flags and
-      declared dependency relationships.
-- [x] Deterministic TAR archive + JSON catalog, both signed indirectly through
-      the same immutable manifest and RFC 3161 token as the paper.
-- [x] Private-record HMAC-SHA256 receipts with per-record 256-bit offline keys;
-      no raw records or keys are uploaded.
-- [x] Standard-library offline TAR member verifier, safe bounds, tampering and
-      privacy regression tests; static reader catalog display.
-- [ ] Real TSA + immutable Release using a synthetic paper/data/private receipt;
-      the full external system integration is not yet demonstrated.
-- [ ] Independent medical/privacy threat assessment, access control, legal and
-      retention policy; no real patient material should be used in CI.
-- [ ] Off-GitHub archival and independent public-availability observation.
+承認済みPDFのSHA-256:
+`0860b735379fb1b9b223f5d535442dae8421f456d7ae1c6bf6ce8d3141a1b07c`
 
-See `docs/RESEARCH_OBJECTS.md`; a green CI proves behavior in the test environment,
-not the accuracy of medical records or a real-world public availability time.
+実TSA試験: [run 43279522755](https://github.com/Unjuno/openpreprint-kit/actions/runs/43279522755)。`first-paper-v1-live-tsa`成果物は2026-11-26 18:26:50 UTC、**2026-11-27 03:26:50 JST**に期限を迎える（2026-11-13のAPI読戻し）。その前に承認済みPDF・全証拠を取得し、指紋を別途保管する。これは作業時間の見積もりではなく、既存成果物の有効期限である。
 
+期限切れなら既に保存した同一指紋のPDFを使う。同一物を確保できなければ停止し、再組版による別バイト列を別版として確認する。失敗に合わせて承認指紋を変えない。以前の候補バンドルは`source_claim: null`なので、新公開先を追記して古いTSAを使い回さず、新manifestと新TSAを生成する。
 
-## 2026-11-06 — Verified timestamp, portable preservation, witness/owner tooling
+### R02で解消する公開経路の不一致
 
-- [x] Real external FreeTSA evidence for TWO synthetic paper/data/code/private
-  HMAC commitment versions; OpenSSL full-chain current CRL/CA/nonce/OID validation.
-- [x] Separate machine restoration of byte-identical v1/v2 evidence archives
-  with independently pinned ZIP digests and independently selected trust policy.
-- [x] Preserve v1 when v2 is created; reject changed paper, wrong archive pin,
-  ZIP traversal, duplicate members, symlinks and secret files.
-- [x] CLI for explicit owner changes to immutable Releases and toolkit template
-  setting (default read-only). Actual owner activation is not assumed.
-- [x] CLI for external Ed25519-signed anonymous public Release observation,
-  externally pinned public key and independent TSA verification.
-- [x] Hash-locked dependency and CI plan; real clean CI install required to
-  claim support for Python 3.10 / 3.12.
-- [ ] Actual real author-approved immutable Release; confirm GitHub published
-  assets, version continuity, off-repo verification and independent observer.
-- [ ] Off-GitHub external custodian with tested recovery and retention; independent
-  reviewer and long-term timestamp/signature-renewal policy.
+PR #29の現行publisherは通常の新規リポジトリを作り、テンプレート生成を行わない。したがって、**P1の成功だけではG1のテンプレート再利用試験にならない**。本短報を含む2つの受入リポジトリをテンプレート由来に揃えるため、公開前レビューで作成経路を整合させる。必要な変更は回帰テスト付きで行い、既存リポジトリの再利用・上書き禁止は維持する。整合前の一括コマンドを、全ゲートを満たすものとして案内しない。
 
-These are concrete acceptance tests, not a promise that an external operator
-will remain available forever. See [PRESERVATION_AND_WITNESS.md](PRESERVATION_AND_WITNESS.md).
+現接続のリポジトリ作成・管理設定操作が不足する場合、所有者が承認したGitHub UIまたは所有者自身の認証済みCLIで実施する。役割上のadmin表示と、実際に提供されるコネクタ操作は区別する。端末へ勝手に接続せず、権限迂回もしない。
 
-## 2026-11-08 — signed witness receipt time anchoring
+## 5. 公開手順と途中失敗
 
-- [x] RFC 3161 verification over arbitrary SHA-256 digests without weakening the
-      original Release manifest validation.
-- [x] Optional independently timestamped witness receipt binds both
-      observation JSON and Ed25519 signature in a domain-separated digest.
-- [x] Strict validation of the witness's expected repository/version and the
-      source identity claimed by the timestamped paper metadata.
-- [x] Reject partial/forged witness tokens, changed signatures, extra claims,
-      TSA failure, and untimestamped receipts when strict verification is requested.
-- [ ] Independent operator must actually run the observer on an anonymously
-      accessible, immutable GitHub Release and retain its own keys/evidence.
-- [ ] Independent storage custodian, human scholarly review and long-term
-      signature-renewal process remain operational blockers.
+手順は「公開先確認 → 公開入力固定 → 新しい存在時刻証拠 → 下書きへ全資産添付 → 再取得・バイト照合 → 不変設定の再読戻し → 公開 → GitHub attestation検証 → 匿名再取得・TSA検証」。作成直前の設定確認と公開の間には競合余地があるので、公開後も実状態を検査する。[S1][S2]
 
-## 2026-11-08 — Explicit evidence-scope verifier
+| 停止点 | 処置 |
+|---|---|
+| 公開前の権限不足、指紋不一致、CA/CRL不一致、TSA障害 | 公開しない。実際の原因を記録し、信頼根・検査・権限を弱めない |
+| 新リポジトリ/下書き作成後の失敗 | 到達段階・公開済み範囲・残資産を記録。自動ロールバックや自動再作成を主張しない |
+| 公開後の証明/再取得失敗 | PUBLIC_VERIFICATION_PENDINGまたはFAIL。発行済み資産を上書きせず、原因調査・追記訂正・必要なら新版へ |
+| 監査で重大/高リスクが発見 | 公開拡大とv1.0判定を停止。再現テスト→修正→全回帰→再監査 |
+| 担当者未選任、APIで設定不明 | BLOCKED/UNKNOWN。未確認を成功にも機能不在にも読み替えない |
 
-- [x] Test-first offline `verify_evidence.py` that rejects mixed paper/witness
-  copies, missing trusted TSA proof, wrong repository/version and witness key pin.
-- [x] Existence-only scope does not claim public access; witness scope requires
-  a separately pinned Ed25519 observer key and timestamped signed observation.
-- [x] Outputs parseable JSON with `verdict`, `scope`, and explicit independent
-  operator, authorship, scientific truth and first-publication disclaimers.
-- [ ] Real author-approved immutable GitHub Release, independent witness
-  operator, independent storage custodian and documented external audit.
+既存版を削除して見かけ上やり直さない。例外的な個人情報事故は公開拡大を止め、人間の事故対応手順に従う。秘密情報自体を公開Issueに添付しない。
 
-`PASS` in the chosen scope does not certify compliance with G3/G4/G5/G7.
+## 6. 証拠・変更管理・継続運用
 
-## 2026-11-08 — Independent custodian audit implementation
+各実施記録は、作業ID、対象リポジトリ/版/ソースSHA、実行者と独立性、環境・ツール版、期待結果、実結果、失敗理由、UTC観測日時、証拠の場所とSHA-256、検証者を持つ。mock、ローカル実処理、実GitHub公開を別フィールドにする。自己申告日時とTSAの署名時刻を混同しない。
 
-- [x] Bounded multi-version ZIP deposit with out-of-band input archive pins,
-  exact repository/tag binding and complete RFC 3161 verification.
-- [x] Deterministic catalog that must be pinned **outside** the custody store.
-- [x] Read-only auditor verifies complete archive inventory, exact ZIP bytes,
-  valid source metadata, and independently trusted TSA/CRL evidence per version.
-- [x] Fail on missing/extra historical versions, tampering, symlinks,
-  duplicate tags, stale CRLs and invalid trust sources; cannot overwrite deposit.
-- [ ] ACTUAL independent custodian, retention policy, periodic audits, access
-  controls, off-GitHub replication and owner-approved published Release.
-- [ ] Full LTV/historical revocation archival and renewal after TSA compromise.
+受入件数はG0〜G7で固定し、試験後に都合よく減らさない。新しい機能は既存ゲートの失敗を解消する場合だけv1.0へ追加する。基準を変更する場合は理由・影響・未達項目を明示した別の所有者承認を必要とする。
 
-A PASS from `custody.py` is a *local audit result*, not certification of the
-custodian or its future survival. See [CUSTODY.md](CUSTODY.md).
+運用開始時に担当者と手順を確定し、**週次の依存/警告トリアージ、月次の公開資産と信頼情報の点検、半年ごとのオフライン復元、TSA/証明書/アルゴリズム変更時の再受入**を実施する。これらは今後採用する運用頻度であり、本書を追加しただけで定期ジョブや人員が稼働したとはしない。失効情報は検証のたびに署名と有効期間を確認し、鍵更新は運用者が定めた期限より前に行う。
 
-## 2026-11-12 — GitHub-native evidence mirror
+## 7. v1.0に追加しない事項
 
-- [x] Code: mirror an independently pinned, timestamp-verified multi-version
-  custody snapshot to a second GitHub repository's immutable Release; verify
-  via anonymous HTTPS, SHA-256 pins and RFC 3161, with no Drive runtime.
-- [ ] Operations: an owner with authenticated GitHub CLI actually publishes
-  a mirror, and an independently managed observer verifies the public bytes.
-- [ ] Durability: separate account custody and verified offline export/restore
-  are evidenced; GitHub-wide failure remains a common-mode risk.
+DOI登録、検索/論文発見基盤、追加の独自Web UI、多数の投稿形式、PDF/A全面認証、臨床データ保管・同意管理システムはv1.1以降の別計画とする。ただし既存必須ゲートの重大欠陥を直す作業は除外しない。人間の査読記録機能は査読誌の認証ではない。
 
-See [GitHub preservation](GITHUB_PRESERVATION.md). Do not call the code's
-unit tests evidence of a real third-party archive or completed v1.0.
+完全な歴史的長期署名検証や10年後の可用性を、前方更新テストだけで実証済みにしない。G7の失効証拠・鍵更新・保守責任の要求は残す。承認済み範囲で保証できないことを明記し、第三者評価なしに安全宣言しない。
+
+## 8. 根拠と旧版
+
+[S1] [GitHub immutable releases](https://docs.github.com/en/code-security/concepts/supply-chain-security/immutable-releases): 下書き・添付・公開、資産/タグの固定と説明文の編集可能性。
+[S2] [Release integrity verification](https://docs.github.com/en/code-security/how-tos/secure-your-supply-chain/secure-your-dependencies/verify-release-integrity): Releaseと個別資産のattestation検証。
+[S3] [Workflow artifacts](https://docs.github.com/en/actions/how-tos/manage-workflow-runs/download-workflow-artifacts): 保持期限付き成果物は正式Releaseではない。
+一次資料の確認日: 2026-11-13。過去の進捗は[更新前ROADMAP](https://github.com/Unjuno/openpreprint-kit/blob/7b1fc1d34ede8aebeb01bd869350ef2140be528e/docs/ROADMAP.md)で保持する。

@@ -1,73 +1,60 @@
-# OpenPreprint Kit — v1.0 goal and objective release gates
+# OpenPreprint Kit v1.0 — 唯一の受入基準 G0〜G7
 
-## Single v1.0 goal
+基準版: 2026-11-13。作業順は[ROADMAP.md](ROADMAP.md)、現在の結果は[RELEASE_READINESS.md](RELEASE_READINESS.md)。本書は合格条件であり、未実施の作業を完了させるものではない。
 
-Publish and independently verify **one paper + disclosed public research data + analysis code** per public GitHub repository, with immutable versioned Releases, machine-checkable SHA-256 provenance, an independently trusted RFC 3161 existence-time token, and a separately managed signed public-access witness. A different custodian must restore and verify the bytes **without GitHub**.
+## 1. 判定範囲
 
-The kit is **not** a scholarly journal, formal peer-review certification, authorship or scientific-truth oracle, clinical electronic-health-record system, proof of initial publication time, or guarantee of ten-year future availability. Confidential originals and all private signing/HMAC keys must remain outside public GitHub. Real patient data require a separately assessed regulated-data workflow.
+**P1 第1論文発行**と**P4 キットv1.0.0完成**を区別する。第1論文はUnjuno / CC BY 4.0 / v1で承認済み。未査読プレプリントであり、内容の科学的正しさ・本人確認・初公開時刻は暗号検証の対象外。原稿の承認はキット全体の安全性承認ではない。
 
-## Release gates (ALL required)
+オンライン公開・複製はGitHubのみ。GitHubから書き出した保存物と別保管した指紋を使ってオフライン復元する。Google Driveや別クラウドは必須ではない。別のGitHubリポジトリは別の基盤障害領域ではない。
 
-| Gate | Owner | Verifiable acceptance | Status (2026-11-08) |
-|---|---|---|---|
-| G0: code/security | Engineer + human reviewer | Python 3.10/3.12 Ubuntu 24.04; **0 failed mandatory tests**, no skipped mandatory checks; distribution-hash locks and pinned Actions; 0 unresolved critical/high issues; RED→GREEN for repairs. | PARTIAL: 216 tests green in each Python 3.10/3.12 job ([CI 42408857827](https://github.com/Unjuno/openpreprint-kit/actions/runs/42408857827)); independent security sign-off remains a separate G7 gate |
-| G1: owner configuration | GitHub repository owner | Template enabled; 2 distinct public template-derived paper repos; immutable Releases enabled **before** publication; protected branch, required CI and human PR review readback. | BLOCKED |
-| G2: versioned publishing | Publisher + independent verifier | **2 repositories × 2 versions = 4** immutable Releases, including >=1 author-approved genuine paper; check every asset and GitHub attestation; v1 bytes unchanged after v2. | BLOCKED: 0 Releases |
-| G3: trusted TSA | TSA policy custodian + verifier | All 4 bundles validate signed imprint/nonce/OID/chain/current CRL under independently pinned CA; >=20 tamper/expired/revoked/wrong-policy samples produce **0 false PASS**; unknown accuracy labeled unknown. | PARTIAL: synthetic FreeTSA v1/v2 verified |
-| G4: public witness | External operator, **not** author/GitHub Actions | Anonymous GET of all 4 published Releases using separately controlled host/Ed25519 key, signed receipt plus optional RFC 3161 receipt timestamp; second verifier checks out-of-band key pin and exact assets. | BLOCKED |
-| G5: GitHub-native custody and offline portability | Separate GitHub archival operator + offline recovery verifier | All 4 immutable source versions replicated to another GitHub repository with distinct credentials; pinned catalog/receipt SHA-256 independently retained; all 4 archives anonymously downloaded and restored on a fresh machine offline after export. Operational retention and annual audit schedules required. GitHub-wide availability is NOT guaranteed. | BLOCKED: no real GitHub mirror or external operator |
-| G6: research governance | Author + human editorial/privacy lead | Real copyright/consent/COI review; no patient originals or secrets published; 1 human review process, 1 correction and 1 retraction exercise with history unchanged. | BLOCKED |
-| G7: independent security and long-term plan | Unrelated software/privacy reviewer | Signed security/privacy assessment for GitHub permissions, YAML/PDF/archives, TSA chain and historical CRLs, witness key and confidential data; renewal/re-timestamping documented and tested; high/critical issues fixed. | BLOCKED |
+## 2. 全必須ゲート
 
-**Decision:** PASS only if G0–G7 all have dated evidence, independent check and explicit owner sign-off. FAIL on accepted malicious content, privacy breach or integrity failure. Otherwise **UNCERTAIN/BLOCKED**; do not claim production v1.0. No real sensitive files in acceptance fixtures.
+| ID | 合格条件 | 最低限の証拠・承認者 |
+|---|---|---|
+| G0 コード・配布品質 | 発行対象SHAでPython 3.10/3.12の必須試験が全成功、必須スキップ0。依存配布物ハッシュ/Actions SHA固定。重大・高リスク未解決0。CodeQLは実行だけでなく警告を読んで判定 | CI原ログ・環境・ソースSHA・配布物指紋・警告トリアージ / 開発者とレビュー担当 |
+| G1 所有者設定・再利用 | Template有効。別々のテンプレート由来公開論文リポジトリ2つ。公開前のImmutable設定、保護ブランチ、必須CI/人間レビューを読み返す | 設定の読戻し・テンプレート由来の記録・操作権限の範囲 / 各所有者 |
+| G2 実公開・版管理 | 2論文リポジトリに各2版、最低4件の不変Release。最低1件は承認済み本短報。v2後もv1資産が不変。全Releaseと全資産のattestation、匿名取得、引用/研究資産の一致を検証 | Release ID/URL/版/ソースSHA、全資産指紋、gh release verify/verify-asset結果 / 発行者と検証担当 |
+| G3 TSAと否定試験 | 全4版の指紋/nonce/OID/署名/証明書連鎖/有効な署名付きCRLを別途選んだ信頼設定で検証。2環境で合計8回以上の正常検証。最低20不正ケースで誤受理0 | CA指紋と選定根拠、CRL・要求応答・原ログ・期待結果 / TSA運用担当と検証担当 |
+| G4 独立公開観測 | 著者と別の管理者/実行環境/秘密鍵で4版を匿名取得し署名。別経路で確認したEd25519公開鍵で別担当が検証。既定のpublic-observation経路に必要な観測記録のRFC3161証拠も保存 | 4署名記録、対象全資産、鍵指紋、観測者の独立性申告・確認 / 外部観測者と検証担当 |
+| G5 GitHub複製・オフライン復元 | 4版を別管理のGitHub不変ミラーへ保存。台帳/ZIP指紋はミラーと別経路で保持。実際にダウンロードした4保存物をGitHub接続なしで新環境へ復元し完全照合 | ミラーURL・管理分離・指紋・4復元ログ・保管と点検責任 / 別管理保管者 |
+| G6 人間の編集・個人情報管理 | 本文/データの権利・公開同意・COI確認。実人間によるレビュー過程1件、訂正演習1件、撤回演習1件で版/履歴を保持。実患者原本・秘密鍵を公開しない | 人間の判断・応答・対象ハッシュ。演習は演習と表示し架空の本番撤回にしない / 著者、編集・プライバシー担当 |
+| G7 独立セキュリティ・証拠寿命 | 固定SHAに対する外部のセキュリティ/プライバシー報告。重大・高リスク未解決0。期限・失効・CA更新・証拠更新・旧失効証拠保存・障害復旧を試験し責任者を確定 | 署名付き監査、指摘と回帰結果、ライフサイクル試験・継続点検手順 / 実装者と別の監査者 |
 
-## H / T / D / C / U acceptance contract
+既存のG0〜G7を統一したものであり、達成していないゲートを免除しない。旧RELEASE_READINESSの独自G1〜G7番号は廃止し、本表の番号だけで判定する。
 
-**H (falsifiable hypothesis):** Four immutable releases, verified independently on two environments (8 release verifications total), yield no erroneous acceptance of 20 intentionally modified/unauthorized samples. All historical releases retain original bytes.
+## 3. P1だけを完了と呼べる条件
 
-**T (minimum verification):** 2 repo × 2 releases, >=8 off-machine bundle checks, 4 signed witness observations, 4 offline restorations from GitHub-exported archives, 20 intentionally invalid cases, one real author-approved manuscript, one human-led correction/retraction rehearsal and one independent security/privacy review. Fail fast on any false acceptance or leaked secret.
+第1論文v1の承認済み入力と公開先ソースを固定し、新たなmanifest/TSA証拠を作る。実際の専用公開Releaseについて、非draft・immutable、全資産の匿名取得、完全照合、GitHub attestation、TSA署名と信頼設定を検証する。成功記録が揃えばP1は完了。ただし観測者の独立性・学術査読・P4完成は主張しない。
 
-**D (decision):** `PASS` iff all gates independently evidenced. `FAIL` if any tamper/secret leak is incorrectly accepted. `UNCERTAIN/BLOCKED` for missing owner permissions, TSA precision, witness independence or custody evidence. Do not silently downgrade validation.
+既存のローカル自己適用、CI成果物、source_claimがない以前の候補へのTSA付与は、P1の代替にならない。テンプレート由来でない公開先をG1の成功と数えない。
 
-**C (counterhypotheses):** One operator controls both author and witness keys; GitHub mutable settings race the release; TSA/CRL trust expires or is revoked; archive/digest both lost; semantic/clinical claims are untrue even when bytes match. Exercise controllable attacks; require external evidence for non-testable claims.
+## 4. 最低試験集合とH / T / D / C / U
 
-**U (uncertainty):** TSA signed accuracy may be absent; TSA operation and clock, verifier's clock, CA revocation history, offsite custodian continuity, and human consent are unmeasured. No basis to compute combined standard uncertainty `u_c` or coverage factor `k`; record **UNKNOWN**, not a fabricated estimate. **Ten years of verifiability is a maintenance target**, not a present-tense measured fact.
+| 区分 | 定義 |
+|---|---|
+| H 反証可能な要求 | 固定4版を別環境で検証・復元でき、意図的な改変/誤った信頼設定を受理しない |
+| T 最小試験 | 2リポジトリ各2版、正常検証8回以上、独立観測4件、オフライン復元4件、否定試験20件以上、人間のレビュー/訂正/撤回と独立監査 |
+| D 判定 | 対象SHAの全ゲートが証拠と承認を伴えばPASS。誤受理・漏えい・履歴破壊はFAIL。証拠/権限/担当者の欠落はBLOCKED。観測不能はUNKNOWN。P4の出荷判断は未達が一つでもあればNO-GO |
+| C 破れ方 | 著者と観測者が同じ鍵を支配、公開直前の設定競合、TSA失効、全資産と台帳の同時置換、期限付き成果物消失、GitHub全体停止 |
+| U 不確かさ | TSA精度が未記載ならUNKNOWN。機械時計、CRLの鮮度、運用者の独立性と保存継続性を別に記録。根拠なしに合成不確かさや包含係数を数値化しない |
 
-## Work order
+20ケースの内訳は実行前に固定する。最低限、PDF改変・データ改変・コード改変・manifest改変・資産欠落・余計なファイル・別リポジトリ・別版・誤CA指紋・誤policy OID・nonce不一致・署名偽造・失効TSA・期限切れTSA・古いCRL・ZIPパストラバーサル・重複member・symlink・誤観測鍵・観測後の再署名を含む。実GitHub効果と模擬通信を区別し、必要な実公開をmockで代替しない。
 
-1. Close YAML duplicate-key ambiguity with test-first patch and CI.
-2. Owner enables template, immutable Releases, branch checks; retain readback, **without sharing tokens in chat**.
-3. Publish two synthetic repository version sequences then one author-approved real paper; verify attestations, historical stability, citations and downloadability.
-4. Obtain an independently operated witness, a separately administered GitHub archive repository, and a tested offline export/restore with digest pins; a second GitHub repo is not another cloud failure domain.
-5. Run consent, review, correction, retraction and external security/privacy gates.
-6. Implement/test renewal, historical revocation evidence and durable discovery/identifiers; re-run all gates before v1.0 declaration.
+この件数は受入集合の下限であり、母集団の不具合率や暗号方式の安全性を統計的に証明するものではない。単なるテスト追加数は進捗指標にしない。
 
-Audit evidence: [AUDIT_2026-11-08.md](AUDIT_2026-11-08.md). Tracking: GitHub issue #5. This gate supersedes broad implementation-stage checkboxes as the **v1.0 production decision**.
+## 5. 証拠形式と承認
 
-## 2026-11-12 — GitHub-only online storage decision
+各ゲートに、gate_id、対象repo/tag/commit、実行環境、operator、独立性の根拠、expected/actual、実通信かmockか、verdict、observed_at_utc、証拠URIとsha256、reviewer、checked_at_utcを記録する。未取得値はnull/UNKNOWNとし、推測で埋めない。日時はローカル観測、GitHub報告published_at、TSA署名時刻を区別する。
 
-**Online publication and replication backend: GitHub Releases only.**
-`github_mirror.py` allows an existing public source Release's verified custody
-store to be mirrored into a **different** immutable GitHub Release. Anonymous
-recovery is verified with separately pinned catalog and receipt hashes and a
-separately approved TSA policy. Google Drive is not a required acceptance
-mechanism. This supersedes any implied Drive preference in earlier notes.
+PASSの判定者は実行者と分けることを原則とし、G4/G5/G7は管理主体の分離を必須とする。同じアカウントの別ランナーやAI自己点検は独立した人間の監査ではない。資格情報・患者原本・秘密鍵を証拠台帳に入れない。
 
-**G5 is NOT automatically satisfied by a second GitHub repository.**
-Separate-owner GitHub mirroring reduces repository/account-specific risk, but
-is still one hosting provider. The existing GitHub-unavailable restoration test
-requires an *actual exported* store and separately held hashes on an offline
-machine; it does not demand any specific second cloud vendor. Human custody,
-retention, renewal, and future availability require recorded evidence.
+期限切れや鍵侵害後の歴史的検証は、前方更新が実装されたことだけでは解決しない。G7では保存した失効証拠の用途・検証可能な時間範囲・停止条件・更新手順を外部監査者が確認する。完全LTV/長期可用性の未達を隠してPASSにしない。
 
-## 2026-11-12 — source Release provenance check for mirrors
+## 6. 基準の凍結と除外
 
-The mirror read-only `verify --require-source-release` option independently GETs each original source Release from GitHub, checks `immutable=true`, confirms the exact asset inventory and compares every asset byte against the pinned archive. Failures do not leave a partially verified output. Without the flag, disaster recovery remains possible when a source repository disappears, but the output explicitly records `source_publication=NOT_CHECKED`. Anonymous mode does **not** cryptographically verify GitHub/Sigstore release attestations, so G2 still requires `gh release verify` and independent attestation evidence. Neither mode establishes operator independence.
+GitHub専用のオンライン保管という承認済み要件を反映する。外部クラウド2コピーを要求する旧Issue #5の記述は、本基準に置き換える。オフライン復元、別管理者、独立監査、最低受入件数は免除しない。
 
-## 2026-11-12 — automated CodeQL scan (G0/G7 supporting evidence)
+DOI、Pages、独自UI、PDF/A全面認証、電子カルテ機能、十年間の可用性実測はv1.0の新規必須条件に追加しない。既存ゲートの重大欠陥を直す作業は除外しない。基準変更は理由と影響を明示した所有者承認を要し、古い未達結果を成功へ書き換えない。
 
-The pinned `github/codeql-action` workflow runs Python `security-extended` queries on PRs, pushes to `main`, a weekly schedule and explicit dispatch. The report is uploaded to GitHub Code Scanning using only `contents: read`, `actions: read` and `security-events: write`; it does not consume clinical records or repository secrets. A successful scan means the scanner executed successfully, **not** that no vulnerabilities exist, that Code Scanning alerts are resolved, or that G7 independent security/privacy review is fulfilled. Operators must separately review alerts and retain assessment evidence.
-
-## 2026-11-12 — forward renewal implementation (G7 partial only)
-
-New `scripts/renewal.py` can issue an opt-in fresh RFC 3161 timestamp over an explicit SHA-256-linked statement about an already verified preservation ZIP, verify a 1..16-step chain with independently selected current TSA trust policies, and export/recover deterministic public-only ZIP assets suitable for separate GitHub Immutable Releases. Real ephemeral OpenSSL CA/TSA tests cover two different CA roots, corruption, archive pin mismatch and absent proof. This **does not** constitute RFC 4998 ERS, historical CRL/LTV validation, provider-independent custody, any public Release issuance or independent security review. G7 stays BLOCKED until actual independent review and sustained algorithm/CA lifecycle evidence.
+過去の基準は[2026-11-13更新前の文書](https://github.com/Unjuno/openpreprint-kit/blob/7b1fc1d34ede8aebeb01bd869350ef2140be528e/docs/V1_ACCEPTANCE.md)で保存する。公式仕様: [不変Release](https://docs.github.com/en/code-security/concepts/supply-chain-security/immutable-releases)、[attestation検証](https://docs.github.com/en/code-security/how-tos/secure-your-supply-chain/secure-your-dependencies/verify-release-integrity)。
