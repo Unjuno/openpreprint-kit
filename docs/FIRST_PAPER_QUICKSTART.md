@@ -44,7 +44,7 @@ The exact PDF from run **43279522755** is version controlled at manuscripts/open
 
 The launcher checks this fingerprint **before GitHub authentication**. It never replaces the approved PDF with a re-typeset one. The original prepublication proof under evidence/first-paper/approved-v1/ has source_claim: null and cannot be labeled as proof of the new repository's public release. Publication creates a **new** source-bound manifest and obtains a **new** RFC 3161 token.
 
-The publication output is retained under the printed temporary evidence directory, including publication/publication-report.json, the verified preservation ZIP and the digest if the prepublication stage succeeds. A result is successful only when status=PASS and state=VERIFIED_PUBLIC_PREPRINT.
+The publication output is retained under a new directory within the owner's home/OpenPreprintKitEvidence, not the OS temporary cache. The printed directory contains publication/publication-report.json, the verified preservation ZIP and the digest if the prepublication stage succeeds. Copy these public evidence artifacts and their fingerprint to independently managed durable custody; a home folder alone is not permanent preservation. A result is successful only when status=PASS and state=VERIFIED_PUBLIC_PREPRINT.
 
 ## Partial failure and read-only recovery
 
