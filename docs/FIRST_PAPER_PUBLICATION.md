@@ -56,3 +56,23 @@ The supplied tests execute real paper-input packaging and ephemeral-TSA signatur
 The pre-promotion archive is the recovery input. `--verify-existing` requires its independently retained digest, expected repository and a separately selected current TSA policy. It performs no POST/PUT/PATCH/DELETE, no timestamp issuance and no release creation. Each invocation uses a new output directory and retains its own PASS/FAIL report. Duplicate asset names, changed bytes, wrong tag target, private/absent/non-immutable Releases and unavailable attestations fail closed. A later successful read-only check does not rewrite the earlier failure report.
 
 See the recovery command in [FIRST_PAPER_QUICKSTART.md](FIRST_PAPER_QUICKSTART.md). A fixture-only GitHub transport test is not a live public acceptance. Authenticated CLI attestation checks and anonymous downloads are distinct; both must succeed.
+
+## Public Git source snapshot verification (2026-11-13)
+
+A release tag pointing at the declared commit does not establish that the
+**paper, data and analysis code at that commit** equal the published release.
+The first-paper publisher now fetches these source files anonymously from
+`raw.githubusercontent.com` at the 40-character source commit, separately from
+Release-asset downloads. It compares their exact SHA-256 and byte lengths
+against `paper.pdf` and each regular member of the verified, declared
+`research-assets.tar`. The check runs **before the draft is promoted** and again
+when the public Release is verified or read-only recovery is performed.
+
+An absent, changed, oversized, redirected or inaccessible source file fails
+closed. A transient CDN propagation failure must not be overridden by disabling
+source verification. Inspect the saved journal and the GitHub repository; never
+replace an already published immutable Release to repair provenance. Tests mock
+GitHub transport and exercise real paper/research archive parsing; this check
+cannot establish server independence, human authorship or scientific validity.
+The verifier uses a bounded anonymous HTTPS connection with ambient proxies
+suppressed and permits no redirects.

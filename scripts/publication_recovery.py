@@ -70,6 +70,12 @@ def _verify_remote(gateway, repository: str, bundle: Path, policy_path: Path,
     from observation import download_bundle
     from verify_evidence import verify_all
     release = _release_readback(gateway, repository, bundle, commit)
+    # A tag/manifest may name the right commit while its source bytes differ.
+    # Check the actual public PDF/data/code at that immutable commit via an
+    # independent anonymous HTTPS retrieval path, before claiming provenance.
+    from source_provenance import verify_source_snapshot
+    source = verify_source_snapshot(repository, commit, bundle,
+                                    lambda path: gateway.anonymous_source(repository, commit, path))
     attestation = gateway.command(['release', 'verify', VERSION, '--repo', repository, '--format', 'json'])
     json.loads(attestation)
     (output / 'github-release-attestation.json').write_text(attestation, encoding='utf-8')
@@ -82,7 +88,7 @@ def _verify_remote(gateway, repository: str, bundle: Path, policy_path: Path,
                           expected_paper_sha256=paper_sha256)
     return {'release_url': f'https://github.com/{repository}/releases/tag/{VERSION}',
             'release_id': release['id'], 'immutable': True,
-            'tag_target_commit': commit, 'anonymous_integrity': 'VERIFIED',
+            'tag_target_commit': commit, 'source_snapshot': source, 'anonymous_integrity': 'VERIFIED',
             'timestamp': verified, 'github_attestation': 'VERIFIED_BY_GH_CLI',
             'assets': _files(public)}
 

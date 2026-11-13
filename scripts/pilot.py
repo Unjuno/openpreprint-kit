@@ -81,6 +81,10 @@ class GitHub:
             raise ValueError(f'GitHub {method} failed (HTTP {status}); inspect owner permissions')
         return json.loads(body) if body.strip() else None
 
+    def anonymous_source(self, repository: str, commit: str, path: str) -> bytes:
+        from source_provenance import fetch_source
+        return fetch_source(repository, commit, path)
+
     def anonymous(self, repository: str, version: str, name: str) -> bytes:
         from observation import fetch_asset
         return fetch_asset(repository, version, name)
