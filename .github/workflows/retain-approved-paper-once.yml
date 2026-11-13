@@ -1,0 +1,98 @@
+name: Retain approved paper input once (not a Release)
+
+on:
+  push:
+    branches: ['maintenance/retain-approved-paper-20261113']
+    paths: ['.github/workflows/retain-approved-paper-once.yml']
+
+permissions:
+  contents: read
+
+jobs:
+  retain:
+    if: github.repository == 'Unjuno/openpreprint-kit' && github.ref == 'refs/heads/maintenance/retain-approved-paper-20261113'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      contents: write
+      actions: read
+    env:
+      GH_TOKEN: ${{ github.token }}
+      EXPECTED_HEAD: ${{ github.sha }}
+    steps:
+      - name: Download only the already approved fixed artifact
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/approved-paper-input"
+          gh run download 43279522755 --repo Unjuno/openpreprint-kit --name first-paper-v1-live-tsa --dir "$RUNNER_TEMP/approved-paper-input"
+      - name: Verify fixed hashes and retain only approved public evidence on this branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import base64, hashlib, json, os, re, subprocess
+          from pathlib import Path
+          repo = 'Unjuno/openpreprint-kit'
+          branch = 'maintenance/retain-approved-paper-20261113'
+          expected = os.environ['EXPECTED_HEAD']
+          if os.environ.get('GITHUB_REPOSITORY') != repo or os.environ.get('GITHUB_REF') != 'refs/heads/' + branch:
+              raise SystemExit('Ref/repository boundary failed')
+          def api(method, path, payload=None):
+              args=['gh','api','--hostname','github.com','--method',method,path,'-H','Accept: application/vnd.github+json','-H','X-GitHub-Api-Version: 2026-03-10']
+              if payload is not None: args += ['--input','-']
+              result=subprocess.run(args,input=None if payload is None else json.dumps(payload),capture_output=True,text=True,timeout=45)
+              if result.returncode: raise SystemExit('GitHub request failed; no force push or rollback attempted')
+              return json.loads(result.stdout) if result.stdout.strip() else None
+          source=Path(os.environ['RUNNER_TEMP'])/'approved-paper-input'
+          pins={
+              'first-paper-v1.pdf':'0860b735379fb1b9b223f5d535442dae8421f456d7ae1c6bf6ce8d3141a1b07c',
+              'v1-preservation.opk.zip':'3e78455af37a0872d994d9d3c12eca6a1db1568a86671d55aa71ac020aa76a3d',
+              'v1-existence-receipt.json':'13c05515ecd2a11aa171885d461d87d5510d8bf19003e1239b309d3dc4b11386',
+          }
+          bodies={}
+          for name, pin in pins.items():
+              file=source/name
+              if file.is_symlink() or not file.is_file() or file.stat().st_size>1024*1024:
+                  raise SystemExit('Unsafe approved artifact file')
+              body=file.read_bytes()
+              if hashlib.sha256(body).hexdigest()!=pin: raise SystemExit('Approved file SHA-256 mismatch: '+name)
+              bodies[name]=body
+          receipt=json.loads(bodies['v1-existence-receipt.json'])
+          if receipt.get('source_commit')!='7b1fc1d34ede8aebeb01bd869350ef2140be528e' or receipt.get('paper_release_published') is not False:
+              raise SystemExit('Unexpected prepublication evidence scope')
+          ref='repos/'+repo+'/git/ref/heads/'+branch
+          if api('GET',ref)['object']['sha']!=expected: raise SystemExit('Branch advanced; do not overwrite')
+          parent=api('GET','repos/'+repo+'/git/commits/'+expected)
+          retained={
+              'manuscripts/openpreprint-kit/approved-v1/paper.pdf':bodies['first-paper-v1.pdf'],
+              'evidence/first-paper/approved-v1/prepublication.opk.zip':bodies['v1-preservation.opk.zip'],
+              'evidence/first-paper/approved-v1/original-existence-receipt.json':bodies['v1-existence-receipt.json'],
+          }
+          note={
+              'schema_version':1,'scope':'RETAINED_APPROVED_PREPUBLICATION_INPUT_NOT_A_RELEASE',
+              'origin_run':43279522755,'origin_artifact':'first-paper-v1-live-tsa',
+              'origin_commit':'7b1fc1d34ede8aebeb01bd869350ef2140be528e',
+              'files':{name:{'sha256':hashlib.sha256(body).hexdigest(),'size_bytes':len(body)} for name,body in retained.items()},
+              'public_paper_release':False,
+              'trust_note':'Git-tracked copies preserve bytes, not GitHub-independent permanence. Archived CA/CRL are evidence copies, not automatic trust roots.',
+              'next_publication':'New source-bound manifest requires a fresh TSA token; never relabel this original proof.',
+          }
+          retained['evidence/first-paper/approved-v1/retention.json']=(json.dumps(note,sort_keys=True,indent=2)+'\n').encode()
+          inventory=api('GET','repos/'+repo+'/git/trees/'+parent['tree']['sha']+'?recursive=1')
+          if inventory.get('truncated') or set(retained)&{item['path'] for item in inventory['tree']}:
+              raise SystemExit('Existing evidence or incomplete tree; never overwrite')
+          entries=[]
+          for name,body in retained.items():
+              blob=api('POST','repos/'+repo+'/git/blobs',{'encoding':'base64','content':base64.b64encode(body).decode('ascii')})
+              entries.append({'path':name,'type':'blob','mode':'100644','sha':blob['sha']})
+          tree=api('POST','repos/'+repo+'/git/trees',{'base_tree':parent['tree']['sha'],'tree':entries})
+          commit=api('POST','repos/'+repo+'/git/commits',{'message':'evidence: retain exact approved v1 PDF and original prepublication proof','tree':tree['sha'],'parents':[expected]})['sha']
+          if not re.fullmatch('[0-9a-f]{40}',commit): raise SystemExit('Invalid commit response')
+          if api('GET',ref)['object']['sha']!=expected: raise SystemExit('Branch advanced before update')
+          api('PATCH','repos/'+repo+'/git/refs/heads/'+branch,{'sha':commit,'force':False})
+          if api('GET',ref)['object']['sha']!=commit: raise SystemExit('Branch update readback mismatch')
+          print('RETAINED approved bytes on isolated branch: '+commit)
+          print('NOT a paper Release, independent witness or immutable-publication certificate.')
+          Path(os.environ['GITHUB_STEP_SUMMARY']).write_text('Approved evidence retained at `'+commit+'`. Exact hashes checked. No Release or repository settings changed.\n')
+          PY
