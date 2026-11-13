@@ -55,10 +55,13 @@ class Authority:
         ssl("req", "-new", "-newkey", "rsa:2048", "-nodes",
             "-keyout", root / "tsa.key", "-out", root / "tsa.csr",
             "-subj", "/CN=Ephemeral test timestamp signer")
+        # OpenSSL config files treat backslashes as escapes on Windows.
+        # Use slash-form absolute paths on all platforms.
+        root_config = root.resolve().as_posix()
         self.config.write_text(f"""[ca]
 default_ca=ca_default
 [ca_default]
-dir={root}
+dir={root_config}
 new_certs_dir=$dir/newcerts
 database=$dir/index
 serial=$dir/serial
@@ -91,10 +94,10 @@ authorityKeyIdentifier=keyid,issuer
         self.tsa_config.write_text(f"""[tsa]
 default_tsa=signer
 [signer]
-serial={root}/tsserial
-signer_cert={root}/tsa.pem
-certs={root}/root.pem
-signer_key={root}/tsa.key
+serial={root_config}/tsserial
+signer_cert={root_config}/tsa.pem
+certs={root_config}/root.pem
+signer_key={root_config}/tsa.key
 signer_digest=sha256
 default_policy={OID}
 other_policies=1.2.3.4.2
