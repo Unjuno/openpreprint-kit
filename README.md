@@ -1,8 +1,8 @@
 # OpenPreprint Kit
 
-## First paper: approved v1 manuscript, not yet a published Release (2026-11-13)
+## First paper: v1 immutable GitHub Release published (2026-11-14)
 
-The [first OpenPreprint Kit manuscript](manuscripts/openpreprint-kit/README.md) is now prepared with user-confirmed display author **Unjuno** and manuscript licence **CC BY 4.0**. The kit itself is the study's subject and first self-application test. Its v1 candidate must receive a **new** timestamp because the older draft's signed digest refers to different bytes. The manuscript remains **unreviewed and without an immutable GitHub Release**; author identity and ownership are not independently authenticated. The reusable template root remains v0/UNSPECIFIED.
+The [first OpenPreprint Kit manuscript](manuscripts/openpreprint-kit/README.md) is publicly available as [the immutable paper v1 Release](https://github.com/Unjuno/openpreprint-kit-paper/releases/tag/v1) (Release ID 444659219; GitHub API: `draft=false`, `immutable=true`, 11 assets). The published `paper.pdf` has the exact approved SHA-256 `0860b735379fb1b9b223f5d535442dae8421f456d7ae1c6bf6ce8d3141a1b07c`. The [owner's publication evidence](https://github.com/Unjuno/openpreprint-kit/issues/5#issuecomment-6863092530) records a **separate approved continuation** after the initial Windows citation-validator subprocess failed; it reports fresh RFC 3161 validation, Release and asset attestations, anonymous retrieval and offline restore. Both the original failure and continuation reports are retained outside the repository. The publication was owner-controlled, **not independent human verification**; the paper is unreviewed, and first-publication time, author identity, scientific correctness, independent custody and toolkit v1.0 acceptance remain unproven. The reusable template root remains v0/UNSPECIFIED. **Do not re-run the one-time `--publish` launcher against this existing paper repository.**
 
 ## GitHub-only publication and preservation (2026-11-12)
 
@@ -21,7 +21,7 @@ not by itself prove independent custody or full-site disaster recovery. Such
 claims require an operator-controlled offline export, independently held hashes
 and an actual restore test. The v1.0 acceptance gates remain strict.
 
-**v1.0 release decision:** [2026-11-08 audit](docs/AUDIT_2026-11-08.md) · [objective acceptance gates](docs/V1_ACCEPTANCE.md). Not yet production-ready: no approved actual Releases, independent public witness or external custodian.
+**v1.0 release decision:** [objective acceptance gates](docs/V1_ACCEPTANCE.md) · [current readiness](docs/RELEASE_READINESS.md). First **paper** Release v1 is public, but toolkit **software** v1.0.0 is still NO-GO: the remaining multi-version tests, independent public witness, separate custodian, human review and security/privacy audit are not accepted.
 
 **GitHubを論文公開の本体にする、再利用可能なプレプリント公開キット。**
 
@@ -150,7 +150,7 @@ trust boundaries and recovery see [Custody runbook](docs/CUSTODY.md).
 | GitHub公開 | 手動起動。公開前APIガードとdraft再ダウンロード検証 |
 | レビュー/応答/訂正/懸念/撤回 | 版とPDF/報告書ハッシュに結合。CIで既存記録の変更を拒否 |
 | 読者ページ | 静的HTML生成。撤回・懸念を明示。自動デプロイなし |
-| 実TSA・実論文での運用、独立レビュー | 合成データで外部TSA検証済み。実論文公開・独立レビューは未実施 |
+| 実TSA・実論文での運用、独立レビュー | 第1論文v1の実GitHub Immutable Release公開済み（P1）。別利用者による4版運用受入と独立人間レビューは未達 |
 | 公開観測・保管、DOI、長期保存 | 観測/保管CLIは実装済み。独立運用・DOI・長期保証は未達 |
 
 ## Forward timestamp renewal (experimental)
