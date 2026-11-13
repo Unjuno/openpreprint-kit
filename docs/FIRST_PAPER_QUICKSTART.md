@@ -1,40 +1,64 @@
 # 第1論文の最終発行 / First-paper final publication
 
-## Initial owner setup (not performed by a remote desktop)
+## Cross-platform owner launcher
 
-The toolkit must be a public Template repository. The owner enables it through GitHub settings and confirms the change. New paper repositories are generated with `--template`, and `template_repository.full_name` is checked before any scientific input is committed. Existing repositories are never reused or overwritten. The publisher does not modify the toolkit's administration settings.
+The approved first paper is published by the **same Python program** on Windows, macOS, and Linux. The former Bash launcher is retained for existing Linux users, but is no longer the recommended entry point. No OS-specific publication/verification logic is added; the portable launcher invokes the existing fail-closed scripts/first_paper_publish.py.
 
-On Linux, with Python 3.10+ and venv, GitHub CLI supporting Release verification, curl, OpenSSL 3 and sha256sum, authenticate using the owner's chosen GitHub mechanism. No passwords or tokens are sent to chat.
+**Prerequisites:** CPython 3.10+ (Python 3.12 is the reference configuration), OpenSSL **3** executable on PATH (not LibreSSL), GitHub CLI gh with release verify and verify-asset support, and an owner-authenticated GitHub account authorized to create a new public repository and enable immutable releases. Installed tools and the GitHub authentication state are checked before installing packages or publishing. Git is not required by the Python launcher. Never paste tokens into chat.
 
-```bash
-gh auth login --hostname github.com
-bash scripts/publish_first_paper.sh --plan
-bash scripts/publish_first_paper.sh --publish
-```
+The existing public toolkit must have **Template repository** enabled. The publication code itself creates **one new** template-derived Unjuno/openpreprint-kit-paper and checks the template origin. It refuses to reuse or overwrite an existing destination. The source repository's rules and contents are not modified by the publisher.
 
-`--plan` is offline and side-effect free. `--publish` creates one NEW **Unjuno/openpreprint-kit-paper**, from the public template, enables/reads back immutability on that NEW repository, uploads the approved scientific inputs and publishes v1 after staging checks. It does NOT imply general-production acceptance or independent review.
+Run from a downloaded or cloned toolkit source snapshot.
 
-## Stable approved input
+**macOS / Linux terminal:**
 
-The exact PDF from run **43279522755** is now version controlled at `manuscripts/openpreprint-kit/approved-v1/paper.pdf`. Its SHA-256 is:
+    python3 scripts/publish_first_paper.py --plan
+    python3 scripts/publish_first_paper.py --check-pdf
+    python3 scripts/publish_first_paper.py --preflight
+    python3 scripts/publish_first_paper.py --publish
 
-`0860b735379fb1b9b223f5d535442dae8421f456d7ae1c6bf6ce8d3141a1b07c`
+On macOS, install OpenSSL 3 and ensure its executable directory precedes the system LibreSSL on PATH. For example, with Homebrew's openssl@3, run:
 
-The launcher checks this fingerprint BEFORE authentication and package installation. It no longer downloads a 14-day Actions artifact. A preview, re-typeset document, or same-named file with different bytes is rejected. The original prepublication proof is retained under `evidence/first-paper/approved-v1/`; it is NOT relabeled as a published proof. Source-bound publication always requires a fresh timestamp.
+    export PATH="$(brew --prefix openssl@3)/bin:$PATH"
 
-## Failure and subsequent checks
+**Windows PowerShell (Python 3.12 installed):**
 
-A verified `first-paper.opk.zip` and its fingerprint are saved **before** public promotion. An unavailable attestation after publication does not destroy recovery evidence. Do not rerun creation against an existing repo or delete immutable history. Use read-only recovery with a NEW output directory instead:
+    py -3.12 scripts/publish_first_paper.py --plan
+    py -3.12 scripts/publish_first_paper.py --check-pdf
+    py -3.12 scripts/publish_first_paper.py --preflight
+    py -3.12 scripts/publish_first_paper.py --publish
 
-```bash
-python scripts/first_paper_publish.py --verify-existing \
-  --repository Unjuno/openpreprint-kit-paper \
-  --archive /retained/first-paper.opk.zip \
-  --archive-sha256 INDEPENDENTLY_RETAINED_ZIP_SHA256 \
-  --policy /trusted/current-timestamp-policy.json \
-  --out /new/read-only-verification
-```
+On Windows, install gh and OpenSSL 3 using trusted distributions and ensure both executables are on PATH. The launcher chooses the platform-specific virtual-environment interpreter without Bash, curl or sha256sum.
 
-This verifies archived and anonymously fetched bytes, source tag/commit, GitHub release and asset attestations, and RFC 3161 under independently selected current trust. It does not publish, reissue a timestamp, modify settings, or overwrite previous reports. It is suitable for an operator's periodic read-only check. Scheduling it does not establish observer independence or guarantee availability; certificate/CRL changes and high-severity alerts still require responsible review.
+**Smartphone / browser:** There is **no native iOS/Android publisher and no one-tap browser publication workflow**. Where GitHub Codespaces is available to the repository owner, a browser-based Codespace provides a Linux terminal; the owner can use the same Python launcher there after checking available gh authentication and OpenSSL 3. This is a cloud-computer execution path, not a claim of an independently secured mobile app, and Codespaces availability/billing may differ. Never embed a broad-scope credential into a public workflow just to obtain a mobile button.
 
-Detailed boundaries: [FIRST_PAPER_PUBLICATION.md](FIRST_PAPER_PUBLICATION.md). Author Unjuno / CC BY 4.0 / v1 remain approved. A successful local/mock test is never described as a real public Release.
+All modes except **explicit --publish** are non-publishing. --plan is fully offline and creates no files. --check-pdf checks only the approved byte fingerprint, offline. --preflight checks tooling and read-only GitHub authentication/template state; it does not create repositories. --publish installs hash-locked Python dependencies into a new temporary venv outside the toolkit, downloads the pinned FreeTSA CA and current signed CRL using TLS and no redirects, and invokes the same existing public publication/verification implementation. If the chosen CA has changed or the CRL cannot be verified, the process must stop; do not weaken validation.
+
+**Portability claim:** GitHub Actions' read-only portable-first-paper.yml covers Python launcher plan, approved-PDF digest and regression tests on Linux, macOS, and Windows. This is a **smoke test**, not evidence of a real platform-specific publication. Actual GitHub release creation, an independently chosen TSA policy, attestation and anonymous restore require separate end-to-end acceptance.
+
+## Stable approved input and evidence
+
+The exact PDF from run **43279522755** is version controlled at manuscripts/openpreprint-kit/approved-v1/paper.pdf. Its SHA-256 is:
+
+    0860b735379fb1b9b223f5d535442dae8421f456d7ae1c6bf6ce8d3141a1b07c
+
+The launcher checks this fingerprint **before GitHub authentication**. It never replaces the approved PDF with a re-typeset one. The original prepublication proof under evidence/first-paper/approved-v1/ has source_claim: null and cannot be labeled as proof of the new repository's public release. Publication creates a **new** source-bound manifest and obtains a **new** RFC 3161 token.
+
+The publication output is retained under the printed temporary evidence directory, including publication/publication-report.json, the verified preservation ZIP and the digest if the prepublication stage succeeds. A result is successful only when status=PASS and state=VERIFIED_PUBLIC_PREPRINT.
+
+## Partial failure and read-only recovery
+
+The verified first-paper.opk.zip and its SHA-256 are saved before making the draft public. A failed attestation or a network outage after promotion must not be called a rollback. **Never rerun --publish against an existing repository, delete a public version, or overwrite an evidence report.**
+
+For an existing public version, use the read-only recovery path with a newly chosen output directory and the *independently retained* ZIP SHA-256:
+
+    python scripts/first_paper_publish.py --verify-existing \
+      --repository Unjuno/openpreprint-kit-paper \
+      --archive /retained/first-paper.opk.zip \
+      --archive-sha256 INDEPENDENTLY_RETAINED_ZIP_SHA256 \
+      --policy /trusted/current-timestamp-policy.json \
+      --out /new/read-only-verification
+
+On Windows, put the command on one line or use PowerShell's line-continuation syntax; Unix backslashes above are not Windows continuation marks. This checks the exact archive and anonymous GitHub release/source bytes, immutable status, attestations and fresh TSA trust, without any public write.
+
+Detailed boundaries: [FIRST_PAPER_PUBLICATION.md](FIRST_PAPER_PUBLICATION.md). Author Unjuno / CC BY 4.0 / v1 remain approved. Publication alone does not prove independent witness, human peer review or product v1.0 readiness.
