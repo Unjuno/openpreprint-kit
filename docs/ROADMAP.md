@@ -17,7 +17,7 @@
 - [RELEASE_READINESS.md](RELEASE_READINESS.md): 証拠付きの現状。Issue #5はその索引であり、別の基準を作らない。
 - [release-status.json](../evidence/acceptance/release-status.json): **過去の**2026-11-13スナップショット。現在の判定は[RELEASE_READINESS.md](RELEASE_READINESS.md)、追加の公開前検証証拠は[2026-11-14再検証記録](../evidence/acceptance/prepublication-recheck-2026-11-14.json)。いずれも人間の署名付き第三者監査ではない。
 
-2026-11-14に確認したmain: `f878210bdaafb68799045504ce56b22bfb11ab76`。第1論文の承認・組版・実TSA・別ランナー検証と、保存済み原稿の現行CRLによる再検証を実施済み。公開コードPR #29・基準PR #30・出所検証PR #31・OS共通化PR #32は統合済み。Python 3.10/3.12各362テストPASS。開発リポジトリのReleaseは0件、Template設定とmainブランチ保護は有効。論文専用公開先での発行は未実証。**最初の停止点は追加機能ではなく、所有者権限による専用repo発行とその実証である。**
+2026-11-14に第1論文v1の正式公開 **P1達成**。[論文Release](https://github.com/Unjuno/openpreprint-kit-paper/releases/tag/v1)（ID 444659219）はGitHub APIで `draft=false`、`immutable=true`、11資産を確認済み。公開対象PDFのSHA-256も承認済み指紋と一致した。[所有者の詳細証拠](https://github.com/Unjuno/openpreprint-kit/issues/5#issuecomment-6863092530)では、初回Windowsランチャーがcitation PATH不備で停止し、所有者承認の下で元FAIL記録を残したまま継続した。**R02/R03はP1の範囲で終了したが、G1〜G7の全受入は未達**。元repoのTemplate設定とmain保護は有効。次の停止点は新機能ではなく、2番目の利用担当者と独立人間の観測・保管・レビュー・監査の確保である。
 
 ## 3. 完成を四つに分ける
 
@@ -47,7 +47,7 @@ P1をP4の全条件待ちにしない。未査読プレプリントはその状�
 | R08 | 人間の運用・独立監査・証拠更新 / 著者、編集担当、外部監査者 | 対象範囲の策定・選任はR01から。実試験はR03〜R07後 | G6・G7の署名付きレビュー、訂正・撤回演習、失効/期限/更新試験、重大・高リスクの未解決指摘0件 |
 | R09 | 最終受入・キット発行 / 所有者、リリース判定担当 | R05〜R08、G0〜G7全PASS | 固定SHAの全CI、全ゲートの承認台帳、v1.0.0不変Releaseと再取得検証。これでP4 |
 
-**最短の依存経路:** R01とR02 → R03 → R04 → R05/R06/R07 → R08の最終承認 → R09。独立担当者の選任は後回しにせずR01時点で始める。R06・R07・監査準備は可能な範囲で並行する。
+**最短の依存経路:** R00〜R03（P1）は達成済み。残りは R04 → R05/R06/R07 → R08の最終承認 → R09。独立した利用者・観測者・保管者・外部監査者がいなければ、関連ゲートはBLOCKEDのまま。R06・R07・監査準備はR04と並行できる。
 
 ### R01の期限付き入力
 
@@ -58,11 +58,11 @@ P1をP4の全条件待ちにしない。未査読プレプリントはその状�
 
 期限切れなら既に保存した同一指紋のPDFを使う。同一物を確保できなければ停止し、再組版による別バイト列を別版として確認する。失敗に合わせて承認指紋を変えない。以前の候補バンドルは`source_claim: null`なので、新公開先を追記して古いTSAを使い回さず、新manifestと新TSAを生成する。
 
-### R02の現状：公開経路の不一致はコードで修正済み、所有者実行は未完了
+### R02・R03の現状：第1論文P1として公開・検証済み（Windows初回失敗は記録保持）
 
-[PR #29](https://github.com/Unjuno/openpreprint-kit/pull/29)を統合後、公開ランチャーは **新規repoを必ずTemplateから作り、GitHub返却のtemplate_repositoryを読戻し検証**する実装になっている。[PR #32](https://github.com/Unjuno/openpreprint-kit/pull/32)でWindows/macOS/Linux共通の起動を整備し、3OSで公開処理の模擬テストを通した。既存repo再利用・上書きは禁止のまま。これらは実公開成功ではない。
+[PR #29](https://github.com/Unjuno/openpreprint-kit/pull/29)で公開ランチャーが新規repoをTemplateから作成する実装となり、[PR #32](https://github.com/Unjuno/openpreprint-kit/pull/32)でWindows/macOS/Linux共通の起動を追加した。2026-11-14、所有者認証済みWindows環境で本物のrepo作成・テンプレート来歴確認・Immutable設定が成功。初回の`--publish`は`cffconvert`探索で停止したが、**所有者が同一コード経路の手動継続を明示承認**し、初回FAIL記録を保持したまま、TSA・Release公開・attestation・匿名再取得・復元を実施した。詳細は[Issue #5](https://github.com/Unjuno/openpreprint-kit/issues/5#issuecomment-6863092530)。旧版の削除・上書き・やり直しをしていない。
 
-実際のTemplate設定とmain保護は読み戻し済み。Immutable Releasesは所有者の有効化申告はあるが、この接続では設定APIの読戻しが不能。**新たな論文repoで公開前/公開後に不変設定を実確認しなければR02は完了しない**。新規repo作成・Administration writeは接続済みGitHubコード操作にないため、所有者自身の認証済みGitHub CLIまたは明示的に承認した適切な経路が必要。Desktop Commander経由の別端末の無断操作や権限迂回はしない。
+既存の論文v1では、GitHub Release APIから `immutable=true`、`draft=false`、11資産を読み戻したため **P1の所有者実行としては完了**。ただし、この1repo・1版はG1/G2で要求する2repo・計4版の代わりにならず、独立した管理者・人間レビューも未達。WindowsのPATH/UTF-8不具合は出荷前に回帰テスト付きで修正し、既に公開済みの不変v1は再発行しない。
 
 ## 5. 公開手順と途中失敗
 

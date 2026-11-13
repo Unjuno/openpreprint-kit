@@ -1,0 +1,92 @@
+{
+  "schema_version": 1,
+  "record_kind": "READ_ONLY_GITHUB_API_RELEASE_METADATA_OBSERVATION_NOT_INDEPENDENT_ATTESTATION",
+  "observed_on_jst": "2026-11-14",
+  "expected_release_url": "https://github.com/Unjuno/openpreprint-kit-paper/releases/tag/v1",
+  "release_id": 444659219,
+  "repository": "Unjuno/openpreprint-kit-paper",
+  "tag": "v1",
+  "published_at_utc": "2026-11-13T19:39:48Z",
+  "draft": false,
+  "immutable": true,
+  "target_commit": "804cb76a4cf5eea65349fc7a8f01e2ce00e1176d",
+  "assets": [
+    {
+      "name": "citation.bib",
+      "size_bytes": 321,
+      "sha256": "sha256:c8c9920650fc39eab5ef58bc0f3145d791ecf3f62b99a78cb53c0d501150907f"
+    },
+    {
+      "name": "CITATION.cff",
+      "size_bytes": 744,
+      "sha256": "sha256:6a7cce39b4d000dcdfc0bccff7b6020d1662e24f5031377519f1ff09348f1043"
+    },
+    {
+      "name": "manifest.json",
+      "size_bytes": 1094,
+      "sha256": "sha256:4ec582630b9ca2ae7c8f9abe519ff613e852840bb5c75856eef15bccedbb9f56"
+    },
+    {
+      "name": "paper.pdf",
+      "size_bytes": 187502,
+      "sha256": "sha256:0860b735379fb1b9b223f5d535442dae8421f456d7ae1c6bf6ce8d3141a1b07c"
+    },
+    {
+      "name": "preprint-metadata.json",
+      "size_bytes": 1017,
+      "sha256": "sha256:2f804f6930ea0a0fb80105304524013a784cae6fd411db4204986dc3de76f2e5"
+    },
+    {
+      "name": "RELEASE_NOTES.md",
+      "size_bytes": 565,
+      "sha256": "sha256:9ca2c9d78d998f7e8a9a1d3ee9eb27a70eeead19b87af7f8d0e1c85c37c24208"
+    },
+    {
+      "name": "research-assets.json",
+      "size_bytes": 2990,
+      "sha256": "sha256:cd481c0726f119ace1741bca85e3d46a80837b7c0af1d692d183b344107d2aaa"
+    },
+    {
+      "name": "research-assets.tar",
+      "size_bytes": 40960,
+      "sha256": "sha256:9677fe710de86972f343efae69f1fde62374a1bee3891d0b3806a1a2c4754498"
+    },
+    {
+      "name": "SHA256SUMS",
+      "size_bytes": 667,
+      "sha256": "sha256:aa8b45af4f9304ce0a54daaaf3250487cb0b3855268a1f0e9670f233a83cf3c2"
+    },
+    {
+      "name": "timestamp.tsq",
+      "size_bytes": 84,
+      "sha256": "sha256:99ec9d2608024e7402f12362264ed4020c7b2d14b884af26eb41c83a18acdcff"
+    },
+    {
+      "name": "timestamp.tsr",
+      "size_bytes": 4653,
+      "sha256": "sha256:ca0695caa687e952871ad9b8cd69d9370604bc1f303b412ed7c6287ce18ce737"
+    }
+  ],
+  "source": "https://api.github.com/repos/Unjuno/openpreprint-kit-paper/releases/tags/v1",
+  "owner_verification_log": "https://github.com/Unjuno/openpreprint-kit/issues/5#issuecomment-6863092530",
+  "evidence_level": {
+    "release_immutable_and_public": "CONFIRMED_BY_GITHUB_API",
+    "release_asset_digests": "REPORTED_BY_GITHUB_API_NOT_INDEPENDENTLY_DOWNLOADED",
+    "approved_pdf_digest": "MATCHES_APPROVED_SHA256_AND_PUBLIC_GITHUB_API_DIGEST",
+    "independent_release_attestation_verification": "OWNER_REPORTED_NOT_REEXECUTED_IN_THIS_RECORD",
+    "rfc3161_new_timestamp": "OWNER_REPORTED_NOT_REEXECUTED_IN_THIS_RECORD",
+    "offline_recovery": "OWNER_REPORTED_NOT_REEXECUTED_IN_THIS_RECORD",
+    "first_publication_time": "NOT_PROVEN",
+    "independent_human_witness": "NOT_PERFORMED",
+    "independent_custody": "NOT_PERFORMED",
+    "software_v1_0_0": "NO_GO"
+  },
+  "incident": {
+    "initial_launcher": "FAIL_AT_SOURCE_COMMITTED_DUE_TO_WINDOWS_CFFCONVERT_PATH",
+    "continuation": "OWNER_APPROVED_RESUMED_SAME_CODE_PATH_WITHOUT_RECREATING_REPO",
+    "original_failure_record_preserved": "OWNER_REPORTED",
+    "separate_continuation_report_preserved": "OWNER_REPORTED",
+    "incident_is_not_auto_success": true,
+    "new_publication_retry_allowed": false
+  }
+}

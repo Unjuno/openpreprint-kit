@@ -48,7 +48,32 @@ class CitationValidationTests(unittest.TestCase):
     def test_valid_cff_and_bibtex_pass(self):
         proc = self.validated()
         self.assertIn("--validate", proc.call_args.args[0])
-        self.assertIn(str(self.folder / "CITATION.cff"), proc.call_args.args[0])
+        self.assertEqual(Path(proc.call_args.args[0][-1]).resolve(),
+                         (self.folder / "CITATION.cff").resolve())
+
+    def test_windows_venv_cffconvert_is_found_without_path_activation(self):
+        # Reproduce the reported incident: venv/Scripts contains cffconvert,
+        # while the caller's PATH does not include that directory.
+        with tempfile.TemporaryDirectory() as folder:
+            scripts = Path(folder) / "venv" / "Scripts"
+            scripts.mkdir(parents=True)
+            python = scripts / "python.exe"
+            python.write_bytes(b"test-only stub")
+            cff = scripts / "cffconvert.exe"
+            cff.write_bytes(b"test-only stub; subprocess is mocked")
+            with mock.patch("citation_validation.sys.executable", str(python)), \
+                 mock.patch("citation_validation.shutil.which", return_value=None):
+                proc = self.validated()
+            self.assertEqual(Path(proc.call_args.args[0][0]), cff)
+
+    def test_cffconvert_fallback_to_existing_path_is_preserved(self):
+        with tempfile.TemporaryDirectory() as folder:
+            python = Path(folder) / "no-venv" / "python.exe"
+            with mock.patch("citation_validation.sys.executable", str(python)), \
+                 mock.patch("citation_validation.shutil.which",
+                            return_value="cffconvert-on-PATH"):
+                proc = self.validated()
+            self.assertEqual(proc.call_args.args[0][0], "cffconvert-on-PATH")
 
     def test_invalid_cff_schema_is_rejected(self):
         with self.assertRaisesRegex(ValueError, "CFF"):

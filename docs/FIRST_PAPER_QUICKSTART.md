@@ -1,5 +1,7 @@
 # 第1論文の最終発行 / First-paper final publication
 
+> **Status, 2026-11-14:** First-paper `Unjuno/openpreprint-kit-paper/v1` is already public and immutable ([Release](https://github.com/Unjuno/openpreprint-kit-paper/releases/tag/v1), ID 444659219). **Do not run `--publish` again**: it is for one-time publication into a *new*, absent repository. The first attempt on Windows stopped at citation validation because the venv's `cffconvert` was missing from PATH; the owner-approved continuation completed publication using existing scripts, preserved the original FAIL report, and recorded the remaining results in a separate continuation report ([execution evidence](https://github.com/Unjuno/openpreprint-kit/issues/5#issuecomment-6863092530)). The repair below prevents this launcher defect on future use, but does not rewrite or certify that historical run. For an existing Release, use the read-only recovery command at the bottom of this document.
+
 ## Cross-platform owner launcher
 
 The approved first paper is published by the **same Python program** on Windows, macOS, and Linux. The former Bash launcher is retained for existing Linux users, but is no longer the recommended entry point. No OS-specific publication/verification logic is added; the portable launcher invokes the existing fail-closed scripts/first_paper_publish.py.
@@ -28,7 +30,20 @@ On macOS, install OpenSSL 3 and ensure its executable directory precedes the sys
     py -3.12 scripts/publish_first_paper.py --preflight
     py -3.12 scripts/publish_first_paper.py --publish
 
-On Windows, install gh and OpenSSL 3 using trusted distributions and ensure both executables are on PATH. The launcher chooses the platform-specific virtual-environment interpreter without Bash, curl or sha256sum.
+On Windows, install gh and OpenSSL 3 using trusted distributions and ensure both executables are on PATH. The launcher chooses the platform-specific virtual-environment interpreter without Bash, curl or sha256sum. Its **publication child** now inherits the locked venv's `Scripts` directory at the front of PATH so the pinned `cffconvert` console script can be found; the citation checker also prefers the executable beside the active Python. All subprocess outputs are decoded as UTF-8 and child Python runs with UTF-8 mode (avoids cp932 errors). No global machine PATH is modified.
+
+If the `py` launcher is not available, run the exact installed `python.exe` using PowerShell's call operator, for example when Python was installed under the default per-user directory:
+
+    $python = Join-Path $env:LOCALAPPDATA 'Programs\Python\Python312\python.exe'
+    & $python scripts/publish_first_paper.py --preflight
+
+If OpenSSL 3 is provided by a trusted Git for Windows installation but not on PATH, you can add its directory **in the current PowerShell session only**, then verify the version:
+
+    $gitOpenSsl = Join-Path $env:ProgramFiles 'Git\usr\bin'
+    $env:PATH = "$gitOpenSsl;$env:PATH"
+    openssl version
+
+Do not run `--publish` for the existing public v1. Use read-only verification below.
 
 **Smartphone / browser:** There is **no native iOS/Android publisher and no one-tap browser publication workflow**. Where GitHub Codespaces is available to the repository owner, a browser-based Codespace provides a Linux terminal; the owner can use the same Python launcher there after checking available gh authentication and OpenSSL 3. This is a cloud-computer execution path, not a claim of an independently secured mobile app, and Codespaces availability/billing may differ. Never embed a broad-scope credential into a public workflow just to obtain a mobile button.
 
@@ -44,7 +59,7 @@ The exact PDF from run **43279522755** is version controlled at manuscripts/open
 
 The launcher checks this fingerprint **before GitHub authentication**. It never replaces the approved PDF with a re-typeset one. The original prepublication proof under evidence/first-paper/approved-v1/ has source_claim: null and cannot be labeled as proof of the new repository's public release. Publication creates a **new** source-bound manifest and obtains a **new** RFC 3161 token.
 
-The publication output is retained under a new directory within the owner's home/OpenPreprintKitEvidence, not the OS temporary cache. The printed directory contains publication/publication-report.json, the verified preservation ZIP and the digest if the prepublication stage succeeds. Copy these public evidence artifacts and their fingerprint to independently managed durable custody; a home folder alone is not permanent preservation. A result is successful only when status=PASS and state=VERIFIED_PUBLIC_PREPRINT.
+The publication output is retained under a new directory within the owner's home/OpenPreprintKitEvidence, not the OS temporary cache. The printed directory contains publication/publication-report.json, the verified preservation ZIP and digest if the prepublication stage succeeds. Copy **both** the original failure journal and any owner-approved continuation report, plus the ZIP and independently retained SHA-256, to separately managed durable custody; a home folder alone is not permanent preservation. A normal uninterrupted run succeeds only when status=PASS and state=VERIFIED_PUBLIC_PREPRINT. **The existing v1 is an exceptional owner-authorized continuation:** its original failed journal remains FAIL, while the recorded continuation, immutable Release metadata, asset attestation and restore evidence establish the separately documented P1 acceptance. Do not silently convert the old FAIL journal to PASS.
 
 ## Partial failure and read-only recovery
 

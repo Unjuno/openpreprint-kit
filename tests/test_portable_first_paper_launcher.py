@@ -97,6 +97,64 @@ class PortableFirstPaperLauncherTests(unittest.TestCase):
             launcher.NoRedirect().redirect_request(None, None, 302, "redirect", {},
                                                     "https://evil.example/ca.pem")
 
+    def test_venv_console_script_and_utf8_inherited_by_publisher(self):
+        # No GitHub calls; check the exact PATH a nested Python child will get.
+        import os
+        import shutil
+        with tempfile.TemporaryDirectory() as folder:
+            scripts = Path(folder) / ("Scripts" if os.name == "nt" else "bin")
+            scripts.mkdir()
+            executable = scripts / ("cffconvert.exe" if os.name == "nt" else "cffconvert")
+            executable.write_bytes(b"not executed")
+            executable.chmod(0o755)
+            done = subprocess.CompletedProcess(["python"], 0, stdout="ready", stderr="")
+            with patch.object(launcher.subprocess, "run", return_value=done) as proc:
+                self.assertEqual(launcher.command(["python", "safe_child.py"],
+                                                  path_prefix=scripts), "ready")
+            env = proc.call_args.kwargs["env"]
+            self.assertEqual(Path(env["PATH"].split(os.pathsep)[0]).resolve(),
+                             scripts.resolve())
+            self.assertEqual(Path(shutil.which("cffconvert", path=env["PATH"])).resolve(),
+                             executable.resolve())
+            self.assertEqual(env["PYTHONUTF8"], "1")
+            self.assertEqual(env["PYTHONIOENCODING"], "utf-8")
+            self.assertEqual(proc.call_args.kwargs["encoding"], "utf-8")
+            self.assertEqual(proc.call_args.kwargs["errors"], "strict")
+
+    def test_missing_venv_executable_directory_fails_before_child(self):
+        with tempfile.TemporaryDirectory() as folder:
+            missing = Path(folder) / "missing-Scripts"
+            with patch.object(launcher.subprocess, "run",
+                              side_effect=AssertionError("unexpected process")):
+                with self.assertRaisesRegex(ValueError, "executable directory is missing"):
+                    launcher.command(["python", "script.py"], path_prefix=missing)
+
+    def test_publish_propagates_venv_scripts_only_to_explicit_publication_child(self):
+        # Regression for the real Windows failure: cffconvert was installed in
+        # venv/Scripts but first_paper_publish.py inherited a PATH without it.
+        with tempfile.TemporaryDirectory() as folder:
+            work = Path(folder) / "evidence"
+            environment = work / "venv"
+            python = launcher.venv_python(environment)
+            python.parent.mkdir(parents=True)
+            python.write_bytes(b"test-only stub; not executed")
+            result = '{"status":"PASS","state":"VERIFIED_PUBLIC_PREPRINT"}'
+            with patch.object(launcher, "check_paper"), \
+                 patch.object(launcher, "check_owner_environment"), \
+                 patch.object(launcher, "allocate_workspace", return_value=work), \
+                 patch.object(launcher.venv.EnvBuilder, "create"), \
+                 patch.object(launcher, "create_policy", return_value=work / "trust/policy.json"), \
+                 patch.object(launcher, "command", side_effect=["", "", result]) as proc:
+                with redirect_stdout(io.StringIO()):
+                    self.assertEqual(launcher.publish(), 0)
+            self.assertEqual(len(proc.call_args_list), 3)
+            install_a, install_b, child = proc.call_args_list
+            self.assertNotIn("path_prefix", install_a.kwargs)
+            self.assertNotIn("path_prefix", install_b.kwargs)
+            self.assertEqual(child.kwargs["path_prefix"], python.parent)
+            self.assertEqual(child.args[0][0], str(python))
+            self.assertIn("--publish", child.args[0])
+
     def test_failed_command_does_not_expose_stdout_or_stderr(self):
         completed = subprocess.CompletedProcess(args=["gh"], returncode=1,
                                                 stdout="private-token", stderr="credential-data")

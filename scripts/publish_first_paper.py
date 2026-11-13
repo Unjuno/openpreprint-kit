@@ -59,10 +59,24 @@ def venv_python(directory: Path, *, windows: bool | None = None) -> Path:
     return directory / ("Scripts/python.exe" if windows else "bin/python")
 
 
-def command(args: list[str], *, timeout: int = 180) -> str:
+def command(args: list[str], *, timeout: int = 180,
+            path_prefix: Path | None = None) -> str:
     env = dict(os.environ, GH_HOST="github.com", GH_PROMPT_DISABLED="1")
+    # Windows may otherwise decode gh's UTF-8 output using the cp932 locale.
+    # Use UTF-8 consistently in this process and its Python descendants.
+    env["PYTHONUTF8"] = "1"
+    env["PYTHONIOENCODING"] = "utf-8"
+    if path_prefix is not None:
+        if not path_prefix.is_dir():
+            raise ValueError("virtual environment executable directory is missing")
+        # Nested citation_validation.py invokes the cffconvert console script
+        # by name. Windows venv Scripts/ is not inherited when launching an
+        # absolute python.exe without activating the venv. Never edit the
+        # caller's process environment or its global PATH.
+        env["PATH"] = str(path_prefix) + os.pathsep + env.get("PATH", "")
     try:
         result = subprocess.run(args, cwd=ROOT, env=env, text=True,
+                                encoding="utf-8", errors="strict",
                                 capture_output=True, timeout=timeout, check=False)
     except FileNotFoundError as exc:
         raise ValueError("required command is unavailable: " + Path(args[0]).name) from exc
@@ -169,7 +183,8 @@ def publish() -> int:
                       "--paper-pdf", str(PAPER),
                       "--paper-sha256", PAPER_SHA256,
                       "--policy", str(policy),
-                      "--out", str(output), "--publish"], timeout=1200)
+                      "--out", str(output), "--publish"], timeout=1200,
+                     path_prefix=python.parent)
     report = json.loads(result)
     if report.get("status") != "PASS" or report.get("state") != "VERIFIED_PUBLIC_PREPRINT":
         raise ValueError("public verification did not return PASS; inspect evidence")

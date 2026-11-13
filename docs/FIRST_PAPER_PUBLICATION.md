@@ -1,5 +1,11 @@
 # Publish the approved first paper (owner execution)
 
+## Status after actual owner publication (2026-11-14)
+
+**Already published:** [Unjuno/openpreprint-kit-paper v1](https://github.com/Unjuno/openpreprint-kit-paper/releases/tag/v1), GitHub Release ID 444659219. The REST API returns `immutable=true`, `draft=false`, 11 assets, and the approved PDF SHA-256. The [owner's recorded checks](https://github.com/Unjuno/openpreprint-kit/issues/5#issuecomment-6863092530) include fresh TSA evidence, Release attestation, anonymous re-download and offline restore. The initial one-shot Windows execution failed at `SOURCE_COMMITTED` because the venv `cffconvert` script was unavailable on PATH; a separately approved same-code-path continuation completed the publication while preserving the original FAIL journal. This is not an uninterrupted launcher success or independent human audit.
+
+**Do not rerun `--publish` against this existing repository, overwrite the immutable v1, delete the failed report, or relabel the old prepublication proof.** The remaining instructions describe the **historical single-use procedure**; for current verification use `--verify-existing` with the independently pinned preserved ZIP digest and a fresh trust policy, or [the read-only quickstart](FIRST_PAPER_QUICKSTART.md). The toolkit v1.0.0 still requires G0–G7 acceptance.
+
 The author display name **Unjuno**, manuscript **CC-BY-4.0** and **v1** are already approved. Do not request them again. This command publishes the real first manuscript, not the synthetic pilot. It requires an owner-authenticated GitHub CLI because a code-writing GitHub connector does not supply repository-creation or Administration authority.
 
 ## Scope and preconditions
