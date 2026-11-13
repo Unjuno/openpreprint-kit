@@ -1,18 +1,40 @@
 # 第1論文の最終発行 / First-paper final publication
 
-## Single owner command
+## Initial owner setup (not performed by a remote desktop)
 
-On Linux, after `gh auth login --hostname github.com`, from a trusted checkout run:
+The toolkit must be a public Template repository. The owner enables it through GitHub settings and confirms the change. New paper repositories are generated with `--template`, and `template_repository.full_name` is checked before any scientific input is committed. Existing repositories are never reused or overwritten. The publisher does not modify the toolkit's administration settings.
+
+On Linux, with Python 3.10+ and venv, GitHub CLI supporting Release verification, curl, OpenSSL 3 and sha256sum, authenticate using the owner's chosen GitHub mechanism. No passwords or tokens are sent to chat.
 
 ```bash
+gh auth login --hostname github.com
+bash scripts/publish_first_paper.sh --plan
 bash scripts/publish_first_paper.sh --publish
 ```
 
-This installs the hash-locked dependencies into a new isolated temporary environment, retrieves the already-approved PDF from run 43279522755, checks its fixed SHA-256, fetches the independently pinned FreeTSA CA and current signed CRL, and invokes the publisher below. The output directory is printed and retained even on failure. With no argument or `--plan`, it prints a plan only and performs no network or file operations. It requires Python with venv, GitHub CLI, curl, OpenSSL 3 and sha256sum.
+`--plan` is offline and side-effect free. `--publish` creates one NEW **Unjuno/openpreprint-kit-paper**, from the public template, enables/reads back immutability on that NEW repository, uploads the approved scientific inputs and publishes v1 after staging checks. It does NOT imply general-production acceptance or independent review.
 
-**Real public side effects:** the target is one NEW `Unjuno/openpreprint-kit-paper`. Its immutability setting is enabled; public inputs and one v1 Release are created. Existing repositories are never reused. The original artifact expires after its GitHub retention period; if download fails, stop and use the pinned PDF plus explicit advanced command below rather than substitute another version. There is no embedded token, no automatic trust of certificates in the evidence archive, and no change to the user's global git authentication configuration.
+## Stable approved input
 
+The exact PDF from run **43279522755** is now version controlled at `manuscripts/openpreprint-kit/approved-v1/paper.pdf`. Its SHA-256 is:
 
-Advanced options, failure handling and evidence limits: [FIRST_PAPER_PUBLICATION.md](FIRST_PAPER_PUBLICATION.md).
+`0860b735379fb1b9b223f5d535442dae8421f456d7ae1c6bf6ce8d3141a1b07c`
 
-Author Unjuno / manuscript CC BY 4.0 / version v1 are already approved. This command does not claim independent review, independent observer operation or full-kit production acceptance. No actual public Release has been executed by the chat connection.
+The launcher checks this fingerprint BEFORE authentication and package installation. It no longer downloads a 14-day Actions artifact. A preview, re-typeset document, or same-named file with different bytes is rejected. The original prepublication proof is retained under `evidence/first-paper/approved-v1/`; it is NOT relabeled as a published proof. Source-bound publication always requires a fresh timestamp.
+
+## Failure and subsequent checks
+
+A verified `first-paper.opk.zip` and its fingerprint are saved **before** public promotion. An unavailable attestation after publication does not destroy recovery evidence. Do not rerun creation against an existing repo or delete immutable history. Use read-only recovery with a NEW output directory instead:
+
+```bash
+python scripts/first_paper_publish.py --verify-existing \
+  --repository Unjuno/openpreprint-kit-paper \
+  --archive /retained/first-paper.opk.zip \
+  --archive-sha256 INDEPENDENTLY_RETAINED_ZIP_SHA256 \
+  --policy /trusted/current-timestamp-policy.json \
+  --out /new/read-only-verification
+```
+
+This verifies archived and anonymously fetched bytes, source tag/commit, GitHub release and asset attestations, and RFC 3161 under independently selected current trust. It does not publish, reissue a timestamp, modify settings, or overwrite previous reports. It is suitable for an operator's periodic read-only check. Scheduling it does not establish observer independence or guarantee availability; certificate/CRL changes and high-severity alerts still require responsible review.
+
+Detailed boundaries: [FIRST_PAPER_PUBLICATION.md](FIRST_PAPER_PUBLICATION.md). Author Unjuno / CC BY 4.0 / v1 remain approved. A successful local/mock test is never described as a real public Release.

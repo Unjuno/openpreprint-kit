@@ -33,7 +33,8 @@ class FirstPaperLauncherTests(unittest.TestCase):
     def test_fixed_inputs_and_trust_are_explicit(self):
         text=SCRIPT.read_text()
         self.assertIn('43279522755',text)
-        self.assertIn('first-paper-v1-live-tsa',text)
+        self.assertIn('manuscripts/openpreprint-kit/approved-v1/paper.pdf',text)
+        self.assertNotIn('gh run download',text)
         self.assertIn('0860b735379fb1b9b223f5d535442dae8421f456d7ae1c6bf6ce8d3141a1b07c',text)
         self.assertIn('2151b61137ffa86bf664691ba67e7da0b19f98c758e3d228d5d8ebf27e044438',text)
         self.assertIn('--require-hashes',text)

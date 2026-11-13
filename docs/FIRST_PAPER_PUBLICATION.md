@@ -4,7 +4,7 @@ The author display name **Unjuno**, manuscript **CC-BY-4.0** and **v1** are alre
 
 ## Scope and preconditions
 
-The intended destination is a **new** `Unjuno/openpreprint-kit-paper`. The toolkit repository remains unchanged. The destination must not already exist. No attempt is made to gain access beyond the owner's native `gh` permissions. Use GitHub CLI supporting `gh release verify` and `gh release verify-asset`, Python 3.10+, OpenSSL 3 and the kit's locked dependencies.
+The intended destination is a **new** `Unjuno/openpreprint-kit-paper`. The toolkit repository remains unchanged. The destination must not already exist. The public toolkit must already be enabled as a Template repository; creation uses that template and verifies the returned template origin. No attempt is made to gain access beyond the owner's native `gh` permissions. Use GitHub CLI supporting `gh release verify` and `gh release verify-asset`, Python 3.10+, OpenSSL 3 and the kit's locked dependencies.
 
 From a clone of this toolkit:
 
@@ -23,7 +23,7 @@ Use the exact approved PDF retained from **run 43279522755**, commit `7b1fc1d34e
 
 `0860b735379fb1b9b223f5d535442dae8421f456d7ae1c6bf6ce8d3141a1b07c`
 
-This is a **PDF** SHA-256, not the ZIP digest. The author approved the manuscript metadata, not a cryptographic identity attestation. Retain the PDF and digest separately; the Actions download itself is temporary. The old bundle has `source_claim: null`; it must not be silently relabeled as a publication from the new repository. This publisher retains the PDF bytes but builds a new source-bound manifest and requests a **new** TSA token.
+This is a **PDF** SHA-256, not the ZIP digest. The author approved the manuscript metadata, not a cryptographic identity attestation. Retain the PDF and digest separately; the Actions download itself is temporary. The exact approved PDF is now version controlled at `manuscripts/openpreprint-kit/approved-v1/paper.pdf`; the launcher does not require the expiring Actions artifact. The original proof is retained at `evidence/first-paper/approved-v1/prepublication.opk.zip`. The old bundle has `source_claim: null`; it must not be silently relabeled as a publication from the new repository. This publisher retains the PDF bytes but builds a new source-bound manifest and requests a **new** TSA token.
 
 Provide `/trusted/timestamp-policy.json` and its pinned CA/current signed CRL through an independently selected trust process, using the existing `docs/TIMESTAMPS.md` procedure. Never automatically trust the CA found inside a downloaded paper archive. The already-tested FreeTSA CA pin is `2151b61137ffa86bf664691ba67e7da0b19f98c758e3d228d5d8ebf27e044438`; this pin alone does not establish current revocation status or provider reliability. Do not replace a mismatched pin merely to make the run pass.
 
@@ -39,7 +39,7 @@ python scripts/first_paper_publish.py \
   --publish
 ```
 
-It validates the PDF pin and all approved source inputs before any public mutation; creates one new public repository; enables and reads back immutability; commits only the allowlisted paper, metadata, seven research inputs and a paper README; rebuilds the manifest with the destination repository/commit; obtains a fresh RFC3161 proof; creates a draft and compares downloaded bytes; re-checks immutability; publishes; verifies GitHub Release/asset attestations; anonymously downloads all eleven assets; restores a preservation ZIP and verifies the original bytes. It does not upload patient records, signing keys, trust credentials, or the entire local workspace. It does not change existing repository permissions or weaken branch protection.
+It validates the PDF pin and all approved source inputs before any public mutation; creates one new public repository from the verified template (including its public toolkit contents); enables and reads back immutability; commits only the allowlisted paper, metadata, seven research inputs and a paper README; rebuilds the manifest with the destination repository/commit; obtains a fresh RFC3161 proof; creates a draft and compares downloaded bytes; re-checks immutability; saves a verified preservation archive and fingerprint before promotion; publishes; verifies GitHub Release/asset attestations; anonymously downloads all eleven assets; restores a preservation ZIP and verifies the original bytes. It does not upload patient records, signing keys, trust credentials, or the entire local workspace. It does not change existing repository permissions or weaken branch protection.
 
 The report is `../first-paper-publication-evidence/publication-report.json`. Only `status=PASS` and `state=VERIFIED_PUBLIC_PREPRINT` mean this run completed publication **and** its post-publication checks. These do not mean production v1.0, independent witness, independent security audit, authorship verification, initial publication time or peer review are proven.
 
@@ -50,3 +50,9 @@ Publication is not an atomic distributed transaction. A failure may leave a newl
 ## Evidence status
 
 The supplied tests execute real paper-input packaging and ephemeral-TSA signature checks, while GitHub HTTP/CLI effects are simulated. They are not proof of an actual external publication. The current chat connection has no new-repository or admin write action. An owner-side run is necessary; the kit does not obtain or impersonate an owner credential. Separate witness, mirror custody and human review remain separate acceptance gates.
+
+## Read-only recovery after partial publication
+
+The pre-promotion archive is the recovery input. `--verify-existing` requires its independently retained digest, expected repository and a separately selected current TSA policy. It performs no POST/PUT/PATCH/DELETE, no timestamp issuance and no release creation. Each invocation uses a new output directory and retains its own PASS/FAIL report. Duplicate asset names, changed bytes, wrong tag target, private/absent/non-immutable Releases and unavailable attestations fail closed. A later successful read-only check does not rewrite the earlier failure report.
+
+See the recovery command in [FIRST_PAPER_QUICKSTART.md](FIRST_PAPER_QUICKSTART.md). A fixture-only GitHub transport test is not a live public acceptance. Authenticated CLI attestation checks and anonymous downloads are distinct; both must succeed.

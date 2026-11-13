@@ -43,6 +43,7 @@ class FirstPaperPublishTests(unittest.TestCase):
         self.pdf = self.root / 'paper.pdf'
         write_pdf(self.pdf)
         self.gateway = FakeGitHub(self.root)
+        self.gateway.template['is_template'] = True
         self.output = self.root / 'publication'
         import hashlib
         self.fingerprint = hashlib.sha256(self.pdf.read_bytes()).hexdigest()
@@ -133,6 +134,8 @@ class FirstPaperPublishTests(unittest.TestCase):
         self.assertEqual(report['state'],'PUBLIC_VERIFICATION_PENDING')
         self.assertFalse(self.gateway.releases[('example/opk-first-paper','v1')]['draft'])
         self.assertFalse(report['rollback_performed'])
+        self.assertTrue((self.output/'first-paper.opk.zip').is_file())
+        self.assertEqual(len(report['archive_sha256']), 64)
 
     def test_only_declared_paper_files_are_uploaded(self):
         self.execute()

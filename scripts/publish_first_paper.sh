@@ -15,8 +15,14 @@ for tool in python3 gh curl openssl sha256sum mktemp; do
   command -v "$tool" >/dev/null || { printf 'Required tool missing: %s\n' "$tool" >&2; exit 1; }
 done
 openssl version | grep -q '^OpenSSL 3\.' || { echo 'OpenSSL 3 is required.' >&2; exit 1; }
-gh auth status --hostname github.com
 ROOT=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)
+# Version-controlled, previously approved PDF; do not depend on expiring run 43279522755 artifacts.
+PDF="$ROOT/manuscripts/openpreprint-kit/approved-v1/paper.pdf"
+PDF_SHA=0860b735379fb1b9b223f5d535442dae8421f456d7ae1c6bf6ce8d3141a1b07c
+[[ -f "$PDF" && ! -L "$PDF" ]] || { echo 'Approved versioned PDF is missing or linked; refusing substitution.' >&2; exit 1; }
+printf '%s  %s\n' "$PDF_SHA" "$PDF" | sha256sum -c -
+gh auth status --hostname github.com
+[[ $(gh api repos/Unjuno/openpreprint-kit --jq '.is_template') == true ]] || { echo 'Owner must enable the toolkit Template repository setting before publication.' >&2; exit 1; }
 WORK=$(mktemp -d "${TMPDIR:-/tmp}/opk-first-paper-publication.XXXXXXXX")
 export WORK
 trap 'rc=$?; printf "Stopped (%s). Evidence remains at %s. Inspect GitHub; no rollback is claimed.\n" "$rc" "$WORK" >&2; exit "$rc"' ERR
@@ -25,11 +31,6 @@ python3 -m venv "$WORK/venv"
 PY="$WORK/venv/bin/python"
 "$PY" -m pip install --require-hashes -r "$ROOT/requirements-build.lock"
 "$PY" -m pip install --require-hashes --no-build-isolation -r "$ROOT/requirements.lock"
-# Retrieve only the previously approved artifact, not arbitrary uploaded scripts.
-gh run download 43279522755 --repo Unjuno/openpreprint-kit \
-  --name first-paper-v1-live-tsa --dir "$WORK/approved"
-PDF_SHA=0860b735379fb1b9b223f5d535442dae8421f456d7ae1c6bf6ce8d3141a1b07c
-printf '%s  %s\n' "$PDF_SHA" "$WORK/approved/first-paper-v1.pdf" | sha256sum -c -
 mkdir -p "$WORK/trust"
 # Trust root is selected here independently of the paper archive. Never change
 # a failed pin just to make verification succeed; stop for owner review instead.
@@ -53,7 +54,7 @@ PY
 # The verifier checks CRL validity and signature chains, not merely this download.
 "$PY" "$ROOT/scripts/first_paper_publish.py" \
   --repository Unjuno/openpreprint-kit-paper \
-  --paper-pdf "$WORK/approved/first-paper-v1.pdf" --paper-sha256 "$PDF_SHA" \
+  --paper-pdf "$PDF" --paper-sha256 "$PDF_SHA" \
   --policy "$WORK/trust/policy.json" --out "$WORK/publication" --publish
 printf 'Publication checks completed. Preserve the report and evidence from: %s\n' "$WORK/publication"
 printf '%s\n' 'This is not an independent witness, human peer review, or production v1.0 certification.'

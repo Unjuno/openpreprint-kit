@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Publish the approved Unjuno/CC-BY-4.0 first paper using owner-authenticated gh.
 
-Default is PLAN_ONLY. --publish creates ONE NEW public paper repository and v1.
+Default is PLAN_ONLY. --publish creates ONE NEW template-derived paper repo and v1.
+--verify-existing rechecks a published version without any remote writes.
 It never modifies an existing destination, promotes a software release, changes
 branch protection, uploads a private original/key, or claims independent review.
 """
@@ -23,6 +24,7 @@ from first_paper_selftest import DEFAULT_MANUSCRIPT, ROOT, copy_regular, digest_
 from pilot import GitHub, _files, _get, _same
 from preflight import preflight, require_immutable, validate_repository
 from research_package import collect
+from publication_recovery import require_template_origin, verify_existing, _verify_remote
 
 VERSION = 'v1'
 
@@ -35,8 +37,8 @@ def plan(template: str, repository: str) -> dict:
     return {'mode': 'PLAN_ONLY', 'toolkit': template, 'repository': repository,
             'version': VERSION, 'author_display_name': 'Unjuno', 'license': 'CC-BY-4.0',
             'publication_performed': False,
-            'requires': ['owner-authenticated gh', 'pinned approved PDF', 'independently selected TSA policy'],
-            'mutations_when_published': ['create NEW public paper repository',
+            'requires': ['owner-authenticated gh', 'enabled public template', 'pinned approved PDF', 'independently selected TSA policy'],
+            'mutations_when_published': ['create NEW public paper repository from the specified template',
                 'enable immutable Releases in NEW repository', 'commit approved public inputs',
                 'issue fresh source-bound timestamp', 'publish one immutable v1 preprint'],
             'independent_witness': 'NOT_PERFORMED', 'production_readiness': 'NOT_ESTABLISHED'}
@@ -98,6 +100,7 @@ def _commit_inputs(gateway, repository: str, source: Path, names: list[str]) -> 
     return commit
 
 
+
 def execute(template: str, repository: str, paper: Path, paper_sha256: str,
             policy_path: Path, output: Path, *, gateway=None) -> dict:
     plan(template, repository)
@@ -116,9 +119,7 @@ def execute(template: str, repository: str, paper: Path, paper_sha256: str,
     gateway = gateway or GitHub()
     gateway.tools()
     source_repo = gateway.api('GET', 'repos/' + template)
-    if (source_repo.get('private') is not False or
-            source_repo.get('full_name', '').lower() != template.lower()):
-        raise ValueError('could not verify the public toolkit source')
+    require_template_origin(source_repo, template)
     if gateway.api('GET', 'repos/' + repository, allow_missing=True) is not None:
         raise ValueError('destination already exists; refusing to modify it')
     output.mkdir(parents=True)
@@ -147,13 +148,18 @@ def execute(template: str, repository: str, paper: Path, paper_sha256: str,
             raise ValueError('paper fingerprint changed during staging')
         # From here a partial error may leave public source or a public Release.
         report['state'] = 'REPOSITORY_CREATION_REQUESTED'; journal()
-        gateway.command(['repo', 'create', repository, '--public', '--add-readme',
+        gateway.command(['repo', 'create', repository, '--public', '--template', template,
                          '--description', 'OpenPreprint Kit technical report: Unjuno, CC BY 4.0, unreviewed'])
         report['state'] = 'REPOSITORY_CREATED'; journal()
         created = gateway.api('GET', 'repos/' + repository)
         if (created.get('private') is not False or created.get('permissions', {}).get('admin') is not True
                 or created.get('full_name', '').lower() != repository.lower()):
             raise ValueError('new paper repository identity/administration not confirmed')
+        origin = created.get('template_repository')
+        if not isinstance(origin, dict) or origin.get('full_name', '').lower() != template.lower():
+            raise ValueError('new repository template origin does not match the requested toolkit')
+        report.update(template_repository=template, template_origin_verified=True)
+        journal()
         gateway.api('PUT', f'repos/{repository}/immutable-releases')
         require_immutable(_get(gateway, repository))
         commit = _commit_inputs(gateway, repository, source, names)
@@ -177,32 +183,18 @@ def execute(template: str, repository: str, paper: Path, paper_sha256: str,
         _same(bundle, downloaded)
         verify_all(downloaded, policy_path, repository, VERSION, 'existence', expected_paper_sha256=paper_sha256)
         require_immutable(_get(gateway, repository))
+        archive = output / 'first-paper.opk.zip'
+        packed = pack(downloaded, archive, policy_path)
+        report.update(state='RECOVERY_ARCHIVE_VERIFIED', archive_sha256=packed['archive_sha256'])
+        journal()
         report['state'] = 'PROMOTION_REQUESTED'; journal()
         gateway.command(['release', 'edit', VERSION, '--repo', repository, '--draft=false', '--latest=false'])
         report['state'] = 'PUBLIC_VERIFICATION_PENDING'; journal()
-        release = gateway.api('GET', f'repos/{repository}/releases/tags/{VERSION}')
-        if (release.get('immutable') is not True or release.get('draft') is not False
-                or release.get('tag_name') != VERSION
-                or {a['name'] for a in release.get('assets', [])} != set(_files(bundle))):
-            raise ValueError('published Release failed immutable/asset readback; no rollback claimed')
-        attestation = gateway.command(['release', 'verify', VERSION, '--repo', repository, '--format', 'json'])
-        json.loads(attestation)
-        (output / 'github-release-attestation.json').write_text(attestation, encoding='utf-8')
-        for asset in sorted(bundle.iterdir()):
-            gateway.command(['release', 'verify-asset', VERSION, str(asset), '--repo', repository])
-        public = output / 'anonymous-download'
-        download_bundle(repository, VERSION, public, lambda name: gateway.anonymous(repository, VERSION, name))
-        _same(bundle, public)
-        verified = verify_all(public, policy_path, repository, VERSION, 'existence', expected_paper_sha256=paper_sha256)
-        archive = output / 'first-paper.opk.zip'
-        packed = pack(public, archive, policy_path)
+        checked = _verify_remote(gateway, repository, downloaded, policy_path, output, paper_sha256, commit)
         restore(archive, output / 'restored', packed['archive_sha256'], policy_path)
-        _same(public, output / 'restored' / 'bundle')
-        report.update(status='PASS', state='VERIFIED_PUBLIC_PREPRINT',
-                      release_url=f'https://github.com/{repository}/releases/tag/{VERSION}',
-                      immutable=True, anonymous_integrity='VERIFIED', restore_byte_equality=True,
-                      timestamp=verified, github_attestation='VERIFIED_BY_GH_CLI',
-                      archive_sha256=packed['archive_sha256'], assets=_files(public))
+        _same(output / 'anonymous-download', output / 'restored' / 'bundle')
+        report.update(checked, status='PASS', state='VERIFIED_PUBLIC_PREPRINT',
+                      restore_byte_equality=True, archive_sha256=packed['archive_sha256'])
         journal()
         return report
     except Exception as exc:
@@ -220,10 +212,20 @@ def main() -> int:
     p.add_argument('--paper-sha256')
     p.add_argument('--policy', type=Path)
     p.add_argument('--out', type=Path)
-    p.add_argument('--publish', action='store_true', help='Actually create a NEW public repository and publish v1')
+    mode = p.add_mutually_exclusive_group()
+    mode.add_argument('--publish', action='store_true', help='Actually create a NEW public repository and publish v1')
+    mode.add_argument('--verify-existing', action='store_true', help='Read-only re-verification of a published v1; never republish')
+    p.add_argument('--archive', type=Path, help='Exact preservation ZIP retained before publication')
+    p.add_argument('--archive-sha256', help='Independently retained ZIP SHA-256, not a value trusted from inside the ZIP')
     a = p.parse_args()
     try:
-        if not a.publish:
+        if a.verify_existing:
+            if any(v is None for v in (a.archive, a.archive_sha256, a.policy, a.out)):
+                raise ValueError('--verify-existing requires --archive, --archive-sha256, --policy and --out')
+            result = verify_existing(a.repository, a.archive, a.archive_sha256, a.policy, a.out)
+        elif not a.publish:
+            if a.archive is not None or a.archive_sha256 is not None:
+                raise ValueError('archive arguments require --verify-existing')
             result = plan(a.template, a.repository)
         else:
             if any(v is None for v in (a.paper_pdf, a.paper_sha256, a.policy, a.out)):
