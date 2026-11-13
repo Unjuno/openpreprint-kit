@@ -9,6 +9,7 @@ from __future__ import annotations
 import argparse
 import json
 from pathlib import Path
+import shutil
 import subprocess
 import sys
 
@@ -45,6 +46,23 @@ def expected_authors(metadata_authors: object) -> list[dict]:
     return output
 
 
+def cffconvert_binary() -> str:
+    """Prefer the executable installed for this Python, even without venv activation.
+
+    On Windows, a venv's console-script shim lives in Scripts/ while callers
+    may invoke the absolute python.exe without adding Scripts/ to PATH.
+    """
+    python_bin = Path(sys.executable).parent
+    names = ("cffconvert.exe", "cffconvert")
+    for directory in (python_bin, python_bin / "Scripts"):
+        for name in names:
+            candidate = directory / name
+            if candidate.is_file():
+                return str(candidate)
+    # Keep established global-PATH behavior for non-venv consumers.
+    return shutil.which("cffconvert") or "cffconvert"
+
+
 def validate_citations(folder: Path) -> None:
     folder = folder.resolve()
     cff_path = folder / "CITATION.cff"
@@ -66,7 +84,7 @@ def validate_citations(folder: Path) -> None:
         raise ValueError("citation authors do not match the fixed publication metadata")
     try:
         result = subprocess.run(
-            ["cffconvert", "--validate", "-i", str(cff_path)],
+            [cffconvert_binary(), "--validate", "-i", str(cff_path)],
             capture_output=True, text=True, timeout=20, check=False, cwd=folder,
         )
     except (FileNotFoundError, subprocess.TimeoutExpired) as exc:
