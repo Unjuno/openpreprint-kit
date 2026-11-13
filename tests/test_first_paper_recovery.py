@@ -14,6 +14,7 @@ import unittest
 from unittest.mock import patch
 
 import test_release
+import test_research_package
 import test_timestamp
 from test_pilot import FakeGitHub
 
@@ -35,7 +36,7 @@ class PublicationRecoveryTests(unittest.TestCase):
         cls.authority = test_timestamp.Authority(cls.base / 'authority')
         cls.policy = cls.base / 'policy.json'
         cls.policy.write_text(json.dumps(cls.authority.policy()), encoding='utf-8')
-        cls.helper = test_release.ReleaseBundleTests()
+        cls.helper = test_research_package.ResearchBundleTests()
         cls.helper.setUp()
         cls.helper.make_bundle()
         policy = timestamp.load_policy(cls.policy)
@@ -62,6 +63,8 @@ class PublicationRecoveryTests(unittest.TestCase):
             'full_name': self.repository, 'private': False,
             'default_branch': 'main', 'head': 'a' * 40, 'immutable': True,
         }
+        from source_provenance import expected_source_files
+        self.gateway.sources[(self.repository, 'a' * 40)] = expected_source_files(self.helper.bundle)
         self.gateway.releases[(self.repository, 'v1')] = {
             'id': 1, 'draft': False, 'commit': 'a' * 40,
             'assets': {p.name: p.read_bytes() for p in self.helper.bundle.iterdir()},
@@ -147,6 +150,26 @@ class PublicationRecoveryTests(unittest.TestCase):
         self.assertEqual(result['status'], 'PASS')
         self.assertEqual(failed, (self.out / 'verification-report.json').read_bytes())
         self.assertFalse(self.gateway.releases[(self.repository, 'v1')]['draft'])
+        self.assert_read_only()
+
+    def test_published_paper_is_rejected_if_tag_source_has_different_pdf(self):
+        source = self.gateway.sources[(self.repository, 'a' * 40)]
+        source['paper/paper.pdf'] = b'DIFFERENT_SOURCE_PAPER'
+        with self.assertRaisesRegex(ValueError, 'paper/paper.pdf'):
+            self.run_verification()
+        self.assertEqual(json.loads((self.out / 'verification-report.json').read_text())['status'], 'FAIL')
+        self.assert_read_only()
+
+    def test_published_paper_is_rejected_if_source_analysis_is_different(self):
+        # The first-paper acceptance bundle contains analysis code; a release
+        # can be internally sound and still lie about its Git source commit.
+        self.assertTrue(any(path.startswith('analysis/') for path in
+                            self.gateway.sources[(self.repository, 'a' * 40)]))
+        source = self.gateway.sources[(self.repository, 'a' * 40)]
+        target = next(path for path in sorted(source) if path.startswith('analysis/'))
+        source[target] = b'DIFFERENT_ANALYSIS_CODE'
+        with self.assertRaisesRegex(ValueError, target):
+            self.run_verification()
         self.assert_read_only()
 
     def test_missing_published_release_is_failure_not_new_publication(self):

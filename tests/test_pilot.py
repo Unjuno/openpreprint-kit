@@ -1,6 +1,7 @@
 """Owner-only operational acceptance: network mocked, bytes and cryptography real."""
 from pathlib import Path
 import hashlib
+import base64
 import importlib
 import json
 import shutil
@@ -75,6 +76,10 @@ class FakeGitHub:
         self.fail_attestation = False
         self.disable_immutable = False
         self.drift_v1 = False
+        self.corrupt_source = False
+        self._blobs = {}
+        self._pending_source = {}
+        self.sources = {}
 
     def tools(self):
         self.calls.append(('tools',))
@@ -97,11 +102,21 @@ class FakeGitHub:
         if suffix == 'commits/main': return {'sha':self.repos[repo]['head']}
         if suffix == 'git/ref/heads/main': return {'object':{'sha':self.repos[repo]['head'],'type':'commit'}}
         if suffix.startswith('git/commits/') and method == 'GET': return {'tree':{'sha':'b'*40}}
-        if suffix == 'git/blobs': return {'sha':hashlib.sha1(json.dumps(data).encode()).hexdigest()}
-        if suffix == 'git/trees': return {'sha':'c'*40}
+        if suffix == 'git/blobs':
+            oid=hashlib.sha1(json.dumps(data).encode()).hexdigest()
+            self._blobs[oid]=base64.b64decode(data['content'])
+            return {'sha':oid}
+        if suffix == 'git/trees':
+            self._pending_source[repo]={entry['path']:self._blobs[entry['sha']]
+                                        for entry in data['tree']}
+            if self.corrupt_source:
+                self._pending_source[repo]['paper/paper.pdf']=b'TAMPERED_SOURCE'
+            return {'sha':'c'*40}
         if suffix == 'git/commits' and method == 'POST':
             self.counter += 1
-            return {'sha':f'{self.counter:040x}'}
+            commit=f'{self.counter:040x}'
+            self.sources[(repo,commit)]=dict(self._pending_source[repo])
+            return {'sha':commit}
         if suffix == 'git/refs/heads/main' and method == 'PATCH':
             assert data['force'] is False
             self.repos[repo]['head'] = data['sha']
@@ -148,6 +163,10 @@ class FakeGitHub:
             return json.dumps({'synthetic_mock_attestation':True})
         if args[:2] == ['release','verify-asset']: return 'mock GitHub attestation checked'
         raise AssertionError(args)
+
+    def anonymous_source(self, repository, commit, path):
+        self.calls.append(('anonymous_source',repository,commit,path))
+        return self.sources[(repository,commit)][path]
 
     def anonymous(self, repository, version, name):
         value=self.releases[(repository,version)]

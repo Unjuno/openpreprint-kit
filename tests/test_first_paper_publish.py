@@ -137,6 +137,25 @@ class FirstPaperPublishTests(unittest.TestCase):
         self.assertTrue((self.output/'first-paper.opk.zip').is_file())
         self.assertEqual(len(report['archive_sha256']), 64)
 
+    def test_published_paper_proves_anonymous_source_bytes_match_versioned_bundle(self):
+        report = self.execute()
+        self.assertEqual(report['source_snapshot']['source_snapshot'], 'VERIFIED_PUBLIC_GIT_BYTES')
+        self.assertIn('paper/paper.pdf', report['source_snapshot']['checked_paths'])
+        self.assertIn('analysis/summarize_ci.py', report['source_snapshot']['checked_paths'])
+
+    def test_wrong_public_git_source_blocks_public_promotion(self):
+        self.gateway.corrupt_source = True
+        with self.assertRaisesRegex(ValueError, 'paper/paper.pdf'):
+            self.execute()
+        # A prepublication draft is expected; the safety invariant is that
+        # invalid source bytes never reach a *public* immutable Release.
+        draft = self.gateway.releases[('example/opk-first-paper', 'v1')]
+        self.assertTrue(draft['draft'])
+        report = json.loads((self.output / 'publication-report.json').read_text())
+        self.assertEqual(report['status'], 'FAIL')
+        self.assertEqual(report['state'], 'DRAFT_CREATED')
+        self.assertFalse(any(c[:3] == ('gh','release','edit') for c in self.gateway.calls))
+
     def test_only_declared_paper_files_are_uploaded(self):
         self.execute()
         blobs=[c for c in self.gateway.calls if c[:2]==('POST','repos/example/opk-first-paper/git/trees')]

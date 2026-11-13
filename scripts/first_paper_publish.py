@@ -182,6 +182,13 @@ def execute(template: str, repository: str, paper: Path, paper_sha256: str,
         gateway.command(['release', 'download', VERSION, '--repo', repository, '--dir', str(downloaded)])
         _same(bundle, downloaded)
         verify_all(downloaded, policy_path, repository, VERSION, 'existence', expected_paper_sha256=paper_sha256)
+        from source_provenance import verify_source_snapshot
+        # The Git commit needs to contain the actual declared paper/data/code,
+        # not merely be the tag target. Fail before irreversible publication.
+        snapshot = verify_source_snapshot(repository, commit, downloaded,
+                                          lambda path: gateway.anonymous_source(repository, commit, path))
+        report.update(source_snapshot_prepublication=snapshot)
+        journal()
         require_immutable(_get(gateway, repository))
         archive = output / 'first-paper.opk.zip'
         packed = pack(downloaded, archive, policy_path)
