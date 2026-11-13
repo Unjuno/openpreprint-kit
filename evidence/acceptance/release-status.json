@@ -1,0 +1,117 @@
+{
+  "schema_version": 1,
+  "record_kind": "MANUAL_READINESS_SNAPSHOT_NOT_AN_ATTESTATION",
+  "observed_on": "2026-11-13",
+  "repository": "Unjuno/openpreprint-kit",
+  "evaluated_main_sha": "7b1fc1d34ede8aebeb01bd869350ef2140be528e",
+  "criteria": "docs/V1_ACCEPTANCE.md",
+  "execution_plan": "docs/ROADMAP.md",
+  "scope": {
+    "online_backend": "GITHUB_ONLY",
+    "google_drive_required": false,
+    "remote_desktop_authorized": false,
+    "offline_export_required": true
+  },
+  "milestones": {
+    "P1_first_paper": "BLOCKED",
+    "P2_reuse_versions": "BLOCKED",
+    "P3_independent_operations": "BLOCKED",
+    "P4_kit_v1_0_0": "NO_GO"
+  },
+  "gates": {
+    "G0": {
+      "status": "PARTIAL",
+      "reviewer": null,
+      "signoff": null
+    },
+    "G1": {
+      "status": "BLOCKED",
+      "reviewer": null,
+      "signoff": null
+    },
+    "G2": {
+      "status": "BLOCKED",
+      "reviewer": null,
+      "signoff": null
+    },
+    "G3": {
+      "status": "PARTIAL",
+      "reviewer": null,
+      "signoff": null
+    },
+    "G4": {
+      "status": "BLOCKED",
+      "reviewer": null,
+      "signoff": null
+    },
+    "G5": {
+      "status": "BLOCKED",
+      "reviewer": null,
+      "signoff": null
+    },
+    "G6": {
+      "status": "PARTIAL",
+      "reviewer": null,
+      "signoff": null
+    },
+    "G7": {
+      "status": "BLOCKED",
+      "reviewer": null,
+      "signoff": null
+    }
+  },
+  "observations": {
+    "template_enabled": false,
+    "toolkit_release_count": 0,
+    "branch_protection": "UNKNOWN",
+    "destination_release_immutability": "UNKNOWN",
+    "codeql_open_alerts": "UNKNOWN",
+    "publication_operator": null,
+    "independent_witness": null,
+    "independent_custodian": null,
+    "independent_auditor": null
+  },
+  "approved_paper": {
+    "author_display_name": "Unjuno",
+    "license": "CC-BY-4.0",
+    "version": "v1",
+    "source_commit": "7b1fc1d34ede8aebeb01bd869350ef2140be528e",
+    "pdf_sha256": "0860b735379fb1b9b223f5d535442dae8421f456d7ae1c6bf6ce8d3141a1b07c",
+    "approval_pr": 28,
+    "public_release_verified": false
+  },
+  "publication_pr": {
+    "number": 29,
+    "state": "open",
+    "head_sha": "4905139950d07d7f43cbebfb3d581e734261e9ad",
+    "merged": false,
+    "template_creation_mismatch_requires_review": true
+  },
+  "artifact": {
+    "run_id": 43279522755,
+    "artifact_id": 13970554866,
+    "name": "first-paper-v1-live-tsa",
+    "expires_at_utc": "2026-11-26T18:26:50Z",
+    "archive_digest": "sha256:dff122ad2d108900db5ce93d1994e721820d8a2f8750e97d3330bebc770752ea"
+  },
+  "evidence_urls": [
+    "https://api.github.com/repos/Unjuno/openpreprint-kit/git/ref/heads/main",
+    "https://api.github.com/repos/Unjuno/openpreprint-kit",
+    "https://api.github.com/repos/Unjuno/openpreprint-kit/releases",
+    "https://github.com/Unjuno/openpreprint-kit/pull/28",
+    "https://github.com/Unjuno/openpreprint-kit/pull/29",
+    "https://github.com/Unjuno/openpreprint-kit/actions/runs/43279522763",
+    "https://github.com/Unjuno/openpreprint-kit/actions/runs/43279522755"
+  ],
+  "next_actions": [
+    "R01 preserve approved bytes and review PR29",
+    "R02 owner authority and template path alignment",
+    "R03 first paper publication and anonymous verification"
+  ],
+  "limitations": [
+    "No new code test or publication is represented by this snapshot",
+    "An absent reviewer is not a sign-off",
+    "Prior live TSA existence evidence is not immutable Release publication",
+    "Source repository role permissions do not establish connector administration operations"
+  ]
+}
