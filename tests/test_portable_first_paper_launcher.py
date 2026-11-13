@@ -56,6 +56,16 @@ class PortableFirstPaperLauncherTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "bad paper"):
                 launcher.publish()
 
+    def test_persistent_evidence_directory_and_source_separation(self):
+        with tempfile.TemporaryDirectory() as folder:
+            base = Path(folder) / "owner-evidence"
+            work = launcher.allocate_workspace(base)
+            self.assertEqual(work.parent, base)
+            self.assertTrue(work.is_dir())
+            with self.assertRaisesRegex(ValueError, "outside the toolkit"):
+                launcher.allocate_workspace(ROOT / "disallowed-evidence")
+            self.assertFalse((ROOT / "disallowed-evidence").exists())
+
     def test_windows_and_unix_venv_paths(self):
         base = Path("temporary") / "env"
         self.assertEqual(launcher.venv_python(base, windows=True),
