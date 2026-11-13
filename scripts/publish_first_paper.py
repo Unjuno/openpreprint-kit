@@ -132,14 +132,23 @@ def create_policy(work: Path) -> Path:
     return policy
 
 
+def allocate_workspace(base: Path | None = None) -> Path:
+    """Keep verification evidence in a stable owner directory, never the OS temp cache."""
+    root = base if base is not None else Path.home() / "OpenPreprintKitEvidence"
+    if root.exists() and (root.is_symlink() or not root.is_dir()):
+        raise ValueError("evidence root must be an ordinary directory")
+    if root.resolve().is_relative_to(ROOT.resolve()):
+        raise ValueError("evidence must remain outside the toolkit source repository")
+    root.mkdir(mode=0o700, parents=True, exist_ok=True)
+    return Path(tempfile.mkdtemp(prefix="first-paper-", dir=str(root))).resolve()
+
+
 def publish() -> int:
     # This order is deliberate: mismatched source cannot trigger auth/network
     # operations or produce a new public repository.
     check_paper()
     check_owner_environment()
-    work = Path(tempfile.mkdtemp(prefix="opk-first-paper-")).resolve()
-    if work.is_relative_to(ROOT):
-        raise ValueError("evidence must remain outside the source repository")
+    work = allocate_workspace()
     print("Owner evidence directory: " + str(work), flush=True)
     print("Installing hash-locked dependencies in an isolated environment", flush=True)
     environment = work / "venv"
