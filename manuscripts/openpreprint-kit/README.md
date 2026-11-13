@@ -2,7 +2,7 @@
 
 **論文v1の著者表示はUnjuno、本文・原稿のライセンスはCC BY 4.0です。2026年11月13日に利用者が確認しました。** この確認はチャット上の申告であり、署名付き本人確認・権利調査・査読を意味しません。
 
-**公開状態：未査読のv1候補。専用GitHubリポジトリのImmutable Releaseは未発行。** [本文](paper.md)、[正式候補メタデータ](preprint.yaml)、[資産別ライセンス通知](LICENSE-NOTICE.txt)が現在の入力です。`proposed-preprint.yaml`は承認前の履歴であり、正式候補には使用しません。
+**公開状態：2026年11月14日、未査読プレプリントv1を[GitHub Immutable Release](https://github.com/Unjuno/openpreprint-kit-paper/releases/tag/v1)として正式公開済み（Release ID 444659219）。** [本文](paper.md)、[正式候補メタデータ](preprint.yaml)、[資産別ライセンス通知](LICENSE-NOTICE.txt)が現在の入力です。`proposed-preprint.yaml`は承認前の履歴であり、正式候補には使用しません。
 
 評価対象の実装コミットは `940d0d06d957cd0708f644a595911bdbc3fffa64` に固定しています。保存済みCIログ274件・26モジュール、集計データ、再実行コードを、現在のキットのテスト件数とは区別して報告します。
 
@@ -36,8 +36,10 @@ GitHub Actions [第1論文実TSAワークフロー](../../.github/workflows/firs
 
 合格できる範囲は `APPROVED_MANUSCRIPT_EXISTENCE_ONLY` です。論文の存在時刻の証拠と、GitHubへの**正式な公開開始時刻**は異なります。証拠の保管先となるGitHub Actions artifactは14日間の短期成果物であり、永久保存ではありません。
 
-## GitHub上での正式発行に必要な条件
+## GitHub上での正式発行結果と残る保証
 
-論文専用の公開GitHubリポジトリを作り、Immutable Releasesを有効化し、作成したv1のPDF・研究データ・引用情報・RFC 3161証拠を添付してから、匿名再ダウンロードとハッシュの再検証を実行します。別のGitHubリポジトリへのミラーと第三者による署名付き観測は独立した工程です。
+論文専用の公開GitHubリポジトリをTemplateから作り、Immutable Releasesを有効化して、承認済みPDF・研究データ・引用情報・**公開先のソースに結び付く新しいRFC 3161証拠**を全11資産として公開しました。GitHub APIで`draft=false`・`immutable=true`と紙面のSHA-256一致を確認できます。[所有者の詳細な実行証拠](https://github.com/Unjuno/openpreprint-kit/issues/5#issuecomment-6863092530)にはRelease attestation、全資産の匿名再取得、復元のPASS記録があります。ただし初回のWindows起動時は`cffconvert` PATH欠陥で停止し、所有者承認の下で手動継続しました。元FAIL記録と継続記録は別々に保持され、最初から無停止で実行できたとは主張しません。
+
+旧プログラムを再実行して新しいv1を作り直すことはしません。別管理GitHubミラー、第三者による署名付き観測、人間のレビューとセキュリティ監査は別工程であり、現時点ではキットv1.0.0の受入条件を満たしていません。
 
 **オンライン配布・ミラーはGitHubを使用します。** Google Driveの利用、実患者原本、非公開HMAC鍵や署名秘密鍵のアップロードはありません。AI支援の原稿であること、未査読であること、独立の著作者本人確認をしていないことを、本文でも明示します。
