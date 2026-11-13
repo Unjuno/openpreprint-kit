@@ -1,0 +1,24 @@
+{
+  "files": {
+    "evidence/first-paper/approved-v1/original-existence-receipt.json": {
+      "sha256": "13c05515ecd2a11aa171885d461d87d5510d8bf19003e1239b309d3dc4b11386",
+      "size_bytes": 926
+    },
+    "evidence/first-paper/approved-v1/prepublication.opk.zip": {
+      "sha256": "3e78455af37a0872d994d9d3c12eca6a1db1568a86671d55aa71ac020aa76a3d",
+      "size_bytes": 248319
+    },
+    "manuscripts/openpreprint-kit/approved-v1/paper.pdf": {
+      "sha256": "0860b735379fb1b9b223f5d535442dae8421f456d7ae1c6bf6ce8d3141a1b07c",
+      "size_bytes": 187502
+    }
+  },
+  "next_publication": "New source-bound manifest requires a fresh TSA token; never relabel this original proof.",
+  "origin_artifact": "first-paper-v1-live-tsa",
+  "origin_commit": "7b1fc1d34ede8aebeb01bd869350ef2140be528e",
+  "origin_run": 43279522755,
+  "public_paper_release": false,
+  "schema_version": 1,
+  "scope": "RETAINED_APPROVED_PREPUBLICATION_INPUT_NOT_A_RELEASE",
+  "trust_note": "Git-tracked copies preserve bytes, not GitHub-independent permanence. Archived CA/CRL are evidence copies, not automatic trust roots."
+}
