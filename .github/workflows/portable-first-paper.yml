@@ -4,14 +4,18 @@ on:
   pull_request:
     paths:
       - 'scripts/publish_first_paper.py'
+      - 'scripts/citation_validation.py'
       - 'tests/test_portable_first_paper_launcher.py'
+      - 'tests/test_citation_validation.py'
       - 'docs/FIRST_PAPER_QUICKSTART.md'
       - '.github/workflows/portable-first-paper.yml'
   push:
     branches: [main]
     paths:
       - 'scripts/publish_first_paper.py'
+      - 'scripts/citation_validation.py'
       - 'tests/test_portable_first_paper_launcher.py'
+      - 'tests/test_citation_validation.py'
       - 'docs/FIRST_PAPER_QUICKSTART.md'
       - '.github/workflows/portable-first-paper.yml'
   workflow_dispatch:
@@ -55,3 +59,5 @@ jobs:
           python -m pip install --require-hashes --no-build-isolation -r requirements.lock
       - name: Simulated first-paper publisher with real ephemeral crypto (no GitHub writes)
         run: python -m unittest discover -s tests -p test_first_paper_publish.py -v
+      - name: Reproduce Windows no-activation citation validation
+        run: python -m unittest discover -s tests -p test_citation_validation.py -v
