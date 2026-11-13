@@ -147,7 +147,13 @@ class FirstPaperPublishTests(unittest.TestCase):
         self.gateway.corrupt_source = True
         with self.assertRaisesRegex(ValueError, 'paper/paper.pdf'):
             self.execute()
-        self.assertEqual(self.gateway.releases, {})
+        # A prepublication draft is expected; the safety invariant is that
+        # invalid source bytes never reach a *public* immutable Release.
+        draft = self.gateway.releases[('example/opk-first-paper', 'v1')]
+        self.assertTrue(draft['draft'])
+        report = json.loads((self.output / 'publication-report.json').read_text())
+        self.assertEqual(report['status'], 'FAIL')
+        self.assertEqual(report['state'], 'DRAFT_CREATED')
         self.assertFalse(any(c[:3] == ('gh','release','edit') for c in self.gateway.calls))
 
     def test_only_declared_paper_files_are_uploaded(self):
