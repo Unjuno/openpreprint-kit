@@ -1,36 +1,34 @@
 # OpenPreprint Kit — 第1論文 v2 データ公開ポリシー
-# 公開対象はすべて本稿の研究成果物であり、実際の公開リポジトリでのライセンスは CC BY 4.0（本文・原稿）と資産別ライセンス（コード・データ）に従う。
 schema_version: 1
 public_assets:
-- path: manuscripts/openpreprint-kit-v2/paper.md
-  role: manuscript_source
-  description: 第1論文 v2 本文（実運用評価）
+- path: data/release-matrix.json
+  role: dataset
+  description: Measured IDs, commits, attestation verification for the five published releases
   license: CC-BY-4.0
-  public_confirmed: false
-- path: manuscripts/openpreprint-kit-v2/preprint.yaml
-  role: publication_metadata
-  description: 書誌情報（所有者承認待ち）
+  public_confirmed: true
+- path: data/tsa-reverification.json
+  role: dataset
+  description: Re-verification results of RFC 3161 proofs for the five published releases
   license: CC-BY-4.0
-  public_confirmed: false
-- path: manuscripts/openpreprint-kit-v2/data/release-matrix.json
-  role: evaluation_data
-  description: 5つの公開ReleaseのID・コミット・attestation検証結果（実測）
+  public_confirmed: true
+- path: data/incident-analysis.json
+  role: dataset
+  description: Two real incidents encountered during the first publication (INC-1, INC-2)
   license: CC-BY-4.0
-  public_confirmed: false
-- path: manuscripts/openpreprint-kit-v2/data/tsa-reverification.json
-  role: evaluation_data
-  description: 5版のRFC 3161再検証結果（実測）
-  license: CC-BY-4.0
-  public_confirmed: false
-- path: manuscripts/openpreprint-kit-v2/data/incident-analysis.json
-  role: evaluation_data
-  description: 実公開で発生した2件の障害と修正の記録（実測）
-  license: CC-BY-4.0
-  public_confirmed: false
-- path: manuscripts/openpreprint-kit-v2/analysis/summarize_releases.py
+  public_confirmed: true
+- path: analysis/summarize_releases.py
   role: analysis_code
-  description: 公開資産の再集計・整合チェックコード（標準ライブラリのみ）
+  description: Standard-library-only recomputation of release/TSA/incident facts
   license: MIT
-  public_confirmed: false
+  public_confirmed: true
+- path: supplements/paper.md
+  role: supplementary
+  description: Manuscript source of the v2 operational evaluation
+  license: CC-BY-4.0
+  public_confirmed: true
+- path: supplements/LICENSE-NOTICE.txt
+  role: supplementary
+  description: Per-file license notice for the v2 manuscript and assets
+  license: CC-BY-4.0
+  public_confirmed: true
 relations: []
-# public_confirmed=false の資産は、所有者の明示承認と対象repo作成/公開可否の確認まで公開しない。
