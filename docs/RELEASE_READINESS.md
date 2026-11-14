@@ -1,6 +1,6 @@
 # OpenPreprint Kit — 現在の受入状態
 
-更新日: **2026-11-15 JST**。現行 main: `fca5c545b8dc3fa930857b9cff00864da3dc6e15`。
+更新日: **2026-11-15 JST**。記録時の基準コミット: `7c646468f12668c12b07c688d393ee203897998d`（最新 main は GitHub で確認）。
 
 **第1論文v1 (P1) は正式公開済み。正式4版（2実論文repo×各2版）も公開・再検証済み。キットv1.0.0 (P4) は NO-GO。**
 ソフトウェアの試験合格を、本番公開の成功・第三者監査・長期保存の証明と混同しない。
@@ -16,7 +16,7 @@
 | 3 | [openpreprint-kit-robustness-eval](https://github.com/Unjuno/openpreprint-kit-robustness-eval) | **v1**（改変検出の実証評価） | RE_kwDOVubJxs4ajPQ0 / `940bd77d02318e9d95fa5cb7db568804de2d1860` | 2026-11-14T16:53:04Z | ✓ |
 | 4 | openpreprint-kit-robustness-eval | **v2**（追加実験: CRL鮮度対照・前方TSA更新） | RE_kwDOVubJxs4ajPhz / `2631782a109bf47572e4310ae0da32f26aec3de9` | 2026-11-14T16:54:53Z | ✓ |
 
-- 全5資産の attestation（`gh release verify` / `verify-asset` ×11）・匿名DL byte一致・オフライン復元・TSA再検証は再実測済み。
+- 各Releaseの全11資産の attestation（`gh release verify` / `verify-asset` ×11）・匿名DL byte一致・オフライン復元・TSA再検証は再実測済み。
 - 論文 repo は事後的に branch protection を設定（deletion/force-push禁止、PR必須、必須 checks `validate (3.12)/(3.10)/audit`, strict=true）。事後設定は公開前保護の証明ではない。
 - 第1論文専用ランナーの初回失敗（cffconvert PATH）は owner 承認後の同一コード経路継続で完了。FAIL 記録は保持。
 - `publish_manuscript.py`（汎用ランナー）を PR #42 で統合。pre-flight 順序欠陥を PR #45 で修正。回帰テスト分離を PR #46 で完了。
