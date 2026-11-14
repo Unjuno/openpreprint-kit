@@ -1,9 +1,9 @@
 {
   "schema_version": 1,
   "kind": "gate-evidence-matrix",
-  "generated_at_utc": "2026-11-14T12:10:00Z",
+  "generated_at_utc": "2026-11-14T12:30:00Z",
   "generator": "OpenCode (AI assistant) — same owner machine as publication; NOT an independent auditor",
-  "main_sha": "3e4d373c7e4376c6d732b61e74c0b8bf2ab22d7a",
+  "main_sha": "84ca91cd6829e2d3d1c5a0f113f475c1d869bf73",
   "environment": {
     "os": "Windows 11 (win32) + GitHub Actions ubuntu-24.04 / macos-15 / windows-2025",
     "python": "CPython 3.12.10 (local) / 3.10 & 3.12 (CI)",
@@ -18,13 +18,13 @@
       "status": "PARTIAL",
       "formal_requirement": "発行対象SHAで Python 3.10/3.12 必須試験が全成功・必須スキップ0。依存配布物ハッシュ/Actions SHA固定。重大・高リスク未解決0。CodeQLは実行だけでなく警告を読んで判定。",
       "evidence": [
-        "main 3e4d373c: Validate (3.10) success / Validate (3.12) success / Quality (audit) success / CodeQL success / First-paper self-application success / Portable launcher smoke success (PR #35, runs #43587897593 / #43587897500 / #43587897597 / #43587897687)",
+        "main 84ca91cd (PR #36 docs): Validate success / Quality success / CodeQL success (runs #43594193249 / #43594193191 / #43594193245). Pre-merge main 3e4d373c (PR #35): full suite 367/367 success + portable smoke.",
         "PR #34 CI (issue #5 comment 6863799982): 367/367 tests Python 3.10 & 3.12; merged at 2cd536ca",
         "Actions SHA-pinned: all `uses:` across workflows pin 40-hex SHAs with version comments (verified 2026-11-14)",
         "requirements.lock hash-locked (321 ' --hash' entries); requirements-build.lock hash-locked (pip/setuptools/wheel)",
         "CodeQL open alerts = 0 (gh api code-scanning/alerts?state=open → 0)",
         "pip-audit 2.10.1 against requirements.lock (22 deps): 0 known vulnerabilities (2026-11-14, local)",
-        "Dependabot alerts: HTTP 403 'Dependabot alerts are disabled for this repository' (NOT counted as separate fail criterion; owner decision recorded in unresolved-blockers.md)"
+        "Dependabot alerts: disabled at audit time (HTTP 403); owner approved enablement 2026-11-14; PUT vulnerability-alerts -> 204; open alerts = 0 (owner + AI recorded)"
       ],
       "owner_self_reported_only": [
         "Required approvals = 0 is owner's explicit choice, NOT an independent human review"
@@ -181,7 +181,7 @@
       "status": "BLOCKED",
       "formal_requirement": "固定SHAに対する外部のセキュリティ/プライバシー報告。重大・高リスク未解決0。期限・失効・CA更新・証拠更新・旧失効証拠保存・障害復旧を試験し責任者を確定。",
       "evidence": [
-        "固定SHA: main 3e4d373c… の CI 全成功・CodeQL 0 open・pip-audit 0 vuln（技術試験のみ）",
+        "固定SHA: main 84ca91cd… の CI 全成功・CodeQL 0 open・pip-audit 0 vuln（技術試験のみ）",
         "証拠寿命試験の一部: renewal.py の転送（TSA更新）試験は CI で実行（test_renewal.py, 合成のみ）",
         "docs/operator-packages/G7-external-audit.md に外部監査者向け監査パッケージ（対象SHA・監査範囲・秘匿なし・PASS条件）作成済み"
       ],
