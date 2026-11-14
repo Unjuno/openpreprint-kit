@@ -1,9 +1,9 @@
 {
   "schema_version": 1,
   "kind": "gate-evidence-matrix",
-  "generated_at_utc": "2026-11-14T12:30:00Z",
+  "generated_at_utc": "2026-11-14T17:10:00Z",
   "generator": "OpenCode (AI assistant) — same owner machine as publication; NOT an independent auditor",
-  "main_sha": "84ca91cd6829e2d3d1c5a0f113f475c1d869bf73",
+  "main_sha": "34aaa790697db1892db9bafd3f47b020e9a4ad8e",
   "environment": {
     "os": "Windows 11 (win32) + GitHub Actions ubuntu-24.04 / macos-15 / windows-2025",
     "python": "CPython 3.12.10 (local) / 3.10 & 3.12 (CI)",
@@ -68,14 +68,12 @@
       "status": "PARTIAL",
       "formal_requirement": "2論文リポジトリに各2版、最低4件の不変Release。最低1件は承認済み本短報。v2後もv1資産が不変。全Releaseと全資産のattestation、匿名取得、引用/研究資産の一致を検証。",
       "evidence": [
-        "paper v1 (Unjuno/openpreprint-kit-paper, Release ID 444659219): draft=false, immutable=true, tag target 804cb76a…, 11資産 attestation VERIFIED (gh release verify), 全資産 verify-asset 0 (2026-11-14 reverify), 匿名DL byte一致, paper SHA-256 0860b735…, v1後の v2 不在",
-        "demo-a v1 (commit a27ab50f…) / v2 (86f3cf2e…): immutable, attestation VERIFIED, 11 assets attested, 匿名DL一致, オフライン復元一致, TSA PASS",
-        "demo-b v1 (78e8ef8d…) / v2 (6c281c97…): 同上",
-        "v2 公開後の v1 不変性: demo-a/demo-b とも v1 再ダウンロード byte equality PASS (pilot continuation, repository-1/v1-after-v2, repository-2/v1-after-v2)",
-        "研究データ/解析コード/引用の整合性: 各バンドルで verify_release.verify() PASS（research-assets.tar 内 checksums + citation SPE Python closure validation）",
-        "5 releases reverified 2026-11-14: all metadata_ok, all_assets_attested, offline_integrity_ok (g2-reverify-results.json)",
-        "基準差異: 正式G2は「2論文リポジトリ各2版」だが、paper は v1 のみ。demo 2 repo は synthetic であり承認済み本短報ではない（paper v1 は別 repo）",
-        "owner 2026-11-14: 「synthetic2repo解釈」承認。ただし正式受入基準 V1_ACCEPTANCE.md G2 を書き換えたわけではない（基準変更には owner 承認が必要）"
+        "paper v1 (Unjuno/openpreprint-kit-paper, Release ID 444659219): immutable, draft=false, tag target 804cb76a…, unchanged since publication; re-verified 2026-11-14",
+        "paper v2 (RE_kwDOVtdYwc4ajOkk): immutable, published 2026-11-14T16:48:30Z, tag target 6ec47ec5…; attestation VERIFIED (gh release verify + verify-asset x11), anonymous re-download byte-equality, offline restore, TSA existence PASS",
+        "paper B v1 (Unjuno/openpreprint-kit-robustness-eval, RE_kwDOVubJxs4ajPQ0): immutable, published 2026-11-14T16:53:04Z, tag target 940bd77d…; attestation VERIFIED, anonymous byte-equality, offline restore, TSA existence PASS",
+        "paper B v2 (same repo, RE_kwDOVubJxs4ajPhz): immutable, published 2026-11-14T16:54:53Z, tag target 2631782a…; attestation VERIFIED, anonymous byte-equality, offline restore, TSA PASS",
+        "v2-after-v1 invariance: paper v1 re-fetched after A v2 and digests matched; B v1 re-fetched after B v2 and digests matched",
+        "5 of 5 previously verified synthetic releases + paper v1 + 3 new formal releases all verified against their SHA-256"
       ],
       "owner_self_reported_only": [],
       "needs_independent_human": [
@@ -83,10 +81,9 @@
         "G2 最終判定（実行者と別の検証担当）"
       ],
       "missing": [
-        "対象4版の基準選択（A案: 新規実論文/v2 が必要 / B案: 基準変更案の承認）",
-        "実行者と別の検証担当による G2 PASS 判定"
+        "発行者と別の検証担当による PASS 判定（実行者=所有者+AI、独立性なし）"
       ],
-      "next_minimal_verification": "owner が A案/B案を選択（unresolved-blockers.md §G2）"
+      "next_minimal_verification": "owner が検証担当を指名し、対象4版を公開・TSA・引用・版不変性で判定、Issue #5 に署名付き結果を記録"
     },
     {
       "id": "G3",
