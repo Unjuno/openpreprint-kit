@@ -1,54 +1,48 @@
 # OpenPreprint Kit — 現在の受入状態
 
-確認日: **2026-11-14 JST**。現行ソフトウェアの固定参照元: `5e49b38ede242ca4cafebf4e4aaab09c3bbac890`（後続の修正PRは別評価）。
+更新日: **2026-11-15 JST**。現行 main: `fca5c545b8dc3fa930857b9cff00864da3dc6e15`。
 
-**第1論文v1（P1）は正式公開済み。キットv1.0.0（P4）は NO-GO。**
-論文の公開が成立したことと、再利用可能なキットの全受入条件が満たされたことは別の判定である。
+**第1論文v1 (P1) は正式公開済み。正式4版（2実論文repo×各2版）も公開・再検証済み。キットv1.0.0 (P4) は NO-GO。**
+ソフトウェアの試験合格を、本番公開の成功・第三者監査・長期保存の証明と混同しない。
 
-唯一の受入基準は [V1_ACCEPTANCE.md](V1_ACCEPTANCE.md) の G0〜G7。実行順と担当は [ROADMAP.md](ROADMAP.md)。完了台帳は [Issue #5](https://github.com/Unjuno/openpreprint-kit/issues/5)。以前の [2026-11-13手動スナップショット](../evidence/acceptance/release-status.json) は履歴として保持し、未公開という古い判断を現在の事実に流用しない。
+基準: [V1_ACCEPTANCE.md](V1_ACCEPTANCE.md) (G0–G7)。工程: [ROADMAP.md](ROADMAP.md)。完了台帳: [Issue #5](https://github.com/Unjuno/openpreprint-kit/issues/5)。過去のスナップショット [2026-11-13 manual status](../evidence/acceptance/release-status.json) は履歴としてのみ参照し、現在の判定には用いない。
 
-## P1 の公開と検証
+## 実公開リリース（2026-11-14）
 
-| 対象 | 確認された値・根拠 |
-|---|---|
-| 専用論文repo | [Unjuno/openpreprint-kit-paper](https://github.com/Unjuno/openpreprint-kit-paper)。Public |
-| v1 Release | [Release ID 444659219](https://github.com/Unjuno/openpreprint-kit-paper/releases/tag/v1)。2026-11-13T19:39:48Z公開。GitHub APIで `draft=false`, `immutable=true` |
-| Releaseの対象ソース | `804cb76a4cf5eea65349fc7a8f01e2ce00e1176d`（論文repoのコミット。ツール本体のmainとは別） |
-| 11資産 | GitHub RESTで11個の資産名・個別SHA-256が閲覧可能 |
-| `paper.pdf` | 187,502 bytes、GitHub API digest `sha256:0860b735379fb1b9b223f5d535442dae8421f456d7ae1c6bf6ce8d3141a1b07c`。承認済みPDFと一致 |
-| attestation / 新TSA / 匿名取得 / 保存ZIP復元 | [所有者の実行記録](https://github.com/Unjuno/openpreprint-kit/issues/5#issuecomment-6863092530)による成功。TSA署名時刻 `2026-11-13T19:39:35+00:00`。保存ZIP SHA-256 `66cccf52d0bdacc7f5bcf8ea4c23931824f94aaf715932d9aff282328752a5c4`。これらの暗号学的/復元試験を本記録の作成者が別環境で独立再実行したとは主張しない |
-| 公開方法 | **最初の実行は Windows PATH 欠陥で `SOURCE_COMMITTED` にて FAIL**。所有者が継続を承認し、既存repoを削除・再作成せず同じコード経路で続行。失敗記録を保持し、`continuation-report.json` に残りの工程を記録 |
-| 第三者保証 | 公開時刻の最初の瞬間、著作者本人確認、科学的正しさ、独立査読、証人/保管者の独立性はいずれも未証明 |
+| # | Repository | Release | Release ID / タグ SHA | 公開時刻 | Immutable |
+|---|---|---|---|---|---|
+| 1 | [openpreprint-kit-paper](https://github.com/Unjuno/openpreprint-kit-paper) | **v1**（承認済み本短報、変更禁止） | 444659219 / `804cb76a4cf5eea65349fc7a8f01e2ce00e1176d` | 2026-11-13T19:39:48Z | ✓ |
+| 2 | openpreprint-kit-paper | **v2**（実運用評価、AI支援執筆・所有者承認） | RE_kwDOVtdYwc4ajOkk / `6ec47ec58e9dc733956615343aad16caca4bb8ee` | 2026-11-14T16:48:30Z | ✓ |
+| 3 | [openpreprint-kit-robustness-eval](https://github.com/Unjuno/openpreprint-kit-robustness-eval) | **v1**（改変検出の実証評価） | RE_kwDOVubJxs4ajPQ0 / `940bd77d02318e9d95fa5cb7db568804de2d1860` | 2026-11-14T16:53:04Z | ✓ |
+| 4 | openpreprint-kit-robustness-eval | **v2**（追加実験: CRL鮮度対照・前方TSA更新） | RE_kwDOVubJxs4ajPhz / `2631782a109bf47572e4310ae0da32f26aec3de9` | 2026-11-14T16:54:53Z | ✓ |
 
-元のFAIL記録をPASSに上書きしない。実証済みの公開内容を変更・再発行しない。今後の確認は[読み取り専用の復元手順](FIRST_PAPER_QUICKSTART.md)による。
+- 全5資産の attestation（`gh release verify` / `verify-asset` ×11）・匿名DL byte一致・オフライン復元・TSA再検証は再実測済み。
+- 論文 repo は事後的に branch protection を設定（deletion/force-push禁止、PR必須、必須 checks `validate (3.12)/(3.10)/audit`, strict=true）。事後設定は公開前保護の証明ではない。
+- 第1論文専用ランナーの初回失敗（cffconvert PATH）は owner 承認後の同一コード経路継続で完了。FAIL 記録は保持。
+- `publish_manuscript.py`（汎用ランナー）を PR #42 で統合。pre-flight 順序欠陥を PR #45 で修正。回帰テスト分離を PR #46 で完了。
 
-## ソフトウェア実装と所有者設定
+## G0–G7 の判定（2026-11-15、自己評価＋実測証拠）
 
-- 公開・復旧ロジック（PR #29）、受入基準（#30）、公開ソースと資産の一致（#31）、Windows/macOS/Linux共通ランチャー（#32）および公開前証拠再検証（#33）はすべてmainへ統合済み。
-- main `5e49b38ede242ca4cafebf4e4aaab09c3bbac890` に対して、[Python 3.10/3.12](https://github.com/Unjuno/openpreprint-kit/actions/runs/43461763874) 各362テスト、[品質](https://github.com/Unjuno/openpreprint-kit/actions/runs/43461763750)、[CodeQL実行](https://github.com/Unjuno/openpreprint-kit/actions/runs/43461763691) が成功。CodeQL実行成功は未解決警告0件を意味しない。
-- 元repoのTemplateは有効、[protect-main](https://github.com/Unjuno/openpreprint-kit/rules/27207738) はActive。削除/force-push禁止、PR必須、Python 3.10/3.12と`audit`が必須。Required approvals=0は所有者が明示的に選択した暫定値で、G1の独立人間レビュー条件は未達。
-- Windows実公開で発見された `venv/Scripts` 非継承と `cffconvert` の解決不備、cp932とUTF-8の違いは、ソフトウェアの修正・回帰テスト対象とする。**新たなCIが成功するまで修正済みとは断定しない。**
-
-## G0〜G7の判定
-
-| ゲート | 現状 | 残る終了証拠 |
+| ゲート | 判定 | 残る証拠・形
 |---|---|---|
-| G0 コード・配布品質 | PARTIAL | Windows実運用欠陥の修正と最終SHAのCI、CodeQL警告のトリアージ、人間の承認、重大・高リスク未解決0 |
-| G1 所有者設定・再利用 | PARTIAL | Template由来の公開論文repoを合計2件、新repo双方の不変設定、ブランチ保護/必須レビューの読戻し |
-| G2 実公開・版管理 | PARTIAL | 現在1repo×1版。2repo×各2版の計4 Immutable Releases、全版attestation、匿名取得・旧版保持 |
-| G3 TSA・否定試験 | PARTIAL | P1で実TSAを使用。4公開版、2環境で8回以上の正常検証、固定20異常系の受入結果が不足 |
-| G4 独立公開観測 | BLOCKED | 管理/実行環境と鍵が独立した人間による4版の署名・時刻証拠 |
-| G5 保存・オフライン復元 | BLOCKED | P1で所有者自身の復元記録あり。別管理のGitHubミラーと保管者、計4版のオフライン復元は未実施 |
-| G6 人間の編集・権利 | PARTIAL | 著者表示/ライセンス承認は既存。実人間のレビューと権利/COI確認、訂正・撤回演習 |
-| G7 独立監査・証拠寿命 | BLOCKED | 外部セキュリティ/プライバシー監査、旧CRL/CA/鍵更新と障害復旧の運用試験、保守責任者の確定 |
+| G0 コード・配布品質 | PARTIAL | main CI 全成功（Validate 3.10/3.12・Quality/audit・CodeQL・self-application・portable smoke）。Actions SHA固定。依存ハッシュロック。CodeQL 0 alerts、pip-audit 0 vuln。**レビュー担当の独立承認が未**。Dependabot alerts は owner 承認で有効化済み（0件） |
+| G1 所有者設定・再利用 | PARTIAL | 2つの論文 repo（paper / robustness-eval）＋ toolkit template を読戻し。Immutable=true、paper/robustness-eval ともに事後 branch protection 設定済み。Required approvals=0 は所有者選択であり独立人間レビューではない |
+| G2 実公開・版管理 | PARTIAL | 正式4版（2実論文repo×各2版、承認済み本短報を含む）公開・attestation・匿名DL一致・v2後もv1不変を実証。**発行者と別の検証担当による判定が未** |
+| G3 TSA・否定試験 | PARTIAL | 5版のRFC 3161再検証 PASS、2環境8回以上の正常検証（Windows + Ubuntu live-acceptance #43583374274）、固定20否定ケース誤受理0（spec固定・23判定）。TSA運用担当の信頼選定承認・検証担当の判定が未 |
+| G4 独立公開観測 | BLOCKED | 別管理鍵・環境の実在観測者が正式4版を匿名取得・署名・RFC 3161。手順書: `docs/operator-packages/G4-independent-observer.md` |
+| G5 複製・オフライン復元 | BLOCKED | 別管理保管者の受領・再計算・別管理GitHubミラー・GitHub非接続4版復元。台帳304 files完備（`CUSTODY_LEDGER.json`）だが未保管。手順書: `G5-custodian-handover.md` |
+| G6 人間の編集・個人情報管理 | PARTIAL | ライセンス分離文書化済み・維持。人間の権利/COI確認・レビュー1件・訂正/撤回演習が未。手順書: `G6-human-review.md` |
+| G7 独立セキュリティ・証拠寿命 | BLOCKED | 外部監査者による固定SHA監査・失効/CA更新/復旧の実測試験と署名。手順書: `G7-external-audit.md` |
 
-**P1 PASS（公開と所有者実行証拠の範囲）。P2 BLOCKED。P3 BLOCKED。P4 NO-GO。**
+**P1 PASS。P2（G2）は骨格実証済み・独立検証未。P3 BLOCKED。P4 NO-GO。v1.0.0 完成宣言はしません。**
 
-## 次の優先行動
+## 残る作業（独立した人間が必要）
 
-1. P1のオリジナルFAIL記録・継続レポート・公開ZIPと独立して保存したSHA-256を、実行者とは別の管理下に複製する。管理主体が分かれない単なるコピーはG5の独立保管証明ではない。
-2. WindowsのPATH/引用検証問題を修正し、Linux・Windows・macOSで暗号学的な模擬公開・負の対照・実CFF検証を再試験する。公開済みv1は再発行しない。
-3. 2番目のTemplate由来repoと総計4版の受入（R04/R05）を、別の利用担当者の承認の下で実行する。
-4. 独立観測者（R06）、別管理保管者（R07）、人間レビュー・外部監査（R08）の選任と、証拠寿命・事故対応の検証を進める。
+1. 検証担当による対象4版の G2/G3 判定と Issue #5 での署名記録
+2. G4（独立観測者）・G5（別管理保管者）・G6（編集担当）・G7（外部監査者）の選任と実測
+3. G0/G1 の独立承認（Required approvals=0 の妥当性含む）
+4. 全 PASS 後に、キット本体 `v1.0.0` 不変 Release の発行（owner 承認）と再取得検証
 
-論文の存在時刻・GitHubの公開日時・科学的妥当性・人間が独立して見た事実は異なる。AI自身の確認を「独立監査」とみなして全ゲートPASSにしない。
+## 文書の訂正履歴
+
+- 2026-11-14: paper A v2 公開後の ER-1（解析集計ラベル誤り）・ER-2（B v2再現手順）・ER-3（ランナー pre-flight 順序欠陥）は `evidence/acceptance/erratum-2026-11-15-public-releases.md` に記録。公開済み asset は変更せず。
