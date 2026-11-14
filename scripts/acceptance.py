@@ -24,33 +24,15 @@ def _protect_windows_private_dir(path: Path) -> None:
     """Give synthetic private fixtures an explicit, locale-independent DACL."""
     if os.name != 'nt':
         return
-    whoami = Path(os.environ.get('SystemRoot', r'C:\Windows')) / 'System32' / 'whoami.exe'
-    icacls = Path(os.environ.get('SystemRoot', r'C:\Windows')) / 'System32' / 'icacls.exe'
-    identity = subprocess.run([str(whoami), '/user', '/fo', 'csv', '/nh'],
-                              capture_output=True, text=True, encoding='utf-8', errors='replace',
-                              check=False, timeout=15)
-    if identity.returncode != 0:
-        raise ValueError('cannot determine Windows test user SID')
-    import re
-    match = re.search(r'"(S-1-[0-9-]+)"\s*$', identity.stdout.strip())
-    if not match:
-        raise ValueError('cannot determine Windows test user SID')
-    user_sid = match.group(1)
-    result = subprocess.run([str(icacls), str(path.resolve()), '/inheritance:r', '/grant:r',
-                             f'*{user_sid}:(OI)(CI)(F)', '*S-1-5-18:(OI)(CI)(F)',
-                             '*S-1-5-32-544:(OI)(CI)(F)'],
-                            capture_output=True, text=True, encoding='utf-8', errors='replace',
-                            check=False, timeout=15)
-    if result.returncode != 0:
-        raise ValueError('cannot create protected synthetic Windows fixture directory')
-    # Windows temporary directories can carry the OWNER RIGHTS pseudo-SID as
-    # an explicit ACE after inheritance is disabled; it is not part of the
-    # deliberately narrow fixture allowlist.
-    result = subprocess.run([str(icacls), str(path.resolve()), '/remove:g', '*S-1-3-4'],
-                            capture_output=True, text=True, encoding='utf-8', errors='replace',
-                            check=False, timeout=15)
-    if result.returncode != 0:
-        raise ValueError('cannot remove inherited Windows fixture ACL entries')
+    import private_seal
+    user_sid = private_seal._windows_acl_snapshot(path)['currentUserSid']
+    sddl = (f'O:{user_sid}G:{user_sid}D:P'
+            f'(A;OICI;FA;;;{user_sid})(A;OICI;FA;;;S-1-5-18)'
+            '(A;OICI;FA;;;S-1-5-32-544)')
+    private_seal._windows_replace_acl(path, sddl)
+    if not private_seal._windows_acl_is_private(
+            private_seal._windows_acl_snapshot(path), allow_trusted_inheritance=True):
+        raise ValueError('cannot verify protected synthetic Windows fixture directory')
 
 
 def run(script: Path, *args: object, expected: int = 0) -> str:

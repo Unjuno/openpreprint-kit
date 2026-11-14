@@ -43,24 +43,17 @@ class PrivateSealTests(unittest.TestCase):
     def _set_test_acl(self, path, *, inheritable=False, extra_sids=()):
         if not self.win_acl:
             self.skipTest('Windows DACL test requires Windows')
-        icacls = Path(os.environ['SystemRoot']) / 'System32' / 'icacls.exe'
-        inherited = '(OI)(CI)' if inheritable else ''
-        entries = [f'*{self.windows_user_sid}:{inherited}(F)',
-                   f'*S-1-5-18:{inherited}(F)', f'*S-1-5-32-544:{inherited}(F)']
-        result = subprocess.run([str(icacls), str(path.resolve()), '/inheritance:r'],
-                                capture_output=True, text=True, encoding='utf-8', errors='replace',
-                                check=False, timeout=15)
-        self.assertEqual(result.returncode, 0, result.stderr or result.stdout)
-        result = subprocess.run([str(icacls), str(path.resolve()), '/grant:r', *entries],
-                                capture_output=True, text=True, encoding='utf-8', errors='replace',
-                                check=False, timeout=15)
-        self.assertEqual(result.returncode, 0, result.stderr or result.stdout)
-        if extra_sids:
-            extra = [f'*{sid}:{inherited}({rights})' for sid, rights in extra_sids]
-            result = subprocess.run([str(icacls), str(path.resolve()), '/grant', *extra],
-                                    capture_output=True, text=True, encoding='utf-8', errors='replace',
-                                    check=False, timeout=15)
-        self.assertEqual(result.returncode, 0, result.stderr or result.stdout)
+        inherit = 'OICI' if inheritable else ''
+        rules = [f'(A;{inherit};FA;;;{self.windows_user_sid})',
+                 f'(A;{inherit};FA;;;S-1-5-18)', f'(A;{inherit};FA;;;S-1-5-32-544)']
+        for sid, rights in extra_sids:
+            if rights != 'RX':
+                raise ValueError(f'unsupported synthetic Windows ACL rights: {rights}')
+            rules.append(f'(A;{inherit};0x1200a9;;;{sid})')
+        sddl = f'O:{self.windows_user_sid}G:{self.windows_user_sid}D:P' + ''.join(rules)
+        private_seal_module._windows_replace_acl(path, sddl)
+        snapshot = private_seal_module._windows_acl_snapshot(path)
+        self.assertEqual(snapshot['ownerSid'], self.windows_user_sid, snapshot)
 
     def tearDown(self):
         self.tmp.cleanup()

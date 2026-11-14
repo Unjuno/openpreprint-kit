@@ -78,6 +78,55 @@ $rules = @($acl.GetAccessRules($true, $true, $sidType) | ForEach-Object {
         raise ValueError('cannot inspect Windows security descriptor') from None
 
 
+def _windows_replace_acl(path: Path, sddl: str) -> None:
+    """Replace owner and DACL from an explicit descriptor; discard old ACEs."""
+    from ctypes import wintypes
+
+    if os.name != 'nt':
+        raise ValueError('Windows ACL replacement is only available on Windows')
+    advapi = ctypes.WinDLL('advapi32', use_last_error=True)
+    kernel = ctypes.WinDLL('kernel32', use_last_error=True)
+    kernel.LocalFree.argtypes = [ctypes.c_void_p]
+    kernel.LocalFree.restype = ctypes.c_void_p
+    descriptor = ctypes.c_void_p()
+    convert = advapi.ConvertStringSecurityDescriptorToSecurityDescriptorW
+    convert.argtypes = [wintypes.LPCWSTR, wintypes.DWORD,
+                        ctypes.POINTER(ctypes.c_void_p), ctypes.POINTER(wintypes.DWORD)]
+    convert.restype = wintypes.BOOL
+    if not convert(sddl, 1, ctypes.byref(descriptor), None):
+        raise OSError(ctypes.get_last_error(), 'cannot build fixture security descriptor')
+    try:
+        owner = ctypes.c_void_p()
+        owner_defaulted = wintypes.BOOL()
+        get_owner = advapi.GetSecurityDescriptorOwner
+        get_owner.argtypes = [ctypes.c_void_p, ctypes.POINTER(ctypes.c_void_p),
+                              ctypes.POINTER(wintypes.BOOL)]
+        get_owner.restype = wintypes.BOOL
+        if not get_owner(descriptor, ctypes.byref(owner), ctypes.byref(owner_defaulted)):
+            raise OSError(ctypes.get_last_error(), 'cannot read fixture owner SID')
+        present = wintypes.BOOL()
+        dacl = ctypes.c_void_p()
+        defaulted = wintypes.BOOL()
+        get_dacl = advapi.GetSecurityDescriptorDacl
+        get_dacl.argtypes = [ctypes.c_void_p, ctypes.POINTER(wintypes.BOOL),
+                             ctypes.POINTER(ctypes.c_void_p), ctypes.POINTER(wintypes.BOOL)]
+        get_dacl.restype = wintypes.BOOL
+        if not get_dacl(descriptor, ctypes.byref(present), ctypes.byref(dacl), ctypes.byref(defaulted)) or not present.value:
+            raise OSError(ctypes.get_last_error(), 'fixture DACL is absent')
+        set_acl = advapi.SetNamedSecurityInfoW
+        set_acl.argtypes = [wintypes.LPWSTR, wintypes.DWORD, wintypes.DWORD,
+                            ctypes.c_void_p, ctypes.c_void_p, ctypes.c_void_p, ctypes.c_void_p]
+        set_acl.restype = wintypes.DWORD
+        # SE_FILE_OBJECT, OWNER_SECURITY_INFORMATION, DACL_SECURITY_INFORMATION,
+        # PROTECTED_DACL_SECURITY_INFORMATION. No SACL privileges are requested.
+        error = set_acl(str(path.resolve()), 1, 0x1 | 0x4 | 0x80000000,
+                        owner, None, dacl, None)
+        if error:
+            raise OSError(error, 'cannot replace fixture owner and DACL')
+    finally:
+        kernel.LocalFree(descriptor)
+
+
 def _windows_acl_is_private(snapshot: dict, *, allow_trusted_inheritance: bool = False) -> bool:
     """Accept a protected DACL limited to user, SYSTEM and admins."""
     try:

@@ -97,10 +97,10 @@ class WorkflowTests(unittest.TestCase):
     def test_example_policy_is_nonoperational_and_has_no_private_keys(self):
         example = ROOT / "timestamp-policy.example.json"
         self.assertTrue(example.is_file())
-        self.assertIn(".invalid", example.read_text())
+        self.assertIn(".invalid", example.read_text(encoding="utf-8"))
         for file in (ROOT / "trust").glob("*"):
             if file.is_file():
-                self.assertNotIn("BEGIN PRIVATE KEY", file.read_text())
+                self.assertNotIn("BEGIN PRIVATE KEY", file.read_text(encoding="utf-8"))
 
 
 if __name__ == "__main__":
