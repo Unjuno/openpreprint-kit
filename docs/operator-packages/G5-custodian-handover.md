@@ -3,6 +3,8 @@
 **目的:** 別管理の保管者が P1/P2 で得られた公開証拠を受領・保管し、GitHub が利用不能でも対象4版の保全バイトを新環境へ復元できることを実証する。
 **注意:** 「台帳が存在する」ことや「所有者が SHA-256 を計算した」ことは G5 の PASS ではない。保管者による実際の受領・再計算・保管記録が必要。
 
+**正式受入対象の重要な区別:** 現在の304ファイル台帳と4件のSynthetic ZIPは**歴史的な機構試験とP1公開の保管対象**であり、選択済みG2 A案の正式4版とは異なる。G5で署名受入する4版は、`openpreprint-kit-paper/v1`と今後の`paper/v2`、新しい第2実論文の`v1/v2`。新規3版の出版後に、別経路で期待指紋を決めた**新しい正式4版目録・保存ZIP・追補台帳**を作成する。既存の304/304一致は尊重するが、新版が増えた後の全資産保全を証明しない。
+
 ## 受領対象（台帳: CUSTODY_LEDGER.json, 2026-11-14, 304 files）
 
 最小保管セット（パスは `OpenPreprintKitEvidence/` 配下）:
@@ -28,8 +30,8 @@
 1. **受領**: 上記セットを Owner 端末から取得する（USB/帯域外転送を推奨。GitHub 非経由）。
 2. **再計算**: `CUSTODY_LEDGER.json` の全エントリを local SHA-256 と照合。1件でも不一致なら受領を拒否し Owner へ報告。
 3. **保管**: 保管場所・管理責任者・点検周期（例: 月次）・事故対応責任者・連絡先を `CUSTODY_HANDOVER.md` の §3 に記入し、owner へ返送。
-4. **ミラー**: 別管理 GitHub アカウント/組織の `OWNER/EVIDENCE-MIRROR` を作成し（別アカウント・別管理権限）、4版の preservation ZIP と `custody.json` を Immutable Release として保存（`docs/GITHUB_PRESERVATION.md` §3 `github_mirror.py publish` 手順）。注意: 同一アカウントの別 repo は「別管理」ではない。
-5. **オフライン復元実証**: GitHub に接続しない新規環境（別PC/VM、ネットワーク遮断）で `preserve.py restore` + SHA-256/TSA 検証により 4版を復元し、完全照合する。ログを保全する。
+4. **ミラー**: G2 A案で確定した**実論文2repo×各2版**のpreservation ZIP 4件と`custody.json`を、別管理 GitHub アカウント/組織の`OWNER/EVIDENCE-MIRROR`にImmutable Releaseとして保存（`docs/GITHUB_PRESERVATION.md` §3の手順）。別アカウント・別管理権限の独立性を実際に確認する。同一アカウント内の別repoは「別管理」ではない。Synthetic証拠は必要に応じ別版として保管するが、A案の正式4版へ算入しない。
+5. **オフライン復元実証**: 別管理GitHubから実際にダウンロードした正式4版の保存ZIPを、GitHubに接続しない新規環境（別PC/VM、ネットワーク遮断）で復元し、別経路のSHA-256とTSA信頼ポリシーを使って完全照合する。ログを保全し、旧304台帳の検査とは分離して記録する。
 6. **記録返送**: 受領確認・再計算結果・ミラータグ・復元ログ・SHA-256 を Issue #5 に添付。
 
 ## PASS 条件
