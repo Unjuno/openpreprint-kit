@@ -137,7 +137,6 @@ def headline(report: dict) -> dict:
 def verify_existing_v2_preserved(repository: str, policy_path: Path, output: Path) -> dict:
     """After a new version is published, re-fetch v1 and pin it against what it was."""
     downloaded = output / 'v1-after-v2'
-    downloaded.mkdir()
     gateway = GitHub()
     download_bundle(repository, 'v1', downloaded, lambda name: gateway.anonymous(repository, 'v1', name))
     verified = verify_all(downloaded, policy_path, repository, 'v1', 'existence')
