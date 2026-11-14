@@ -24,17 +24,19 @@ def main() -> int:
     errors = []
     if len(releases) != 5:
         errors.append(f"expected 5 releases, got {len(releases)}")
-    if sum(1 for r in releases if r["is_immutable"]) != 5:
+    if any(r["is_immutable"] is not True for r in releases):
         errors.append("all 5 releases must be immutable")
-    if sum(1 for r in releases if not r["is_draft"]) != 5:
+    if any(r["is_draft"] is not False for r in releases):
         errors.append("all 5 releases must be public (not draft)")
-    if sum(1 for r in releases if r["asset_digests_match_anonymous_download"]) != 5:
+    if any(not r.get("asset_digests_match_anonymous_download") for r in releases):
         errors.append("all releases must re-download to identical bytes")
     if any(r["target_commit"] is None for r in releases):
         errors.append("release target commit missing")
 
     if sum(1 for t in tsa if t.get("verdict") == "PASS") != len(tsa):
         errors.append("TSA re-verification must be PASS for all examined versions")
+    if len(tsa) != 8:
+        errors.append("expected 8 TSA re-verification records for the demo releases (bundle + anonymous download each)")
 
     if len(incidents["incidents"]) < 2:
         errors.append("expected at least the two recorded incidents INC-1 and INC-2")
@@ -42,10 +44,9 @@ def main() -> int:
     summary = {
         "release_count": len(releases),
         "immutable_releases": sum(1 for r in releases if r["is_immutable"]),
-        "attestation_verified_releases": len(tsa),
-        "asset_digests_match_anonymous_download": sum(
+        "anonymous_digests_match_github": sum(
             1 for r in releases if r["asset_digests_match_anonymous_download"]),
-        "tsa_reverify_pass": sum(1 for t in tsa if t.get("verdict") == "PASS"),
+        "tsa_reverify_passes": sum(1 for t in tsa if t.get("verdict") == "PASS"),
         "incidents_recorded": len(incidents["incidents"]),
     }
     print(json.dumps(summary, ensure_ascii=False, indent=2))

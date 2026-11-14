@@ -69,14 +69,22 @@ fresh 側は leaf の有効性確認を含め正常に通過し、stale 側は C
 ## 5. 再現性
 
 ```bash
-# E-V2-1
-python <this dir>/analysis/...  # 実験記録: data/e-v2-1-crl-lifecycle.json（生ログ含む）
-# E-V2-2
+# E-V2-1（同一PKI・同一TSA証明書・同一問合せでの CRL 鮮度対照）
+python manuscripts/openpreprint-kit-robustness-eval/v2/analysis/reverify_v2.py
+
+# E-V2-2（保存ZIPに対する前方RFC 3161更新）
 python scripts/renewal.py issue <v1-preservation.zip> \
   --expected-archive-sha256 106d536371c9286952eca1cf96fff542cc5de949c0673956818f52f13cffa26c \
-  --source-policy <policy.json> --repository Unjuno/opk-demo-acceptance-a --version v1 \
-  --renewal-policy <policy.json> --out renewal-chain.json --apply
+  --source-policy <trusted-policy.json> \
+  --repository Unjuno/opk-demo-acceptance-a --version v1 \
+  --renewal-policy <trusted-policy.json> \
+  --out renewal-chain.json --apply
+
+# 否定試験結果の再集計（v1）
+python manuscripts/openpreprint-kit-robustness-eval/v1/analysis/analyze_robustness.py
 ```
+
+実験記録: `v2/data/{e-v2-1-crl-lifecycle.json, renewal-experiment.json, negative-suite-results.json}`。対象実装: `c51aa55edfeb41e43b2c86982765c5d0777771ed`。
 
 環境: Windows（CPython 3.12.10、OpenSSL 3.5.6）。データ: `v2/data/{e-v2-1-crl-lifecycle.json, renewal-experiment.json}`。対象実装: `c51aa55e…`。
 
