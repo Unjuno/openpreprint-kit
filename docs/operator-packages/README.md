@@ -11,6 +11,8 @@ NOT PASS — not even with AI assistance.
 - [G6-human-review.md](G6-human-review.md) — human editorial/privacy review, rights/COI consent, 1 review + 1 correction + 1 withdrawal exercise
 - [G7-external-audit.md](G7-external-audit.md) — external security/privacy audit of pinned SHA the SHA current at audit time (as of writing: `84ca91cd…` / `b735988e…`; auditor MUST re-pin to the SHA current when the audit starts, e.g., the v1.0.0 tag)
 
+**G2 A案は所有者選択済み**：正式条件を維持し、既存のpaper v1に加えてpaper v2**かつ**第2実論文v1/v2が必要。[G2-optionA-publication.md](G2-optionA-publication.md)を最初に確認する。既存のSynthetic 4版は技術的な先行実証であり、G4/G5の正式4版の代替にはならない。観測者・保管者向けの対象一覧はG2実公開後に確定し、別管理者に引き渡す。
+
 Current verdict (2026-11-14): **P4 = NO-GO**. P1 = PASS. P2 = PARTIAL. P3 = BLOCKED.
 
 See `evidence/acceptance/gate-evidence-matrix-2026-11-14.md` for what is verified,

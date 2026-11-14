@@ -5,12 +5,12 @@
 
 ## 依頼文（所有者→外部監査者）
 
-> 対象は OpenPreprint Kit（GitHub: Unjuno/openpreprint-kit、固定SHA <FIXED_SHA_AT_AUDIT_START>  (set to the SHA current at audit time — as of this writing `b735988e…`; re-pin at audit start)、main）です。スコープは下記の監査項目です。実署名のある監査報告（重大/高リスク未解決0、または未解決リストと理由）をお願いします。低リスクの指摘も歓迎です。監査中に公開拡大・仕様変更が判明した場合は停止し、私へ連絡してください。
+> 対象は OpenPreprint Kit（GitHub: Unjuno/openpreprint-kit、固定SHA `<FIXED_SHA_AT_AUDIT_START>`（監査開始時にGitHubの完全な40桁SHAを読み戻して記録し、その後は変更しない）、main）です。スコープは下記の監査項目です。実署名のある監査報告（重大・高リスクの未解決0件を受入条件とし、未解決があればFAIL/NO-GOと理由を報告）をお願いします。低リスクの指摘も歓迎です。監査中に公開拡大・仕様変更が判明した場合は停止し、私へ連絡してください。
 
 ## 対象の固定
 
 - Repository: `https://github.com/Unjuno/openpreprint-kit`
-- SHA: <FIXED_SHA_AT_AUDIT_START>  (set to the SHA current at audit time — as of this writing `b735988e…`; re-pin at audit start)
+- SHA: `<FIXED_SHA_AT_AUDIT_START>`（監査開始時点の完全な40桁のGitHubコミットSHA。署名付き報告にも同じSHAを記載）
 - 関連公開物（監査対象ではなく参照）: paper v1 / demo-a / demo-b（Issues #29-#35 のPR記録）
 
 ## 監査項目
@@ -36,6 +36,6 @@
 
 ## PASS 条件
 
-- 監査者の署名付き監査報告が Issue #5 に添付され、重大・高リスク未解決0（または未解決リストと Owner 承認）が明記されること。
-- 証拠寿命試験（失効/CA更新/復旧）の実施または計画と責任者が確定すること。
+- **監査者の署名付き監査報告があり、重大・高リスク未解決が0件であること。** 未解決の重大・高リスク指摘は、所有者が例外を承認してもG7をPASSにできない。未解決事項は理由・影響を報告してNO-GOとする。公開Issueには秘密情報を掲載せず、適切に制限された保管先の原文と、公開可能な監査要約・指紋を参照すること。
+- 失効・期限切れ・CA更新・証拠更新・旧失効証拠保存・GitHub接続なしの実復元について、**実測した試験結果**、原ログ、対象資産・固定SHA・時刻、担当責任者と点検周期が記録されること。計画書のみではPASSにできない。
 - これが無い限り G7 は PASS にしない。低いリスクのみの報告でも正式な署名が無ければ PASS にしない。
