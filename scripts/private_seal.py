@@ -9,6 +9,7 @@ an original and its per-record secret can establish a match to an anchored recei
 from __future__ import annotations
 
 import argparse
+import ctypes
 import hashlib
 import hmac
 import json
@@ -24,6 +25,154 @@ DOMAIN = b'OpenPreprint-Kit private record commitment v1\x00'
 MAX_BYTES = 100 * 1024 * 1024
 ID_RE = re.compile(r'[0-9a-f]{32}\Z', re.ASCII)
 HEX_RE = re.compile(r'[0-9a-f]{64}\Z', re.ASCII)
+WINDOWS_SYSTEM_SID = 'S-1-5-18'
+WINDOWS_ADMINISTRATORS_SID = 'S-1-5-32-544'
+WINDOWS_FULL_CONTROL = 2032127  # FILE_ALL_ACCESS / FileSystemRights.FullControl
+
+
+def _windows_acl_snapshot(path: Path) -> dict:
+    """Read a filesystem DACL as SIDs and numeric rights, never localized names."""
+    if os.name != 'nt':
+        raise ValueError('Windows ACL inspection is only available on Windows')
+    powershell = Path(os.environ.get('SystemRoot', r'C:\Windows')) / 'System32' / 'WindowsPowerShell' / 'v1.0' / 'powershell.exe'
+    if not powershell.is_file():
+        raise ValueError('Windows ACL inspection runtime is unavailable')
+    command = r'''
+$ErrorActionPreference = 'Stop'
+Import-Module Microsoft.PowerShell.Security -ErrorAction Stop
+$path = $env:OPK_ACL_TARGET
+$acl = Get-Acl -LiteralPath $path
+$sidType = [System.Security.Principal.SecurityIdentifier]
+$rules = @($acl.GetAccessRules($true, $true, $sidType) | ForEach-Object {
+    [pscustomobject]@{
+        sid = $_.IdentityReference.Value
+        type = $_.AccessControlType.ToString()
+        rights = [int64]$_.FileSystemRights
+        inherited = [bool]$_.IsInherited
+        inheritance = [int]$_.InheritanceFlags
+        propagation = [int]$_.PropagationFlags
+    }
+})
+[pscustomobject]@{
+    ownerSid = $acl.GetOwner($sidType).Value
+    currentUserSid = [System.Security.Principal.WindowsIdentity]::GetCurrent().User.Value
+    protected = [bool]$acl.AreAccessRulesProtected
+    rules = $rules
+} | ConvertTo-Json -Compress -Depth 5
+'''
+    module_path = Path(os.environ.get('SystemRoot', r'C:\Windows')) / 'System32' / 'WindowsPowerShell' / 'v1.0' / 'Modules'
+    env = dict(os.environ, OPK_ACL_TARGET=str(path.resolve()), PSModulePath=str(module_path))
+    try:
+        result = subprocess.run(
+            [str(powershell), '-NoProfile', '-NonInteractive', '-Command', command],
+            capture_output=True, text=True, encoding='utf-8', errors='strict',
+            check=False, timeout=15, env=env,
+        )
+        if result.returncode != 0 or not result.stdout.strip():
+            raise ValueError('cannot inspect Windows security descriptor')
+        snapshot = json.loads(result.stdout)
+        if not isinstance(snapshot, dict):
+            raise ValueError('invalid Windows security descriptor response')
+        return snapshot
+    except (OSError, subprocess.SubprocessError, UnicodeError, json.JSONDecodeError, TypeError):
+        raise ValueError('cannot inspect Windows security descriptor') from None
+
+
+def _windows_acl_is_private(snapshot: dict, *, allow_trusted_inheritance: bool = False) -> bool:
+    """Accept a protected DACL limited to user, SYSTEM and admins."""
+    try:
+        user_sid = snapshot['currentUserSid']
+        if not isinstance(user_sid, str) or not re.fullmatch(r'S-1-[0-9]+(?:-[0-9]+)+', user_sid):
+            return False
+        if snapshot['ownerSid'] != user_sid or snapshot['protected'] is not True:
+            return False
+        rules = snapshot['rules']
+        if not isinstance(rules, list) or len(rules) != 3:
+            return False
+        expected = {user_sid, WINDOWS_SYSTEM_SID, WINDOWS_ADMINISTRATORS_SID}
+        observed = set()
+        for rule in rules:
+            if (not isinstance(rule, dict)
+                    or rule.get('sid') not in expected
+                    or rule.get('sid') in observed
+                    or rule.get('type') != 'Allow'
+                    or rule.get('rights') != WINDOWS_FULL_CONTROL
+                    or rule.get('inherited') is not False
+                    or rule.get('inheritance') not in ((0, 3) if allow_trusted_inheritance else (0,))
+                    or rule.get('propagation') != 0):
+                return False
+            observed.add(rule['sid'])
+        return observed == expected
+    except (KeyError, TypeError):
+        return False
+
+
+def _require_windows_private_acl(path: Path, *, allow_trusted_inheritance: bool = False) -> dict:
+    snapshot = _windows_acl_snapshot(path)
+    if not _windows_acl_is_private(snapshot, allow_trusted_inheritance=allow_trusted_inheritance):
+        raise ValueError('Windows ACL is unsafe or unknown; use a protected owner/SYSTEM/Administrators-only directory')
+    return snapshot
+
+
+def _write_windows_private_key(path: Path, key: bytes, user_sid: str) -> None:
+    """Create a key file atomically with a protected SID-based DACL from byte zero."""
+    from ctypes import wintypes
+
+    advapi = ctypes.WinDLL('advapi32', use_last_error=True)
+    kernel = ctypes.WinDLL('kernel32', use_last_error=True)
+    kernel.LocalFree.argtypes = [ctypes.c_void_p]
+    kernel.LocalFree.restype = ctypes.c_void_p
+    kernel.CloseHandle.argtypes = [wintypes.HANDLE]
+    kernel.CloseHandle.restype = wintypes.BOOL
+    kernel.FlushFileBuffers.argtypes = [wintypes.HANDLE]
+    kernel.FlushFileBuffers.restype = wintypes.BOOL
+    descriptor = ctypes.c_void_p()
+    sddl = (f'O:{user_sid}G:{user_sid}D:P'
+            f'(A;;FA;;;{user_sid})(A;;FA;;;{WINDOWS_SYSTEM_SID})'
+            f'(A;;FA;;;{WINDOWS_ADMINISTRATORS_SID})')
+    convert = advapi.ConvertStringSecurityDescriptorToSecurityDescriptorW
+    convert.argtypes = [wintypes.LPCWSTR, wintypes.DWORD,
+                        ctypes.POINTER(ctypes.c_void_p), ctypes.POINTER(wintypes.DWORD)]
+    convert.restype = wintypes.BOOL
+    if not convert(sddl, 1, ctypes.byref(descriptor), None):
+        raise OSError(ctypes.get_last_error(), 'cannot build protected key DACL')
+
+    class SECURITY_ATTRIBUTES(ctypes.Structure):
+        _fields_ = [('nLength', wintypes.DWORD), ('lpSecurityDescriptor', ctypes.c_void_p),
+                    ('bInheritHandle', wintypes.BOOL)]
+
+    security = SECURITY_ATTRIBUTES(ctypes.sizeof(SECURITY_ATTRIBUTES), descriptor, False)
+    create = kernel.CreateFileW
+    create.argtypes = [wintypes.LPCWSTR, wintypes.DWORD, wintypes.DWORD,
+                       ctypes.POINTER(SECURITY_ATTRIBUTES), wintypes.DWORD,
+                       wintypes.DWORD, wintypes.HANDLE]
+    create.restype = wintypes.HANDLE
+    handle = create(str(path.resolve()), 0x40000000, 0x00000007, ctypes.byref(security),
+                    1, 0x80, None)  # GENERIC_WRITE, CREATE_NEW, FILE_ATTRIBUTE_NORMAL
+    if handle == wintypes.HANDLE(-1).value:
+        error = ctypes.get_last_error()
+        kernel.LocalFree(descriptor)
+        raise OSError(error, 'cannot create private key with protected DACL')
+    try:
+        _require_windows_private_acl(path)
+        buffer = ctypes.create_string_buffer(key)
+        written = wintypes.DWORD()
+        write = kernel.WriteFile
+        write.argtypes = [wintypes.HANDLE, ctypes.c_void_p, wintypes.DWORD,
+                          ctypes.POINTER(wintypes.DWORD), ctypes.c_void_p]
+        write.restype = wintypes.BOOL
+        if not write(handle, buffer, len(key), ctypes.byref(written), None) or written.value != len(key):
+            raise OSError(ctypes.get_last_error(), 'cannot write private key')
+        if not kernel.FlushFileBuffers(handle):
+            raise OSError(ctypes.get_last_error(), 'cannot flush private key')
+    except BaseException:
+        kernel.CloseHandle(handle)
+        path.unlink(missing_ok=True)
+        raise
+    else:
+        kernel.CloseHandle(handle)
+    finally:
+        kernel.LocalFree(descriptor)
 
 
 def commit_file(path: Path, key: bytes) -> str:
@@ -72,18 +221,12 @@ def seal(source: Path, key_path: Path) -> Path:
     ensure_outside_root(key_path)
     if key_path.parent.is_symlink() or not key_path.parent.is_dir():
         raise ValueError('secret directory must already exist and must not be a symlink')
+    windows_user_sid = None
     if os.name == 'nt':
-        # 0o600 does not establish a Windows DACL. Inspect the existing
-        # directory before creating a key so broad inherited access is refused.
-        acl = subprocess.run(['icacls', str(key_path.parent)], capture_output=True,
-                             text=True, encoding='utf-8', errors='replace', check=False)
-        if acl.returncode != 0:
-            raise ValueError('cannot inspect secret directory ACL; create key in a private directory')
-        normalized_acl = acl.stdout.lower()
-        if any(principal in normalized_acl for principal in
-                       ('everyone:', 'authenticated users:', 'builtin\\users:',
-                        'nt authority\\authenticated users:')):
-            raise ValueError('secret directory ACL is not restricted; use a private owner-only directory')
+        # Display names from icacls are localized. Require an exact protected
+        # DACL by SID and reject inherited or unrecognized access rules.
+        windows_user_sid = _require_windows_private_acl(
+            key_path.parent, allow_trusted_inheritance=True)['currentUserSid']
     key = secrets.token_bytes(32)
     commitment = commit_file(source, key)
     rid = secrets.token_hex(16)
@@ -96,10 +239,13 @@ def seal(source: Path, key_path: Path) -> Path:
                'algorithm': 'HMAC-SHA256', 'commitment': commitment}
     fd = None
     try:
-        fd = os.open(key_path, os.O_WRONLY | os.O_CREAT | os.O_EXCL | getattr(os, 'O_NOFOLLOW', 0), 0o600)
-        with os.fdopen(fd, 'wb') as handle:
-            fd = None
-            handle.write(key)
+        if os.name == 'nt':
+            _write_windows_private_key(key_path, key, windows_user_sid)
+        else:
+            fd = os.open(key_path, os.O_WRONLY | os.O_CREAT | os.O_EXCL | getattr(os, 'O_NOFOLLOW', 0), 0o600)
+            with os.fdopen(fd, 'wb') as handle:
+                fd = None
+                handle.write(key)
         with receipt_path.open('x', encoding='utf-8') as handle:
             json.dump(receipt, handle, sort_keys=True, separators=(',', ':'))
             handle.write('\n')

@@ -20,6 +20,39 @@ import time
 ROOT=Path(__file__).resolve().parents[1]
 
 
+def _protect_windows_private_dir(path: Path) -> None:
+    """Give synthetic private fixtures an explicit, locale-independent DACL."""
+    if os.name != 'nt':
+        return
+    whoami = Path(os.environ.get('SystemRoot', r'C:\Windows')) / 'System32' / 'whoami.exe'
+    icacls = Path(os.environ.get('SystemRoot', r'C:\Windows')) / 'System32' / 'icacls.exe'
+    identity = subprocess.run([str(whoami), '/user', '/fo', 'csv', '/nh'],
+                              capture_output=True, text=True, encoding='utf-8', errors='replace',
+                              check=False, timeout=15)
+    if identity.returncode != 0:
+        raise ValueError('cannot determine Windows test user SID')
+    import re
+    match = re.search(r'"(S-1-[0-9-]+)"\s*$', identity.stdout.strip())
+    if not match:
+        raise ValueError('cannot determine Windows test user SID')
+    user_sid = match.group(1)
+    result = subprocess.run([str(icacls), str(path.resolve()), '/inheritance:r', '/grant:r',
+                             f'*{user_sid}:(OI)(CI)(F)', '*S-1-5-18:(OI)(CI)(F)',
+                             '*S-1-5-32-544:(OI)(CI)(F)'],
+                            capture_output=True, text=True, encoding='utf-8', errors='replace',
+                            check=False, timeout=15)
+    if result.returncode != 0:
+        raise ValueError('cannot create protected synthetic Windows fixture directory')
+    # Windows temporary directories can carry the OWNER RIGHTS pseudo-SID as
+    # an explicit ACE after inheritance is disabled; it is not part of the
+    # deliberately narrow fixture allowlist.
+    result = subprocess.run([str(icacls), str(path.resolve()), '/remove:g', '*S-1-3-4'],
+                            capture_output=True, text=True, encoding='utf-8', errors='replace',
+                            check=False, timeout=15)
+    if result.returncode != 0:
+        raise ValueError('cannot remove inherited Windows fixture ACL entries')
+
+
 def run(script: Path, *args: object, expected: int = 0) -> str:
     result=subprocess.run([sys.executable,str(script),*map(str,args)],capture_output=True,text=True,timeout=120)
     if result.returncode!=expected:
@@ -69,6 +102,7 @@ def fixture(output: Path, version: str, *, export_source: bool = False) -> dict:
         (repo/'research-assets.yaml').write_text(yaml.safe_dump(research),encoding='utf-8')
         (repo/'reviews'/'record.json').write_text('{"schema_version":1,"events":[]}\n',encoding='utf-8')
         private=work/'private'; private.mkdir(mode=0o700)
+        _protect_windows_private_dir(private)
         original=private/'synthetic-record.json'; original.write_bytes(b'{"type":"NO_PATIENT_PRIVATE_FIXTURE","value":123}\n')
         key=private/'per-record.key'
         run(repo/'scripts'/'private_seal.py','seal',original,'--key-output',key)

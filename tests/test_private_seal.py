@@ -10,6 +10,8 @@ import tempfile
 import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / 'scripts'))
+import private_seal as private_seal_module
 
 
 class PrivateSealTests(unittest.TestCase):
@@ -29,18 +31,36 @@ class PrivateSealTests(unittest.TestCase):
         self.acl_root = Path(self.tmp.name) / 'private-acl'
         if self.win_acl:
             self.acl_root.mkdir()
-            result = subprocess.run(['icacls', str(self.acl_root), '/inheritance:r', '/T', '/C'],
-                                    capture_output=True, text=True, check=False)
-            if result.returncode == 0:
-                subprocess.run(['icacls', str(self.acl_root), '/grant:r',
-                                 f'{os.environ.get("USERDOMAIN", "") }\\{os.environ.get("USERNAME", "")}:F',
-                                 'SYSTEM:F', 'Administrators:F', '/T', '/C'],
-                                capture_output=True, text=True, check=False)
+            snapshot = private_seal_module._windows_acl_snapshot(self.acl_root)
+            self.windows_user_sid = snapshot['currentUserSid']
+            self._set_test_acl(self.acl_root)
             os.replace(self.original, self.acl_root / self.original.name)
             self.original = self.acl_root / self.original.name
             self.outside.rmdir()
             self.outside = self.acl_root
             self.key = self.outside / 'key.bin'
+
+    def _set_test_acl(self, path, *, inheritable=False, extra_sids=()):
+        if not self.win_acl:
+            self.skipTest('Windows DACL test requires Windows')
+        icacls = Path(os.environ['SystemRoot']) / 'System32' / 'icacls.exe'
+        inherited = '(OI)(CI)' if inheritable else ''
+        entries = [f'*{self.windows_user_sid}:{inherited}(F)',
+                   f'*S-1-5-18:{inherited}(F)', f'*S-1-5-32-544:{inherited}(F)']
+        result = subprocess.run([str(icacls), str(path.resolve()), '/inheritance:r'],
+                                capture_output=True, text=True, encoding='utf-8', errors='replace',
+                                check=False, timeout=15)
+        self.assertEqual(result.returncode, 0, result.stderr or result.stdout)
+        result = subprocess.run([str(icacls), str(path.resolve()), '/grant:r', *entries],
+                                capture_output=True, text=True, encoding='utf-8', errors='replace',
+                                check=False, timeout=15)
+        self.assertEqual(result.returncode, 0, result.stderr or result.stdout)
+        if extra_sids:
+            extra = [f'*{sid}:{inherited}({rights})' for sid, rights in extra_sids]
+            result = subprocess.run([str(icacls), str(path.resolve()), '/grant', *extra],
+                                    capture_output=True, text=True, encoding='utf-8', errors='replace',
+                                    check=False, timeout=15)
+        self.assertEqual(result.returncode, 0, result.stderr or result.stdout)
 
     def tearDown(self):
         self.tmp.cleanup()
@@ -66,17 +86,62 @@ class PrivateSealTests(unittest.TestCase):
         elif not self.win_acl:
             self.skipTest('private key permission semantics are platform-specific')
         else:
-            acl = subprocess.run(['icacls', str(self.key)], capture_output=True,
-                                 text=True, check=False)
-            self.assertEqual(acl.returncode, 0, acl.stderr)
-            normalized_acl = acl.stdout.lower()
-            self.assertIn(f'{os.environ.get("USERNAME", "").lower()}:(f)', normalized_acl)
-            self.assertNotIn('everyone:', normalized_acl)
-            self.assertNotIn('authenticated users:', normalized_acl)
+            snapshot = private_seal_module._windows_acl_snapshot(self.key)
+            self.assertTrue(private_seal_module._windows_acl_is_private(snapshot), snapshot)
         self.assertNotIn(str(self.original), receipts[0].read_text())
         self.assertNotIn('synthetic', receipts[0].read_text())
         self.assertNotIn(self.key.read_bytes().hex(), receipts[0].read_text())
         self.assertEqual(self.run_cli('verify', self.original, '--key', self.key, '--receipt', receipts[0]).returncode, 0)
+
+    def test_localized_group_display_names_cannot_bypass_wide_read_sid(self):
+        if not self.win_acl:
+            self.skipTest('Windows localized trustee-name scenario requires Windows')
+        # Display labels deliberately vary; the actual DACL trustee stays the
+        # stable Builtin Users SID, which is what the implementation inspects.
+        labels = ('BUILTIN\\Users [en-US]', 'BUILTIN\\Benutzer [de-DE]',
+                  'BUILTIN\\利用者 [ja-JP]', 'BUILTIN\\Utilisateurs [fr-FR]')
+        for label in labels:
+            with self.subTest(display_name=label):
+                self._set_test_acl(self.acl_root, extra_sids=(('S-1-5-32-545', 'RX'),))
+                with self.assertRaisesRegex(ValueError, 'Windows ACL is unsafe or unknown'):
+                    private_seal_module._require_windows_private_acl(
+                        self.acl_root, allow_trusted_inheritance=True)
+                result = self.seal()
+                self.assertNotEqual(result.returncode, 0, result.stdout)
+                self.assertIn('ValueError', result.stderr)
+                self.assertFalse(self.key.exists(), 'secret key must not be created under a broad read ACE')
+                self.assertFalse((self.root / 'evidence' / 'commitments').exists())
+
+    def test_inherited_broad_read_ace_is_rejected_before_key_creation(self):
+        if not self.win_acl:
+            self.skipTest('Windows inherited DACL test requires Windows')
+        inherited = self.acl_root / 'inherited'
+        self._set_test_acl(self.acl_root, inheritable=True,
+                           extra_sids=(('S-1-5-32-545', 'RX'),))
+        inherited.mkdir()
+        original = inherited / 'synthetic-not-real.txt'
+        original.write_bytes(b'completely synthetic inherited-DACL fixture\n')
+        key = inherited / 'key.bin'
+        with self.assertRaisesRegex(ValueError, 'Windows ACL is unsafe or unknown'):
+            private_seal_module._require_windows_private_acl(
+                inherited, allow_trusted_inheritance=True)
+        result = self.run_cli('seal', original, '--key-output', key)
+        self.assertNotEqual(result.returncode, 0, result.stdout)
+        self.assertIn('ValueError', result.stderr)
+        self.assertFalse(key.exists(), 'secret key must not be created with inherited broad read')
+        self.assertFalse((self.root / 'evidence' / 'commitments').exists())
+
+    def test_unknown_trustee_sid_is_rejected_before_key_creation(self):
+        if not self.win_acl:
+            self.skipTest('Windows unknown-trustee DACL test requires Windows')
+        self._set_test_acl(self.acl_root, extra_sids=(('S-1-5-4', 'RX'),))
+        with self.assertRaisesRegex(ValueError, 'Windows ACL is unsafe or unknown'):
+            private_seal_module._require_windows_private_acl(
+                self.acl_root, allow_trusted_inheritance=True)
+        result = self.seal()
+        self.assertNotEqual(result.returncode, 0, result.stdout)
+        self.assertFalse(self.key.exists(), 'unknown trustee must not receive access to a new secret key')
+        self.assertFalse((self.root / 'evidence' / 'commitments').exists())
 
     def test_modified_record_is_rejected(self):
         self.assertEqual(self.seal().returncode, 0)
