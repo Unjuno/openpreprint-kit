@@ -9,7 +9,7 @@ NOT PASS — not even with AI assistance.
 - [G4-independent-observer.md](G4-independent-observer.md) — independent observer (different key/environment), anonymous retrieval, signature + RFC 3161 receipts
 - [G5-custodian-handover.md](G5-custodian-handover.md) — separately managed custodian: receipt, re-hash, immutable GitHub mirror, offline restore without GitHub
 - [G6-human-review.md](G6-human-review.md) — human editorial/privacy review, rights/COI consent, 1 review + 1 correction + 1 withdrawal exercise
-- [G7-external-audit.md](G7-external-audit.md) — external security/privacy audit of pinned SHA `84ca91cd6829e2d3d1c5a0f113f475c1d869bf73`
+- [G7-external-audit.md](G7-external-audit.md) — external security/privacy audit of pinned SHA the SHA current at audit time (as of writing: `84ca91cd…` / `b735988e…`; auditor MUST re-pin to the SHA current when the audit starts, e.g., the v1.0.0 tag)
 
 Current verdict (2026-11-14): **P4 = NO-GO**. P1 = PASS. P2 = PARTIAL. P3 = BLOCKED.
 
