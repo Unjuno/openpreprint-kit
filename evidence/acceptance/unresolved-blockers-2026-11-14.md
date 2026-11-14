@@ -1,11 +1,11 @@
-# 未達項目と責任者（ブロッカー台帳、2026-11-14 / main `3e4d373c`）
+# 未達項目と責任者（ブロッカー台帳、2026-11-14 / main `84ca91cd`）
 
 判定: **P4 = NO-GO**。以下が未達。G0〜G7 を全て解消するまで v1.0.0 完成とは宣言しない。
 
 | # | ゲート | ブロッカー | 種別 | 必要な人・権限 | 現状 |
 |---|---|---|---|---|---|
 | B1 | G0 | レビュー担当の独立承認（CodeQL 0件・pip-audit 0件の読み・承認） | 人間 | レビュー担当（owner 以外が望ましい） | 未了。AI自己評価不可 |
-| B2 | G0 | Dependabot alerts 無効（403）の扱い: 有効化 or 代替脆弱性評価の採用記録 | 権限・判断 | owner | 未了（本書ミッションで再提示） |
+| B2 | G0 | Dependabot alerts 無効（403）の扱い: 有効化 or 代替脆弱性評価の採用記録 | 権限・判断 | owner | **RESOLVED 2026-11-14: owner 承認で有効化（PUT vulnerability-alerts → 204、open alerts=0）** |
 | B3 | G1 | Required approvals=0 の独立人間レビューとしての妥当性承認、またはレビュアー追加 | 人間 | owner or 独立レビュアー | 未了 |
 | B4 | G1 | paper/demo リポジトリへの branch protection 適用の要否判断（テンプレート repo 同等の保護を求めるか） | 判断 | owner | 未了（現状 rules なし） |
 | B5 | G2 | **基準と実態の不一致**: 正式「2論文repo各2版」vs 現状（paper v1 のみ + synthetic 2 repo 各 v1/v2） | 基準・執筆 | owner（A案: paper v2 執筆/第2原稿、B案: 基準変更の署名付き承認） | owner 未決定（g2-criterion-impact-2026-11-14.md） |
