@@ -1,0 +1,220 @@
+{
+  "schema_version": 1,
+  "kind": "gate-evidence-matrix",
+  "generated_at_utc": "2026-11-14T12:10:00Z",
+  "generator": "OpenCode (AI assistant) — same owner machine as publication; NOT an independent auditor",
+  "main_sha": "3e4d373c7e4376c6d732b61e74c0b8bf2ab22d7a",
+  "environment": {
+    "os": "Windows 11 (win32) + GitHub Actions ubuntu-24.04 / macos-15 / windows-2025",
+    "python": "CPython 3.12.10 (local) / 3.10 & 3.12 (CI)",
+    "gh": "2.83.2",
+    "openssl": "3.5.6",
+    "verdict_scope": "Only what was actually executed and observed this session or in recorded CI; no speculation"
+  },
+  "gates": [
+    {
+      "id": "G0",
+      "title": "コード・配布品質",
+      "status": "PARTIAL",
+      "formal_requirement": "発行対象SHAで Python 3.10/3.12 必須試験が全成功・必須スキップ0。依存配布物ハッシュ/Actions SHA固定。重大・高リスク未解決0。CodeQLは実行だけでなく警告を読んで判定。",
+      "evidence": [
+        "main 3e4d373c: Validate (3.10) success / Validate (3.12) success / Quality (audit) success / CodeQL success / First-paper self-application success / Portable launcher smoke success (PR #35, runs #43587897593 / #43587897500 / #43587897597 / #43587897687)",
+        "PR #34 CI (issue #5 comment 6863799982): 367/367 tests Python 3.10 & 3.12; merged at 2cd536ca",
+        "Actions SHA-pinned: all `uses:` across workflows pin 40-hex SHAs with version comments (verified 2026-11-14)",
+        "requirements.lock hash-locked (321 ' --hash' entries); requirements-build.lock hash-locked (pip/setuptools/wheel)",
+        "CodeQL open alerts = 0 (gh api code-scanning/alerts?state=open → 0)",
+        "pip-audit 2.10.1 against requirements.lock (22 deps): 0 known vulnerabilities (2026-11-14, local)",
+        "Dependabot alerts: HTTP 403 'Dependabot alerts are disabled for this repository' (NOT counted as separate fail criterion; owner decision recorded in unresolved-blockers.md)"
+      ],
+      "owner_self_reported_only": [
+        "Required approvals = 0 is owner's explicit choice, NOT an independent human review"
+      ],
+      "needs_independent_human": [
+        "レビュー担当による CodeQL/依存警告の adjudication・承認署名",
+        "Dependabot 有効化の可否判定（または代替の脆弱性評価の採用宣言）— G0 の非加点ではなく G0 完全性の一部として所有者が記録"
+      ],
+      "missing": [
+        "レビュー担当の独立承認",
+        "Dependabot の扱いの owner 決定"
+      ],
+      "next_minimal_verification": "owner が CodeQL 0件・pip-audit 0件を読んで承認し、Dependabot の有効化可否を Issue #5 に記録する"
+    },
+    {
+      "id": "G1",
+      "title": "所有者設定・再利用",
+      "status": "PARTIAL",
+      "formal_requirement": "Template有効。別々のテンプレート由来公開論文リポジトリ2つ。公開前のImmutable設定、保護ブランチ、必須CI/人間レビューを読み返す。",
+      "evidence": [
+        "Unjuno/openpreprint-kit is_template=true (readback 2026-11-14)",
+        "Template-derived public repos: openpreprint-kit-paper (admin=true, immutable=true, template origin=Unjuno/openpreprint-kit), opk-demo-acceptance-a (same), opk-demo-acceptance-b (same)",
+        "Toolkit main rules (readback 2026-11-14): deletion blocked, non_fast_forward blocked, pull_request required (required_approving_review_count=0, require_last_push_approval=false), required_status_checks=[validate (3.12), validate (3.10), audit] strict",
+        "Required approvals = 0 is owner's explicit choice, NOT independent human review",
+        "Paper/demo repos have no branch protection rules (readback returned empty)"
+      ],
+      "verified_by_ai": true,
+      "owner_self_reported_only": [],
+      "needs_independent_human": [
+        "独立したレビュー担当による Required approvals=0 のまま進めることの明示承認、または独立レビュアーの追加",
+        "paper/demo リポジトリのブランチ保護を要求するかの owner 判断（必須ではない）"
+      ],
+      "missing": [
+        "独立人間レビューの仕組み（Required approvals>0 か、別の承認記録）"
+      ],
+      "next_minimal_verification": "owner が branch protection / required reviews の現状値を承認し Issue #5 に記録する"
+    },
+    {
+      "id": "G2",
+      "title": "実公開・版管理",
+      "status": "PARTIAL",
+      "formal_requirement": "2論文リポジトリに各2版、最低4件の不変Release。最低1件は承認済み本短報。v2後もv1資産が不変。全Releaseと全資産のattestation、匿名取得、引用/研究資産の一致を検証。",
+      "evidence": [
+        "paper v1 (Unjuno/openpreprint-kit-paper, Release ID 444659219): draft=false, immutable=true, tag target 804cb76a…, 11資産 attestation VERIFIED (gh release verify), 全資産 verify-asset 0 (2026-11-14 reverify), 匿名DL byte一致, paper SHA-256 0860b735…, v1後の v2 不在",
+        "demo-a v1 (commit a27ab50f…) / v2 (86f3cf2e…): immutable, attestation VERIFIED, 11 assets attested, 匿名DL一致, オフライン復元一致, TSA PASS",
+        "demo-b v1 (78e8ef8d…) / v2 (6c281c97…): 同上",
+        "v2 公開後の v1 不変性: demo-a/demo-b とも v1 再ダウンロード byte equality PASS (pilot continuation, repository-1/v1-after-v2, repository-2/v1-after-v2)",
+        "研究データ/解析コード/引用の整合性: 各バンドルで verify_release.verify() PASS（research-assets.tar 内 checksums + citation SPE Python closure validation）",
+        "5 releases reverified 2026-11-14: all metadata_ok, all_assets_attested, offline_integrity_ok (g2-reverify-results.json)",
+        "基準差異: 正式G2は「2論文リポジトリ各2版」だが、paper は v1 のみ。demo 2 repo は synthetic であり承認済み本短報ではない（paper v1 は別 repo）",
+        "owner 2026-11-14: 「synthetic2repo解釈」承認。ただし正式受入基準 V1_ACCEPTANCE.md G2 を書き換えたわけではない（基準変更には owner 承認が必要）"
+      ],
+      "owner_self_reported_only": [],
+      "needs_independent_human": [
+        "正式4版（paper v1 + 2 repo 各2版）が対象として確定すること、または B案（synthetic 受入として基準変更）を owner が承認し Issue #5 と docs に記録すること",
+        "G2 最終判定（実行者と別の検証担当）"
+      ],
+      "missing": [
+        "対象4版の基準選択（A案: 新規実論文/v2 が必要 / B案: 基準変更案の承認）",
+        "実行者と別の検証担当による G2 PASS 判定"
+      ],
+      "next_minimal_verification": "owner が A案/B案を選択（unresolved-blockers.md §G2）"
+    },
+    {
+      "id": "G3",
+      "title": "TSAと否定試験",
+      "status": "PARTIAL",
+      "formal_requirement": "全4版の指紋/nonce/OID/署名/証明書連鎖/有効な署名付きCRLを別途選んだ信頼設定で検証。2環境で合計8回以上の正常検証。最低20不正ケースで誤受理0。",
+      "evidence": [
+        "5 releases の RFC 3161 証拠を再検証 PASS（paper v1: TSA 2026-11-13T19:39:35Z; demo-a v1/v2: 20:45:44/20:47:10; demo-b v1/v2: 20:48:41/20:50:14; 再検証 2026-11-14, g3-reverify-results.json）",
+        "異なる環境での正常検証 8回以上: Windows (bundle+draft+anonymous+restore × 5 releases) + Ubuntu 24.04 live-acceptance (#43583374274, public-tsa & fresh-verification success) = 2環境×8回を満たす",
+        "否定試験 20ケース 23判定: 誤受理0（spec 固定済み negative-suite-spec.json; results negative-suite-results.json; 再照合: spec 20/20 ケース全一致・false accepts 0）",
+        "古いCRL は openssl `CRL has expired` で拒否されることをローカル合成PKIで確認",
+        "mock/ローカルPKI/実通信を区分: 20ケースはローカル実証（mock通信ではないが GitHub 非接続での検証）、実TSAは公開時・live-acceptance で実施",
+        "CA指紋 2151b611…（FreeTSA pinned）、policy OID 1.2.3.4.1、nonce 一致、CRL 有効"
+      ],
+      "owner_self_reported_only": [],
+      "needs_independent_human": [
+        "TSA運用担当による信頼選定・CRL/失効運用の承認",
+        "検証担当による G3 最終 PASS 判定"
+      ],
+      "missing": [
+        "TSA運用担当と検証担当による承認"
+      ],
+      "next_minimal_verification": "owner が G3 の TSA/検証担当を指名し Issue #5 で判定"
+    },
+    {
+      "id": "G4",
+      "title": "独立公開観測",
+      "status": "BLOCKED",
+      "formal_requirement": "著者と別の管理者/実行環境/秘密鍵で4版を匿名取得し署名。別経路で確認したEd25519公開鍵で別担当が検証。RFC 3161 証拠も保存。",
+      "evidence": [
+        "所有者/OpenCode による観測は独立性を満たさない（同一アカウント・同一端末）",
+        "観測者向け実行パッケージ docs/operator-packages/G4-independent-observer.md を作成済み（手順・独立性確認書・雛形）"
+      ],
+      "owner_self_reported_only": [],
+      "needs_independent_human": [
+        "著者・所有者と管理/鍵/環境を異にする実在の観測者",
+        "観測者の Ed25519 鍵指紋の別経路確認と別担当による署名検証"
+      ],
+      "missing": [
+        "観測者の選任と実測（4版の匿名取得・署名・RFC 3161）"
+      ],
+      "next_minimal_verification": "owner が観測者を選任（docs/operator-packages/G4-independent-observer.md の依頼文に従う）"
+    },
+    {
+      "id": "G5",
+      "title": "GitHub複製・オフライン復元",
+      "status": "BLOCKED",
+      "formal_requirement": "4版を別管理のGitHub不変ミラーへ保存。台帳/ZIP指紋はミラーと別経路で保持。実際にダウンロードした4保存物をGitHub非接続の新環境へ復元し完全照合。",
+      "evidence": [
+        "CUSTODY_LEDGER.json（304 files, SHA-256）と CUSTODY_HANDOVER.md を作成済み（未保管）",
+        "所有者確認 2026-11-14: 別管理保管者は現時点不在",
+        "docs/operator-packages/G5-custodian-handover.md に受領・ミラー・復元手順を作成済み"
+      ],
+      "owner_self_reported_only": [],
+      "needs_independent_human": [
+        "別管理の保管者（別のGitHubアカウント/組織/物理保管）",
+        "保管者による受領・SHA-256再計算・保管記録"
+      ],
+      "missing": [
+        "保管者の選任と受領確認",
+        "別管理GitHubミラーの作成と4版の保存",
+        "GitHub非接続新環境での4版オフライン復元と完全照合"
+      ],
+      "next_minimal_verification": "owner が保管者を選任（docs/operator-packages/G5-custodian-handover.md に従う）"
+    },
+    {
+      "id": "G6",
+      "title": "人間の編集・個人情報管理",
+      "status": "PARTIAL",
+      "formal_requirement": "本文/データの権利・公開同意・COI確認。実人間によるレビュー過程1件、訂正演習1件、撤回演習1件で版/履歴を保持。実患者原本・秘密鍵を公開しない。",
+      "evidence": [
+        "本文・研究データ・コードのライセンス分離は文書化済み（CC BY 4.0 paper / MIT code・data、LICENSE-NOTICE.txt、supplements/）",
+        "著者表示 Unjuno（所有者申告。本人確認済みの証拠ではない — V1_ACCEPTANCE と一致）",
+        "患者原本・秘密鍵は保管リストに含まれない（確認済み）",
+        "docs/operator-packages/G6-human-review.md にレビュー/訂正/撤回演習テンプレート作成済み"
+      ],
+      "owner_self_reported_only": [
+        "著者表示・ライセンス・公開同意は所有者申告のみ（本人確認・第三者確認なし）"
+      ],
+      "needs_independent_human": [
+        "人間の編集・プライバシー担当による: 権利/同意/COI 確認、レビュー1件、訂正演習1件、撤回演習1件"
+      ],
+      "missing": [
+        "人間のレビュー記録1件",
+        "訂正演習1件・撤回演習1件（版/履歴保持・Immutable Release が破壊されないことの確認）"
+      ],
+      "next_minimal_verification": "owner が編集担当を選任（docs/operator-packages/G6-human-review.md）"
+    },
+    {
+      "id": "G7",
+      "title": "独立セキュリティ・証拠寿命",
+      "status": "BLOCKED",
+      "formal_requirement": "固定SHAに対する外部のセキュリティ/プライバシー報告。重大・高リスク未解決0。期限・失効・CA更新・証拠更新・旧失効証拠保存・障害復旧を試験し責任者を確定。",
+      "evidence": [
+        "固定SHA: main 3e4d373c… の CI 全成功・CodeQL 0 open・pip-audit 0 vuln（技術試験のみ）",
+        "証拠寿命試験の一部: renewal.py の転送（TSA更新）試験は CI で実行（test_renewal.py, 合成のみ）",
+        "docs/operator-packages/G7-external-audit.md に外部監査者向け監査パッケージ（対象SHA・監査範囲・秘匿なし・PASS条件）作成済み"
+      ],
+      "owner_self_reported_only": [],
+      "needs_independent_human": [
+        "実装者と別の外部監査者による署名付き監査報告",
+        "証明書期限切れ・失効・CA更新・証拠更新・旧失効証拠保存・GitHub障害復旧の試験結果に対する監査者の承認",
+        "保守・鍵管理・事故対応責任者の確定"
+      ],
+      "missing": [
+        "外部監査者の選任と署名付き監査報告",
+        "証拠寿命試験（実CRL/CA更新を用いた試験）と責任者確定"
+      ],
+      "next_minimal_verification": "owner が外部監査者を選任（docs/operator-packages/G7-external-audit.md）"
+    }
+  ],
+  "verdict_summary": {
+    "G0": "PARTIAL",
+    "G1": "PARTIAL",
+    "G2": "PARTIAL",
+    "G3": "PARTIAL",
+    "G4": "BLOCKED",
+    "G5": "BLOCKED",
+    "G6": "PARTIAL",
+    "G7": "BLOCKED",
+    "P1_paper_v1": "PASS",
+    "P4_kit_v1_0_0": "NO-GO"
+  },
+  "uncertainties": [
+    "TSA (FreeTSA) の時刻精度: 証明書に accuracy 未記載 → UNKNOWN（数値化しない）",
+    "CRL の鮮度: 検証時点で有効な CRL を使用したが、継続更新は運用責任者未確定 → 不確かさとして記録",
+    "独立性: 全検証を同一オペレータ（所有者+AI）が実施。他環境（Ubuntu CI）でも実TSAを実行したが、管理/鍵/アカウントは所有者配下 → 独立性は主張しない",
+    "保管継続性: 証拠はローカル1台＋GitHubのみ。保管者未選任 → 長期保存は不確か",
+    "GitHub 全体停止: 想定される破れ方（C）の1つ。二重化は未実施"
+  ]
+}
