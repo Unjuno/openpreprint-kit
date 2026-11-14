@@ -8,7 +8,7 @@
 | B2 | G0 | Dependabot alerts 無効（403）の扱い: 有効化 or 代替脆弱性評価の採用記録 | 権限・判断 | owner | **RESOLVED 2026-11-14: owner 承認で有効化（PUT vulnerability-alerts → 204、open alerts=0）** |
 | B3 | G1 | Required approvals=0 の独立人間レビューとしての妥当性承認、またはレビュアー追加 | 人間 | owner or 独立レビュアー | 未了 |
 | B4 | G1 | paper/demo リポジトリへの branch protection 適用の要否判断（テンプレート repo 同等の保護を求めるか） | 判断 | owner | 未了（現状 rules なし） |
-| B5 | G2 | **基準と実態の不一致**: 正式「2論文repo各2版」vs 現状（paper v1 のみ + synthetic 2 repo 各 v1/v2） | 基準・執筆 | owner（A案: paper v2 執筆/第2原稿、B案: 基準変更の署名付き承認） | owner 未決定（g2-criterion-impact-2026-11-14.md） |
+| B5 | G2 | **基準と実態の不一致**: 正式「2論文repo各2版」vs 現状（paper v1 のみ + synthetic 2 repo 各 v1/v2） | 基準・執筆 | owner（A案確定: paper v2 と第2実論文v1/v2の著者・権利承認、別検証担当） | A案は選択済み。実論文3 Releaseと別担当の判定が未達 |
 | B6 | G2 | 発行者と別の検証担当による最終 PASS 判定 | 人間 | 検証担当（owner 以外が望ましい） | 未了 |
 | B7 | G3 | TSA運用担当による信頼選定・CRL 運用の承認 | 人間 | TSA運用担当 | 未了 |
 | B8 | G3 | 検証担当による G3 最終 PASS 判定 | 人間 | 検証担当 | 未了（技術証拠は揃う） |
@@ -30,9 +30,8 @@
 
 ## 所有者が依頼すべき最小作業（人間）
 1. 観測者・保管者・編集担当・外部監査者・検証担当を選任する（B9〜B14）
-2. G2 基準の A案/B案を選択・署名付きで記録する（B5）
+2. 選択済みA案に基づき、paper v2 **と**第2実論文v1/v2の内容・権利を承認し、3件の新規Immutable Releaseを実証する（B5）
 3. G2/G3/G0 の最終判定を実行者と別の担当者が署名する（B1/B6/B8）
-4. （B案選択時）V1_ACCEPTANCE.md G2 の変更 PR を承認する
-5. （A案選択時）paper v2 または第2原稿の執筆・承認・公開
+4. G2の正式4版を定義し、別の検証担当が公開・TSA・引用・版不変性を判定する。B案への変更は現段階では採用しない
 
 これらが Issue #5 に記録され、G0〜G7 が全 PASS になり、main 固定SHA の必須CIが成功し、v1.0.0 不変Release が発行・再検証されるまで、**OpenPreprint Kit v1.0.0 完成とは宣言できない**。
