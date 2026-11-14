@@ -5,12 +5,12 @@
 
 ## 依頼文（所有者→外部監査者）
 
-> 対象は OpenPreprint Kit（GitHub: Unjuno/openpreprint-kit、固定SHA `84ca91cd6829e2d3d1c5a0f113f475c1d869bf73`、main）です。スコープは下記の監査項目です。実署名のある監査報告（重大/高リスク未解決0、または未解決リストと理由）をお願いします。低リスクの指摘も歓迎です。監査中に公開拡大・仕様変更が判明した場合は停止し、私へ連絡してください。
+> 対象は OpenPreprint Kit（GitHub: Unjuno/openpreprint-kit、固定SHA <FIXED_SHA_AT_AUDIT_START>  (set to the SHA current at audit time — as of this writing `b735988e…`; re-pin at audit start)、main）です。スコープは下記の監査項目です。実署名のある監査報告（重大/高リスク未解決0、または未解決リストと理由）をお願いします。低リスクの指摘も歓迎です。監査中に公開拡大・仕様変更が判明した場合は停止し、私へ連絡してください。
 
 ## 対象の固定
 
 - Repository: `https://github.com/Unjuno/openpreprint-kit`
-- SHA: `84ca91cd6829e2d3d1c5a0f113f475c1d869bf73`
+- SHA: <FIXED_SHA_AT_AUDIT_START>  (set to the SHA current at audit time — as of this writing `b735988e…`; re-pin at audit start)
 - 関連公開物（監査対象ではなく参照）: paper v1 / demo-a / demo-b（Issues #29-#35 のPR記録）
 
 ## 監査項目
