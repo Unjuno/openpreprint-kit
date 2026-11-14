@@ -181,6 +181,24 @@ def execute(manuscript: Path, version: str, repository: str, new_repo: bool,
         report['paper_pages'] = pages
 
         policy = load_policy(policy_path)
+
+        # Pre-flight: strictly validate and build the bundle locally BEFORE any
+        # GitHub write, so unapproved/unlisted assets are never pushed publicly.
+        source = output / 'source'
+        names, _ = stage(manuscript, paper_pdf, source, metadata)
+        if digest_file(source / 'paper' / 'paper.pdf') != paper_sha256:
+            raise ValueError('paper fingerprint changed during staging')
+        asset_sha = validate_assets_in(source)
+        report['assets'] = asset_sha
+        scripts_stage = source / 'scripts'
+        shutil.copytree(ROOT / 'scripts', scripts_stage,
+                        ignore=shutil.ignore_patterns('__pycache__'))
+        pre_bundle = output / 'preflight-bundle'
+        run(scripts_stage / 'prepare_release.py', '--output', pre_bundle,
+            '--repository', repository, '--commit', '0' * 40)
+        run(scripts_stage / 'citation_validation.py', pre_bundle)
+        report['preflight'] = 'PASS'; journal()
+
         gateway = GitHub()
         gateway.tools()
         source_repo = gateway.api('GET', 'repos/Unjuno/openpreprint-kit')
@@ -216,17 +234,9 @@ def execute(manuscript: Path, version: str, repository: str, new_repo: bool,
 
         require_immutable(_get(gateway, repository))
 
-        source = output / 'source'
-        names, _ = stage(manuscript, paper_pdf, source, metadata)
-        if digest_file(source / 'paper' / 'paper.pdf') != paper_sha256:
-            raise ValueError('paper fingerprint changed during staging')
-        asset_sha = validate_assets_in(source)
-        report['assets'] = asset_sha
         commit = _commit_inputs(gateway, repository, source, names)
         report.update(state='SOURCE_COMMITTED', source_commit=commit); journal()
 
-        shutil.copytree(ROOT / 'scripts', source / 'scripts',
-                        ignore=shutil.ignore_patterns('__pycache__'))
         bundle = output / 'bundle'
         run(source / 'scripts/prepare_release.py', '--output', bundle,
             '--repository', repository, '--commit', commit)
