@@ -1,0 +1,19 @@
+{
+  "operation": "renewal issue + verify (RFC 3161 forward renewal)",
+  "tool": "scripts/renewal.py",
+  "archive": "Unjuno/opk-demo-acceptance-a release v1 evidence.opk.zip",
+  "archive_sha256": "106d536371c9286952eca1cf96fff542cc5de949c0673956818f52f13cffa26c",
+  "chain_sha256": "1eaae7e2ad3239a516b4731d14515be6bd5748caa45a038a59aebcdea2a6f993",
+  "tsa_policies": [
+    "1.2.3.4.1"
+  ],
+  "tsa_signed_times_utc": [
+    "2026-11-14T16:14:04+00:00"
+  ],
+  "issue_status": "PASS",
+  "verify_status": "PASS",
+  "notes": [
+    "live FreeTSA request; no GitHub writes",
+    "historical LTV NOT established; revocation must be re-checked now AND at token time"
+  ]
+}

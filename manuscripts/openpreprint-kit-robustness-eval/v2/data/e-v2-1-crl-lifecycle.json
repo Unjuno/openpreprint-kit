@@ -1,0 +1,19 @@
+{
+  "experiment": "E-V2-1 CRL lifecycle contrast (same PKI, same TSA cert, same query/reply)",
+  "date_utc": "2026-11-14T16:18:24.031642+00:00",
+  "crl_fresh": {
+    "result": {
+      "verdict": "VERIFIED",
+      "tsa_time_utc": "2026-11-14T16:18:23+00:00"
+    },
+    "note": "crl-fresh.pem nextUpdate in future (openssl ca default_crl_days=30); verify accepted"
+  },
+  "crl_stale": {
+    "result": {
+      "verdict": "REJECTED",
+      "error": "OpenSSL verification failed: Using configuration from /usr/ssl/openssl.cnf\n100000000A000000:error:1C8000DE:Provider routines:file_set_ctx_params:search only supported for directories:providers/implementations/storemgmt/file_store.c:357:\n100000000A000000:error:17800064:time stamp routines:ts_verify_cert:certificate verify error:crypto/ts/ts_rsp_verify.c:190:Verify error:CRL has expired"
+    },
+    "note": "nextUpdate=2020-01-01 and thisUpdate=2019-12-01; verify rejected"
+  },
+  "interpretation": "fresh CRL accepted; stale CRL rejected (openssl reports 'CRL has expired'). Freshness enforcement depends on openssl ts -verify -crl_check_all, not on application logic."
+}

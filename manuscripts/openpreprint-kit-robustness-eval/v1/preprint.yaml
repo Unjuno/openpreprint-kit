@@ -1,0 +1,17 @@
+# OpenPreprint Kit — 改変検出・時刻証拠・障害復旧の実証評価（v1）メタデータ（所有者承認待ち）
+schema_version: 1
+title: 'OpenPreprint Kitにおける改変検出・時刻証拠・障害復旧の実証評価'
+authors:
+- name: Unjuno
+  orcid: null
+abstract: プレプリント公開物に対する意図的な改変、信頼設定の誤り、証拠失効、公開処理の途中失敗をどの範囲で検出・拒否・復旧できるかを、固定20否定ケース（23判定、誤受理0）・2環境での正常検証・ローカル合成PKI・実障害記録（INC-1/INC-2）に基づく実測で評価する。
+keywords:
+- tamper detection
+- RFC 3161
+- trust boundary
+- PKI
+- restore
+- incident analysis
+version: v1
+paper: paper/paper.pdf
+license: CC-BY-4.0

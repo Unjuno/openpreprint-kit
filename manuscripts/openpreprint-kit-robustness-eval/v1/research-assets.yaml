@@ -1,0 +1,54 @@
+# OpenPreprint Kit — 改変検出・時刻証拠・障害復旧の実証評価 — データ公開ポリシー
+schema_version: 1
+public_assets:
+- path: manuscripts/openpreprint-kit-robustness-eval/paper.md
+  role: manuscript_source
+  description: 改変検出の実証評価 本文（v1）
+  license: CC-BY-4.0
+  public_confirmed: false
+- path: manuscripts/openpreprint-kit-robustness-eval/preprint.yaml
+  role: publication_metadata
+  description: 書誌情報（所有者承認待ち）
+  license: CC-BY-4.0
+  public_confirmed: false
+- path: manuscripts/openpreprint-kit-robustness-eval/data/negative-suite-spec.json
+  role: evaluation_data
+  description: 事前固定した20の否定ケース仕様
+  license: CC-BY-4.0
+  public_confirmed: false
+- path: manuscripts/openpreprint-kit-robustness-eval/data/negative-suite-results.json
+  role: evaluation_data
+  description: 23判定の実行結果（誤受理0）
+  license: CC-BY-4.0
+  public_confirmed: false
+- path: manuscripts/openpreprint-kit-robustness-eval/data/negative-suite-summary.json
+  role: evaluation_data
+  description: ケース別の判定サマリ
+  license: CC-BY-4.0
+  public_confirmed: false
+- path: manuscripts/openpreprint-kit-robustness-eval/data/tsa-reverification.json
+  role: evaluation_data
+  description: 公開5版のRFC 3161再検証結果
+  license: CC-BY-4.0
+  public_confirmed: false
+- path: manuscripts/openpreprint-kit-robustness-eval/data/release-matrix.json
+  role: evaluation_data
+  description: 公開5版のID・コミット・digest一致照合
+  license: CC-BY-4.0
+  public_confirmed: false
+- path: manuscripts/openpreprint-kit-robustness-eval/data/incident-analysis.json
+  role: evaluation_data
+  description: 実公開で発生した2件の障害と修正（実測）
+  license: CC-BY-4.0
+  public_confirmed: false
+- path: manuscripts/openpreprint-kit-robustness-eval/data/renewal-experiment.json
+  role: evaluation_data
+  description: 前方RFC 3161更新（renewal.py issue + verify）の実測結果
+  license: CC-BY-4.0
+  public_confirmed: false
+- path: manuscripts/openpreprint-kit-robustness-eval/analysis/analyze_robustness.py
+  role: analysis_code
+  description: 否定試験結果の再集計コード（標準ライブラリのみ）
+  license: MIT
+  public_confirmed: false
+relations: []

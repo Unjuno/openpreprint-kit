@@ -1,0 +1,20 @@
+{
+  "incidents": [
+    {
+      "id": "INC-1",
+      "date": "2026-11-13/14",
+      "title": "first publication halted at SOURCE_COMMITTED by Windows cffconvert PATH defect",
+      "detail": "publish_first_paper.py installed cffconvert==2.0.0 into an isolated venv but citation_validation.py invoked it by bare name; Windows venv Scripts/ not on PATH. pipeline stopped before any Release/TSA operation.",
+      "resolution": "owner-approved continuation: same code path, venv Scripts prepended to PATH; original FAIL record preserved; PR #34 fixed resolution (cffconvert next to sys.executable, PYTHONUTF8/PYTHONIOENCODING=utf-8 for child processes) + regression tests; merged 2cd536c",
+      "effect": "publication completed without recreating the repository or rewriting the FAIL record"
+    },
+    {
+      "id": "INC-2",
+      "date": "2026-11-14",
+      "title": "immutable-releases PUT->GET read-back race",
+      "detail": "PUT /immutable-releases succeeded but immediate GET returned enabled!=true on a freshly created repository; require_immutable() raised and stopped the synthetic pilot after repo creation (0 releases).",
+      "resolution": "owner-approved continuation with bounded retry (6 attempts, 1.0s); PR #35 merged to main (3e4d373c)",
+      "effect": "synthetic pilot completed (2 repos x v1/v2, all immutable, attestations verified)"
+    }
+  ]
+}

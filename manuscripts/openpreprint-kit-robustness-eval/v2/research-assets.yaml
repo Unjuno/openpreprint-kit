@@ -1,0 +1,39 @@
+# OpenPreprint Kit — 改変検出・時刻証拠・障害復旧 — v2 データ公開ポリシー
+schema_version: 1
+public_assets:
+- path: manuscripts/openpreprint-kit-robustness-eval/v2/paper.md
+  role: manuscript_source
+  description: 改変検出の実証評価 追加実験 v2
+  license: CC-BY-4.0
+  public_confirmed: false
+- path: manuscripts/openpreprint-kit-robustness-eval/v2/preprint.yaml
+  role: publication_metadata
+  description: 書誌情報（所有者承認待ち）
+  license: CC-BY-4.0
+  public_confirmed: false
+- path: manuscripts/openpreprint-kit-robustness-eval/v2/data/e-v2-1-crl-lifecycle.json
+  role: evaluation_data
+  description: CRL鮮度対照実験（fresh PASS / stale REJECTED）の生記録
+  license: CC-BY-4.0
+  public_confirmed: false
+- path: manuscripts/openpreprint-kit-robustness-eval/v2/data/renewal-experiment.json
+  role: evaluation_data
+  description: 前方RFC 3161更新の issue/verify 実測結果
+  license: CC-BY-4.0
+  public_confirmed: false
+- path: manuscripts/openpreprint-kit-robustness-eval/v2/data/negative-suite-spec.json
+  role: evaluation_data
+  description: v1と共通の事前固定否定ケース仕様（参照用）
+  license: CC-BY-4.0
+  public_confirmed: false
+- path: manuscripts/openpreprint-kit-robustness-eval/v2/data/negative-suite-results.json
+  role: evaluation_data
+  description: v1の23判定結果（参照用）
+  license: CC-BY-4.0
+  public_confirmed: false
+- path: manuscripts/openpreprint-kit-robustness-eval/v2/data/incident-analysis.json
+  role: evaluation_data
+  description: INC-1/INC-2の実測記録（参照用）
+  license: CC-BY-4.0
+  public_confirmed: false
+relations: []
