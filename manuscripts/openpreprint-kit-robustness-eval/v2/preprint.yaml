@@ -5,7 +5,7 @@ title: 'OpenPreprint Kitにおける改変検出・時刻証拠・障害復旧�
 authors:
 - name: Unjuno
   orcid: null
-abstract: v1のCRL鮮度ケースを、同一PKI・同一TSA証明書・同一問合せで対照実験（fresh=VERIFIED / stale=Verify error: CRL has expired）。保存ZIPへの前方RFC 3161更新（issue/verify PASS、chain 1eaae7e2…）を実測として追加する。
+abstract: 'v1のCRL鮮度ケースを同一PKI・同一TSA証明書・同一問合せで対照実験（fresh=VERIFIED / stale=Verify error: CRL has expired）。保存ZIPへの前方RFC 3161更新（issue/verify PASS、chain 1eaae7e2…）を実測として追加する。'
 keywords:
 - CRL freshness
 - revocation checking
