@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 from pathlib import Path
 import shutil
 import subprocess
@@ -199,7 +200,12 @@ class RenewalTests(unittest.TestCase):
         with self.assertRaises(ValueError): self.verify(self.output, result['chain_sha256'], [self.policy1])
         (self.output / 'private.key').unlink()
         (self.output / 'step-0001' / 'timestamp.tsq').unlink()
-        (self.output / 'step-0001' / 'timestamp.tsq').symlink_to(self.source_policy)
+        try:
+            (self.output / 'step-0001' / 'timestamp.tsq').symlink_to(self.source_policy)
+        except OSError as exc:
+            if os.name == 'nt' and getattr(exc, 'winerror', None) == 1314:
+                self.skipTest('Windows symlink privilege unavailable')
+            raise
         with self.assertRaises(ValueError): self.verify(self.output, result['chain_sha256'], [self.policy1])
 
     def test_issuer_never_accepts_missing_or_untrusted_source_timestamp(self):

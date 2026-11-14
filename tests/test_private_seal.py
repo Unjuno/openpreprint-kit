@@ -25,6 +25,22 @@ class PrivateSealTests(unittest.TestCase):
         self.original = self.outside / 'synthetic-not-real.txt'
         self.original.write_bytes(b'completely synthetic data\n')
         self.key = self.outside / 'key.bin'
+        self.win_acl = os.name == 'nt'
+        self.acl_root = Path(self.tmp.name) / 'private-acl'
+        if self.win_acl:
+            self.acl_root.mkdir()
+            result = subprocess.run(['icacls', str(self.acl_root), '/inheritance:r', '/T', '/C'],
+                                    capture_output=True, text=True, check=False)
+            if result.returncode == 0:
+                subprocess.run(['icacls', str(self.acl_root), '/grant:r',
+                                 f'{os.environ.get("USERDOMAIN", "") }\\{os.environ.get("USERNAME", "")}:F',
+                                 'SYSTEM:F', 'Administrators:F', '/T', '/C'],
+                                capture_output=True, text=True, check=False)
+            os.replace(self.original, self.acl_root / self.original.name)
+            self.original = self.acl_root / self.original.name
+            self.outside.rmdir()
+            self.outside = self.acl_root
+            self.key = self.outside / 'key.bin'
 
     def tearDown(self):
         self.tmp.cleanup()
@@ -45,7 +61,18 @@ class PrivateSealTests(unittest.TestCase):
         self.assertEqual(len(receipt['record_id']), 32)
         self.assertEqual(len(receipt['commitment']), 64)
         self.assertEqual(len(self.key.read_bytes()), 32)
-        self.assertFalse(self.key.stat().st_mode & 0o077)
+        if os.name == 'posix':
+            self.assertFalse(self.key.stat().st_mode & 0o077)
+        elif not self.win_acl:
+            self.skipTest('private key permission semantics are platform-specific')
+        else:
+            acl = subprocess.run(['icacls', str(self.key)], capture_output=True,
+                                 text=True, check=False)
+            self.assertEqual(acl.returncode, 0, acl.stderr)
+            normalized_acl = acl.stdout.lower()
+            self.assertIn(f'{os.environ.get("USERNAME", "").lower()}:(f)', normalized_acl)
+            self.assertNotIn('everyone:', normalized_acl)
+            self.assertNotIn('authenticated users:', normalized_acl)
         self.assertNotIn(str(self.original), receipts[0].read_text())
         self.assertNotIn('synthetic', receipts[0].read_text())
         self.assertNotIn(self.key.read_bytes().hex(), receipts[0].read_text())

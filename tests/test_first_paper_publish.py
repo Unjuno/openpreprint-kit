@@ -1,6 +1,7 @@
 """Approved first paper publication: mock GitHub transport, never fake public success."""
 import importlib
 import json
+import os
 from pathlib import Path
 import shutil
 import subprocess
@@ -86,8 +87,19 @@ class FirstPaperPublishTests(unittest.TestCase):
         self.assertEqual(self.gateway.calls, [])
 
     def test_pdf_symlink_rejected(self):
-        linked = self.root/'linked.pdf'; linked.symlink_to(self.pdf); self.pdf=linked
-        with self.assertRaisesRegex(ValueError, 'symlink'): self.execute()
+        linked = self.root/'linked.pdf'
+        try:
+            linked.symlink_to(self.pdf)
+        except OSError as exc:
+            if os.name == 'nt' and getattr(exc, 'winerror', None) == 1314:
+                self.skipTest('Windows symlink privilege unavailable')
+            raise
+        original_pdf, original_fingerprint = self.pdf, self.fingerprint
+        self.pdf = linked
+        self.fingerprint = __import__('hashlib').sha256(linked.read_bytes()).hexdigest()
+        with self.assertRaisesRegex(ValueError, 'symlink'):
+            self.execute()
+        self.pdf, self.fingerprint = original_pdf, original_fingerprint
         self.assertEqual(self.gateway.calls, [])
 
     def test_existing_repository_never_modified(self):

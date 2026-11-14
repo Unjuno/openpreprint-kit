@@ -11,9 +11,13 @@ SCRIPT=ROOT/'scripts/publish_first_paper.sh'
 
 class FirstPaperLauncherTests(unittest.TestCase):
     def setUp(self):
+        if os.name != 'posix':
+            self.skipTest('POSIX shell launcher integration test')
         self.assertTrue(SCRIPT.is_file(), 'owner first-paper launcher missing')
 
     def test_default_is_offline_plan(self):
+        if os.name != 'posix': self.skipTest('POSIX shell integration')
+        if os.name != 'posix': self.skipTest('POSIX shell integration')
         with tempfile.TemporaryDirectory() as tmp:
             r=subprocess.run(['/bin/bash',str(SCRIPT)],cwd=tmp,
                 env={**os.environ,'PATH':'/nonexistent'},capture_output=True,text=True,timeout=10)
@@ -23,10 +27,14 @@ class FirstPaperLauncherTests(unittest.TestCase):
             self.assertEqual(list(Path(tmp).iterdir()),[])
 
     def test_unknown_flag_rejected(self):
+        if os.name != 'posix': self.skipTest('POSIX shell integration')
+        if os.name != 'posix': self.skipTest('POSIX shell integration')
         r=subprocess.run(['/bin/bash',str(SCRIPT),'--force'],capture_output=True,text=True,timeout=10)
         self.assertEqual(r.returncode,2)
 
     def test_shell_syntax(self):
+        if os.name != 'posix': self.skipTest('POSIX shell integration')
+        if os.name != 'posix': self.skipTest('POSIX shell integration')
         r=subprocess.run(['/bin/bash','-n',str(SCRIPT)],capture_output=True,text=True,timeout=10)
         self.assertEqual(r.returncode,0,r.stderr)
 
@@ -45,6 +53,8 @@ class FirstPaperLauncherTests(unittest.TestCase):
         self.assertLess(text.index('sha256sum -c'),text.index('scripts/first_paper_publish.py'))
 
     def test_auth_failure_does_not_start_work(self):
+        if os.name != 'posix': self.skipTest('POSIX shell integration')
+        if os.name != 'posix': self.skipTest('POSIX shell integration')
         with tempfile.TemporaryDirectory() as tmp:
             fake=Path(tmp)/'gh'
             fake.write_text('#!/bin/sh\nexit 1\n'); fake.chmod(0o755)

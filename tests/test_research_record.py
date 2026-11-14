@@ -3,6 +3,7 @@ import copy
 import hashlib
 import importlib.util
 import json
+import os
 from pathlib import Path
 import tempfile
 import unittest
@@ -55,9 +56,17 @@ class ResearchRecordTests(unittest.TestCase):
         m=self.module();e=self.event();e['evidence'][0]['path']='../private.txt';self.data['events']=[e]
         self.assertTrue(m.validate_record(self.data,self.root))
     def test_symlink_evidence_is_rejected(self):
+        if os.name == 'nt' and not os.environ.get('OPK_WINDOWS_SYMLINK_TESTS'):
+            self.skipTest('enable OPK_WINDOWS_SYMLINK_TESTS on a Windows runner with symlink privilege')
         m=self.module();self.data['events']=[self.event()];other=self.root/'other.md';other.write_bytes(self.report.read_bytes())
-        self.report.unlink();self.report.symlink_to(other)
-        self.assertTrue(m.validate_record(self.data,self.root))
+        try:
+            self.report.unlink();self.report.symlink_to(other)
+        except OSError as exc:
+            if os.name == 'nt' and getattr(exc, 'winerror', None) == 1314:
+                self.skipTest('Windows symlink privilege unavailable')
+            raise
+        self.assertTrue(any('symlink evidence is forbidden' in error
+                            for error in m.validate_record(self.data,self.root)))
     def test_conflicting_hash_for_same_version_is_rejected(self):
         m=self.module();e=self.event(id='e2');e['paper_sha256']='b'*64
         self.data['events']=[self.event(),e];self.assertTrue(m.validate_record(self.data,self.root))

@@ -95,7 +95,7 @@ def fixture(output: Path, version: str, *, export_source: bool = False) -> dict:
             public_paths = ['preprint.yaml', 'research-assets.yaml', 'paper/paper.pdf',
                             'data/synthetic.csv', 'analysis/reproduce.py', str(receipt.relative_to(repo))]
             for relative in public_paths:
-                destination = output / 'source' / relative
+                destination = output / 'source' / Path(relative)
                 destination.parent.mkdir(parents=True, exist_ok=True)
                 shutil.copyfile(repo / relative, destination)
             report['source_export'] = 'ALLOWLISTED_SYNTHETIC_ONLY'

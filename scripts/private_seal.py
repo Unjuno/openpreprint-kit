@@ -16,6 +16,7 @@ import os
 from pathlib import Path
 import re
 import secrets
+import subprocess
 import sys
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -71,6 +72,18 @@ def seal(source: Path, key_path: Path) -> Path:
     ensure_outside_root(key_path)
     if key_path.parent.is_symlink() or not key_path.parent.is_dir():
         raise ValueError('secret directory must already exist and must not be a symlink')
+    if os.name == 'nt':
+        # 0o600 does not establish a Windows DACL. Inspect the existing
+        # directory before creating a key so broad inherited access is refused.
+        acl = subprocess.run(['icacls', str(key_path.parent)], capture_output=True,
+                             text=True, encoding='utf-8', errors='replace', check=False)
+        if acl.returncode != 0:
+            raise ValueError('cannot inspect secret directory ACL; create key in a private directory')
+        normalized_acl = acl.stdout.lower()
+        if any(principal in normalized_acl for principal in
+                       ('everyone:', 'authenticated users:', 'builtin\\users:',
+                        'nt authority\\authenticated users:')):
+            raise ValueError('secret directory ACL is not restricted; use a private owner-only directory')
     key = secrets.token_bytes(32)
     commitment = commit_file(source, key)
     rid = secrets.token_hex(16)

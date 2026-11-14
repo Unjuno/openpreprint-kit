@@ -53,8 +53,13 @@ class AcceptanceFixtureTests(unittest.TestCase):
         source = self.root/'source-demo'/'source'
         files = {str(p.relative_to(source)) for p in source.rglob('*') if p.is_file()}
         public = {'preprint.yaml', 'research-assets.yaml', 'paper/paper.pdf', 'data/synthetic.csv', 'analysis/reproduce.py'}
-        receipts = {p for p in files if p.startswith('evidence/commitments/') and p.endswith('.json')}
-        self.assertEqual(files, public | receipts)
+        receipts = {p.replace('\\', '/') for p in files
+                    if p.replace('\\', '/').startswith('evidence/commitments/')
+                    and p.endswith('.json')}
+        normalized_files = {p.replace('\\', '/') for p in files}
+        self.assertEqual({p for p in normalized_files if not p.startswith('evidence/commitments/')}, public)
+        self.assertEqual(len({p for p in normalized_files if p.startswith('evidence/commitments/')
+                              and p.endswith('.json')}), 1)
         self.assertEqual(len(receipts), 1)
         for p in source.rglob('*'):
             if p.is_file():
