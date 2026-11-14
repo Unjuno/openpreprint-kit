@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "purpose": "OpenPreprint Kit v1.0 acceptance - fixed 20-case negative (tamper) suite",
+  "fixed_at_utc": "2026-11-14",
+  "environment": {
+    "host": "Windows (win32), same owner machine as publication",
+    "toolkit_main": "2cd536caa4c3fbc31b1fe32274e35b23ff654259",
+    "python": "3.12.10",
+    "openssl": "3.5.6",
+    "comm": "ALL cases run locally; no GitHub writes; no network TSA calls; synthetic PKI built locally for cases 13-15. Real-GitHub effects are NOT exercised here (already covered by publication/re-verification evidence)."
+  },
+  "base_input": "Preserved synthetic v1 bundle (opk-demo-acceptance-a v1), anonymous re-downloaded and byte-checked during pilot continuation",
+  "expectation": "Every case MUST be rejected (expected=false accept). Any false accept is a FAIL to report.",
+  "cases": [
+    {"id": 1, "name": "PDF改変", "method": "paper.pdf の1バイトを反転し verify_release.verify にかける", "layer": "bundle integrity"},
+    {"id": 2, "name": "データ改変", "method": "research-assets.tar 内のデータファイルを書き換え、(a) manifest 不整合で verify 拒否、(b) manifest/SHA256SUMS を再計算した整合バンドルで TSA imprint 不整合により verify_proof 拒否", "layer": "bundle integrity + TSA binding"},
+    {"id": 3, "name": "コード改変", "method": "research-assets.tar 内の reproduce.py を書き換え、(a) verify 拒否、(b) 再整合化後 TSA verify 拒否", "layer": "bundle integrity + TSA binding"},
+    {"id": 4, "name": "manifest改変", "method": "manifest.json の size_bytes を改ざんし、(a) verify 拒否、(b) manifest/SHA256SUMS 再計算後 TSA verify 拒否", "layer": "bundle integrity + TSA binding"},
+    {"id": 5, "name": "資産欠落", "method": "citation.bib を削除して verify にかける", "layer": "bundle integrity"},
+    {"id": 6, "name": "余計なファイル", "method": "bundle に extra.txt を追加して verify にかける", "layer": "bundle integrity"},
+    {"id": 7, "name": "別リポジトリ", "method": "expected repository を Unjuno/openpreprint-kit に変えて assert_source_identity/verify_all", "layer": "source identity"},
+    {"id": 8, "name": "別版", "method": "version='v2' に対して v1 バンドルを verify_all", "layer": "source identity"},
+    {"id": 9, "name": "誤CA指紋", "method": "policy の ca_sha256 を 0x00..00 にして load_policy", "layer": "trust policy pin"},
+    {"id": 10, "name": "誤policy OID", "method": "policy の policy_oid を 1.2.3.4.2 にして verify_digest", "layer": "TSA policy OID"},
+    {"id": 11, "name": "nonce不一致", "method": "b repo v1 の timestamp.tsq と a repo v1 の timestamp.tsr を混在させて verify_digest", "layer": "RFC 3161 nonce binding"},
+    {"id": 12, "name": "署名偽造", "method": "timestamp.tsr 末尾の署名バイトを反転して verify_digest", "layer": "TSA signature"},
+    {"id": 13, "name": "失効TSA", "method": "ローカルPKIで TSA 証明書をCRL失効させた上で正常な署名済みTSRを verify_digest（-crl_check_all）", "layer": "revocation"},
+    {"id": 14, "name": "期限切れTSA", "method": "ローカルPKIで有効期限切れの TSA 証明書で署名し verify_digest（now と token time 双方の有効性を要求）", "layer": "certificate validity"},
+    {"id": 15, "name": "古いCRL", "method": "ローカルPKIで nextUpdate を過去にした（または即時失効の）CRLで verify_digest を試み、挙動を記録する", "layer": "CRL freshness"},
+    {"id": 16, "name": "ZIPパストラバーサル", "method": "member 名 'bundle/../evil.txt' の ZIP を preserve.restore にかける", "layer": "archive parser"},
+    {"id": 17, "name": "重複member", "method": "同名 member が2つある ZIP を preserve.restore にかける", "layer": "archive parser"},
+    {"id": 18, "name": "symlink member", "method": "external_attr が S_IFLNK の member を持つ ZIP を preserve.restore にかける", "layer": "archive parser"},
+    {"id": 19, "name": "誤観測鍵", "method": "Ed25519: 証人Aの署名済み観測証拠を証人Bの公開鍵（+Bのピン）で verify_public", "layer": "witness signature"},
+    {"id": 20, "name": "観測後の再署名", "method": "観測後に observation.json の paper_sha256 を改ざんし同じ鍵で再署名して verify_public", "layer": "witness assertion vs bytes"}
+  ]
+}

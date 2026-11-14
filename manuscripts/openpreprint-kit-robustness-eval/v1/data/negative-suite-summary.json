@@ -1,0 +1,167 @@
+{
+  "spec": "negative-suite-spec.json (fixed 2026-11-14 before execution)",
+  "total_judgments": 23,
+  "passes": 23,
+  "false_accepts": 0,
+  "by_case": {
+    "1": [
+      {
+        "variant": "bundle integrity",
+        "verdict": "PASS",
+        "rejected": true
+      }
+    ],
+    "2": [
+      {
+        "variant": "a: verify",
+        "verdict": "PASS",
+        "rejected": true
+      },
+      {
+        "variant": "b: TSA imprint) — variant",
+        "verdict": "PASS",
+        "rejected": true
+      }
+    ],
+    "3": [
+      {
+        "variant": "a: verify",
+        "verdict": "PASS",
+        "rejected": true
+      },
+      {
+        "variant": "b: TSA imprint) — variant",
+        "verdict": "PASS",
+        "rejected": true
+      }
+    ],
+    "4": [
+      {
+        "variant": "a: verify",
+        "verdict": "PASS",
+        "rejected": true
+      },
+      {
+        "variant": "b: TSA imprint) — variant",
+        "verdict": "PASS",
+        "rejected": true
+      }
+    ],
+    "5": [
+      {
+        "variant": "citation.bib 欠落",
+        "verdict": "PASS",
+        "rejected": true
+      }
+    ],
+    "6": [
+      {
+        "variant": "extra.txt",
+        "verdict": "PASS",
+        "rejected": true
+      }
+    ],
+    "7": [
+      {
+        "variant": "main",
+        "verdict": "PASS",
+        "rejected": true
+      }
+    ],
+    "8": [
+      {
+        "variant": "v2 扱い",
+        "verdict": "PASS",
+        "rejected": true
+      }
+    ],
+    "9": [
+      {
+        "variant": "main",
+        "verdict": "PASS",
+        "rejected": true
+      }
+    ],
+    "10": [
+      {
+        "variant": "main",
+        "verdict": "PASS",
+        "rejected": true
+      }
+    ],
+    "11": [
+      {
+        "variant": "main",
+        "verdict": "PASS",
+        "rejected": true
+      }
+    ],
+    "12": [
+      {
+        "variant": "main",
+        "verdict": "PASS",
+        "rejected": true
+      }
+    ],
+    "13": [
+      {
+        "variant": "main",
+        "verdict": "PASS",
+        "rejected": true
+      }
+    ],
+    "14": [
+      {
+        "variant": "main",
+        "verdict": "PASS",
+        "rejected": true
+      }
+    ],
+    "15": [
+      {
+        "variant": "main",
+        "verdict": "PASS",
+        "rejected": true
+      }
+    ],
+    "16": [
+      {
+        "variant": "main",
+        "verdict": "PASS",
+        "rejected": true
+      }
+    ],
+    "17": [
+      {
+        "variant": "main",
+        "verdict": "PASS",
+        "rejected": true
+      }
+    ],
+    "18": [
+      {
+        "variant": "main",
+        "verdict": "PASS",
+        "rejected": true
+      }
+    ],
+    "19": [
+      {
+        "variant": "main",
+        "verdict": "PASS",
+        "rejected": true
+      }
+    ],
+    "20": [
+      {
+        "variant": "main",
+        "verdict": "PASS",
+        "rejected": true
+      }
+    ]
+  },
+  "environments": [
+    "Windows (win32, CPython 3.12.10, OpenSSL 3.5.6) — local, this machine",
+    "GitHub Actions ubuntu-24.04 (run 43583374274, public-tsa + fresh-verification) — synthetic only"
+  ]
+}
