@@ -1,0 +1,31 @@
+name: Reviewer interest (public)
+description: Publicly volunteer for an open review round
+title: "[Reviewer interest] Issue #<round issue number>"
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This form is public. Do not submit email addresses, private identifiers, confidential COI details, or sensitive information. The editor may ask you to discuss conflicts through an approved private channel before assigning a review.
+  - type: input
+    id: round_issue
+    attributes:
+      label: Review round issue
+      placeholder: https://github.com/OWNER/REPO/issues/123
+    validations:
+      required: true
+  - type: textarea
+    id: expertise
+    attributes:
+      label: Relevant expertise (brief public summary)
+      description: State enough for the editor to assess fit; do not include private personal information.
+    validations:
+      required: true
+  - type: checkboxes
+    id: public_terms
+    attributes:
+      label: Public participation
+      options:
+        - label: I understand this is an open, non-anonymous review and that my GitHub account and any published report will be visible.
+          required: true
+        - label: I will disclose conflicts to the editor before accepting and will not submit confidential or restricted content.
+          required: true

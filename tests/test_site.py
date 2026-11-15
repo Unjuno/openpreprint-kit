@@ -37,7 +37,7 @@ class SiteTests(unittest.TestCase):
         spec=importlib.util.spec_from_file_location('opk_site',p);m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m);return m
     def build(self):
         self.module().build_site(self.bundle,self.root,self.output,'example/paper')
-        return (self.output/'index.html').read_text()
+        return (self.output/'index.html').read_text(encoding='utf-8')
     def test_default_is_unreviewed_and_not_time_verified(self):
         text=self.build();self.assertIn('UNREVIEWED_PREPRINT',text);self.assertIn('NOT_VERIFIED',text)
     def test_untrusted_html_is_escaped(self):
@@ -51,6 +51,24 @@ class SiteTests(unittest.TestCase):
             e=helper.event('retraction');e['paper_sha256']=self.digest
             self.record.write_text(json.dumps({'schema_version':1,'events':[e]}))
             text=self.build();self.assertIn('RETRACTED',text);self.assertTrue((self.output/'assets/paper.pdf').is_file())
+        finally:helper.tearDown()
+    def test_editorial_decision_and_public_round_link_are_visible_but_not_certified(self):
+        helper=test_research_record.ResearchRecordTests();helper.setUp()
+        try:
+            import shutil
+            shutil.copytree(helper.root/'reviews/evidence',self.root/'reviews/evidence')
+            events=[helper.linked_event('review','review-1','Synthetic reviewer A'),
+                    helper.linked_event('review','review-2','Synthetic reviewer B'),
+                    helper.linked_event('response','response-1','Synthetic author'),
+                    helper.linked_event('editorial_decision','decision-1','Synthetic editor',
+                                        summary='Synthetic fixture decision',decision='accept')]
+            for event in events:event['paper_sha256']=self.digest
+            self.record.write_text(json.dumps({'schema_version':1,'events':events}))
+            text=self.build()
+            self.assertIn('EDITORIAL_ACCEPTED',text)
+            self.assertIn('Declared editorial decision:',text)
+            self.assertIn('https://github.com/example/paper/issues/7',text)
+            self.assertIn('not an independently certified peer-reviewed publication',text)
         finally:helper.tearDown()
     def test_present_timestamp_is_not_claimed_verified(self):
         (self.bundle/'timestamp.tsq').write_bytes(b'not verified');(self.bundle/'timestamp.tsr').write_bytes(b'not verified')
@@ -80,7 +98,7 @@ class SiteTests(unittest.TestCase):
             'version':'v1','entries':entries,'relations':[]
         }),encoding='utf-8')
         manifest_file=self.bundle/'manifest.json'
-        manifest=json.loads(manifest_file.read_text())
+        manifest=json.loads(manifest_file.read_text(encoding='utf-8'))
         for name in ('research-assets.json','research-assets.tar'):
             raw=(self.bundle/name).read_bytes()
             manifest['files'][name]={'sha256':hashlib.sha256(raw).hexdigest(),'size_bytes':len(raw)}

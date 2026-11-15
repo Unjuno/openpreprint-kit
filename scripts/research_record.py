@@ -16,7 +16,9 @@ import sys
 
 EVENT_KEYS = {'id', 'kind', 'version', 'paper_sha256', 'recorded_at', 'actor',
               'conflicts', 'summary', 'evidence'}
-KINDS = {'review', 'response', 'correction', 'expression_of_concern', 'retraction'}
+KINDS = {'review', 'response', 'correction', 'expression_of_concern', 'retraction',
+         'editorial_decision'}
+DECISIONS = {'accept', 'revise', 'decline', 'pause'}
 MAX_RECORD = 2 * 1024 * 1024
 MAX_REPORT = 256 * 1024
 HEX = re.compile(r'[0-9a-f]{64}')
@@ -84,7 +86,8 @@ def validate_record(data: object, root: Path, baseline: object = None) -> list[s
     ids, versions = set(), {}
     for i, event in enumerate(data['events']):
         prefix = f'events[{i}]'
-        if not isinstance(event, dict) or not EVENT_KEYS.issubset(event) or set(event) - EVENT_KEYS - {'replacement'}:
+        if (not isinstance(event, dict) or not EVENT_KEYS.issubset(event)
+                or set(event) - EVENT_KEYS - {'replacement', 'round_issue', 'decision'}):
             errors.append(f'{prefix}: missing or unknown fields'); continue
         event_id = event['id']
         if not isinstance(event_id, str) or not re.fullmatch(r'[a-z0-9][a-z0-9-]{0,63}', event_id) or event_id in ids:
@@ -94,6 +97,21 @@ def validate_record(data: object, root: Path, baseline: object = None) -> list[s
         kind = event['kind']
         if not isinstance(kind, str) or kind not in KINDS:
             errors.append(f'{prefix}: unsupported kind')
+        round_issue = event.get('round_issue')
+        if round_issue is not None:
+            if (not isinstance(round_issue, str)
+                    or not re.fullmatch(r'https://github\.com/[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+/issues/[1-9][0-9]*', round_issue)):
+                errors.append(f'{prefix}: round_issue must be a canonical public GitHub issue URL')
+            elif kind not in {'review', 'response', 'editorial_decision'}:
+                errors.append(f'{prefix}: round_issue is only valid for review-round events')
+        decision = event.get('decision')
+        if kind == 'editorial_decision':
+            if round_issue is None:
+                errors.append(f'{prefix}: editorial_decision needs a round_issue')
+            if not isinstance(decision, str) or decision not in DECISIONS:
+                errors.append(f'{prefix}: editorial_decision needs accept, revise, decline or pause')
+        elif 'decision' in event:
+            errors.append(f'{prefix}: decision is only valid for editorial_decision')
         version, digest = event['version'], event['paper_sha256']
         if not version_ok(version) or not digest_ok(digest):
             errors.append(f'{prefix}: invalid version or paper_sha256')
@@ -138,16 +156,61 @@ def validate_record(data: object, root: Path, baseline: object = None) -> list[s
                 errors.append(f'{prefix}: correction needs a replacement with a new version and PDF hash')
         elif 'replacement' in event:
             errors.append(f'{prefix}: replacement is only valid for a correction')
+    rounds = {(event.get('version'), event.get('paper_sha256'), event.get('round_issue'))
+              for event in data['events'] if isinstance(event, dict)
+              and event.get('kind') == 'editorial_decision' and isinstance(event.get('round_issue'), str)}
+    for version, digest, round_issue in rounds:
+        errors.extend(validate_round(data, version, digest, round_issue))
     return errors
 
 
 def status_for(data: dict, version: str, digest: str) -> str:
-    kinds = {e['kind'] for e in data['events'] if e['version'] == version and e['paper_sha256'] == digest}
+    events = [e for e in data['events'] if e['version'] == version and e['paper_sha256'] == digest]
+    kinds = {e['kind'] for e in events}
     for kind, status in (('retraction', 'RETRACTED'), ('expression_of_concern', 'EXPRESSION_OF_CONCERN'),
-                         ('correction', 'CORRECTION_RECORDED'), ('review', 'REVIEWS_RECORDED')):
+                         ('correction', 'CORRECTION_RECORDED')):
         if kind in kinds:
             return status
+    decisions = [e['decision'] for e in events if e['kind'] == 'editorial_decision']
+    if decisions:
+        return {'accept': 'EDITORIAL_ACCEPTED', 'revise': 'REVISION_REQUESTED',
+                'decline': 'EDITORIAL_DECLINED', 'pause': 'REVIEW_PAUSED'}[decisions[-1]]
+    if 'review' in kinds:
+        return 'REVIEWS_RECORDED'
     return 'UNREVIEWED_PREPRINT'
+
+
+def validate_round(data: object, version: str, digest: str, round_issue: str) -> list[str]:
+    """Validate a complete, public two-reviewer round without certifying people or science."""
+    if (not isinstance(round_issue, str)
+            or not re.fullmatch(r'https://github\.com/[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+/issues/[1-9][0-9]*', round_issue)):
+        return ['round issue must be a canonical public GitHub issue URL']
+    if not isinstance(data, dict) or not isinstance(data.get('events'), list):
+        return ['invalid research record']
+    indexed_events = [(i, e) for i, e in enumerate(data['events']) if isinstance(e, dict)
+                      and e.get('version') == version and e.get('paper_sha256') == digest
+                      and e.get('round_issue') == round_issue]
+    events = [e for _, e in indexed_events]
+    reviewers = {e.get('actor') for e in events if e.get('kind') == 'review'
+                 and isinstance(e.get('actor'), str) and e['actor'].strip()}
+    if len(reviewers) < 2:
+        return ['round needs review events from two distinct reviewers']
+    response_actors = {e.get('actor') for e in events if e.get('kind') == 'response'
+                       and isinstance(e.get('actor'), str) and e['actor'].strip()}
+    if not response_actors:
+        return ['round needs an author response event']
+    if reviewers.intersection(response_actors):
+        return ['author response actor must be separate from reviewers']
+    decisions = [e for e in events if e.get('kind') == 'editorial_decision']
+    if not decisions:
+        return ['round needs an editorial decision event']
+    final_decision_index = max(i for i, e in indexed_events if e.get('kind') == 'editorial_decision')
+    required_event_indexes = [i for i, e in indexed_events if e.get('kind') in {'review', 'response'}]
+    if required_event_indexes and final_decision_index < max(required_event_indexes):
+        return ['editorial decision must be appended after all included reviews and responses']
+    if decisions[-1].get('actor') in reviewers | response_actors:
+        return ['editorial decision actor must be separate from reviewers and author responders']
+    return []
 
 
 def main() -> int:
@@ -155,16 +218,40 @@ def main() -> int:
     parser.add_argument('--root', type=Path, default=Path(__file__).resolve().parents[1])
     parser.add_argument('--record', type=Path, default=Path('reviews/record.json'))
     parser.add_argument('--baseline', type=Path)
+    parser.add_argument('--round-issue', help='Require a complete collaborative round for this public GitHub Issue URL')
+    parser.add_argument('--version', help='Release version to validate with --round-issue')
+    parser.add_argument('--paper-sha256', help='Exact PDF SHA-256 to validate with --round-issue')
     args = parser.parse_args()
     try:
         data = read_json(args.root / args.record)
         baseline = read_json(args.baseline) if args.baseline else None
         errors = validate_record(data, args.root, baseline)
+        round_summary = None
+        if args.round_issue:
+            if not args.version or not digest_ok(args.paper_sha256):
+                raise ValueError('--round-issue requires --version and --paper-sha256')
+            errors.extend(validate_round(data, args.version, args.paper_sha256, args.round_issue))
+            matching = [e for e in data['events'] if e.get('version') == args.version
+                        and e.get('paper_sha256') == args.paper_sha256
+                        and e.get('round_issue') == args.round_issue]
+            decisions = [e['decision'] for e in matching if e.get('kind') == 'editorial_decision']
+            round_summary = {
+                'issue': args.round_issue,
+                'version': args.version,
+                'paper_sha256': args.paper_sha256,
+                'reviewers': len({e['actor'] for e in matching if e.get('kind') == 'review'}),
+                'responses': sum(1 for e in matching if e.get('kind') == 'response'),
+                'decision': decisions[-1] if decisions else None,
+                'human_identity_independence': 'NOT_CRYPTOGRAPHICALLY_VERIFIED',
+            }
         if errors:
             raise ValueError('; '.join(errors))
-        print(json.dumps({'status': 'PASS', 'events': len(data['events']),
-                          'identities': 'NOT_AUTHENTICATED', 'dates': 'CLAIMED',
-                          'peer_review_certification': 'NOT_PROVIDED'}))
+        result = {'status': 'PASS', 'events': len(data['events']),
+                  'identities': 'NOT_AUTHENTICATED', 'dates': 'CLAIMED',
+                  'peer_review_certification': 'NOT_PROVIDED'}
+        if round_summary is not None:
+            result['round'] = round_summary
+        print(json.dumps(result))
         return 0
     except (OSError, ValueError, TypeError, KeyError) as exc:
         print(f'FAIL: {exc}', file=sys.stderr); return 1

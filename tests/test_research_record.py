@@ -3,6 +3,7 @@ import copy
 import hashlib
 import importlib.util
 import json
+import os
 from pathlib import Path
 import tempfile
 import unittest
@@ -28,6 +29,11 @@ class ResearchRecordTests(unittest.TestCase):
                'evidence':[{'path':'reviews/evidence/report.md','sha256':hashlib.sha256(self.report.read_bytes()).hexdigest()}]}
         if kind=='correction': event['replacement']={'version':'v2','paper_sha256':'b'*64}
         return event
+    def linked_event(self,kind,id,actor,summary=None,decision=None):
+        event=self.event(kind,id);event['actor']=actor;event['round_issue']='https://github.com/example/paper/issues/7'
+        if summary:event['summary']=summary
+        if decision:event['decision']=decision
+        return event
     def test_empty_record_is_not_peer_reviewed(self):
         m=self.module();self.assertEqual(m.validate_record(self.data,self.root),[])
         self.assertEqual(m.status_for(self.data,'v1','a'*64),'UNREVIEWED_PREPRINT')
@@ -35,6 +41,43 @@ class ResearchRecordTests(unittest.TestCase):
         m=self.module();self.data['events'].append(self.event())
         self.assertEqual(m.validate_record(self.data,self.root),[])
         self.assertEqual(m.status_for(self.data,'v1','a'*64),'REVIEWS_RECORDED')
+    def test_editorial_decision_requires_round_and_allowed_decision(self):
+        m=self.module();self.data['events']=[
+            self.linked_event('review','review-1','Reviewer A'),
+            self.linked_event('review','review-2','Reviewer B'),
+            self.linked_event('response','response-1','Author'),
+            self.linked_event('editorial_decision','decision-1','Editor',decision='accept')]
+        event=self.data['events'][-1];self.assertEqual(m.validate_record(self.data,self.root),[])
+        event['decision']='peer_reviewed';self.assertTrue(m.validate_record(self.data,self.root))
+        event['decision']='accept';event.pop('round_issue');self.assertTrue(m.validate_record(self.data,self.root))
+    def test_round_requires_two_reviewers_author_response_and_separate_editor(self):
+        m=self.module();self.data['events']=[
+            self.linked_event('review','review-1','Reviewer A'),
+            self.linked_event('review','review-2','Reviewer B'),
+            self.linked_event('response','response-1','Author'),
+            self.linked_event('editorial_decision','decision-1','Editor',decision='revise')]
+        self.assertEqual(m.validate_record(self.data,self.root),[])
+        self.assertEqual(m.validate_round(self.data,'v1','a'*64,'https://github.com/example/paper/issues/7'),[])
+        self.assertEqual(m.status_for(self.data,'v1','a'*64),'REVISION_REQUESTED')
+    def test_round_rejects_single_review_duplicate_reviewers_and_reviewing_editor(self):
+        m=self.module();review=self.linked_event('review','review-1','Reviewer A')
+        response=self.linked_event('response','response-1','Author')
+        decision=self.linked_event('editorial_decision','decision-1','Editor',decision='accept')
+        self.data['events']=[review,response,decision]
+        self.assertTrue(m.validate_round(self.data,'v1','a'*64,review['round_issue']))
+        second=self.linked_event('review','review-2','Reviewer A');self.data['events'].insert(1,second)
+        self.assertTrue(any('two distinct reviewers' in e for e in m.validate_round(self.data,'v1','a'*64,review['round_issue'])))
+        second['actor']='Reviewer B';decision['actor']='Reviewer B'
+        self.assertTrue(any('separate from reviewers' in e for e in m.validate_round(self.data,'v1','a'*64,review['round_issue'])))
+    def test_round_is_fixed_to_one_release_issue_and_pdf_digest(self):
+        m=self.module();self.data['events']=[
+            self.linked_event('review','review-1','Reviewer A'),
+            self.linked_event('review','review-2','Reviewer B'),
+            self.linked_event('response','response-1','Author'),
+            self.linked_event('editorial_decision','decision-1','Editor',decision='accept')]
+        self.data['events'][1]['round_issue']='https://github.com/example/paper/issues/8'
+        self.assertTrue(any('two distinct reviewers' in e for e in m.validate_round(
+            self.data,'v1','a'*64,'https://github.com/example/paper/issues/7')))
     def test_append_is_allowed(self):
         m=self.module();base=copy.deepcopy(self.data);self.data['events'].append(self.event())
         self.assertEqual(m.validate_record(self.data,self.root,base),[])
@@ -56,7 +99,13 @@ class ResearchRecordTests(unittest.TestCase):
         self.assertTrue(m.validate_record(self.data,self.root))
     def test_symlink_evidence_is_rejected(self):
         m=self.module();self.data['events']=[self.event()];other=self.root/'other.md';other.write_bytes(self.report.read_bytes())
-        self.report.unlink();self.report.symlink_to(other)
+        self.report.unlink()
+        try:
+            self.report.symlink_to(other)
+        except OSError as exc:
+            if os.name == 'nt' and getattr(exc, 'winerror', None) == 1314:
+                self.skipTest('Windows symlink privilege unavailable')
+            raise
         self.assertTrue(m.validate_record(self.data,self.root))
     def test_conflicting_hash_for_same_version_is_rejected(self):
         m=self.module();e=self.event(id='e2');e['paper_sha256']='b'*64
