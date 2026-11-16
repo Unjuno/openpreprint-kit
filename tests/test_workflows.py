@@ -18,6 +18,8 @@ class WorkflowTests(unittest.TestCase):
         self.assertIn('research_package.py --check', publisher)
         self.assertIn('research_package.py --check', validator)
         self.assertIn('commitment_history.py --base-sha', validator)
+        self.assertIn('git merge-base origin/main HEAD', validator)
+        self.assertIn('Push predecessor', validator)
         self.assertIn('dist/research-assets.tar', publisher)
         self.assertIn('dist/research-assets.json', publisher)
         self.assertLess(publisher.index('research_package.py --check'), publisher.index('timestamp.py stamp'))

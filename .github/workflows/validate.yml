@@ -38,6 +38,10 @@ jobs:
         run: |
           set -euo pipefail
           python scripts/research_record.py
+          if [ -n "$BASE_SHA" ] && [ "$BASE_SHA" != "0000000000000000000000000000000000000000" ] && ! git cat-file -e "$BASE_SHA^{commit}" 2>/dev/null; then
+            echo "Push predecessor $BASE_SHA is unavailable; falling back to the merge-base with origin/main."
+            BASE_SHA="$(git merge-base origin/main HEAD)"
+          fi
           if [ -n "$BASE_SHA" ] && [ "$BASE_SHA" != "0000000000000000000000000000000000000000" ]; then
             python scripts/commitment_history.py --base-sha "$BASE_SHA"
           fi
