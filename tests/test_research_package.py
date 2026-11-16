@@ -2,6 +2,7 @@
 from __future__ import annotations
 import hashlib
 import json
+import os
 from pathlib import Path
 import shutil
 import subprocess
@@ -133,11 +134,18 @@ class ResearchBundleTests(unittest.TestCase):
         self.assertNotEqual(self.run_script('prepare_release.py', '--output', self.bundle).returncode, 0)
 
     def test_symlinked_dataset_is_rejected(self):
+        if os.name == 'nt' and not os.environ.get('OPK_WINDOWS_SYMLINK_TESTS'):
+            self.skipTest('enable OPK_WINDOWS_SYMLINK_TESTS on a Windows runner with symlink privilege')
         (self.root / 'data' / 'synthetic.csv').unlink()
         external = self.root.parent / (self.root.name + '-outside.csv')
         external.write_bytes(b'not-public')
         try:
-            (self.root / 'data' / 'synthetic.csv').symlink_to(external)
+            try:
+                (self.root / 'data' / 'synthetic.csv').symlink_to(external)
+            except OSError as exc:
+                if os.name == 'nt' and getattr(exc, 'winerror', None) == 1314:
+                    self.skipTest('Windows symlink privilege unavailable')
+                raise
             self.assertNotEqual(self.run_script('prepare_release.py', '--output', self.bundle).returncode, 0)
         finally:
             external.unlink()

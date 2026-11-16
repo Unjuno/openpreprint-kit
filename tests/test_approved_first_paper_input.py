@@ -1,8 +1,8 @@
 """Exact approved bytes must survive Actions-artifact expiry and preview copies."""
 import hashlib
 import json
-from pathlib import Path
 import os
+from pathlib import Path
 import shutil
 import subprocess
 import tempfile
@@ -40,6 +40,8 @@ class ApprovedPaperInputTests(unittest.TestCase):
         self.assertLess(launcher.index('sha256sum -c'), launcher.index('gh auth status'))
 
     def test_wrong_preview_pdf_is_rejected_before_authentication(self):
+        if os.name != 'posix':
+            self.skipTest('tests the POSIX owner shell launcher')
         with tempfile.TemporaryDirectory() as d:
             root = Path(d); (root / 'scripts').mkdir()
             p = root / 'manuscripts/openpreprint-kit/approved-v1/paper.pdf'

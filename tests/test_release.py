@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 from pathlib import Path
 import shutil
 import subprocess
@@ -150,7 +151,12 @@ class ReleaseBundleTests(unittest.TestCase):
     def test_symlink_is_rejected(self):
         self.make_bundle()
         (self.bundle / "citation.bib").unlink()
-        (self.bundle / "citation.bib").symlink_to(self.bundle / "CITATION.cff")
+        try:
+            (self.bundle / "citation.bib").symlink_to(self.bundle / "CITATION.cff")
+        except OSError as exc:
+            if os.name == 'nt' and getattr(exc, 'winerror', None) == 1314:
+                self.skipTest('Windows symlink privilege unavailable')
+            raise
         result = self.run_script("verify_release.py", self.bundle)
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("non-symlink", result.stderr)

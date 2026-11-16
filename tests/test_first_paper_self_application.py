@@ -1,6 +1,7 @@
 """The first actual OPK manuscript is its own bounded, non-publishing smoke test."""
 from pathlib import Path
 import json
+import os
 import shutil
 import subprocess
 import sys
@@ -175,7 +176,12 @@ class FirstPaperSelfApplicationTests(unittest.TestCase):
 
     def test_symlink_pdf_is_refused(self):
         link = self.root / 'link.pdf'
-        link.symlink_to(self.pdf)
+        try:
+            link.symlink_to(self.pdf)
+        except OSError as exc:
+            if os.name == 'nt' and getattr(exc, 'winerror', None) == 1314:
+                self.skipTest('Windows symlink privilege unavailable')
+            raise
         result = self.execute(pdf=link)
         self.assertNotEqual(result.returncode, 0)
         self.assertIn('symlink', result.stderr.lower())
@@ -220,7 +226,12 @@ class ExportCandidateTests(unittest.TestCase):
         self.assertFalse(self.destination.exists())
 
     def test_symlinked_target_does_not_escape_or_get_overwritten(self):
-        self.destination.symlink_to(self.helper.root)
+        try:
+            self.destination.symlink_to(self.helper.root)
+        except OSError as exc:
+            if os.name == 'nt' and getattr(exc, 'winerror', None) == 1314:
+                self.skipTest('Windows symlink privilege unavailable')
+            raise
         with self.assertRaisesRegex(ValueError, 'already exists'):
             self.module.export_candidate(self.bundle, self.destination)
         self.assertTrue(self.destination.is_symlink())

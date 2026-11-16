@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 from pathlib import Path
 import shutil
 import subprocess
@@ -152,7 +153,12 @@ class CustodyTests(unittest.TestCase):
     def test_audit_rejects_symlink(self):
         receipt = self.deposit()
         (self.store / 'v1.opk.zip').unlink()
-        (self.store / 'v1.opk.zip').symlink_to(self.sources / 'v1.opk.zip')
+        try:
+            (self.store / 'v1.opk.zip').symlink_to(self.sources / 'v1.opk.zip')
+        except OSError as exc:
+            if os.name == 'nt' and getattr(exc, 'winerror', None) == 1314:
+                self.skipTest('Windows symlink privilege unavailable')
+            raise
         with self.assertRaisesRegex(ValueError, 'symlink'):
             self.audit(receipt['catalog_sha256'])
 

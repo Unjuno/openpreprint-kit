@@ -45,4 +45,5 @@ class FirstPaperEvidenceTests(unittest.TestCase):
             result=subprocess.run([sys.executable,str(PATH),'--csv',str(output)],capture_output=True,text=True)
             self.assertEqual(result.returncode,0,result.stderr)
             self.assertNotIn(b'\r',output.read_bytes())
-            self.assertEqual(output.read_bytes(),(PATH.parents[1]/'data/test-counts.csv').read_bytes())
+            baseline=(PATH.parents[1]/'data/test-counts.csv').read_text(encoding='utf-8').replace('\r\n','\n').encode('utf-8')
+            self.assertEqual(output.read_bytes(),baseline)
