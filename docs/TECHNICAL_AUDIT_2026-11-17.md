@@ -37,9 +37,12 @@
 | AUD-05 | **高** | `research_package.py:108` | collect 後 create_research までの間に ancestor を外部ディレクトリへの symlink/junction に差し替えても、leaf しか再検証しない | 公開研究アーカイブに外部の機密ファイルが混入し、catalog が整合しているため検証を通過する | 読取り直前に leaf+ancestor+resolve containment+junction を再検証する `path_is_safe()` を追加 | `test_ancestor_swap_after_collect_is_rejected` |
 | AUD-06 | 中 | `citation_validation.py:98` | BibTeX が非空文字列だけで、metadata に結合されていない | 改変・誤生成された引用が PASS で公開される | title/author/note を検証済み metadata に結合 | `test_mismatched_bibtex_is_rejected` |
 | AUD-07 | 低 | `citation_validation.py:73` | 重複JSONキーを許容 (他 verifier は拒否) | validator 間の解釈不一致、fail-open | `object_pairs_hook=unique_object` を適用 | `test_duplicate_metadata_keys_rejected` |
-| AUD-08 | 中 | tests 23ファイル | `Path.read_text()` がロケール既定 (cp932) を使用し、UTF-8 ファイルを読めない | 日本語 Windows で 7 tests が ERROR / G0 の OS  porta 性違反 | 全テストの read_text に `encoding='utf-8'` を明示 | 全393試験を `PYTHONUTF8` 未設定で実行し PASS |
+| AUD-08 | 中 | tests 23ファイル | `Path.read_text()` がロケール既定 (cp932) を使用し、UTF-8 ファイルを読めない | 日本語 Windows で 7 tests が ERROR / G0 の OS  porta 性違反 | 全テストの read_text に `encoding='utf-8'` を明示 | 全394試験を `PYTHONUTF8` 未設定で実行し PASS |
+| AUD-09 | **高 (CI FAIL)** | `tests/test_hypothesis_properties.py` | Hypothesis未インストール環境で、`skipUnless` に関わらずクラス定義時に `@settings`/`@given` が評価され `NameError` | PR #51 の Validate (3.10/3.12) と Quality (Ubuntu/Windows) が **FAIL** (run `44028158017`, `44028158061`) | 未インストール時に無効デコレータと strategy スタブを定義し、モジュール import を成功させる | `test_hypothesis_module_imports_without_dependency` (subprocess で依存を隠して import) |
 
-すべての再現は実行済み。回帰試験は [tests/test_hardening_regressions.py](../tests/test_hardening_regressions.py) に集約 (8件)。
+すべての再現は実行済み。回帰試験は [tests/test_hardening_regressions.py](../tests/test_hardening_regressions.py) に集約 (9件)。
+AUD-09 は継続サイクル Step 1 で古い成功ログを流用せず CI を読み直した結果、新たに発見した**自作の回帰**である。
+旧 FAIL の run ID (`44028158017`, `44028158061`) は過去の事実として保持し、削除・上書きしない。修正後 run で再判定する。
 
 ## 4. 异常入力・状態遷移・競合試験
 

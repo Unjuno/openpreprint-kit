@@ -26,12 +26,14 @@
 
 | 試験 | 結果 | 証拠 |
 |---|---|---|
-| 全 unittest (修正後) | **393 試験 / 15 skip / OK** (280.199s、`PYTHONUTF8` 未設定) | ローカル実行ログ |
-| 新規回帰試験 | 8/8 PASS | `tests/test_hardening_regressions.py` |
+| 全 unittest (修正後) | **394 試験 / 15 skip / OK** (280.199s、`PYTHONUTF8` 未設定) | ローカル実行ログ |
+| 新規回帰試験 | 9/9 PASS (AUD-09 含む) | `tests/test_hardening_regressions.py` |
 | Hypothesis 特性 | 7/7 PASS (100–150 examples each) | `tests/test_hypothesis_properties.py` |
 | Python vs Lean 差分 | **28/28 MATCH** | `formal/VERIFICATION_RESULTS.txt`, `formal/lean_results.txt` |
 | Lean ビルド | `Build completed successfully` (6 jobs)、`sorry/admit/axiom` なし | 同上 |
-| CI (固定SHA) | Validate 3.10/3.12・Quality/audit・CodeQL・selftest・portable すべて success | `43832249370` 他 |
+| CI (固定SHA 811dc84) | Validate 3.10/3.12・Quality/audit・CodeQL・selftest・portable すべて success | `43832249370` 他 |
+| CI (PR #51 旧 commit 889ff4b) | **FAIL** (AUD-09: Hypothesis未依存環境で `NameError: settings`) — 過去の事実として保持 | `44028158017`, `44028158061` |
+| CI (PR #51 修正後 0efeada) | Validate 3.10/3.12・Quality (Ubuntu+Windows)・CodeQL・selftest・portable **すべて success** | `44107268710`, `44107268574`, `44107268524` |
 | CodeQL | open alerts **0** | `gh api .../code-scanning/alerts` |
 
 ### OS / skip の内訳 (15件、いずれも意図的な環境ゲート)
@@ -43,7 +45,7 @@
 ### 異常系
 
 既存20件の否定ケース (改変・誤CA・nonce不一致・失効TSA・古いCRL・ZIPtraversal・重複member・symlink等) は維持・誤受理0。
-加えて AUD-01〜08 の再現8件と Hypothesis 7性質を追加。
+加えて AUD-01〜09 の再現9件と Hypothesis 7性質を追加。
 
 ## 4. Lean で証明した性質 / 未証明
 
@@ -56,9 +58,9 @@
 
 | ゲート | 判定 | 根拠 |
 |---|---|---|
-| TQ-1 修復済み欠陥の回帰 | **PASS** | 8/8 回帰試験 PASS |
+| TQ-1 修復済み欠陥の回帰 | **PASS** | 9/9 回帰試験 PASS (AUD-09 のCI FAIL再現・修正を含む) |
 | TQ-2 未解決重大・高リスク欠陥 | **PASS** | 0件 (監査 §5) |
-| TQ-3 全試験成功 | **PASS** | 393/393 (15 skip は環境ゲート) |
+| TQ-3 全試験成功 | **PASS** | 394/394 (15 skip は環境ゲート) |
 | TQ-4 形式検証のカーネル検査 | **PASS** | Lean 4.35.0 ビルド成功、sorry/admit/axiom なし |
 | TQ-5 Python-Lean 対応 | **PASS** | 28/28 ベクトル一致 |
 | TQ-6 リポジトリ台帳の作成 | **PASS** | REPOSITORY_MAP.md |
@@ -90,15 +92,16 @@
 | `scripts/owner_setup.py` | `631948ef43775a481b19b44835b30d2b37d4afad79d8d6b208db4ad87a31f145` |
 | `scripts/research_package.py` | `dfd9e8778406e4bac5b39bcf810d4618fe9c096e47b8dbe77141ba73634d0316` |
 | `scripts/citation_validation.py` | `f4eba138d264d0e1f701d6323bc061b20ed9244147c55d3ae87fddf083d6a3b9` |
-| `tests/test_hardening_regressions.py` | `f488bfc3cf38a40ea2925f154c4a0934bd146f7ee916411873012b23a007d01f` |
-| `tests/test_hypothesis_properties.py` | `9bd31c92d5e38cb9edf12339576ee37ea6678cfa2678608b35e7c859f739a989` |
+| `tests/test_hardening_regressions.py` | `5ea3a53f30597d0c8b67573811fc90188e5db8bf7cfe6935f6649adbf6efb9e1` |
+| `tests/test_hypothesis_properties.py` | `c986877a05ac49f20f7ec313ceae74d9a7c27f9eb7298d2fcc04db9583970223` |
 | `formal/lean_results.txt` | `ef787ea4c6f34e14bed4e06e13cc310adcd33e9e9d10b1f1c935766577d4eb32` |
 | `formal/vectors.json` | `c4bf1efdae083fe6a2e0b3a14f7b8af85a058a0f312a2ef0787111d64dff3147` |
-| `formal/VERIFICATION_RESULTS.txt` | `5992f6e953dae99277073b97c4049292a4aa99fc17fee7acca6400e1f344f974` |
+| `formal/VERIFICATION_RESULTS.txt` | `cf57eac779954b5ab8729248775f2c857f2499443383e4055ff427a98187411c` |
 | `formal/OpenPreprintFormal/ReleaseAssets.lean` | `d054024faf018cd0547ee5ce69e59cd23ef96148bef4450e1041364f738ad0fd` |
 | `formal/OpenPreprintFormal/StateTransition.lean` | `6b9485b09e851116b254223fd5fd65fc513b541c911f139ec591650ee2268997` |
 | `formal/OpenPreprintFormal/EvidenceBinding.lean` | `f96c48c2f000f6de6f2f5779a76e2b351f73349889bdbacbd1b806095deb3d93` |
 | `formal/lean-toolchain` | `ca5f1f601d34c49079e38d7e7041eb0f2a9c227fbc1df0f404820069a052330c` |
+| `docs/TECHNICAL_AUDIT_2026-11-17.md` | `0f803e5138fd9b2e9069b10405addc1bd9b853957e1ba8ee60e28729bfa93fb3` |
 | `docs/V1_ACCEPTANCE.md` (不変更) | `9fd1a889191d6c2f5024bf758c008105084296698a2772cb85d34c1b830f3135` |
 | `docs/RELEASE_READINESS.md` (不変更) | `2a7f78af346b43edee1e1ba3453539e596676e83274a4dcf15347b6619bc5c15` |
 | `evidence/acceptance/first-paper-v1-release-observation-2026-11-14.json` | `2e029607e93298baa00b59a04aecfcea6685e322f649dcf6b9e0c94cf0a5c02b` |
@@ -126,4 +129,7 @@
 - 開いている PR / 古いブランチの閉鎖・削除
 
 すべて所有者の明示承認を待つ。
+
+
+
 
