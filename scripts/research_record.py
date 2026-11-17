@@ -166,7 +166,9 @@ def main() -> int:
                           'identities': 'NOT_AUTHENTICATED', 'dates': 'CLAIMED',
                           'peer_review_certification': 'NOT_PROVIDED'}))
         return 0
-    except (OSError, ValueError, TypeError, KeyError) as exc:
+    except (OSError, ValueError, TypeError, KeyError, RecursionError) as exc:
+        # Deeply nested JSON raises RecursionError (a RuntimeError subclass),
+        # which must still produce a deterministic FAIL, not a traceback.
         print(f'FAIL: {exc}', file=sys.stderr); return 1
 
 

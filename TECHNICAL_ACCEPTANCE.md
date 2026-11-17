@@ -26,10 +26,10 @@
 
 | 試験 | 結果 | 証拠 |
 |---|---|---|
-| 全 unittest (修正後) | **394 試験 / 15 skip / OK** (280.199s、`PYTHONUTF8` 未設定) | ローカル実行ログ |
-| 新規回帰試験 | 9/9 PASS (AUD-09 含む) | `tests/test_hardening_regressions.py` |
+| 全 unittest (修正後) | **398 試験 / 15 skip / OK** (397.760s、`PYTHONUTF8` 未設定) | ローカル実行ログ |
+| 新規回帰試験 | 13/13 PASS (AUD-01〜13) | `tests/test_hardening_regressions.py`, `tests/test_hardening_regressions_iter3.py` |
 | Hypothesis 特性 | 7/7 PASS (100–150 examples each) | `tests/test_hypothesis_properties.py` |
-| Python vs Lean 差分 | **28/28 MATCH** | `formal/VERIFICATION_RESULTS.txt`, `formal/lean_results.txt` |
+| Python vs Lean 差分 | **33/33 MATCH** | `formal/VERIFICATION_RESULTS.txt`, `formal/lean_results.txt` |
 | Lean ビルド | `Build completed successfully` (6 jobs)、`sorry/admit/axiom` なし | 同上 |
 | CI (固定SHA 811dc84) | Validate 3.10/3.12・Quality/audit・CodeQL・selftest・portable すべて success | `43832249370` 他 |
 | CI (PR #51 旧 commit 889ff4b) | **FAIL** (AUD-09: Hypothesis未依存環境で `NameError: settings`) — 過去の事実として保持 | `44028158017`, `44028158061` |
@@ -45,7 +45,7 @@
 ### 異常系
 
 既存20件の否定ケース (改変・誤CA・nonce不一致・失効TSA・古いCRL・ZIPtraversal・重複member・symlink等) は維持・誤受理0。
-加えて AUD-01〜09 の再現9件と Hypothesis 7性質を追加。
+加えて AUD-01〜13 の再現13件と Hypothesis 7性質を追加。
 
 ## 4. Lean で証明した性質 / 未証明
 
@@ -58,11 +58,11 @@
 
 | ゲート | 判定 | 根拠 |
 |---|---|---|
-| TQ-1 修復済み欠陥の回帰 | **PASS** | 9/9 回帰試験 PASS (AUD-09 のCI FAIL再現・修正を含む) |
+| TQ-1 修復済み欠陥の回帰 | **PASS** | 13/13 回帰試験 PASS (AUD-10〜13 の履歴ガード誤PASS・パス回避を含む) |
 | TQ-2 未解決重大・高リスク欠陥 | **PASS** | 0件 (監査 §5) |
-| TQ-3 全試験成功 | **PASS** | 394/394 (15 skip は環境ゲート) |
+| TQ-3 全試験成功 | **PASS** | 398/398 (15 skip は環境ゲート) |
 | TQ-4 形式検証のカーネル検査 | **PASS** | Lean 4.35.0 ビルド成功、sorry/admit/axiom なし |
-| TQ-5 Python-Lean 対応 | **PASS** | 28/28 ベクトル一致 |
+| TQ-5 Python-Lean 対応 | **PASS** | 33/33 ベクトル一致 (verified→published 遷移を含む) |
 | TQ-6 リポジトリ台帳の作成 | **PASS** | REPOSITORY_MAP.md |
 | TQ-7 独立人間による G4/G5/G7 | **UNKNOWN** | 本監査は自己検証。独立監査者の選任・実測は未実施 |
 | TQ-8 公式G0–G7の独立承認 | **UNKNOWN** | RELEASE_READINESS の PARTIAL/BLOCKED を変更せず |
@@ -91,16 +91,21 @@
 | `scripts/publish_manuscript.py` | `b2c9eb1fdfd8fd128c5f68899b464d5c9d8f51d258621dd13f7d0e5c38143c06` |
 | `scripts/owner_setup.py` | `631948ef43775a481b19b44835b30d2b37d4afad79d8d6b208db4ad87a31f145` |
 | `scripts/research_package.py` | `dfd9e8778406e4bac5b39bcf810d4618fe9c096e47b8dbe77141ba73634d0316` |
+| `scripts/commitment_history.py` | `3836efc9e28eafc6a1121341f9c8122a111b5b2c5a24ece899d7be1a93b6375c` |
+| `scripts/research_record.py` | `3da86eea83d660fd7f410041446d092fc535645c7de4e5b047d8346d2290676e` |
+| `scripts/first_paper_selftest.py` | `1ac9d884444e0f69cad10b96cc0ffd368b858184bbff91353ab69b761d50f287` |
 | `scripts/citation_validation.py` | `f4eba138d264d0e1f701d6323bc061b20ed9244147c55d3ae87fddf083d6a3b9` |
 | `tests/test_hardening_regressions.py` | `5ea3a53f30597d0c8b67573811fc90188e5db8bf7cfe6935f6649adbf6efb9e1` |
+| `tests/test_hardening_regressions_iter3.py` | `15ef9d67b365cc8a73ffaa9cdacf3bcdab799f7c8ebc4a68e2e6376aa1560517` |
 | `tests/test_hypothesis_properties.py` | `c986877a05ac49f20f7ec313ceae74d9a7c27f9eb7298d2fcc04db9583970223` |
-| `formal/lean_results.txt` | `ef787ea4c6f34e14bed4e06e13cc310adcd33e9e9d10b1f1c935766577d4eb32` |
-| `formal/vectors.json` | `c4bf1efdae083fe6a2e0b3a14f7b8af85a058a0f312a2ef0787111d64dff3147` |
-| `formal/VERIFICATION_RESULTS.txt` | `cf57eac779954b5ab8729248775f2c857f2499443383e4055ff427a98187411c` |
+| `formal/lean_results.txt` | `1e8d435df5354052ec0df1dbc49662b5b88e3c6b9fee4e283f2f2c41b0a97a82` |
+| `formal/vectors.json` | `23dcde263ca4f52a13f469d65ae41368e3645289b5dcbc9968c1d99727896785` |
+| `formal/VERIFICATION_RESULTS.txt` | `be6506a5b374f1c0ada4a94a27e0ea01091ef9fd2f19b0cc8f18547822e07bb1` |
 | `formal/OpenPreprintFormal/ReleaseAssets.lean` | `d054024faf018cd0547ee5ce69e59cd23ef96148bef4450e1041364f738ad0fd` |
 | `formal/OpenPreprintFormal/StateTransition.lean` | `6b9485b09e851116b254223fd5fd65fc513b541c911f139ec591650ee2268997` |
 | `formal/OpenPreprintFormal/EvidenceBinding.lean` | `f96c48c2f000f6de6f2f5779a76e2b351f73349889bdbacbd1b806095deb3d93` |
 | `formal/lean-toolchain` | `ca5f1f601d34c49079e38d7e7041eb0f2a9c227fbc1df0f404820069a052330c` |
+| `docs/TECHNICAL_AUDIT_2026-11-18.md` | `4513a2d928c2c848d640cc4e1e9255cce6bd7d3d12d75ae22e927f21f3909861` |
 | `docs/TECHNICAL_AUDIT_2026-11-17.md` | `0f803e5138fd9b2e9069b10405addc1bd9b853957e1ba8ee60e28729bfa93fb3` |
 | `docs/V1_ACCEPTANCE.md` (不変更) | `9fd1a889191d6c2f5024bf758c008105084296698a2772cb85d34c1b830f3135` |
 | `docs/RELEASE_READINESS.md` (不変更) | `2a7f78af346b43edee1e1ba3453539e596676e83274a4dcf15347b6619bc5c15` |
@@ -138,7 +143,7 @@
 | 2 | 旧 FAIL の履歴保持 | run `44028158017` / `44028158061` は AUD-09 修正前の FAIL。削除せず記録済み | 修正後 run `0efeada` 以降の全 success と併せて台帳に残す（完了） |
 | 3 | G4 / G5 / G7 の独立検証 | 外部の独立人間が必要。AI 自己検証は不可 | 独立観測者・保管者・監査者の選任と署名入り証拠が揃う（所有者の手配が必要） |
 
-※ 優先度1は「新機能追加」ではなく既存の異常系検証範囲の補完。変更は引き続き PR #51 で提案し、固定 main への統合は所有者の承認を待つ。
+技術的優先度はすべて完了。次回の最優先は優先度3のG4/G5/G7（所有者による独立検証者の選任）。変更は引き続き PR #51 で提案し、固定 main への統合は所有者の承認を待つ。
 
 
 

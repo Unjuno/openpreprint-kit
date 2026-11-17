@@ -80,9 +80,13 @@ def export_candidate(bundle: Path, destination: Path) -> None:
     This function creates NO GitHub Release, signature, or independent approval.
     The manuscript's author/license are declared, not independently authenticated.
     """
-    bundle = bundle.absolute()
-    destination = destination.absolute()
-    if destination.is_relative_to(bundle):
+    # absolute() keeps '..' and symlinked ancestors, so is_relative_to() can be
+    # fooled into accepting a destination that resolves INSIDE the verified
+    # bundle (and copytree then recurses into its own destination). Canonicalize
+    # first, and re-check before the rename to close the TOCTOU window.
+    bundle = bundle.resolve()
+    destination = destination.resolve()
+    if destination == bundle or destination.is_relative_to(bundle):
         raise ValueError('draft candidate destination must be outside the source bundle')
     if destination.exists() or destination.is_symlink():
         raise ValueError('candidate destination already exists')
@@ -94,12 +98,16 @@ def export_candidate(bundle: Path, destination: Path) -> None:
         raise ValueError('candidate bundle integrity failed: ' + '; '.join(problems))
     with tempfile.TemporaryDirectory(prefix='.opk-candidate-', dir=destination.parent) as temporary:
         intermediate = Path(temporary) / 'candidate'
+        if intermediate.resolve().is_relative_to(bundle):
+            raise ValueError('candidate workspace resolves inside the source bundle')
         shutil.copytree(bundle, intermediate)
         copied_problems = verify_bundle(intermediate, None)
         if copied_problems:
             raise ValueError('copied candidate integrity failed: ' + '; '.join(copied_problems))
         if destination.exists() or destination.is_symlink():
             raise ValueError('candidate destination already exists')
+        if destination.resolve().is_relative_to(bundle):
+            raise ValueError('draft candidate destination must be outside the source bundle')
         os.rename(intermediate, destination)
 
 
