@@ -1,0 +1,16 @@
+# Test-only property-testing dependency. NOT part of the release/install locks.
+# The release suite skips Hypothesis property tests when this is not installed.
+# Hashes from PyPI JSON API for hypothesis 6.170.15.
+hypothesis==6.170.15 \
+    --hash=sha256:a4a57e5fb106ecb29cad37e22e411d957e20d933bfb9fb029e1999b1deb8a0b6 \
+    --hash=sha256:db8211e0a56fa29bf9e5d9ff9cd969a91ff4e5ffa8fb4983d3dd788253aeee2c \
+    --hash=sha256:34e0859a53f20200f39db3f9cd92112eb6034c31dc670e88d56d8725f453562d \
+    --hash=sha256:99a1a4711b5276e5bfc3aa0cca034d0e45f8696a46ac8dce008308f580c18234 \
+    --hash=sha256:124b0b9962ff6b25786692b7b6cb0065f8bb7870081ddd9baf4745b0ff4a5c7a \
+    --hash=sha256:d34e54f485777eb217c85c425ddbe7b278ef56540feedb5de4097a5abc9f5719 \
+    --hash=sha256:de9fe573a4955b0cf0354822fbfe9b79882e8de02f26287313fe1ad47ba3e69f \
+    --hash=sha256:29223a2d180e463f1205b7e5eb397db0c4827de06f2ae571b00c392d355c410e \
+    --hash=sha256:7953ad8f123b4289801b833666aaab757ba52e91ed687d954eb26f4af7328e5b \
+    --hash=sha256:e9e20ec17d2095e9314ea232b4e34b5510def0d9e7a7e764cc70cae88fe4b0c4 \
+    --hash=sha256:7dfb3d92df4faa67d3c975d1ecdefabc5a2481b789048f52cd5fb775c6c517b8 \
+    --hash=sha256:1f7ede44b875dddd8f3e7562e6702c363e82c6fb680b0fe079536bae662987f8

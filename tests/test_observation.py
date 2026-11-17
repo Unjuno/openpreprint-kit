@@ -71,7 +71,7 @@ class ObserverTests(unittest.TestCase):
 
     def test_rewritten_claim_rejected(self):
         self.record()
-        record=self.out/'observation.json'; data=json.loads(record.read_text()); data['version']='v2'; record.write_text(json.dumps(data))
+        record=self.out/'observation.json'; data=json.loads(record.read_text(encoding='utf-8')); data['version']='v2'; record.write_text(json.dumps(data))
         with self.assertRaises(ValueError): self.check()
 
     def test_tampered_download_rejected(self):
@@ -92,7 +92,7 @@ class ObserverTests(unittest.TestCase):
     def test_existing_output_preserved(self):
         self.out.mkdir(); (self.out/'keep').write_text('untouched')
         with self.assertRaises(ValueError): self.record()
-        self.assertEqual((self.out/'keep').read_text(),'untouched')
+        self.assertEqual((self.out/'keep').read_text(encoding='utf-8'),'untouched')
 
     def test_signed_observation_rejects_overstated_public_availability(self):
         # A compromised or careless signer must not be able to promote an
@@ -247,7 +247,8 @@ class ObserverTests(unittest.TestCase):
         self.assertIn('--expected-version', result.stderr)
 
     def test_no_authorship_claim(self):
-        self.record(); data=json.loads((self.out/'observation.json').read_text())
+        self.record(); data=json.loads((self.out/'observation.json').read_text(encoding='utf-8'))
         self.assertEqual(data['authorship'],'NOT_PROVEN')
         self.assertEqual(data['first_publication'],'NOT_PROVEN')
         self.assertFalse((self.out/'signer.key').exists())
+

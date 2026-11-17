@@ -38,12 +38,12 @@ class CommitmentHistoryTests(unittest.TestCase):
         return subprocess.run([sys.executable, str(SOURCE), '--root', str(self.root), '--base-sha', self.base], capture_output=True, text=True)
 
     def test_new_anonymous_receipt_allowed(self):
-        (self.folder / ('e' * 32 + '.json')).write_text(self.receipt.read_text().replace(RID, 'e' * 32))
+        (self.folder / ('e' * 32 + '.json')).write_text(self.receipt.read_text(encoding='utf-8').replace(RID, 'e' * 32))
         self.commit()
         self.assertEqual(self.check().returncode, 0)
 
     def test_edit_existing_receipt_rejected(self):
-        self.receipt.write_text(self.receipt.read_text().replace('a'*64, 'b'*64))
+        self.receipt.write_text(self.receipt.read_text(encoding='utf-8').replace('a'*64, 'b'*64))
         self.commit()
         self.assertNotEqual(self.check().returncode, 0)
 
@@ -54,3 +54,4 @@ class CommitmentHistoryTests(unittest.TestCase):
 
 
 if __name__ == '__main__': unittest.main()
+

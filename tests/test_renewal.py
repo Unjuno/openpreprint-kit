@@ -133,7 +133,7 @@ class RenewalTests(unittest.TestCase):
         self.assertEqual(len(self.recorded_requests), 2)
         report = self.verify(chain, result['chain_sha256'], [self.policy1, self.policy2])
         self.assertEqual(report['status'], 'PASS')
-        statement2 = json.loads((chain / 'step-0002' / 'statement.json').read_text())
+        statement2 = json.loads((chain / 'step-0002' / 'statement.json').read_text(encoding='utf-8'))
         first_pin = self.module().step_digest(self.output / 'step-0001')
         self.assertEqual(statement2['previous_step_sha256'], first_pin)
         self.assertEqual(report['tsa_policies'], ['1.2.3.4.1', '1.2.3.4.1'])
@@ -191,7 +191,7 @@ class RenewalTests(unittest.TestCase):
     def test_existing_destination_is_never_overwritten(self):
         self.output.mkdir(); (self.output / 'important').write_text('keep')
         with self.assertRaises(ValueError): self.first()
-        self.assertEqual((self.output / 'important').read_text(), 'keep')
+        self.assertEqual((self.output / 'important').read_text(encoding='utf-8'), 'keep')
         self.assertFalse(self.recorded_requests)
 
     def test_unknown_files_and_links_rejected(self):
@@ -340,3 +340,4 @@ class RenewalTests(unittest.TestCase):
         self.assertEqual(p.returncode, 0, p.stderr)
         self.assertEqual(json.loads(p.stdout)['status'], 'PLAN_ONLY')
         self.assertFalse(self.output.exists())
+

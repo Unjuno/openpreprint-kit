@@ -10,11 +10,11 @@ ROOT = Path(__file__).resolve().parents[1]
 class WorkflowTests(unittest.TestCase):
     def workflow(self):
         # BaseLoader preserves YAML 1.2-like 'on', unlike SafeLoader YAML 1.1 booleans.
-        return yaml.load((ROOT / ".github/workflows/publish.yml").read_text(), Loader=yaml.BaseLoader)
+        return yaml.load((ROOT / ".github/workflows/publish.yml").read_text(encoding='utf-8'), Loader=yaml.BaseLoader)
 
     def test_research_inputs_checked_and_archive_uploaded(self):
-        publisher = (ROOT / '.github/workflows/publish.yml').read_text()
-        validator = (ROOT / '.github/workflows/validate.yml').read_text()
+        publisher = (ROOT / '.github/workflows/publish.yml').read_text(encoding='utf-8')
+        validator = (ROOT / '.github/workflows/validate.yml').read_text(encoding='utf-8')
         self.assertIn('research_package.py --check', publisher)
         self.assertIn('research_package.py --check', validator)
         self.assertIn('commitment_history.py --base-sha', validator)
@@ -26,29 +26,29 @@ class WorkflowTests(unittest.TestCase):
         self.assertIn('verify_release.py downloaded-release', publisher)
 
     def test_timestamp_precedes_draft_creation(self):
-        text = (ROOT / ".github/workflows/publish.yml").read_text()
+        text = (ROOT / ".github/workflows/publish.yml").read_text(encoding='utf-8')
         self.assertIn("timestamp.py stamp", text)
         self.assertLess(text.index("timestamp.py stamp"), text.index("gh release create"))
         self.assertIn("timestamp-policy.json", text)
 
     def test_downloaded_timestamp_is_verified_before_publication(self):
-        text = (ROOT / ".github/workflows/publish.yml").read_text()
+        text = (ROOT / ".github/workflows/publish.yml").read_text(encoding='utf-8')
         needle = "timestamp.py verify downloaded-release"
         self.assertIn(needle, text)
         self.assertLess(text.index(needle), text.index("--draft=false"))
         self.assertIn("dist/timestamp.tsq dist/timestamp.tsr", text)
 
     def test_external_citation_validation_blocks_timestamp_and_release(self):
-        text = (ROOT / ".github/workflows/publish.yml").read_text()
+        text = (ROOT / ".github/workflows/publish.yml").read_text(encoding='utf-8')
         self.assertIn("citation_validation.py dist", text)
         self.assertLess(text.index("citation_validation.py dist"), text.index("timestamp.py stamp"))
         self.assertIn("requirements-publication-checks.txt", text)
 
     def test_quality_ci_installs_external_citation_validators(self):
         for name in ("validate.yml", "quality.yml"):
-            text = (ROOT / ".github/workflows" / name).read_text()
+            text = (ROOT / ".github/workflows" / name).read_text(encoding='utf-8')
             self.assertIn("requirements-publication-checks.txt", text)
-        self.assertIn("cffconvert==2.0.0", (ROOT / "requirements-publication-checks.txt").read_text())
+        self.assertIn("cffconvert==2.0.0", (ROOT / "requirements-publication-checks.txt").read_text(encoding='utf-8'))
 
     def test_only_manual_dispatch_with_minimum_permissions(self):
         workflow = self.workflow()
@@ -58,7 +58,7 @@ class WorkflowTests(unittest.TestCase):
 
     def test_actions_are_pinned_and_shell_inputs_are_not_interpolated(self):
         for file in (ROOT / ".github/workflows").glob("*.yml"):
-            workflow = yaml.load(file.read_text(), Loader=yaml.BaseLoader)
+            workflow = yaml.load(file.read_text(encoding='utf-8'), Loader=yaml.BaseLoader)
             for job in workflow["jobs"].values():
                 for step in job["steps"]:
                     if "uses" in step:
@@ -85,7 +85,7 @@ class WorkflowTests(unittest.TestCase):
         self.assertIn('github/codeql-action/analyze@', steps[2]['uses'])
         self.assertEqual(steps[1]['with']['languages'], 'python')
         self.assertEqual(steps[1]['with']['queries'], 'security-extended')
-        self.assertNotIn('secrets.', path.read_text())
+        self.assertNotIn('secrets.', path.read_text(encoding='utf-8'))
 
     def test_dependency_update_prs_are_configured(self):
         config = yaml.safe_load((ROOT / ".github/dependabot.yml").read_text(encoding="utf-8"))
@@ -107,3 +107,4 @@ class WorkflowTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+

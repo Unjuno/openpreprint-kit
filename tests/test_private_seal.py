@@ -70,7 +70,7 @@ class PrivateSealTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
         receipts = list((self.root / 'evidence' / 'commitments').glob('*.json'))
         self.assertEqual(len(receipts), 1)
-        receipt = json.loads(receipts[0].read_text())
+        receipt = json.loads(receipts[0].read_text(encoding='utf-8'))
         self.assertEqual(len(receipt['record_id']), 32)
         self.assertEqual(len(receipt['commitment']), 64)
         self.assertEqual(len(self.key.read_bytes()), 32)
@@ -81,9 +81,9 @@ class PrivateSealTests(unittest.TestCase):
         else:
             snapshot = private_seal_module._windows_acl_snapshot(self.key)
             self.assertTrue(private_seal_module._windows_acl_is_private(snapshot), snapshot)
-        self.assertNotIn(str(self.original), receipts[0].read_text())
-        self.assertNotIn('synthetic', receipts[0].read_text())
-        self.assertNotIn(self.key.read_bytes().hex(), receipts[0].read_text())
+        self.assertNotIn(str(self.original), receipts[0].read_text(encoding='utf-8'))
+        self.assertNotIn('synthetic', receipts[0].read_text(encoding='utf-8'))
+        self.assertNotIn(self.key.read_bytes().hex(), receipts[0].read_text(encoding='utf-8'))
         self.assertEqual(self.run_cli('verify', self.original, '--key', self.key, '--receipt', receipts[0]).returncode, 0)
 
     def test_localized_group_display_names_cannot_bypass_wide_read_sid(self):
@@ -163,3 +163,4 @@ class PrivateSealTests(unittest.TestCase):
 
 
 if __name__ == '__main__': unittest.main()
+

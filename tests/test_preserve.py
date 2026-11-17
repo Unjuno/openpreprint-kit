@@ -54,7 +54,7 @@ class PreserveTests(unittest.TestCase):
     def test_no_overwrite(self):
         digest=self.create(); self.target.mkdir(); (self.target/'important').write_text('keep')
         r=self.restore(digest)
-        self.assertNotEqual(r.returncode,0); self.assertEqual((self.target/'important').read_text(),'keep')
+        self.assertNotEqual(r.returncode,0); self.assertEqual((self.target/'important').read_text(encoding='utf-8'),'keep')
 
     def test_unexpected_secret_is_not_archived(self):
         (self.helper.bundle/'secret.key').write_text('PRIVATE')
@@ -138,3 +138,4 @@ class SignedPreservationTests(unittest.TestCase):
             self.assertEqual(good.returncode,0,good.stderr)
             self.assertEqual(json.loads(good.stdout)['timestamp'],'VERIFIED')
             self.assertEqual(json.loads(good.stdout)['bundled_trust'],'NOT_AUTOMATICALLY_TRUSTED')
+

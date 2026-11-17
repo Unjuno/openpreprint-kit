@@ -283,7 +283,7 @@ class GithubMirrorTests(unittest.TestCase):
         self.remote.corrupt_public=True
         with self.assertRaisesRegex(ValueError,'SHA-256|mismatch'):
             self.publish()
-        report=json.loads((self.output/'mirror-report.json').read_text())
+        report=json.loads((self.output/'mirror-report.json').read_text(encoding='utf-8'))
         self.assertEqual(report['status'],'FAIL')
         self.assertIn(report['stage'],('PUBLISHED_PENDING_AUDIT','PUBLIC_AUDIT'))
         self.assertEqual(report['rollback'],'NOT_PERFORMED')
@@ -334,3 +334,4 @@ class GithubMirrorTests(unittest.TestCase):
         report=self.publish()
         self.assertFalse(any(x.endswith(('.key','.pem','.p12')) for x in self.remote.files))
         self.assertNotIn('INDEPENDENT',json.dumps(report))
+

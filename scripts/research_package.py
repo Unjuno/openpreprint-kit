@@ -16,6 +16,30 @@ from verify_research import (ALLOWED_ROLES, ARCHIVE, CATALOG, ID_RE, MAX_FILES,
 CONFIG = 'research-assets.yaml'
 
 
+def path_is_safe(root: Path, rel: str, path: Path) -> bool:
+    """Re-check containment at the moment of use.
+
+    A validated path can be replaced by a symlink or a Windows junction at any
+    later time. Path.is_symlink() does not report junctions, so resolution and
+    an explicit junction check are both required. This is used both by collect()
+    and again by create_research() immediately before reading the bytes.
+    """
+    try:
+        root_real = root.resolve()
+        if path.is_symlink() or not path.is_file() or not path.resolve().is_relative_to(root_real):
+            return False
+        parts = rel.split('/')
+        for i in range(1, len(parts)):
+            ancestor = root / '/'.join(parts[:i])
+            if (ancestor.is_symlink()
+                    or getattr(ancestor, 'is_junction', lambda: False)()
+                    or not ancestor.resolve().is_relative_to(root_real)):
+                return False
+        return True
+    except (OSError, RuntimeError, ValueError):
+        return False
+
+
 def collect(root: Path) -> tuple[list[dict], list[dict], dict[str, Path]] | None:
     cfg_file = root / CONFIG
     receipt_dir = root / 'evidence' / 'commitments'
@@ -45,9 +69,7 @@ def collect(root: Path) -> tuple[list[dict], list[dict], dict[str, Path]] | None
         if asset['path'] in files:
             raise ValueError('duplicate public asset path')
         path = root / asset['path']
-        if (path.is_symlink() or not path.is_file() or not path.resolve().is_relative_to(root.resolve())
-                or any((root / '/'.join(asset['path'].split('/')[:i])).is_symlink()
-                       for i in range(1, len(asset['path'].split('/'))))):
+        if not path_is_safe(root, asset['path'], path):
             raise ValueError('public asset missing or unsafe: ' + asset['path'])
         if path.stat().st_size > MAX_SINGLE_BYTES:
             raise ValueError('public asset exceeds 25 MiB: ' + asset['path'])
@@ -105,11 +127,16 @@ def create_research(root: Path, output: Path, plan: tuple, paper_sha256: str, ve
     total_bytes = 0
     with tarfile.open(archive, mode='w', format=tarfile.USTAR_FORMAT) as tar:
         for entry in entries:
-            # Files may change between collect and open. Bind digest to the *archived bytes*.
+            # Files may change between collect and open. Bind digest to the
+            # *archived bytes*, and re-run the FULL containment check (leaf and
+            # ancestors, including Windows junctions) at read time. The old
+            # leaf-only check let an ancestor be swapped for an out-of-tree
+            # link between collect() and create_research().
             filename = entry['path']
             path = files[filename]
-            if path.is_symlink() or not path.is_file():
-                raise ValueError('research file changed or became symlink during preparation')
+            if (not path_ok(filename, private=(entry['role'] == 'private_commitment'))
+                    or not path_is_safe(root, filename, path)):
+                raise ValueError('research file changed or became unsafe during preparation')
             content = path.read_bytes()
             total_bytes += len(content)
             if len(content) > MAX_SINGLE_BYTES or total_bytes > MAX_TOTAL_BYTES:

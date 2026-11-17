@@ -1,0 +1,750 @@
+{
+  "release_assets": [
+    [
+      "RA-01",
+      {
+        "repo": {
+          "owner": "Unjuno",
+          "name": "paper"
+        },
+        "version": [
+          1
+        ],
+        "assets": {
+          "citation": true,
+          "notes": true,
+          "bibtex": true,
+          "paper": true,
+          "metadata": true,
+          "manifest": true,
+          "sums": true,
+          "researchJson": false,
+          "researchTar": false,
+          "tsq": false,
+          "tsr": false
+        },
+        "manifestFiles": {
+          "citation": true,
+          "notes": true,
+          "bibtex": true,
+          "paper": true,
+          "metadata": true,
+          "manifest": false,
+          "sums": false,
+          "researchJson": false,
+          "researchTar": false,
+          "tsq": false,
+          "tsr": false
+        },
+        "paperDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "pinnedPaperDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      {
+        "owner": "Unjuno",
+        "name": "paper"
+      },
+      [
+        1
+      ],
+      true
+    ],
+    [
+      "RA-02",
+      {
+        "repo": {
+          "owner": "Unjuno",
+          "name": "paper"
+        },
+        "version": [
+          1
+        ],
+        "assets": {
+          "citation": true,
+          "notes": true,
+          "bibtex": true,
+          "paper": true,
+          "metadata": true,
+          "manifest": true,
+          "sums": true,
+          "researchJson": false,
+          "researchTar": false,
+          "tsq": true,
+          "tsr": true
+        },
+        "manifestFiles": {
+          "citation": true,
+          "notes": true,
+          "bibtex": true,
+          "paper": true,
+          "metadata": true,
+          "manifest": false,
+          "sums": false,
+          "researchJson": false,
+          "researchTar": false,
+          "tsq": false,
+          "tsr": false
+        },
+        "paperDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "pinnedPaperDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      {
+        "owner": "Unjuno",
+        "name": "paper"
+      },
+      [
+        1
+      ],
+      true
+    ],
+    [
+      "RA-03",
+      {
+        "repo": {
+          "owner": "Unjuno",
+          "name": "paper"
+        },
+        "version": [
+          1
+        ],
+        "assets": {
+          "citation": true,
+          "notes": true,
+          "bibtex": true,
+          "paper": true,
+          "metadata": true,
+          "manifest": true,
+          "sums": true,
+          "researchJson": true,
+          "researchTar": true,
+          "tsq": false,
+          "tsr": false
+        },
+        "manifestFiles": {
+          "citation": true,
+          "notes": true,
+          "bibtex": true,
+          "paper": true,
+          "metadata": true,
+          "manifest": false,
+          "sums": false,
+          "researchJson": true,
+          "researchTar": true,
+          "tsq": false,
+          "tsr": false
+        },
+        "paperDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "pinnedPaperDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      {
+        "owner": "Unjuno",
+        "name": "paper"
+      },
+      [
+        1
+      ],
+      true
+    ],
+    [
+      "RA-04",
+      {
+        "repo": {
+          "owner": "Unjuno",
+          "name": "paper"
+        },
+        "version": [
+          1
+        ],
+        "assets": {
+          "citation": true,
+          "notes": true,
+          "bibtex": true,
+          "paper": true,
+          "metadata": true,
+          "manifest": true,
+          "sums": true,
+          "researchJson": true,
+          "researchTar": true,
+          "tsq": true,
+          "tsr": true
+        },
+        "manifestFiles": {
+          "citation": true,
+          "notes": true,
+          "bibtex": true,
+          "paper": true,
+          "metadata": true,
+          "manifest": false,
+          "sums": false,
+          "researchJson": true,
+          "researchTar": true,
+          "tsq": false,
+          "tsr": false
+        },
+        "paperDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "pinnedPaperDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      {
+        "owner": "Unjuno",
+        "name": "paper"
+      },
+      [
+        1
+      ],
+      true
+    ],
+    [
+      "RA-05",
+      {
+        "repo": {
+          "owner": "Unjuno",
+          "name": "paper"
+        },
+        "version": [
+          1
+        ],
+        "assets": {
+          "citation": true,
+          "notes": true,
+          "bibtex": true,
+          "paper": true,
+          "metadata": true,
+          "manifest": true,
+          "sums": true,
+          "researchJson": false,
+          "researchTar": false,
+          "tsq": false,
+          "tsr": false
+        },
+        "manifestFiles": {
+          "citation": true,
+          "notes": true,
+          "bibtex": true,
+          "paper": true,
+          "metadata": true,
+          "manifest": true,
+          "sums": false,
+          "researchJson": false,
+          "researchTar": false,
+          "tsq": false,
+          "tsr": false
+        },
+        "paperDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "pinnedPaperDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      {
+        "owner": "Unjuno",
+        "name": "paper"
+      },
+      [
+        1
+      ],
+      false
+    ],
+    [
+      "RA-06",
+      {
+        "repo": {
+          "owner": "Unjuno",
+          "name": "paper"
+        },
+        "version": [
+          1
+        ],
+        "assets": {
+          "citation": true,
+          "notes": true,
+          "bibtex": true,
+          "paper": false,
+          "metadata": true,
+          "manifest": true,
+          "sums": true,
+          "researchJson": false,
+          "researchTar": false,
+          "tsq": false,
+          "tsr": false
+        },
+        "manifestFiles": {
+          "citation": true,
+          "notes": true,
+          "bibtex": true,
+          "paper": true,
+          "metadata": true,
+          "manifest": false,
+          "sums": false,
+          "researchJson": false,
+          "researchTar": false,
+          "tsq": false,
+          "tsr": false
+        },
+        "paperDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "pinnedPaperDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      {
+        "owner": "Unjuno",
+        "name": "paper"
+      },
+      [
+        1
+      ],
+      false
+    ],
+    [
+      "RA-07",
+      {
+        "repo": {
+          "owner": "Unjuno",
+          "name": "paper"
+        },
+        "version": [
+          1
+        ],
+        "assets": {
+          "citation": true,
+          "notes": true,
+          "bibtex": true,
+          "paper": true,
+          "metadata": true,
+          "manifest": true,
+          "sums": true,
+          "researchJson": true,
+          "researchTar": true,
+          "tsq": false,
+          "tsr": false
+        },
+        "manifestFiles": {
+          "citation": true,
+          "notes": true,
+          "bibtex": true,
+          "paper": true,
+          "metadata": true,
+          "manifest": false,
+          "sums": false,
+          "researchJson": false,
+          "researchTar": false,
+          "tsq": false,
+          "tsr": false
+        },
+        "paperDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "pinnedPaperDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      {
+        "owner": "Unjuno",
+        "name": "paper"
+      },
+      [
+        1
+      ],
+      false
+    ],
+    [
+      "RA-08",
+      {
+        "repo": {
+          "owner": "Unjuno",
+          "name": "paper"
+        },
+        "version": [
+          1
+        ],
+        "assets": {
+          "citation": true,
+          "notes": true,
+          "bibtex": true,
+          "paper": true,
+          "metadata": true,
+          "manifest": true,
+          "sums": true,
+          "researchJson": false,
+          "researchTar": false,
+          "tsq": false,
+          "tsr": false
+        },
+        "manifestFiles": {
+          "citation": true,
+          "notes": true,
+          "bibtex": true,
+          "paper": true,
+          "metadata": true,
+          "manifest": false,
+          "sums": false,
+          "researchJson": false,
+          "researchTar": false,
+          "tsq": false,
+          "tsr": false
+        },
+        "paperDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "pinnedPaperDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      {
+        "owner": "Unjuno",
+        "name": "paper"
+      },
+      [
+        1
+      ],
+      false
+    ],
+    [
+      "RA-09",
+      {
+        "repo": {
+          "owner": "Unjuno",
+          "name": "paper"
+        },
+        "version": [
+          1
+        ],
+        "assets": {
+          "citation": true,
+          "notes": true,
+          "bibtex": true,
+          "paper": true,
+          "metadata": true,
+          "manifest": true,
+          "sums": true,
+          "researchJson": false,
+          "researchTar": false,
+          "tsq": false,
+          "tsr": false
+        },
+        "manifestFiles": {
+          "citation": true,
+          "notes": true,
+          "bibtex": true,
+          "paper": true,
+          "metadata": true,
+          "manifest": false,
+          "sums": false,
+          "researchJson": false,
+          "researchTar": false,
+          "tsq": false,
+          "tsr": false
+        },
+        "paperDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "pinnedPaperDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      {
+        "owner": "Other",
+        "name": "paper"
+      },
+      [
+        1
+      ],
+      false
+    ],
+    [
+      "RA-10",
+      {
+        "repo": {
+          "owner": "Unjuno",
+          "name": "paper"
+        },
+        "version": [
+          1
+        ],
+        "assets": {
+          "citation": true,
+          "notes": true,
+          "bibtex": true,
+          "paper": true,
+          "metadata": true,
+          "manifest": true,
+          "sums": true,
+          "researchJson": false,
+          "researchTar": false,
+          "tsq": false,
+          "tsr": false
+        },
+        "manifestFiles": {
+          "citation": true,
+          "notes": true,
+          "bibtex": true,
+          "paper": true,
+          "metadata": true,
+          "manifest": false,
+          "sums": false,
+          "researchJson": false,
+          "researchTar": false,
+          "tsq": false,
+          "tsr": false
+        },
+        "paperDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "pinnedPaperDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      {
+        "owner": "Unjuno",
+        "name": "paper"
+      },
+      [
+        0
+      ],
+      false
+    ],
+    [
+      "RA-11",
+      {
+        "repo": {
+          "owner": "Unjuno",
+          "name": "paper"
+        },
+        "version": [
+          1
+        ],
+        "assets": {
+          "citation": true,
+          "notes": true,
+          "bibtex": true,
+          "paper": true,
+          "metadata": true,
+          "manifest": true,
+          "sums": true,
+          "researchJson": false,
+          "researchTar": false,
+          "tsq": false,
+          "tsr": false
+        },
+        "manifestFiles": {
+          "citation": true,
+          "notes": true,
+          "bibtex": true,
+          "paper": true,
+          "metadata": true,
+          "manifest": false,
+          "sums": false,
+          "researchJson": false,
+          "researchTar": false,
+          "tsq": false,
+          "tsr": false
+        },
+        "paperDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "pinnedPaperDigest": null
+      },
+      {
+        "owner": "Unjuno",
+        "name": "paper"
+      },
+      [
+        1
+      ],
+      true
+    ]
+  ],
+  "state_transition": [
+    [
+      "ST-01",
+      {
+        "repository": "Unjuno/paper",
+        "version": "v1",
+        "commit": "0000000000000000000000000000000000000000"
+      },
+      {
+        "isPublic": true,
+        "immutableEnabled": true,
+        "headSha": "0000000000000000000000000000000000000000",
+        "releaseTagExists": false,
+        "tagRefExists": false
+      },
+      "verified"
+    ],
+    [
+      "ST-02",
+      {
+        "repository": "Unjuno/paper",
+        "version": "v1",
+        "commit": "0000000000000000000000000000000000000000"
+      },
+      {
+        "isPublic": false,
+        "immutableEnabled": true,
+        "headSha": "0000000000000000000000000000000000000000",
+        "releaseTagExists": false,
+        "tagRefExists": false
+      },
+      "draft"
+    ],
+    [
+      "ST-03",
+      {
+        "repository": "Unjuno/paper",
+        "version": "v1",
+        "commit": "0000000000000000000000000000000000000000"
+      },
+      {
+        "isPublic": true,
+        "immutableEnabled": false,
+        "headSha": "0000000000000000000000000000000000000000",
+        "releaseTagExists": false,
+        "tagRefExists": false
+      },
+      "draft"
+    ],
+    [
+      "ST-04",
+      {
+        "repository": "Unjuno/paper",
+        "version": "v1",
+        "commit": "0000000000000000000000000000000000000000"
+      },
+      {
+        "isPublic": true,
+        "immutableEnabled": true,
+        "headSha": "1111111111111111111111111111111111111111",
+        "releaseTagExists": false,
+        "tagRefExists": false
+      },
+      "draft"
+    ],
+    [
+      "ST-05",
+      {
+        "repository": "Unjuno/paper",
+        "version": "v1",
+        "commit": "0000000000000000000000000000000000000000"
+      },
+      {
+        "isPublic": true,
+        "immutableEnabled": true,
+        "headSha": "0000000000000000000000000000000000000000",
+        "releaseTagExists": true,
+        "tagRefExists": false
+      },
+      "draft"
+    ],
+    [
+      "ST-06",
+      {
+        "repository": "Unjuno/paper",
+        "version": "v1",
+        "commit": "0000000000000000000000000000000000000000"
+      },
+      {
+        "isPublic": true,
+        "immutableEnabled": true,
+        "headSha": "0000000000000000000000000000000000000000",
+        "releaseTagExists": false,
+        "tagRefExists": true
+      },
+      "draft"
+    ],
+    [
+      "ST-07",
+      {
+        "repository": "Unjuno/paper",
+        "version": "v0",
+        "commit": "0000000000000000000000000000000000000000"
+      },
+      {
+        "isPublic": true,
+        "immutableEnabled": true,
+        "headSha": "0000000000000000000000000000000000000000",
+        "releaseTagExists": false,
+        "tagRefExists": false
+      },
+      "draft"
+    ],
+    [
+      "ST-08",
+      {
+        "repository": "Unjuno/paper",
+        "version": "v2",
+        "commit": "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz"
+      },
+      {
+        "isPublic": true,
+        "immutableEnabled": true,
+        "headSha": "0000000000000000000000000000000000000000",
+        "releaseTagExists": false,
+        "tagRefExists": false
+      },
+      "draft"
+    ]
+  ],
+  "evidence_binding": [
+    [
+      "EB-01",
+      "statement",
+      "sig",
+      "statement",
+      "sig",
+      true
+    ],
+    [
+      "EB-02",
+      "statement",
+      "sig",
+      "statement",
+      "OTHER",
+      false
+    ],
+    [
+      "EB-03",
+      "statement",
+      "sig",
+      "ALTERED",
+      "sig",
+      false
+    ],
+    [
+      "EB-04",
+      "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "sig",
+      "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "sig",
+      true
+    ],
+    [
+      "EB-05",
+      "a",
+      "b",
+      "b",
+      "a",
+      false
+    ],
+    [
+      "EB-06",
+      "☃",
+      "s",
+      "☃",
+      "s",
+      true
+    ]
+  ],
+  "claims": [
+    [
+      "CL-01",
+      {
+        "publicAvailability": "WITNESS_ASSERTS_ANONYMOUS_RETRIEVAL",
+        "firstPublication": "NOT_PROVEN",
+        "authorship": "NOT_PROVEN",
+        "witnessClock": "SELF_REPORTED_NOT_A_TRUSTED_TIMESTAMP",
+        "anonymousHttps": true,
+        "timestampVerified": true
+      },
+      true
+    ],
+    [
+      "CL-02",
+      {
+        "publicAvailability": "WITNESS_ASSERTS_ANONYMOUS_RETRIEVAL",
+        "firstPublication": "FIRST_PUBLICATION_PROVEN",
+        "authorship": "NOT_PROVEN",
+        "witnessClock": "SELF_REPORTED_NOT_A_TRUSTED_TIMESTAMP",
+        "anonymousHttps": true,
+        "timestampVerified": true
+      },
+      false
+    ],
+    [
+      "CL-03",
+      {
+        "publicAvailability": "WITNESS_ASSERTS_ANONYMOUS_RETRIEVAL",
+        "firstPublication": "NOT_PROVEN",
+        "authorship": "NOT_PROVEN",
+        "witnessClock": "SELF_REPORTED_NOT_A_TRUSTED_TIMESTAMP",
+        "anonymousHttps": true,
+        "timestampVerified": false
+      },
+      false
+    ]
+  ]
+}

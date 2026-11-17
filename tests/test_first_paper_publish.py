@@ -78,7 +78,7 @@ class FirstPaperPublishTests(unittest.TestCase):
         self.output.mkdir()
         (self.output/'keep').write_text('previous evidence')
         with self.assertRaises(ValueError): self.execute()
-        self.assertEqual((self.output/'keep').read_text(), 'previous evidence')
+        self.assertEqual((self.output/'keep').read_text(encoding='utf-8'), 'previous evidence')
         self.assertEqual(self.gateway.calls, [])
 
     def test_wrong_pdf_pin_stops_before_any_network(self):
@@ -141,7 +141,7 @@ class FirstPaperPublishTests(unittest.TestCase):
     def test_attestation_failure_preserves_public_pending_state(self):
         self.gateway.fail_attestation=True
         with self.assertRaisesRegex(ValueError,'attestation'): self.execute()
-        report=json.loads((self.output/'publication-report.json').read_text())
+        report=json.loads((self.output/'publication-report.json').read_text(encoding='utf-8'))
         self.assertEqual(report['status'],'FAIL')
         self.assertEqual(report['state'],'PUBLIC_VERIFICATION_PENDING')
         self.assertFalse(self.gateway.releases[('example/opk-first-paper','v1')]['draft'])
@@ -163,7 +163,7 @@ class FirstPaperPublishTests(unittest.TestCase):
         # invalid source bytes never reach a *public* immutable Release.
         draft = self.gateway.releases[('example/opk-first-paper', 'v1')]
         self.assertTrue(draft['draft'])
-        report = json.loads((self.output / 'publication-report.json').read_text())
+        report = json.loads((self.output / 'publication-report.json').read_text(encoding='utf-8'))
         self.assertEqual(report['status'], 'FAIL')
         self.assertEqual(report['state'], 'DRAFT_CREATED')
         self.assertFalse(any(c[:3] == ('gh','release','edit') for c in self.gateway.calls))
@@ -179,3 +179,4 @@ class FirstPaperPublishTests(unittest.TestCase):
         self.assertNotIn('timestamp-policy.json',names)
         self.assertNotIn('trust/ca.pem',names)
         self.assertFalse(any('key' in p or 'private' in p for p in names))
+

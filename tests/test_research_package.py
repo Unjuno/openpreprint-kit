@@ -58,10 +58,10 @@ class ResearchBundleTests(unittest.TestCase):
 
     def test_public_files_bundle_and_verify(self):
         self.make_bundle()
-        manifest = json.loads((self.bundle / 'manifest.json').read_text())
+        manifest = json.loads((self.bundle / 'manifest.json').read_text(encoding='utf-8'))
         self.assertIn('research-assets.tar', manifest['files'])
         self.assertIn('research-assets.json', manifest['files'])
-        catalog = json.loads((self.bundle / 'research-assets.json').read_text())
+        catalog = json.loads((self.bundle / 'research-assets.json').read_text(encoding='utf-8'))
         self.assertEqual([x['path'] for x in catalog['entries']], ['analysis/fit.py', 'data/synthetic.csv'])
         self.assertEqual(catalog['relations'][0]['kind'], 'analyzes')
         with tarfile.open(self.bundle / 'research-assets.tar', mode='r:') as archive:
@@ -161,7 +161,7 @@ class ResearchBundleTests(unittest.TestCase):
             tar.addfile(info, BytesIO(payload))
         # A malicious actor can update every ordinary SHA digest, but not a prior RFC 3161 stamp.
         manifest_file = self.bundle / 'manifest.json'
-        manifest = json.loads(manifest_file.read_text())
+        manifest = json.loads(manifest_file.read_text(encoding='utf-8'))
         archive = self.bundle / 'research-assets.tar'
         manifest['files'][archive.name]['sha256'] = hashlib.sha256(archive.read_bytes()).hexdigest()
         manifest['files'][archive.name]['size_bytes'] = archive.stat().st_size
@@ -180,7 +180,7 @@ class ResearchBundleTests(unittest.TestCase):
         receipt = {'schema_version': 1, 'record_id': rid, 'algorithm': 'HMAC-SHA256', 'commitment': 'b' * 64}
         (receipts / (rid + '.json')).write_text(json.dumps(receipt))
         self.make_bundle()
-        catalog = json.loads((self.bundle / 'research-assets.json').read_text())
+        catalog = json.loads((self.bundle / 'research-assets.json').read_text(encoding='utf-8'))
         private = [e for e in catalog['entries'] if e['role'] == 'private_commitment']
         self.assertEqual(len(private), 1)
         archive_data = (self.bundle / 'research-assets.tar').read_bytes()
@@ -197,3 +197,4 @@ class ResearchBundleTests(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+

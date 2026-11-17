@@ -10,7 +10,7 @@ class DependencyLockTests(unittest.TestCase):
         for name in ('requirements.lock','requirements-build.lock'):
             file=ROOT/name
             self.assertTrue(file.is_file(),'resolved hash lock missing')
-            joined=file.read_text().replace('\\\n',' ')
+            joined=file.read_text(encoding='utf-8').replace('\\\n',' ')
             rows=[s.strip() for s in joined.splitlines() if s.strip() and not s.startswith('#')]
             self.assertTrue(rows)
             for row in rows:
@@ -20,15 +20,16 @@ class DependencyLockTests(unittest.TestCase):
 
     def test_runtime_and_publication_requirements_agree_with_lock(self):
         self.assertTrue((ROOT/'requirements.lock').exists(),'resolved hash lock missing')
-        lock=(ROOT/'requirements.lock').read_text().lower().replace('_','-')
+        lock=(ROOT/'requirements.lock').read_text(encoding='utf-8').lower().replace('_','-')
         for file in ('requirements.txt','requirements-publication-checks.txt'):
-            for row in (ROOT/file).read_text().splitlines():
+            for row in (ROOT/file).read_text(encoding='utf-8').splitlines():
                 if '==' in row and not row.startswith('#'):
                     self.assertIn(row.strip().lower().replace('_','-')+' ',lock)
 
     def test_ci_and_publisher_require_distribution_hashes(self):
         for name in ('publish.yml','validate.yml','quality.yml'):
-            text=(ROOT/'.github/workflows'/name).read_text()
+            text=(ROOT/'.github/workflows'/name).read_text(encoding='utf-8')
             self.assertIn('--require-hashes -r requirements-build.lock',text)
             self.assertIn('--no-build-isolation -r requirements.lock',text)
             self.assertNotRegex(text,r'pip install -r requirements(?:\.txt|-publication)')
+
