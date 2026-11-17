@@ -10,8 +10,8 @@
 |---|---|
 | 正式 main | `811dc84367c88a81dbf062fa5d262f5d10a41180` |
 | 提案ブランチ / PR | `hardening/formal-verification-20261117` / [Draft PR #51](https://github.com/Unjuno/openpreprint-kit/pull/51) |
-| 直近コード検証済みSHA | `2a8e1447d58b8a3d98d195099ac793bf4b0e39bc`（Validate/Quality/CodeQL/selftest success、Ubuntu/Windows） |
-| 現在のPR head | `5dd6289ba1407690f4dea422f0fcd83e28b6c113` |
+| 直近コード検証済みSHA | `e3c5f68da1efac54937d0615adb4307dd0bfd63b`（Validate/Quality/CodeQL/selftest success、Ubuntu/Windows） |
+| 現在のPR head | `e3c5f68da1efac54937d0615adb4307dd0bfd63b`（ドキュメント更新のみの commit が後続する場合あり） |
 | tree hash | `a8a2747e994a7763cca2ba3e4664d2cbdd659b2f` |
 | source zip SHA-256 | `3bef7dc8f4e6351fde3c0bfb8de2826e9c75162311882179b4c619b7788e89c5` |
 | 受入基準 | [V1_ACCEPTANCE.md](V1_ACCEPTANCE.md)（緩和・置換禁止） |

@@ -147,10 +147,10 @@
 |---|---|---|---|
 | 1 | CI での Hypothesis 実行 — **完了** | 旧CIは test-only 依存が無く7特性がskip。Hypothesis 6.170.15 は **Python >=3.11 必須** | 3.12ジョブのみ hash固定lockを導入。run `44109219645` の validate(3.12) で **7特性すべて ok / 394 tests / OK(skipped=3)**、validate(3.10) は7件を正しくskip。Quality/CodeQL も success (`44109219720` 他) |
 | 2 | 旧 FAIL の履歴保持 | run `44028158017` / `44028158061` は AUD-09 修正前の FAIL。削除せず記録済み | 修正後 run `0efeada` 以降の全 success と併せて台帳に残す（完了） |
-| 3 | macOS の検証 — portable smoke **PASS** / 全 unittest は **UNKNOWN** | 旧 run `44116478457` の macos-15 は queued→cancelled。最新 run `44119821885` で `portable-smoke (macos-15)` が **success**（Ubuntu/Windows も success）。ただし全 unittest は Ubuntu/Windows のみ設定 | macOS で全 unittest（399件）を実行する workflow を追加し、結果と SKIP 内訳を記録する（設定変更は PR #51 で提案） |
+| 3 | macOS の検証 — **UNKNOWN（ランナー不安定）** | run `44116478457` は queued→cancelled、run `44119821885` は macos-15 **success**、最新コードSHA `e3c5f68` の run `44122897522` では再び **cancelled**。全 unittest は Ubuntu/Windows のみ設定 | macOS runner で最新SHAの portable smoke と全 unittest（403件）を安定して完了させ、原ログを記録する。完了まで UNKNOWN のまま |
 | 4 | G4 / G5 / G7 の独立検証 | 外部の独立人間が必要。AI 自己検証は不可 | 独立観測者・保管者・監査者の選任と署名入り証拠が揃う（所有者の手配が必要） |
 
-コードは SHA `2a8e144` で Validate・Quality・CodeQL・selftest が success（Ubuntu/Windows）。SHA `30a1756` では portable smoke が macOS/Ubuntu/Windows の3OSすべて success（run `44119821885`）。macOS の全 unittest は未設定のため UNKNOWN。
+コードは SHA `e3c5f68` で Validate・Quality・CodeQL・selftest が success（Ubuntu/Windows）。macOS portable smoke は SHA `30a1756` で success を観測したが、最新SHA `e3c5f68` では cancelled（run `44122897522`）。再現性がないため macOS は UNKNOWN。macOS の全 unittest は未設定。
 次回の最優先は優先度4のG4/G5/G7（所有者による独立検証者の選任）。変更は引き続き PR #51 で提案し、固定 main への統合は所有者の承認を待つ。
 
 
