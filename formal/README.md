@@ -31,7 +31,7 @@ python differential.py
 
 ## Lean カーネルが検査した定理
 
-### ReleaseAssets (11本)
+### ReleaseAssets (12本)
 - `accept_is_deterministic` — 受入判定は決定论的
 - `accept_decomposes` — 受入 = 6条件 + 任意ピン一致の分解
 - `accept_requires_repo_match` / `accept_requires_version_match` — 受入には固定 repo/version 一致が必須
@@ -50,7 +50,7 @@ python differential.py
 - `phase_never_regresses` — phase は後退しない (rank 単調)
 - `advance_is_deterministic` — 遷移は決定论的
 
-### EvidenceBinding (10本)
+### EvidenceBinding (12本)
 - `digest_injective` — モデル化された digest は単射
 - `envelope_binds_signature` / `envelope_binds_data` / `receipt_digest_is_binding` — 受領 digest が本文と署名の両方に結合
 - `envelope_lengths_are_bound` — 長さプレフィクスによりフィールド境界が確定
@@ -61,7 +61,7 @@ python differential.py
 ## 証明できた性質 / 仮定 / モデル外 / 未証明
 
 ### 証明できた性質
-上記 29 本。いずれも `sorry` / `admit` / 独自公理なしで Lean カーネルが検査。
+上記 32 本。いずれも `sorry` / `admit` / 独自公理なしで Lean カーネルが検査。
 
 ### 仮定 (モデル内の単純化)
 - 資産は11種類の有限列挙 (実運用のファイル名は `verify_release.py` の定数)
@@ -79,3 +79,4 @@ python differential.py
 - 暗号安全性 (証明していない。assumption としても置いていない)
 - 本番 Python と Lean モデルの全入力領域での等価性 (28ベクトル + Hypothesis 7性質による部分確認のみ)
 - G4 / G5 / G7 の独立人間による検証 (本モジュールは代替しない)
+

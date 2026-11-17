@@ -47,7 +47,7 @@
 
 ## 4. Lean で証明した性質 / 未証明
 
-- 証明: 29定理 (ReleaseAssets 11 / StateTransition 8 / EvidenceBinding 10)。詳細は [formal/README.md](formal/README.md)。
+- 証明: 32定理 (ReleaseAssets 12 / StateTransition 8 / EvidenceBinding 12)。詳細は [formal/README.md](formal/README.md)。
 - 共通テストベクトル: `formal/vectors.json` → `GeneratedVectors.lean` を自動生成。Python 側は本番 `preflight.preflight()` と `observation.receipt_digest()` を直接呼び、他2領域は本番ルールを純粋入力へ忠実に再表現 (ソース行をコメント明記)。
 - **モデルと本番Pythonは異なる実装**。等価性は28ベクトル + Hypothesis 7性質による部分確認であり、全入力領域の証明ではない。
 - 未証明/仮定: SHA-256衝突耐性、Ed25519偽造耐性、RFC3161/X.509/CRL暗号検証、GitHub API応答、実時刻、観測者の独立性、CA選定、OSのsymlink/junction挙動。
@@ -126,3 +126,4 @@
 - 開いている PR / 古いブランチの閉鎖・削除
 
 すべて所有者の明示承認を待つ。
+
