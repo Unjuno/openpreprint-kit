@@ -66,6 +66,35 @@ class Iteration3FixTests(unittest.TestCase):
             self.assertTrue(errors)
             self.assertTrue(any("changed or deleted" in e for e in errors))
 
+    def test_tampered_receipt_merged_from_side_branch_is_rejected(self):
+        import commitment_history as ch
+        with tempfile.TemporaryDirectory() as td:
+            repo = Path(td)
+            folder = repo / "evidence" / "commitments"
+            folder.mkdir(parents=True)
+            receipt = folder / (RID + ".json")
+            original = json.dumps({"schema_version": 1, "record_id": RID,
+                                   "algorithm": "HMAC-SHA256", "commitment": "a" * 64})
+            receipt.write_text(original, encoding="utf-8")
+            _git(repo, "init", "-q", "-b", "main")
+            _git(repo, "config", "user.email", "t@e.invalid")
+            _git(repo, "config", "user.name", "T")
+            _git(repo, "add", "-A")
+            _git(repo, "commit", "-qm", "base")
+            base = _git(repo, "rev-parse", "HEAD")
+
+            _git(repo, "checkout", "-qb", "side")
+            receipt.write_text(original.replace("a" * 64, "b" * 64), encoding="utf-8")
+            _git(repo, "add", "-A")
+            _git(repo, "commit", "-qm", "side tamper")
+            _git(repo, "checkout", "-q", "main")
+            (repo / "README.md").write_text("advance main\n", encoding="utf-8")
+            _git(repo, "add", "-A")
+            _git(repo, "commit", "-qm", "main advance")
+            _git(repo, "merge", "-q", "--no-ff", "side", "-m", "merge side")
+
+            self.assertTrue(ch.protect_history(repo, base))
+
     """AUD-12: deeply nested JSON must produce a clean FAIL, not a traceback."""
 
     def test_deeply_nested_json_fails_cleanly(self):

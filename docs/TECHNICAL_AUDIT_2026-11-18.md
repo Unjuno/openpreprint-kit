@@ -15,7 +15,7 @@
 | ID | 深刻度 | 箇所 | 原因分析 | 影響 | 修正 | 回帰試験 |
 |---|---|---|---|---|---|---|
 | AUD-10 | **高** | `commitment_history.py:18-19` | all-zero baseline を「最初のコミット」として無条件 `[]` を返し、git コマンドを1つも実行せず PASS | 信頼できる baseline 供給側が失敗・誤設定で0を渡すと、匿名 commitment の追加専用保証が**完全に無効化**される | all-zero を明示的エラーに変更（CI側は既に0を渡さない。validate.yml で確認済み） | `test_all_zero_baseline_is_rejected` |
-| AUD-11 | **高** | `commitment_history.py:23-38` | `git diff base HEAD` の**端点ネット差分**しか見ていない。改変→復元の2コミットはネット差分0で PASS | 通常のコミット権限で受領書を改変・復元でき、CIは追加専用不変条件が保たれたと誤判定（誤 PASS） | `git log base..HEAD -- evidence/commitments` で全コミットを列挙し、各コミットの `diff-tree` で `A` 以外を拒否 | `test_tamper_then_restore_is_rejected`（ネット差分が空であることも同時に実証） |
+| AUD-11 | **高** | `commitment_history.py:23-38` | `git diff base HEAD` の**端点ネット差分**しか見ていない。改変→復元の2コミットはネット差分0で PASS | 通常のコミット権限で受領書を改変・復元でき、CIは追加専用不変条件が保たれたと誤判定（誤 PASS） | `git log base..HEAD -- evidence/commitments` で全コミットを列挙し、各コミットの `diff-tree -m` で `A` 以外を拒否（マージコミットも対象） | `test_tamper_then_restore_is_rejected`（ネット差分が空であることも同時に実証）, `test_tampered_receipt_merged_from_side_branch_is_rejected` |
 | AUD-12 | 中 | `research_record.py:50,169` | 深くネストした JSON が `RecursionError` を送出。これは `RuntimeError` の派生で `except (OSError, ValueError, TypeError, KeyError)` に捕捉されない | 約6KBの入力でプロセスが未処理 traceback 終了。CIが不定失敗し、パス/環境情報を漏らす可能性 | `RecursionError` を捕捉 tuple に追加し、常に `FAIL` を返す | `test_deeply_nested_json_fails_cleanly` |
 | AUD-13 | 中 | `first_paper_selftest.py:83-103` | `Path.absolute()` は `..` と symlink 祖先を正規化しないため、`is_relative_to()` のテキスト比較を迂回して出力先が検証済み bundle 内に解決される | `copytree(bundle, bundle内)` が自己再帰し、検証済み成果物を汚染 + ディスク/パス枯渇 | `resolve()` で正規化、workspace と rename 直前にも再チェック | `test_export_candidate_resolves_dotdot` |
 
@@ -32,6 +32,6 @@
 
 ## 4. Step 5 証拠
 
-- 全試験: **398 tests / 15 skips / OK**（Windows / Python 3.12 / OpenSSL 3.5.0、原ログは CI artifact とローカル実行で取得）
-- 回帰: 既存9件 + 今回4件 = 13件すべて PASS
+- 全試験: **399 tests / 15 skips / OK**（Windows / Python 3.12 / OpenSSL 3.5.0、原ログは CI artifact とローカル実行で取得）
+- 回帰: 既存9件 + 今回5件 = 14件すべて PASS
 - 旧 FAIL（`44028158017`, `44028158061`）は削除せず前回報告に保持

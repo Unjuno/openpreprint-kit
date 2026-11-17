@@ -41,7 +41,9 @@ def protect_history(repo: Path, base_sha: str) -> list[str]:
     errors: list[str] = []
     for commit in commits:
         try:
-            raw = _run(repo, 'diff-tree', '--no-commit-id', '--name-status', '-r', '-z',
+            # -m makes merge commits show per-parent diffs; without it a
+            # tampered receipt merged from a side branch is invisible here.
+            raw = _run(repo, 'diff-tree', '-m', '--no-commit-id', '--name-status', '-r', '-z',
                        '--no-renames', '--root', commit, '--', RECEIPT_PATH)
         except (subprocess.CalledProcessError, FileNotFoundError, subprocess.TimeoutExpired):
             return ['unable to compare receipt history against trusted base commit']
