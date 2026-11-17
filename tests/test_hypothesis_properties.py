@@ -18,6 +18,21 @@ HYP = importlib.util.find_spec("hypothesis") is not None
 
 if HYP:
     from hypothesis import given, settings, strategies as st
+else:
+    # The class-level skip below marks every test as skipped, but Python still
+    # evaluates decorators when the class body is executed. Provide inert
+    # stand-ins so this module imports cleanly in CI environments that do NOT
+    # install the test-only Hypothesis dependency.
+    def _inert_decorator(*_args, **_kwargs):
+        return lambda fn: fn
+
+    given = settings = _inert_decorator
+
+    class _MissingStrategies:
+        def __getattr__(self, _name):
+            return lambda *args, **kwargs: None
+
+    st = _MissingStrategies()
 
 import preflight
 import verify_release

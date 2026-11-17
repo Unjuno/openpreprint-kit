@@ -282,6 +282,21 @@ class AuditFixTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "unsafe during preparation"):
                 rp.create_research(root, output, plan, "a" * 64, "v1")
 
+    """AUD-09: the Hypothesis test module must import when the test-only
+    dependency is absent (CI does not install it)."""
+
+    def test_hypothesis_module_imports_without_dependency(self):
+        code = (
+            "import importlib.util, sys\n"
+            "real = importlib.util.find_spec\n"
+            "importlib.util.find_spec = lambda n,*a,**k: None if n=='hypothesis' else real(n,*a,**k)\n"
+            f"sys.path.insert(0, {str(ROOT / 'tests')!r})\n"
+            f"sys.path.insert(0, {str(ROOT / 'scripts')!r})\n"
+            "import test_hypothesis_properties\n"
+        )
+        result = subprocess.run([sys.executable, "-c", code], capture_output=True, text=True)
+        self.assertEqual(result.returncode, 0, result.stderr)
+
     """F6/F7: citation validation binds BibTeX and rejects duplicate keys."""
 
     def _citation_folder(self, metadata_text):
