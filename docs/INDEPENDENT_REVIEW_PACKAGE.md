@@ -10,8 +10,8 @@
 |---|---|
 | 正式 main | `811dc84367c88a81dbf062fa5d262f5d10a41180` |
 | 提案ブランチ / PR | `hardening/formal-verification-20261117` / [Draft PR #51](https://github.com/Unjuno/openpreprint-kit/pull/51) |
-| 直近コード検証済みSHA | `e3c5f68da1efac54937d0615adb4307dd0bfd63b`（Validate/Quality/CodeQL/selftest success、Ubuntu/Windows） |
-| 現在のPR head | `e3c5f68da1efac54937d0615adb4307dd0bfd63b`（ドキュメント更新のみの commit が後続する場合あり） |
+| 直近コード検証済みSHA | `695b232f65f6`（Validate 3.10/3.12・Quality Ubuntu/Windows/macOS・CodeQL・selftest・portable すべて success） |
+| 現在のPR head | `695b232f65f6`（ドキュメント更新のみの commit が後続する場合あり） |
 | tree hash | `a8a2747e994a7763cca2ba3e4664d2cbdd659b2f` |
 | source zip SHA-256 | `3bef7dc8f4e6351fde3c0bfb8de2826e9c75162311882179b4c619b7788e89c5` |
 | 受入基準 | [V1_ACCEPTANCE.md](V1_ACCEPTANCE.md)（緩和・置換禁止） |
@@ -42,7 +42,7 @@
 - [ ] G5: 別管理ミラーURL、台帳/ハッシュの別経路保管、GitHub非接続4版復元ログを確認。
 - [ ] G6: ライセンス/公開同意/COI、実人間のレビュー1件・訂正演習・撤回演習を確認。
 - [ ] G7: 固定SHAへの外部監査報告、失効/CA更新/復旧の実測、責任者と継続点検手順を確認。
-- [ ] 未検証OS（macOS）の扱い: portable smoke は最新 run `44126039717` で macos-15 success。ただし全 unittest は Ubuntu/Windows のみ → **UNKNOWN**。macOS で全 unittest が成功するまで PASS にしない。過去の cancelled run `44116478457`, `44122897522` は履歴として保持。
+- [ ] OS 別試験: run `44172420938` で Ubuntu/Windows/**macOS** すべて success。macOS 全 unittest は 403 tests / 3 skips。Python 3.10 は Validate job でカバー。過去の cancelled/FAIL run は履歴として保持。
 
 ## 4. 証拠の記録形式（各ゲート）
 
@@ -57,5 +57,5 @@ V1_ACCEPTANCE §5 に従い次を記録: `gate_id`, 対象repo/tag/commit, 実�
 
 ## 6. 現状（2026-11-18）
 
-独立レビューは**未実施**。全ゲートの reviewer 欄は空。macOS portable smoke は PASS だが全 unittest は UNKNOWN。
+独立レビューは**未実施**。全ゲートの reviewer 欄は空。OS 別試験は Windows/Ubuntu/macOS すべて PASSだが、独立レビューは代替不可。
 したがって本パッケージは「提出準備完了」を意味し、「受入完了」を意味しない。
