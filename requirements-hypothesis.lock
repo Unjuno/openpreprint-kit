@@ -1,6 +1,10 @@
 # Test-only property-testing dependency. NOT part of the release/install locks.
 # The release suite skips Hypothesis property tests when this is not installed.
-# Hashes from PyPI JSON API for hypothesis 6.170.15.
+# NOTE: hypothesis 6.170.15 requires Python >= 3.11; do NOT install on 3.10.
+# Hashes from PyPI JSON API.
+sortedcontainers==2.4.0 \
+    --hash=sha256:a163dcaede0f1c021485e957a39245190e74249897e2ae4b2aa38595db237ee0 \
+    --hash=sha256:25caa5a06cc30b6b83d11423433f65d1f9d76c4c6a0c90e3379eaa43b9bfdb88
 hypothesis==6.170.15 \
     --hash=sha256:a4a57e5fb106ecb29cad37e22e411d957e20d933bfb9fb029e1999b1deb8a0b6 \
     --hash=sha256:db8211e0a56fa29bf9e5d9ff9cd969a91ff4e5ffa8fb4983d3dd788253aeee2c \

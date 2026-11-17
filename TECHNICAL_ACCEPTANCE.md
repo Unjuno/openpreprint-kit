@@ -134,7 +134,7 @@
 
 | 優先度 | 課題 | 原因 / 現状 | 完了条件 |
 |---|---|---|---|
-| 1 | CI での Hypothesis 実行 | 現行 CI は test-only 依存を入れず、7 特性試験が skip される（ローカルでは 7/7 PASS）。CI 上は UNKNOWN | `requirements-hypothesis.lock` を全OS/Python 3.10・3.12 で `--require-hashes` インストールできることを確認し、Validate/Quality で 7 特性が実行され 401 tests / 0 FAIL になる |
+| 1 | CI での Hypothesis 実行 | 現行 CI は test-only 依存を入れず、7 特性試験が skip される（ローカルでは 7/7 PASS）。CI 上は UNKNOWN。Hypothesis 6.170.15 は **Python >=3.11 必須**のため 3.10 には入らない | 3.12 ジョブのみ `requirements-hypothesis.lock` を `--require-hashes` で導入（実装済み）。Validate 3.12 と Quality (Ubuntu/Windows) で 7 特性が実行され **394 tests / 0 FAIL** になることを新規 run で確認 |
 | 2 | 旧 FAIL の履歴保持 | run `44028158017` / `44028158061` は AUD-09 修正前の FAIL。削除せず記録済み | 修正後 run `0efeada` 以降の全 success と併せて台帳に残す（完了） |
 | 3 | G4 / G5 / G7 の独立検証 | 外部の独立人間が必要。AI 自己検証は不可 | 独立観測者・保管者・監査者の選任と署名入り証拠が揃う（所有者の手配が必要） |
 
