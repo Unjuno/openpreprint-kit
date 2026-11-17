@@ -141,9 +141,11 @@
 |---|---|---|---|
 | 1 | CI での Hypothesis 実行 — **完了** | 旧CIは test-only 依存が無く7特性がskip。Hypothesis 6.170.15 は **Python >=3.11 必須** | 3.12ジョブのみ hash固定lockを導入。run `44109219645` の validate(3.12) で **7特性すべて ok / 394 tests / OK(skipped=3)**、validate(3.10) は7件を正しくskip。Quality/CodeQL も success (`44109219720` 他) |
 | 2 | 旧 FAIL の履歴保持 | run `44028158017` / `44028158061` は AUD-09 修正前の FAIL。削除せず記録済み | 修正後 run `0efeada` 以降の全 success と併せて台帳に残す（完了） |
-| 3 | G4 / G5 / G7 の独立検証 | 外部の独立人間が必要。AI 自己検証は不可 | 独立観測者・保管者・監査者の選任と署名入り証拠が揃う（所有者の手配が必要） |
+| 3 | macOS の検証 — **UNKNOWN** | run `44116478457` の `portable-smoke (macos-15)` が `queued` のまま（ランナー未提供）。同 run の Ubuntu/Windows は success | macOS runner で `portable-first-paper.yml` が完了し、原ログと結果を記録する |
+| 4 | G4 / G5 / G7 の独立検証 | 外部の独立人間が必要。AI 自己検証は不可 | 独立観測者・保管者・監査者の選任と署名入り証拠が揃う（所有者の手配が必要） |
 
-技術的優先度はすべて完了。次回の最優先は優先度3のG4/G5/G7（所有者による独立検証者の選任）。変更は引き続き PR #51 で提案し、固定 main への統合は所有者の承認を待つ。
+コードは SHA `2a8e144` で Validate・Quality・CodeQL・selftest が success（Ubuntu/Windows）。macOS は優先度3が未完了のため UNKNOWN。
+次回の最優先は優先度4のG4/G5/G7（所有者による独立検証者の選任）。変更は引き続き PR #51 で提案し、固定 main への統合は所有者の承認を待つ。
 
 
 
