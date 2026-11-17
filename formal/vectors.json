@@ -544,6 +544,8 @@
         "releaseTagExists": false,
         "tagRefExists": false
       },
+      "draft",
+      "none",
       "verified"
     ],
     [
@@ -560,6 +562,8 @@
         "releaseTagExists": false,
         "tagRefExists": false
       },
+      "draft",
+      "none",
       "draft"
     ],
     [
@@ -576,6 +580,8 @@
         "releaseTagExists": false,
         "tagRefExists": false
       },
+      "draft",
+      "none",
       "draft"
     ],
     [
@@ -592,6 +598,8 @@
         "releaseTagExists": false,
         "tagRefExists": false
       },
+      "draft",
+      "none",
       "draft"
     ],
     [
@@ -608,6 +616,8 @@
         "releaseTagExists": true,
         "tagRefExists": false
       },
+      "draft",
+      "none",
       "draft"
     ],
     [
@@ -624,6 +634,8 @@
         "releaseTagExists": false,
         "tagRefExists": true
       },
+      "draft",
+      "none",
       "draft"
     ],
     [
@@ -640,6 +652,8 @@
         "releaseTagExists": false,
         "tagRefExists": false
       },
+      "draft",
+      "none",
       "draft"
     ],
     [
@@ -656,7 +670,99 @@
         "releaseTagExists": false,
         "tagRefExists": false
       },
+      "draft",
+      "none",
       "draft"
+    ],
+    [
+      "ST-09",
+      {
+        "repository": "Unjuno/paper",
+        "version": "v1",
+        "commit": "0000000000000000000000000000000000000000"
+      },
+      {
+        "isPublic": true,
+        "immutableEnabled": true,
+        "headSha": "0000000000000000000000000000000000000000",
+        "releaseTagExists": false,
+        "tagRefExists": false
+      },
+      "verified",
+      "self",
+      "published"
+    ],
+    [
+      "ST-10",
+      {
+        "repository": "Unjuno/paper",
+        "version": "v1",
+        "commit": "0000000000000000000000000000000000000000"
+      },
+      {
+        "isPublic": true,
+        "immutableEnabled": true,
+        "headSha": "1111111111111111111111111111111111111111",
+        "releaseTagExists": false,
+        "tagRefExists": false
+      },
+      "verified",
+      "self",
+      "verified"
+    ],
+    [
+      "ST-11",
+      {
+        "repository": "Unjuno/paper",
+        "version": "v1",
+        "commit": "0000000000000000000000000000000000000000"
+      },
+      {
+        "isPublic": true,
+        "immutableEnabled": true,
+        "headSha": "0000000000000000000000000000000000000000",
+        "releaseTagExists": false,
+        "tagRefExists": false
+      },
+      "published",
+      "self",
+      "published"
+    ],
+    [
+      "ST-12",
+      {
+        "repository": "Unjuno/paper",
+        "version": "v1",
+        "commit": "0000000000000000000000000000000000000000"
+      },
+      {
+        "isPublic": true,
+        "immutableEnabled": true,
+        "headSha": "0000000000000000000000000000000000000000",
+        "releaseTagExists": false,
+        "tagRefExists": false
+      },
+      "verified",
+      "other",
+      "verified"
+    ],
+    [
+      "ST-13",
+      {
+        "repository": "Unjuno/paper",
+        "version": "v1",
+        "commit": "0000000000000000000000000000000000000000"
+      },
+      {
+        "isPublic": true,
+        "immutableEnabled": true,
+        "headSha": "0000000000000000000000000000000000000000",
+        "releaseTagExists": false,
+        "tagRefExists": false
+      },
+      "verified",
+      "none",
+      "verified"
     ]
   ],
   "evidence_binding": [

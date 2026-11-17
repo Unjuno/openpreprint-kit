@@ -75,14 +75,21 @@ def view(isPublic=True, immutable=True, head="0" * 40, tag=False, ref=False):
 COMMIT = "0" * 40
 state_cases = [
     # id, context, view, expected phase
-    ["ST-01", {"repository": "Unjuno/paper", "version": "v1", "commit": COMMIT}, view(), "verified"],
-    ["ST-02", {"repository": "Unjuno/paper", "version": "v1", "commit": COMMIT}, view(isPublic=False), "draft"],
-    ["ST-03", {"repository": "Unjuno/paper", "version": "v1", "commit": COMMIT}, view(immutable=False), "draft"],
-    ["ST-04", {"repository": "Unjuno/paper", "version": "v1", "commit": COMMIT}, view(head="1" * 40), "draft"],
-    ["ST-05", {"repository": "Unjuno/paper", "version": "v1", "commit": COMMIT}, view(tag=True), "draft"],
-    ["ST-06", {"repository": "Unjuno/paper", "version": "v1", "commit": COMMIT}, view(ref=True), "draft"],
-    ["ST-07", {"repository": "Unjuno/paper", "version": "v0", "commit": COMMIT}, view(), "draft"],
-    ["ST-08", {"repository": "Unjuno/paper", "version": "v2", "commit": "z" * 40}, view(), "draft"],
+    # id, context, view, start phase, checked context, expected phase
+    ["ST-01", {"repository": "Unjuno/paper", "version": "v1", "commit": COMMIT}, view(), "draft", "none", "verified"],
+    ["ST-02", {"repository": "Unjuno/paper", "version": "v1", "commit": COMMIT}, view(isPublic=False), "draft", "none", "draft"],
+    ["ST-03", {"repository": "Unjuno/paper", "version": "v1", "commit": COMMIT}, view(immutable=False), "draft", "none", "draft"],
+    ["ST-04", {"repository": "Unjuno/paper", "version": "v1", "commit": COMMIT}, view(head="1" * 40), "draft", "none", "draft"],
+    ["ST-05", {"repository": "Unjuno/paper", "version": "v1", "commit": COMMIT}, view(tag=True), "draft", "none", "draft"],
+    ["ST-06", {"repository": "Unjuno/paper", "version": "v1", "commit": COMMIT}, view(ref=True), "draft", "none", "draft"],
+    ["ST-07", {"repository": "Unjuno/paper", "version": "v0", "commit": COMMIT}, view(), "draft", "none", "draft"],
+    ["ST-08", {"repository": "Unjuno/paper", "version": "v2", "commit": "z" * 40}, view(), "draft", "none", "draft"],
+    # verified -> published / terminal / forced-update coverage (was missing)
+    ["ST-09", {"repository": "Unjuno/paper", "version": "v1", "commit": COMMIT}, view(), "verified", "self", "published"],
+    ["ST-10", {"repository": "Unjuno/paper", "version": "v1", "commit": COMMIT}, view(head="1" * 40), "verified", "self", "verified"],
+    ["ST-11", {"repository": "Unjuno/paper", "version": "v1", "commit": COMMIT}, view(), "published", "self", "published"],
+    ["ST-12", {"repository": "Unjuno/paper", "version": "v1", "commit": COMMIT}, view(), "verified", "other", "verified"],
+    ["ST-13", {"repository": "Unjuno/paper", "version": "v1", "commit": COMMIT}, view(), "verified", "none", "verified"],
 ]
 
 evidence_cases = [
@@ -173,14 +180,23 @@ def generate():
     lines.append("]")
     lines.append("")
 
-    lines.append("def stateCases : List (String × PublishContext × RepoView × Phase) := [")
-    for cid, ctx, v, exp in state_cases:
+    lines.append("def stateCases : List (String × PubState × PublishContext × RepoView × Phase) := [")
+    for cid, ctx, v, start, checked, exp in state_cases:
         c = (f'{{ repository := {lean_str(ctx["repository"])}, version := {lean_str(ctx["version"])}, '
              f'commit := {lean_str(ctx["commit"])} }}')
         rv = (f'{{ isPublic := {lean_bool(v["isPublic"])}, immutableEnabled := {lean_bool(v["immutableEnabled"])}, '
               f'headSha := {lean_str(v["headSha"])}, releaseTagExists := {lean_bool(v["releaseTagExists"])}, '
               f'tagRefExists := {lean_bool(v["tagRefExists"])} }}')
-        lines.append(f'  ({lean_str(cid)}, {c}, {rv}, Phase.{exp}),')
+        if checked == "self":
+            ck = f"some {c}"
+        elif checked == "other":
+            other = (f'{{ repository := {lean_str(ctx["repository"])}, version := "v9", '
+                     f'commit := {lean_str(ctx["commit"])} }}')
+            ck = f"some {other}"
+        else:
+            ck = "none"
+        st = f'{{ phase := Phase.{start}, checked := {ck} }}'
+        lines.append(f'  ({lean_str(cid)}, {st}, {c}, {rv}, Phase.{exp}),')
     lines.append("]")
     lines.append("")
 

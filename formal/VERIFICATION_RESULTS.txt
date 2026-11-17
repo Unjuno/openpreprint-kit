@@ -1,9 +1,8 @@
-DATE: 2026-11-17 (iteration 2, re-run not reused)
+DATE: 2026-11-18 (iteration 3; fresh re-run)
 LEAN: leanprover/lean4:v4.35.0 (pinned in lean-toolchain)
-
-=== lean build (lake build OpenPreprintFormal.GeneratedVectors) ===
+=== lean build ===
 Build completed successfully (5 jobs).
-=== Lean model eval on shared vectors ===
+=== Lean model eval ===
 RA-01	true	true
 RA-02	true	true
 RA-03	true	true
@@ -23,6 +22,11 @@ ST-05	draft	draft
 ST-06	draft	draft
 ST-07	draft	draft
 ST-08	draft	draft
+ST-09	published	published
+ST-10	verified	verified
+ST-11	published	published
+ST-12	verified	verified
+ST-13	verified	verified
 EB-01	true	true
 EB-02	false	false
 EB-03	false	false
@@ -52,6 +56,11 @@ ST-05	python=draft	lean=draft	MATCH
 ST-06	python=draft	lean=draft	MATCH
 ST-07	python=draft	lean=draft	MATCH
 ST-08	python=draft	lean=draft	MATCH
+ST-09	python=published	lean=published	MATCH
+ST-10	python=verified	lean=verified	MATCH
+ST-11	python=published	lean=published	MATCH
+ST-12	python=verified	lean=verified	MATCH
+ST-13	python=verified	lean=verified	MATCH
 EB-01	python=true	lean=true	MATCH
 EB-02	python=false	lean=false	MATCH
 EB-03	python=false	lean=false	MATCH
@@ -62,4 +71,4 @@ CL-01	python=true	lean=true	MATCH
 CL-02	python=false	lean=false	MATCH
 CL-03	python=false	lean=false	MATCH
 
-28/28 vectors agree across Python and Lean
+33/33 vectors agree across Python and Lean

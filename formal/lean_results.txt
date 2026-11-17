@@ -17,6 +17,11 @@ ST-05	draft	draft
 ST-06	draft	draft
 ST-07	draft	draft
 ST-08	draft	draft
+ST-09	published	published
+ST-10	verified	verified
+ST-11	published	published
+ST-12	verified	verified
+ST-13	verified	verified
 EB-01	true	true
 EB-02	false	false
 EB-03	false	false

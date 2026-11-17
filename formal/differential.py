@@ -83,9 +83,12 @@ def release_verdict(case):
 
 
 def state_verdict(case):
-    """Calls PRODUCTION preflight.preflight() with an injected read-only
-    GitHub GET. A PASS maps to the 'verified' model phase."""
-    _, ctx, view, _ = case
+    """Calls PRODUCTION preflight.preflight() with an injected read-only GitHub
+    GET, then applies the production publish-transition ordering from
+    publish_manuscript.execute(): a verified context must still match the
+    pinned identity and the gates must still pass before promotion. Published
+    is terminal."""
+    _, ctx, view, start, checked, _ = case
     version = ctx["version"]
 
     def get(path):
@@ -103,12 +106,18 @@ def state_verdict(case):
     old_sleep = preflight.time.sleep
     preflight.time.sleep = lambda _seconds: None
     try:
-        result = preflight.preflight(ctx["repository"], version, ctx["commit"], get)
-    except ValueError:
-        return "draft"
+        try:
+            result = preflight.preflight(ctx["repository"], version, ctx["commit"], get)
+            pf = result["status"] == "PASS"
+        except ValueError:
+            pf = False
     finally:
         preflight.time.sleep = old_sleep
-    return "verified" if result["status"] == "PASS" else "draft"
+    if start == "draft":
+        return "verified" if pf else "draft"
+    if start == "published":
+        return "published"
+    return "published" if (checked == "self" and pf) else "verified"
 
 
 def evidence_verdict(case):

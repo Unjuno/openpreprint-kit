@@ -16,7 +16,7 @@ python differential.py
 ```
 
 `VERIFICATION_RESULTS.txt` は 2026-11-17 の実測出力をそのまま保存したもの。
-`lean_results.txt` は `#eval` の出力、28/28 ベクトルが Python と一致。
+`lean_results.txt` は `#eval` の出力、33/33 ベクトルが Python と一致。
 
 ## モデル化した3領域
 
@@ -28,6 +28,10 @@ python differential.py
 
 `GeneratedVectors.lean` は `vectors.py` が `vectors.json` から自動生成する (手編集禁止)。
 `ModelEval.lean` は同じベクトルを Lean モデルで評価して `lean_results.txt` を出す。
+状態遷移ベクトルは draft→verified に加え、verified→published (ST-09)、強制更新によるブロック (ST-10)、
+published 終端 (ST-11)、checked 不一致 (ST-12)、checked 欠落 (ST-13) を含む。
+Python 側は本番 `preflight.preflight()` を呼び、公開遷移は `publish_manuscript.execute()` の
+検証順序を純粋入力へ再表現したアダプタで照合する。
 
 ## Lean カーネルが検査した定理
 
@@ -77,6 +81,7 @@ python differential.py
 
 ### 未証明 / 未達
 - 暗号安全性 (証明していない。assumption としても置いていない)
-- 本番 Python と Lean モデルの全入力領域での等価性 (28ベクトル + Hypothesis 7性質による部分確認のみ)
+- 本番 Python と Lean モデルの全入力領域での等価性 (33ベクトル + Hypothesis 7性質による部分確認のみ)
 - G4 / G5 / G7 の独立人間による検証 (本モジュールは代替しない)
+
 
