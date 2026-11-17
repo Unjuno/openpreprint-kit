@@ -26,8 +26,8 @@
 
 | 試験 | 結果 | 証拠 |
 |---|---|---|
-| 全 unittest (修正後) | **399 試験 / 15 skip / OK** (再実行)、`PYTHONUTF8` 未設定) | ローカル実行ログ |
-| 新規回帰試験 | 14/14 PASS (AUD-01〜13、AUD-11にマージ改変ケースを含む) | `tests/test_hardening_regressions.py`, `tests/test_hardening_regressions_iter3.py` |
+| 全 unittest (修正後) | **403 試験 / 15 skip / OK** (再実行)、`PYTHONUTF8` 未設定) | ローカル実行ログ |
+| 新規回帰試験 | 18/18 PASS (AUD-01〜17、AUD-11にマージ改変ケースを含む) | `tests/test_hardening_regressions.py`, `tests/test_hardening_regressions_iter3.py`, `tests/test_hardening_regressions_iter4.py` |
 | Hypothesis 特性 | 7/7 PASS (100–150 examples each) | `tests/test_hypothesis_properties.py` |
 | Python vs Lean 差分 | **33/33 MATCH** | `formal/VERIFICATION_RESULTS.txt`, `formal/lean_results.txt` |
 | Lean ビルド | `Build completed successfully` (6 jobs)、`sorry/admit/axiom` なし | 同上 |
@@ -45,7 +45,7 @@
 ### 異常系
 
 既存20件の否定ケース (改変・誤CA・nonce不一致・失効TSA・古いCRL・ZIPtraversal・重複member・symlink等) は維持・誤受理0。
-加えて AUD-01〜13 の再現13件と Hypothesis 7性質を追加。
+加えて AUD-01〜17 の再現17件と Hypothesis 7性質を追加。
 
 ## 4. Lean で証明した性質 / 未証明
 
@@ -58,9 +58,9 @@
 
 | ゲート | 判定 | 根拠 |
 |---|---|---|
-| TQ-1 修復済み欠陥の回帰 | **PASS** | 14/14 回帰試験 PASS (AUD-10〜13 の履歴ガード誤PASS・パス回避を含む) |
+| TQ-1 修復済み欠陥の回帰 | **PASS** | 18/18 回帰試験 PASS (AUD-10〜17 の履歴ガード誤PASS・パス回避を含む) |
 | TQ-2 未解決重大・高リスク欠陥 | **PASS** | 0件 (監査 §5) |
-| TQ-3 全試験成功 | **PASS** | 399/399 (15 skip は環境ゲート) |
+| TQ-3 全試験成功 | **PASS** | 403/403 (15 skip は環境ゲート) |
 | TQ-4 形式検証のカーネル検査 | **PASS** | Lean 4.35.0 ビルド成功、sorry/admit/axiom なし |
 | TQ-5 Python-Lean 対応 | **PASS** | 33/33 ベクトル一致 (verified→published 遷移を含む) |
 | TQ-6 リポジトリ台帳の作成 | **PASS** | REPOSITORY_MAP.md |
@@ -91,6 +91,12 @@
 | `scripts/publish_manuscript.py` | `b2c9eb1fdfd8fd128c5f68899b464d5c9d8f51d258621dd13f7d0e5c38143c06` |
 | `scripts/owner_setup.py` | `631948ef43775a481b19b44835b30d2b37d4afad79d8d6b208db4ad87a31f145` |
 | `scripts/research_package.py` | `dfd9e8778406e4bac5b39bcf810d4618fe9c096e47b8dbe77141ba73634d0316` |
+| `scripts/validate.py` | `7af553deb20ee66fd620875425f55603f1413c1e9b8025f10e58c5511bd78add` |
+| `scripts/prepare_release.py` | `92ec64adc714699b2e39b0bab7dd1d295226a98c2291467cce837bb24c115e25` |
+| `scripts/pdf_validation.py` | `d84e7d83c27935cc83e45a260fa365acf083889173d5ae3775490809572ed9ba` |
+| `scripts/private_seal.py` | `cba152d68f2f56db84a7c14090f2d611be50f41cc9a4e5a72520feaae4e3ad79` |
+| `tests/test_hardening_regressions_iter4.py` | `7d2fc454853656489b30cd01a18943fd8dae77fae07785aa792f6695e699c2f2` |
+| `docs/TECHNICAL_AUDIT_2026-11-18-CYCLE4.md` | `58263fe708b25e7af8627689def2a044a46c38435afd1236f2e09b4853863bb2` |
 | `scripts/commitment_history.py` | `841cf2b6a55a8f39dfc690c4c76efdff44cbeb7ca1f36a1440a7f13bfae1dabc` |
 | `scripts/research_record.py` | `3da86eea83d660fd7f410041446d092fc535645c7de4e5b047d8346d2290676e` |
 | `scripts/first_paper_selftest.py` | `1ac9d884444e0f69cad10b96cc0ffd368b858184bbff91353ab69b761d50f287` |
@@ -141,10 +147,10 @@
 |---|---|---|---|
 | 1 | CI での Hypothesis 実行 — **完了** | 旧CIは test-only 依存が無く7特性がskip。Hypothesis 6.170.15 は **Python >=3.11 必須** | 3.12ジョブのみ hash固定lockを導入。run `44109219645` の validate(3.12) で **7特性すべて ok / 394 tests / OK(skipped=3)**、validate(3.10) は7件を正しくskip。Quality/CodeQL も success (`44109219720` 他) |
 | 2 | 旧 FAIL の履歴保持 | run `44028158017` / `44028158061` は AUD-09 修正前の FAIL。削除せず記録済み | 修正後 run `0efeada` 以降の全 success と併せて台帳に残す（完了） |
-| 3 | macOS の検証 — **UNKNOWN** | run `44116478457` の `portable-smoke (macos-15)` が `queued` のまま（ランナー未提供）。同 run の Ubuntu/Windows は success | macOS runner で `portable-first-paper.yml` が完了し、原ログと結果を記録する |
+| 3 | macOS の検証 — portable smoke **PASS** / 全 unittest は **UNKNOWN** | 旧 run `44116478457` の macos-15 は queued→cancelled。最新 run `44119821885` で `portable-smoke (macos-15)` が **success**（Ubuntu/Windows も success）。ただし全 unittest は Ubuntu/Windows のみ設定 | macOS で全 unittest（399件）を実行する workflow を追加し、結果と SKIP 内訳を記録する（設定変更は PR #51 で提案） |
 | 4 | G4 / G5 / G7 の独立検証 | 外部の独立人間が必要。AI 自己検証は不可 | 独立観測者・保管者・監査者の選任と署名入り証拠が揃う（所有者の手配が必要） |
 
-コードは SHA `2a8e144` で Validate・Quality・CodeQL・selftest が success（Ubuntu/Windows）。macOS は優先度3が未完了のため UNKNOWN。
+コードは SHA `2a8e144` で Validate・Quality・CodeQL・selftest が success（Ubuntu/Windows）。SHA `30a1756` では portable smoke が macOS/Ubuntu/Windows の3OSすべて success（run `44119821885`）。macOS の全 unittest は未設定のため UNKNOWN。
 次回の最優先は優先度4のG4/G5/G7（所有者による独立検証者の選任）。変更は引き続き PR #51 で提案し、固定 main への統合は所有者の承認を待つ。
 
 
