@@ -96,6 +96,7 @@
 | `scripts/pdf_validation.py` | `d84e7d83c27935cc83e45a260fa365acf083889173d5ae3775490809572ed9ba` |
 | `scripts/private_seal.py` | `cba152d68f2f56db84a7c14090f2d611be50f41cc9a4e5a72520feaae4e3ad79` |
 | `tests/test_hardening_regressions_iter4.py` | `7d2fc454853656489b30cd01a18943fd8dae77fae07785aa792f6695e699c2f2` |
+| `docs/TECHNICAL_AUDIT_2026-11-18-CYCLE5.md` | `83ad3e2650aced33478d644a3ecb0e3acfb3e5e451fd16313744500be2e71bcd` |
 | `docs/TECHNICAL_AUDIT_2026-11-18-CYCLE4.md` | `58263fe708b25e7af8627689def2a044a46c38435afd1236f2e09b4853863bb2` |
 | `scripts/commitment_history.py` | `841cf2b6a55a8f39dfc690c4c76efdff44cbeb7ca1f36a1440a7f13bfae1dabc` |
 | `scripts/research_record.py` | `3da86eea83d660fd7f410041446d092fc535645c7de4e5b047d8346d2290676e` |
@@ -147,10 +148,10 @@
 |---|---|---|---|
 | 1 | CI での Hypothesis 実行 — **完了** | 旧CIは test-only 依存が無く7特性がskip。Hypothesis 6.170.15 は **Python >=3.11 必須** | 3.12ジョブのみ hash固定lockを導入。run `44109219645` の validate(3.12) で **7特性すべて ok / 394 tests / OK(skipped=3)**、validate(3.10) は7件を正しくskip。Quality/CodeQL も success (`44109219720` 他) |
 | 2 | 旧 FAIL の履歴保持 | run `44028158017` / `44028158061` は AUD-09 修正前の FAIL。削除せず記録済み | 修正後 run `0efeada` 以降の全 success と併せて台帳に残す（完了） |
-| 3 | macOS の検証 — **UNKNOWN（ランナー不安定）** | run `44116478457` は queued→cancelled、run `44119821885` は macos-15 **success**、最新コードSHA `e3c5f68` の run `44122897522` では再び **cancelled**。全 unittest は Ubuntu/Windows のみ設定 | macOS runner で最新SHAの portable smoke と全 unittest（403件）を安定して完了させ、原ログを記録する。完了まで UNKNOWN のまま |
+| 3 | macOS portable smoke — **PASS** / 全 unittest — **UNKNOWN** | 最新 head `4b777a8` の run `44126039717` で `portable-smoke (macos-15)` が success（ubuntu/windows も success）。ただし全 unittest は Ubuntu/Windows のみ設定 | macOS で全 unittest（403件）を実行する workflow を追加し、結果と SKIP 内訳を記録する（PR #51 で提案） |
 | 4 | G4 / G5 / G7 の独立検証 | 外部の独立人間が必要。AI 自己検証は不可 | 独立観測者・保管者・監査者の選任と署名入り証拠が揃う（所有者の手配が必要） |
 
-コードは SHA `e3c5f68` で Validate・Quality・CodeQL・selftest が success（Ubuntu/Windows）。macOS portable smoke は SHA `30a1756` で success を観測したが、最新SHA `e3c5f68` では cancelled（run `44122897522`）。再現性がないため macOS は UNKNOWN。macOS の全 unittest は未設定。
+最新 head `4b777a8` で CI 全5ワークフロー success。macOS portable smoke も success（run `44126039717`）。macOS の全 unittest は未設定のため UNKNOWN。過去に cancelled/queued を観測した run（`44116478457`, `44122897522`）は履歴として保持。
 次回の最優先は優先度4のG4/G5/G7（所有者による独立検証者の選任）。変更は引き続き PR #51 で提案し、固定 main への統合は所有者の承認を待つ。
 
 

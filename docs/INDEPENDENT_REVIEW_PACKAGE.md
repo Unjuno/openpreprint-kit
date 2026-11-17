@@ -42,7 +42,7 @@
 - [ ] G5: 別管理ミラーURL、台帳/ハッシュの別経路保管、GitHub非接続4版復元ログを確認。
 - [ ] G6: ライセンス/公開同意/COI、実人間のレビュー1件・訂正演習・撤回演習を確認。
 - [ ] G7: 固定SHAへの外部監査報告、失効/CA更新/復旧の実測、責任者と継続点検手順を確認。
-- [ ] 未検証OS（macOS）の扱い: run `44116478457` の macos-15 job は `cancelled` → **UNKNOWN**。macOS runner で再実行するまで PASS にしない。
+- [ ] 未検証OS（macOS）の扱い: portable smoke は最新 run `44126039717` で macos-15 success。ただし全 unittest は Ubuntu/Windows のみ → **UNKNOWN**。macOS で全 unittest が成功するまで PASS にしない。過去の cancelled run `44116478457`, `44122897522` は履歴として保持。
 
 ## 4. 証拠の記録形式（各ゲート）
 
@@ -57,5 +57,5 @@ V1_ACCEPTANCE §5 に従い次を記録: `gate_id`, 対象repo/tag/commit, 実�
 
 ## 6. 現状（2026-11-18）
 
-独立レビューは**未実施**。全ゲートの reviewer 欄は空。macOS は UNKNOWN。
+独立レビューは**未実施**。全ゲートの reviewer 欄は空。macOS portable smoke は PASS だが全 unittest は UNKNOWN。
 したがって本パッケージは「提出準備完了」を意味し、「受入完了」を意味しない。
