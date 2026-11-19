@@ -18,6 +18,14 @@ class OperationGuardTests(unittest.TestCase):
     def test_all_workflow_timeouts_are_bounded(self):
         for path in (ROOT/'.github/workflows').glob('*.yml'):
             doc=yaml.load(path.read_text(encoding='utf-8'),Loader=yaml.BaseLoader)
-            for job in doc['jobs'].values():
-                self.assertLessEqual(int(job['timeout-minutes']),15)
+            for job_name, job in doc['jobs'].items():
+                # Only the read-only TeX self-application can exceed 15 minutes:
+                # cold Ubuntu apt mirrors exceeded 15 minutes before PDF testing.
+                limit = 30 if (path.name, job_name) == (
+                    'first-paper-selftest.yml', 'self-application'
+                ) else 15
+                self.assertLessEqual(
+                    int(job['timeout-minutes']), limit,
+                    f'{path.name}/{job_name}: timeout exceeds {limit} min'
+                )
 
