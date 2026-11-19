@@ -45,29 +45,70 @@ def _normalize_windows_path(path: str) -> str:
     return lowered
 
 
+def _win32_api():
+    """Return kernel32 with pointer-safe ctypes signatures.
+
+    ctypes defaults every restype to ``c_long``. On 64-bit Windows that
+    truncates a HANDLE and makes ``INVALID_HANDLE_VALUE`` (2**64-1) compare
+    unequal to the ``-1`` returned by a failed CreateFileW. Declare every
+    signature explicitly so a failed open is detected before any handle is
+    used, on both 32- and 64-bit runners.
+    """
+    import ctypes
+    from ctypes import wintypes
+
+    k32 = ctypes.WinDLL('kernel32', use_last_error=True)
+    k32.CreateFileW.argtypes = [
+        wintypes.LPCWSTR, wintypes.DWORD, wintypes.DWORD, wintypes.LPVOID,
+        wintypes.DWORD, wintypes.DWORD, wintypes.HANDLE,
+    ]
+    k32.CreateFileW.restype = wintypes.HANDLE
+    k32.GetFinalPathNameByHandleW.argtypes = [
+        wintypes.HANDLE, wintypes.LPWSTR, wintypes.DWORD, wintypes.DWORD,
+    ]
+    k32.GetFinalPathNameByHandleW.restype = wintypes.DWORD
+    k32.ReadFile.argtypes = [
+        wintypes.HANDLE, wintypes.LPVOID, wintypes.DWORD,
+        ctypes.POINTER(wintypes.DWORD), wintypes.LPVOID,
+    ]
+    k32.ReadFile.restype = wintypes.BOOL
+    k32.CloseHandle.argtypes = [wintypes.HANDLE]
+    k32.CloseHandle.restype = wintypes.BOOL
+    return k32
+
+
 def _windows_read(root: Path, rel: str, max_bytes: int) -> bytes:
     import ctypes
     from ctypes import wintypes
 
     target = (root / rel.replace('/', '\\')).absolute()
     root_real = _normalize_windows_path(str(root.resolve()))
-    k32 = ctypes.WinDLL('kernel32', use_last_error=True)
+    k32 = _win32_api()
     GENERIC_READ = 0x80000000
-    FILE_SHARE_READ = FILE_SHARE_WRITE = FILE_SHARE_DELETE = 0x1 | 0x2 | 0x4
+    FILE_SHARE_READ = 0x00000001
+    FILE_SHARE_WRITE = 0x00000002
+    FILE_SHARE_DELETE = 0x00000004
     OPEN_EXISTING = 3
     FILE_ATTRIBUTE_NORMAL = 0x80
-    FILE_FLAG_BACKUP_SEMANTICS = 0x02000000
 
-    handle = k32.CreateFileW(str(target), GENERIC_READ,
-                             FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,
-                             None, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, None)
-    if handle == wintypes.HANDLE(-1).value:
-        raise OSError(ctypes.get_last_error(), 'open failed: ' + rel)
+    handle = k32.CreateFileW(
+        str(target), GENERIC_READ,
+        FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,
+        None, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, None,
+    )
+    # A NULL handle and INVALID_HANDLE_VALUE are both failures. With an
+    # explicit HANDLE restype ctypes returns INVALID_HANDLE_VALUE as a
+    # pointer-width integer, so this comparison is correct on x86 and x64.
+    if handle is None or handle in (0, wintypes.HANDLE(-1).value):
+        raise ctypes.WinError(ctypes.get_last_error(), 'open failed: ' + rel)
     try:
         buf = ctypes.create_unicode_buffer(32768)
-        n = k32.GetFinalPathNameByHandleW(handle, buf, 32768, 0x0)  # 0 = normalized
-        if n == 0:
-            raise _escape_report(rel)
+        n = k32.GetFinalPathNameByHandleW(handle, buf, len(buf), 0x0)  # normalized
+        if n == 0 or n >= len(buf):
+            # The handle is valid but its final path cannot be proven within
+            # the buffer: fail closed instead of trusting a truncated path.
+            raise ctypes.WinError(ctypes.get_last_error(),
+                                  'final path resolution failed: ' + rel)
         final = _normalize_windows_path(buf.value)
         if not final.startswith(root_real + '\\') and final != root_real:
             raise _escape_report(rel)
@@ -78,11 +119,13 @@ def _windows_read(root: Path, rel: str, max_bytes: int) -> bytes:
         chunk = ctypes.create_string_buffer(65536)
         read = wintypes.DWORD()
         while True:
-            ok = k32.ReadFile(handle, chunk, 65536, ctypes.byref(read), None)
+            ok = k32.ReadFile(handle, chunk, len(chunk), ctypes.byref(read), None)
             if not ok:
-                raise OSError('read failed: ' + rel)
-            if read.value == 0:
+                raise ctypes.WinError(ctypes.get_last_error(), 'read failed: ' + rel)
+            if read.value == 0:  # EOF (or a short read at the end of the file)
                 break
+            if read.value > len(chunk):
+                raise ValueError('invalid ReadFile byte count: ' + rel)
             data += chunk.raw[:read.value]
             if len(data) > max_bytes:
                 raise ValueError('research file exceeds the permitted byte limit: ' + rel)

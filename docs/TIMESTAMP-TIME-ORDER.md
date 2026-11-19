@@ -30,3 +30,24 @@
 - ステップごとに別 policy を適用する場合は増加のみ受け入れる
 - チェーンの terminal digest は out-of-band に保持し、チェーン自体から導出しない
 - チェーンは GitHub Release などの不変媒体に配置し、毎回匿名再取得で照合する
+
+
+## 元証拠 → 最初の更新ステップの関係（2026-11-19 追加）
+
+`verify_chain()` は元の preservation ZIP に含まれる existence stamp の
+`tsa_time_utc` / `accuracy_microseconds` / `policy_oid` を `origin_existence_stamp` として
+検証結果に含め、最初の更新ステップとの関係を `_check_origin_to_first_renewal()` で評価する。
+
+| 状況 | 判定 | 根拠 |
+|---|---|---|
+| 更新時刻が元証拠時刻より combined accuracy を超えて前 | 拒否 | 前方延長ではないため証拠の誤受理 |
+| 同一 policy OID で同一時刻／accuracy 内のわずかな逆転 | `NON_DECREASING_SAME_TSA_POLICY_FROM_ORIGIN` | 同一 TSA の非減少ルールを踏襲 |
+| 同一 policy OID で明確に後 | `FORWARD_SAME_TSA_POLICY_FROM_ORIGIN` | 同一 TSA の時刻で前方 |
+| 異なる policy OID（別 TSA）で同等／重複 | `CROSS_TSA_ORDER_NOT_PROVEN_CLOCK_SKEW` | 別 TSA の時計差は証明できないため不確実性を明示 |
+
+`time_order_note` には「RFC 3161 の署名時刻はダイジェスト存在の境界を示すだけで、
+提出順序や初公開時刻を証明しない」旨を必ず記録する。
+`historical_ltv` / `first_publication` は従来どおり `NOT_ESTABLISHED` / `NOT_PROVEN` を維持する。
+
+`issue_chain()` は出力の確定前に `verify_chain()` を呼ぶため、
+元証拠より前の更新ステップは発行段階でも拒否される。

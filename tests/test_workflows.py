@@ -66,6 +66,16 @@ class WorkflowTests(unittest.TestCase):
                     if "run" in step:
                         self.assertNotIn("${{", step["run"])
 
+    def test_lean_installer_is_version_pinned_and_checksum_verified(self):
+        text = (ROOT / '.github/workflows/lean-proofs.yml').read_text(encoding='utf-8')
+        self.assertNotIn('elan/master/elan-init.sh', text)
+        self.assertRegex(text, r'raw\.githubusercontent\.com/leanprover/elan/v[0-9]+\.[0-9]+\.[0-9]+/elan-init\.sh')
+        self.assertRegex(text, r'sha256sum\s+--check')
+        self.assertRegex(text, r'\b[0-9a-f]{64}\b')
+        self.assertIn('--default-toolchain none', text)
+        self.assertIn('cd formal', text)
+        self.assertRegex(text, r'lean --version \| grep -Fq')
+
     def test_codeql_scans_python_on_pr_push_and_weekly_schedule(self):
         path = ROOT / '.github/workflows/security-codeql.yml'
         self.assertTrue(path.exists(), 'CodeQL security workflow is mandatory')

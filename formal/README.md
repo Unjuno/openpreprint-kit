@@ -85,3 +85,14 @@ Python 側は本番 `preflight.preflight()` を呼び、公開遷移は `publish
 - G4 / G5 / G7 の独立人間による検証 (本モジュールは代替しない)
 
 
+
+
+## CI のツールチェーン供給元固定（2026-11-19）
+
+`lean-proofs.yml` は `elan-init.sh` を `leanprover/elan` の **release tag v4.4.0** から取得し、
+実行前に SHA-256 `a620ff1641616222c8d37c54845492004bb84d6877cdbc944dd65c1aa685bf53` で
+バイト列を検証する。可変の `master` 参照は使用しない。
+インストーラは `--default-toolchain none` で実行し、コンパイラ版は `formal/lean-toolchain`
+（`leanprover/lean4:v4.35.0`）のみを根拠とする。CI は `formal/` 内で
+`lean --version` が `4.35.0` を含むことを再確認し、保存済みの成功ログを再利用せず
+毎回 `lake build`・vector 再生成・Python–Lean 差分試験を実行する。

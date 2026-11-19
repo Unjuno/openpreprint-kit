@@ -207,6 +207,58 @@ class ResearchBundleTests(unittest.TestCase):
             if not (self.root / 'data').exists():
                 (target / 'data-moved').rename(original)
 
+    def test_safe_read_returns_multi_chunk_file_within_limit(self):
+        # Forces several ReadFile/os.read iterations (chunk size is 65536).
+        rp = self._import_rp()
+        target = self.root / 'data' / 'large.bin'
+        payload = bytes(range(256)) * 300  # 76800 bytes
+        target.write_bytes(payload)
+        self.assertEqual(rp.safe_read_bytes(self.root, 'data/large.bin',
+                                            len(payload)), payload)
+
+    def test_safe_read_rejects_file_over_limit(self):
+        rp = self._import_rp()
+        target = self.root / 'data' / 'limited.bin'
+        target.write_bytes(b'x' * 2048)
+        with self.assertRaisesRegex(ValueError, 'byte limit'):
+            rp.safe_read_bytes(self.root, 'data/limited.bin', 1024)
+
+    def test_win32_api_declares_pointer_safe_signatures(self):
+        # A bare ctypes.WinDLL() defaults every restype to c_long (32-bit).
+        # On 64-bit Windows that truncates HANDLE values and makes the
+        # INVALID_HANDLE_VALUE comparison compare -1 against 2**64-1.
+        # Guarding the declarations themselves turns that silent mismatch
+        # into a deterministic test failure on every Windows runner.
+        if sys.platform != 'win32':
+            self.skipTest('Win32 handle declarations are Windows-specific')
+        import ctypes
+        from ctypes import wintypes
+        rp = self._import_rp()
+        api = rp._win32_api()
+        self.assertIs(api.CreateFileW.restype, wintypes.HANDLE)
+        self.assertEqual(api.CreateFileW.argtypes[0], wintypes.LPCWSTR)
+        self.assertEqual(api.CreateFileW.argtypes[3], wintypes.LPVOID)
+        self.assertIs(api.GetFinalPathNameByHandleW.restype, wintypes.DWORD)
+        self.assertEqual(api.GetFinalPathNameByHandleW.argtypes[0], wintypes.HANDLE)
+        self.assertIs(api.ReadFile.restype, wintypes.BOOL)
+        self.assertEqual(api.ReadFile.argtypes[0], wintypes.HANDLE)
+        self.assertEqual(api.ReadFile.argtypes[3],
+                         ctypes.POINTER(wintypes.DWORD))
+        self.assertEqual(api.CloseHandle.argtypes, [wintypes.HANDLE])
+        self.assertIs(api.CloseHandle.restype, wintypes.BOOL)
+
+    def test_win32_missing_file_reports_open_failure_not_containment(self):
+        # Before the pointer-safe fix, CreateFileW returned -1 (c_long), the
+        # invalid-handle check missed it, and the resulting ERROR_INVALID_HANDLE
+        # from GetFinalPathNameByHandleW was misreported as a containment
+        # escape. Missing files must be reported as open failures.
+        if sys.platform != 'win32':
+            self.skipTest('Win32 handle behavior is Windows-specific')
+        rp = self._import_rp()
+        with self.assertRaises(OSError) as caught:
+            rp._windows_read(self.root, 'data/does-not-exist.csv', 1024)
+        self.assertIn('open failed', str(caught.exception))
+
     def test_forged_tar_member_rejected_even_after_manifest_rehash(self):
         # Rehashing outer checksums cannot make an extra undeclared TAR member valid.
         self.make_bundle()
