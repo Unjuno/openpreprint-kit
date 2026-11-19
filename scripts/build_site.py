@@ -79,9 +79,39 @@ def build_site(bundle: Path, root: Path, output: Path, repository: str) -> None:
         if replacement:
             url = f'https://github.com/{repository}/releases/tag/{replacement["version"]}'
             replacement_html = f'<p>Replacement record: <a href="{escape(url, quote=True)}">{escape(replacement["version"])}</a> — PDF SHA-256 <code>{replacement["paper_sha256"]}</code>. Publication of that link is not verified here.</p>'
+        round_issue = event.get('round_issue')
+        round_html = (f'<p>Review round: <a href="{escape(round_issue, quote=True)}">{escape(round_issue)}</a></p>'
+                      if round_issue else '')
+        decision = event.get('decision')
+        decision_html = f'<p>Declared editorial decision: <strong>{escape(decision)}</strong></p>' if decision else ''
         notices.append(f'<article><h3>{escape(event["kind"])}</h3><p>{escape(event["summary"])}</p>'
                        f'<p>Claimed actor: {escape(event["actor"])} · Claimed UTC: {escape(event["recorded_at"])}</p>'
-                       f'<p>Declared conflicts: {escape(event["conflicts"])}</p>{replacement_html}{"".join(reports)}</article>')
+                       f'<p>Declared conflicts: {escape(event["conflicts"])}</p>{decision_html}{round_html}{replacement_html}{"".join(reports)}</article>')
+    research_section = ''
+    if (bundle / 'research-assets.json').is_file():
+        catalog = json.loads((bundle / 'research-assets.json').read_text('utf-8'), object_pairs_hook=unique_object)
+        published = [item for item in catalog['entries'] if item['role'] != 'private_commitment']
+        private_count = sum(1 for item in catalog['entries'] if item['role'] == 'private_commitment')
+        public_rows = ''.join(
+            '<li><code>' + escape(item['path']) + '</code> (' + escape(item['role']) + ') — '
+            + escape(item['description']) + '; license: ' + escape(item['license'])
+            + '; SHA-256: <code>' + escape(item['sha256']) + '</code></li>'
+            for item in published
+        )
+        relation_rows = ''.join(
+            '<li>' + escape(item['source']) + ' — ' + escape(item['kind']) + ' → '
+            + escape(item['target']) + '</li>'
+            for item in catalog['relations']
+        )
+        research_section = (
+            '<h2>Research data and reproducibility</h2>'
+            '<p>Public data and scripts are distributed in <a href="assets/research-assets.tar" download>research-assets.tar</a>.'
+            ' Each file hash is bound to this version’s manifest. Relationships are author-declared, not independently reproduced.</p>'
+            + ('<ul>' + public_rows + '</ul>' if published else '<p>No public research data or analysis files were declared.</p>')
+            + ('<h3>Declared relationships</h3><ul>' + relation_rows + '</ul>' if relation_rows else '')
+            + '<p>Private commitment receipts: ' + str(private_count) + '. The underlying confidential records and HMAC keys'
+            ' are NEVER included; a key and the original are needed for selective verification.</p>'
+        )
     title = escape(metadata['title'])
     html = f'''<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
@@ -96,7 +126,7 @@ def build_site(bundle: Path, root: Path, output: Path, repository: str) -> None:
 <main><h2>Abstract</h2><p>{escape(metadata['abstract'])}</p>
 <p>Paper license: {escape(metadata['license'])}. This is separate from the toolkit software license.</p>
 <p><a href="assets/paper.pdf" download>Download this version's PDF</a> · <a href="{release}">Version-specific GitHub Release</a></p>
-<h2>Integrity and time evidence</h2><p>PDF SHA-256: <code>{digest}</code></p>
+{research_section}<h2>Integrity and time evidence</h2><p>PDF SHA-256: <code>{digest}</code></p>
 <p>Bundled checksums matched when this page was built; authenticity requires a separately trusted source.</p>
 <p>Timestamp status: <strong>NOT_VERIFIED</strong> by this page. Downloaded timestamp files, if listed, must be verified with an independently selected CA/CRL policy. General public availability time and authorship are not proven.</p>
 <ul>{rows}</ul><h2>Review and post-publication notices</h2>

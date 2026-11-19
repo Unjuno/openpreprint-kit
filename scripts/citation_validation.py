@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Independently validate generated CFF 1.2.0 and BibTeX publication assets.
 
-Require cffconvert==2.0.0 (CLI) and bibtexparser==1.4.3. Metadata truth,
+Require cffconvert==2.0.0 (CLI) and bibtexparser==2.1.0. Metadata truth,
 authorship, and peer review are outside this syntax/schema validation.
 """
 from __future__ import annotations
@@ -9,10 +9,13 @@ from __future__ import annotations
 import argparse
 import json
 from pathlib import Path
+import shutil
 import subprocess
 import sys
 
 import yaml
+from verify_release import unique_object
+from yaml_strict import safe_load_unique
 
 MAX_CITATION_BYTES = 1024 * 1024
 
@@ -44,14 +47,41 @@ def expected_authors(metadata_authors: object) -> list[dict]:
     return output
 
 
+def _normalize_bib_text(value: str) -> str:
+    """Undo the common BibTeX escapes emitted by prepare_release.py."""
+    text = value.strip()
+    text = text.replace(r"\textbackslash{}", "\\")
+    for token in (r"\{", r"\}", r"\%", r"\&", r"\_", r"\#", r"\$"):
+        text = text.replace(token, token[1])
+    return " ".join(text.split())
+
+
+def cffconvert_binary() -> str:
+    """Prefer the executable installed for this Python, even without venv activation.
+
+    On Windows, a venv's console-script shim lives in Scripts/ while callers
+    may invoke the absolute python.exe without adding Scripts/ to PATH.
+    """
+    python_bin = Path(sys.executable).parent
+    names = ("cffconvert.exe", "cffconvert")
+    for directory in (python_bin, python_bin / "Scripts"):
+        for name in names:
+            candidate = directory / name
+            if candidate.is_file():
+                return str(candidate)
+    # Keep established global-PATH behavior for non-venv consumers.
+    return shutil.which("cffconvert") or "cffconvert"
+
+
 def validate_citations(folder: Path) -> None:
     folder = folder.resolve()
     cff_path = folder / "CITATION.cff"
     bib_path = folder / "citation.bib"
     metadata_path = folder / "preprint-metadata.json"
-    cff = yaml.safe_load(read_text(cff_path))
+    cff = safe_load_unique(read_text(cff_path))
     bib_text = read_text(bib_path)
-    metadata = json.loads(read_text(metadata_path))
+    # Fail closed on ambiguous JSON, as every other verifier in the kit does.
+    metadata = json.loads(read_text(metadata_path), object_pairs_hook=unique_object)
     if not isinstance(cff, dict) or cff.get("cff-version") != "1.2.0":
         raise ValueError("CFF must contain valid version 1.2.0 metadata")
     if not isinstance(metadata, dict):
@@ -65,7 +95,7 @@ def validate_citations(folder: Path) -> None:
         raise ValueError("citation authors do not match the fixed publication metadata")
     try:
         result = subprocess.run(
-            ["cffconvert", "--validate", "-i", str(cff_path)],
+            [cffconvert_binary(), "--validate", "-i", str(cff_path)],
             capture_output=True, text=True, timeout=20, check=False, cwd=folder,
         )
     except (FileNotFoundError, subprocess.TimeoutExpired) as exc:
@@ -77,14 +107,38 @@ def validate_citations(folder: Path) -> None:
     except ImportError as exc:
         raise ValueError("BibTeX independent parser is not installed") from exc
     try:
-        entries = bibtexparser.loads(bib_text).entries
+        # bibtexparser 2.x returns Library and typed Entry/Field objects.
+        # Its parser recovers from malformed blocks; never accept recovered
+        # partial content or duplicate field keys as a publication citation.
+        library = bibtexparser.parse_string(bib_text)
+        if library.failed_blocks:
+            raise ValueError("BibTeX parsing failed (invalid or duplicate block)")
+        entries = library.entries
+        if len(entries) != 1 or entries[0].entry_type.lower() != "misc":
+            raise ValueError("BibTeX must contain exactly one @misc citation entry")
+        fields = entries[0].fields_dict
+        entry = {key: fields[key].value for key in ("title", "author", "note")
+                 if key in fields}
+    except ValueError:
+        raise
     except Exception as exc:
         raise ValueError("BibTeX parsing failed") from exc
-    if len(entries) != 1 or entries[0].get("ENTRYTYPE", "").lower() != "misc":
-        raise ValueError("BibTeX must contain exactly one @misc citation entry")
-    if any(not isinstance(entries[0].get(key), str) or not entries[0][key].strip()
+    if any(not isinstance(entry.get(key), str) or not entry[key].strip()
            for key in ("title", "author", "note")):
         raise ValueError("BibTeX must include title, author and note")
+    # Bind all parsed citation content to the already-validated metadata.
+    # Syntax recovery, duplicate keys and silently substituted metadata fail.
+    if _normalize_bib_text(entry["title"]) != _normalize_bib_text(str(metadata.get("title", ""))):
+        raise ValueError("BibTeX title does not match publication metadata")
+    expected_author = " and ".join(
+        "{" + a["name"] + "}" if "name" in a
+        else str(a.get("family-names", "")) + ", " + str(a.get("given-names", ""))
+        for a in expected_authors(metadata.get("authors"))
+    )
+    if _normalize_bib_text(entry["author"]) != _normalize_bib_text(expected_author):
+        raise ValueError("BibTeX author does not match publication metadata")
+    if str(metadata.get("version", "")) not in entry["note"]:
+        raise ValueError("BibTeX note does not match publication version")
 
 
 def main() -> int:

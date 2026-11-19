@@ -1,0 +1,232 @@
+name: First-paper v1 timestamp (user-approved metadata; no publication)
+
+# Never publish a Release or assert independently verified authorship from this workflow.
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/first-paper-live-timestamp.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: opk-first-paper-public-tsa-v1
+  cancel-in-progress: false
+
+jobs:
+  stamp-v1:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    outputs:
+      archive_sha256: ${{ steps.bind.outputs.archive_sha256 }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: '3.12'
+      - name: Install hash-pinned Python dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pip install --require-hashes -r requirements-build.lock
+          python -m pip install --require-hashes --no-build-isolation -r requirements.lock
+      - name: Install manuscript typesetting dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends pandoc texlive-xetex lmodern texlive-lang-cjk texlive-lang-chinese texlive-fonts-recommended fonts-noto-cjk fonts-liberation fonts-dejavu-core
+      - name: Typeset real first paper and stage only verified v1 submission
+        shell: bash
+        run: |
+          set -euo pipefail
+          export SOURCE_DATE_EPOCH=1794528000
+          pandoc manuscripts/openpreprint-kit/paper.md --from markdown --pdf-engine=xelatex --output "$RUNNER_TEMP/first-paper-v1.pdf"
+          python scripts/first_paper_selftest.py \
+            --manuscript manuscripts/openpreprint-kit \
+            --paper-pdf "$RUNNER_TEMP/first-paper-v1.pdf" \
+            --report "$RUNNER_TEMP/selftest.json" \
+            --export-candidate "$RUNNER_TEMP/v1-candidate-bundle"
+          python scripts/verify_release.py "$RUNNER_TEMP/v1-candidate-bundle"
+      - name: Pin FreeTSA certificate and validate signed current CRL
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/trust"
+          curl --proto '=https' --tlsv1.2 --fail --max-time 45 https://freetsa.org/files/cacert.pem -o "$RUNNER_TEMP/trust/ca.pem"
+          echo '2151b61137ffa86bf664691ba67e7da0b19f98c758e3d228d5d8ebf27e044438' "$RUNNER_TEMP/trust/ca.pem" | sha256sum -c -
+          curl --proto '=https' --tlsv1.2 --fail --max-time 45 https://www.freetsa.org/crl/root_ca.crl -o "$RUNNER_TEMP/trust/crl.pem"
+          openssl crl -in "$RUNNER_TEMP/trust/crl.pem" -noout -verify -CAfile "$RUNNER_TEMP/trust/ca.pem"
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          p=Path(os.environ['RUNNER_TEMP'])/'trust'/'policy.json'
+          p.write_text(json.dumps({
+            'schema_version':1,'tsa_url':'https://freetsa.org/tsr',
+            'ca_file':'ca.pem',
+            'ca_sha256':'2151b61137ffa86bf664691ba67e7da0b19f98c758e3d228d5d8ebf27e044438',
+            'crl_file':'crl.pem','policy_oid':'1.2.3.4.1','timeout_seconds':45
+          },sort_keys=True)+'\n',encoding='utf-8')
+          PY
+      - name: Real TSA stamp and validation of exact research bundle
+        shell: bash
+        run: |
+          set -euo pipefail
+          python scripts/timestamp.py stamp "$RUNNER_TEMP/v1-candidate-bundle" --policy "$RUNNER_TEMP/trust/policy.json" > "$RUNNER_TEMP/v1-timestamp-report.json"
+          python scripts/timestamp.py verify "$RUNNER_TEMP/v1-candidate-bundle" --policy "$RUNNER_TEMP/trust/policy.json"
+          python scripts/preserve.py pack "$RUNNER_TEMP/v1-candidate-bundle" --out "$RUNNER_TEMP/v1-preservation.opk.zip" --policy "$RUNNER_TEMP/trust/policy.json" > "$RUNNER_TEMP/preservation-report.json"
+      - name: Bind verified archive digest to job output
+        id: bind
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import hashlib, json, os
+          from pathlib import Path
+          r=Path(os.environ['RUNNER_TEMP'])
+          selftest=json.loads((r/'selftest.json').read_text('utf-8'))
+          tsa=json.loads((r/'v1-timestamp-report.json').read_text('utf-8'))
+          preservation=json.loads((r/'preservation-report.json').read_text('utf-8'))
+          assert selftest['verdict']=='PASS' and selftest['scope']=='LOCAL_SELF_APPLICATION_ONLY'
+          assert selftest['unapproved_draft_rejected'] and selftest['provisional_bundle_exported']
+          assert selftest['approved_version']=='v1' and selftest['approved_license']=='CC-BY-4.0'
+          assert selftest['author_display_name']=='Unjuno'
+          for name in ('author_approved','license_granted'):
+              assert selftest[name] is True, name
+          for name in ('timestamp_verified','release_published','independent_witness'):
+              assert selftest[name] is False, name
+          assert tsa['status']=='VERIFIED' and tsa['manifest_sha256']==selftest['manifest_sha256']
+          assert preservation['status']=='PASS' and preservation['timestamp']=='VERIFIED'
+          archive=r/'v1-preservation.opk.zip'
+          sha=hashlib.sha256(archive.read_bytes()).hexdigest()
+          assert sha==preservation['archive_sha256']
+          receipt={
+           'schema_version':1,'scope':'APPROVED_MANUSCRIPT_EXISTENCE_ONLY',
+           'source_commit':os.environ['GITHUB_SHA'],'paper_sha256':selftest['paper_pdf_sha256'],
+           'manifest_sha256':selftest['manifest_sha256'],'archive_sha256':sha,
+           'tsa_time_utc':tsa['tsa_time_utc'],'tsa_accuracy_microseconds':tsa['accuracy_microseconds'],
+           'license_granted':True,'author_approved':True,'paper_release_published':False,
+           'license':'CC-BY-4.0','display_author':'Unjuno',
+           'approval_basis':'USER_CONFIRMED_NOT_ID_VERIFIED',
+           'public_availability':'NOT_PROVEN','independent_witness':False,
+           'independent_security_audit':False,'authorship':'NOT_PROVEN',
+           'first_publication':'NOT_PROVEN',
+           'retention':'GITHUB_ACTIONS_ARTIFACT_14_DAYS_NOT_PERMANENT'
+          }
+          (r/'v1-existence-receipt.json').write_text(json.dumps(receipt,indent=2,sort_keys=True)+'\n',encoding='utf-8')
+          with open(os.environ['GITHUB_OUTPUT'],'a',encoding='utf-8') as output:
+              output.write('archive_sha256='+sha+'\n')
+          print('PASS: external TSA proved approved-metadata v1 evidence existence; NO PAPER RELEASE WAS PUBLISHED')
+          PY
+      - name: Retain v1 proof for 14 days, including failed-run diagnostics
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: first-paper-v1-live-tsa
+          path: |
+            ${{ runner.temp }}/first-paper-v1.pdf
+            ${{ runner.temp }}/selftest.json
+            ${{ runner.temp }}/v1-timestamp-report.json
+            ${{ runner.temp }}/preservation-report.json
+            ${{ runner.temp }}/v1-preservation.opk.zip
+            ${{ runner.temp }}/v1-existence-receipt.json
+          if-no-files-found: warn
+          retention-days: 14
+
+  fresh-verify:
+    needs: [stamp-v1]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    env:
+      EXPECTED_ARCHIVE_SHA256: ${{ needs.stamp-v1.outputs.archive_sha256 }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: '3.12'
+      - name: Independently install hash-pinned verifier
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pip install --require-hashes -r requirements-build.lock
+          python -m pip install --require-hashes --no-build-isolation -r requirements.lock
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: first-paper-v1-live-tsa
+          path: ${{ runner.temp }}/received
+      - name: Independently fetch FreeTSA CA and fresh signed CRL
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/trust"
+          curl --proto '=https' --tlsv1.2 --fail --max-time 45 https://freetsa.org/files/cacert.pem -o "$RUNNER_TEMP/trust/ca.pem"
+          echo '2151b61137ffa86bf664691ba67e7da0b19f98c758e3d228d5d8ebf27e044438' "$RUNNER_TEMP/trust/ca.pem" | sha256sum -c -
+          curl --proto '=https' --tlsv1.2 --fail --max-time 45 https://www.freetsa.org/crl/root_ca.crl -o "$RUNNER_TEMP/trust/crl.pem"
+          openssl crl -in "$RUNNER_TEMP/trust/crl.pem" -noout -verify -CAfile "$RUNNER_TEMP/trust/ca.pem"
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          p=Path(os.environ['RUNNER_TEMP'])/'trust'/'policy.json'
+          p.write_text(json.dumps({
+            'schema_version':1,'tsa_url':'https://freetsa.org/tsr',
+            'ca_file':'ca.pem',
+            'ca_sha256':'2151b61137ffa86bf664691ba67e7da0b19f98c758e3d228d5d8ebf27e044438',
+            'crl_file':'crl.pem','policy_oid':'1.2.3.4.1','timeout_seconds':45
+          },sort_keys=True)+'\n',encoding='utf-8')
+          PY
+      - name: Restore and verify whole first-paper v1 candidate in separate runner
+        shell: bash
+        run: |
+          set -euo pipefail
+          python scripts/preserve.py restore "$RUNNER_TEMP/received/v1-preservation.opk.zip" \
+            --out "$RUNNER_TEMP/recovered" \
+            --expected-sha256 "$EXPECTED_ARCHIVE_SHA256" \
+            --policy "$RUNNER_TEMP/trust/policy.json"
+          python scripts/verify_release.py "$RUNNER_TEMP/recovered/bundle"
+          python scripts/timestamp.py verify "$RUNNER_TEMP/recovered/bundle" --policy "$RUNNER_TEMP/trust/policy.json"
+          python scripts/citation_validation.py "$RUNNER_TEMP/recovered/bundle"
+          python - <<'PY'
+          import hashlib, json, os
+          from pathlib import Path
+          root=Path(os.environ['RUNNER_TEMP']); received=root/'received'; bundle=root/'recovered'/'bundle'
+          receipt=json.loads((received/'v1-existence-receipt.json').read_text('utf-8'))
+          selftest=json.loads((received/'selftest.json').read_text('utf-8'))
+          def sha(path): return hashlib.sha256(path.read_bytes()).hexdigest()
+          assert receipt['source_commit']==os.environ['GITHUB_SHA']
+          assert receipt['scope']=='APPROVED_MANUSCRIPT_EXISTENCE_ONLY'
+          assert receipt['archive_sha256']==os.environ['EXPECTED_ARCHIVE_SHA256']
+          assert receipt['manifest_sha256']==sha(bundle/'manifest.json')==selftest['manifest_sha256']
+          assert receipt['paper_sha256']==sha(bundle/'paper.pdf')==sha(received/'first-paper-v1.pdf')
+          assert selftest['provisional_bundle_exported'] and selftest['unapproved_draft_rejected']
+          assert all(v is True for v in selftest['negative_cases'].values())
+          assert receipt['author_approved'] is True and receipt['license_granted'] is True
+          assert receipt['license']=='CC-BY-4.0' and receipt['display_author']=='Unjuno'
+          assert receipt['approval_basis']=='USER_CONFIRMED_NOT_ID_VERIFIED'
+          assert all(receipt[k] is False for k in ('paper_release_published','independent_witness'))
+          assert receipt['public_availability']=='NOT_PROVEN'
+          assert receipt['first_publication']=='NOT_PROVEN'
+          assert receipt['retention']=='GITHUB_ACTIONS_ARTIFACT_14_DAYS_NOT_PERMANENT'
+          report={'verdict':'PASS','scope':'APPROVED_MANUSCRIPT_EXISTENCE_ONLY',
+            'source_commit':receipt['source_commit'],
+            'manifest_sha256':receipt['manifest_sha256'],'archive_sha256':receipt['archive_sha256'],
+            'tsa_time_utc':receipt['tsa_time_utc'],'public_availability':'NOT_PROVEN',
+            'immutable_release_published':False,'license_granted':True,
+            'independent_operator':'NOT_VERIFIED','long_term_retention':'NOT_ESTABLISHED'}
+          (root/'fresh-verification.json').write_text(json.dumps(report,indent=2,sort_keys=True)+'\n',encoding='utf-8')
+          print('PASS: fresh runner verified actual first-paper approved v1 candidate and external TSA signature')
+          print('NO-GO: no immutable Release, authenticated authorship or independent witness')
+          PY
+      - name: Retain v1 verification for 14 days
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: first-paper-v1-fresh-verification
+          path: ${{ runner.temp }}/fresh-verification.json
+          if-no-files-found: warn
+          retention-days: 14

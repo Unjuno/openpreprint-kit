@@ -51,6 +51,17 @@ class PreflightTests(unittest.TestCase):
     def test_malformed_response_is_rejected(self):
         with self.assertRaises(ValueError): self.run_check({'/immutable-releases':(200,{'enabled':'true'})})
 
+    def test_immutable_readback_eventual_consistency(self):
+        module=self.module(); mapping=self.responses(); calls=[]
+        def get(path):
+            if path=='/immutable-releases':
+                calls.append(1)
+                return (200,{'enabled':len(calls)>=3})
+            return mapping[path]
+        result=module.preflight('example/paper','v1','a'*40,get)
+        self.assertEqual(result['status'],'PASS')
+        self.assertEqual(len(calls),3)
+
     def test_untrusted_repository_string(self):
         module=self.module()
         with self.assertRaises(ValueError):

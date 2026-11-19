@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 from pathlib import Path
 import shutil
 import subprocess
@@ -24,7 +25,7 @@ class ReleaseBundleTests(unittest.TestCase):
         self.root = Path(self.temporary.name)
         (self.root / "scripts").mkdir()
         (self.root / "paper").mkdir()
-        for file in ("validate.py", "prepare_release.py", "verify_release.py", "pdf_validation.py"):
+        for file in ("validate.py", "prepare_release.py", "verify_release.py", "pdf_validation.py", "research_package.py", "verify_research.py", "yaml_strict.py"):
             shutil.copy2(SOURCE_ROOT / "scripts" / file, self.root / "scripts" / file)
         self.paper = self.root / "paper" / "paper.pdf"
         # A valid syntactic fixture is needed now that publication requires PDF parsing.
@@ -73,12 +74,12 @@ class ReleaseBundleTests(unittest.TestCase):
         result = self.run_script("verify_release.py", self.bundle)
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertIn("NOT established", result.stdout)
-        cited = yaml.safe_load((self.bundle / "CITATION.cff").read_text())
+        cited = yaml.safe_load((self.bundle / "CITATION.cff").read_text(encoding='utf-8'))
         self.assertEqual(cited["cff-version"], "1.2.0")
         self.assertEqual(cited["authors"][0]["family-names"], "Doe")
         self.assertEqual(cited["authors"][1]["name"], "Research Group")
-        self.assertIn(r"\{physics\} \&", (self.bundle / "citation.bib").read_text())
-        record = json.loads((self.bundle / "preprint-metadata.json").read_text())
+        self.assertIn(r"\{physics\} \&", (self.bundle / "citation.bib").read_text(encoding='utf-8'))
+        record = json.loads((self.bundle / "preprint-metadata.json").read_text(encoding='utf-8'))
         self.assertEqual(record["time_attestation"], None)
         self.assertEqual(record["paper_sha256"], hashlib.sha256(self.paper.read_bytes()).hexdigest())
 
@@ -150,7 +151,12 @@ class ReleaseBundleTests(unittest.TestCase):
     def test_symlink_is_rejected(self):
         self.make_bundle()
         (self.bundle / "citation.bib").unlink()
-        (self.bundle / "citation.bib").symlink_to(self.bundle / "CITATION.cff")
+        try:
+            (self.bundle / "citation.bib").symlink_to(self.bundle / "CITATION.cff")
+        except OSError as exc:
+            if os.name == 'nt' and getattr(exc, 'winerror', None) == 1314:
+                self.skipTest('Windows symlink privilege unavailable')
+            raise
         result = self.run_script("verify_release.py", self.bundle)
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("non-symlink", result.stderr)
@@ -158,3 +164,4 @@ class ReleaseBundleTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+

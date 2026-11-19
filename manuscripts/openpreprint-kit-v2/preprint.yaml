@@ -1,0 +1,18 @@
+# OpenPreprint Kit 実運用評価 v2 の原稿メタデータ（所有者承認待ち）
+# 本メタデータは著者性・公開承認の証明ではない。
+schema_version: 1
+title: 'OpenPreprint Kit: GitHub上の論文・研究データを検証可能にする公開キット — 実運用評価（v2）'
+authors:
+- name: Unjuno
+  orcid: null
+abstract: 初期設計短報v1による274試験CI評価（固定コミット940d0d06…）に対し、本稿は2026年11月の実GitHub公開・Immutable Release・attestation・RFC 3161・匿名再取得・復元・障害分析（INC-1/INC-2）と未達の独立人間受入を実測として報告する。
+keywords:
+- preprint
+- research data
+- RFC 3161
+- GitHub
+- reproducibility
+- incident analysis
+version: v2
+paper: paper/paper.pdf
+license: CC-BY-4.0

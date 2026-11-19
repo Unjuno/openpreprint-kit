@@ -1,0 +1,130 @@
+name: Live acceptance (synthetic only)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: opk-public-tsa-acceptance
+  cancel-in-progress: false
+
+jobs:
+  public-tsa:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: '3.12'
+      - name: Install hash-verified runtime dependencies
+        run: |
+          set -euo pipefail
+          python -m pip install --require-hashes -r requirements-build.lock
+          python -m pip install --require-hashes --no-build-isolation -r requirements.lock
+      - name: Obtain explicit FreeTSA trust profile for synthetic exercise
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/acceptance/trust"
+          curl --proto '=https' --tlsv1.2 --fail --max-time 45 https://freetsa.org/files/cacert.pem -o "$RUNNER_TEMP/acceptance/trust/ca.pem"
+          echo '2151b61137ffa86bf664691ba67e7da0b19f98c758e3d228d5d8ebf27e044438' "${RUNNER_TEMP}/acceptance/trust/ca.pem" | sha256sum -c -
+          curl --proto '=https' --tlsv1.2 --fail --max-time 45 https://www.freetsa.org/crl/root_ca.crl -o "$RUNNER_TEMP/acceptance/trust/crl.pem"
+          openssl crl -in "$RUNNER_TEMP/acceptance/trust/crl.pem" -noout -verify -CAfile "$RUNNER_TEMP/acceptance/trust/ca.pem"
+          python - <<'PY'
+          import json, os, pathlib
+          path=pathlib.Path(os.environ['RUNNER_TEMP'])/'acceptance'/'trust'/'policy.json'
+          config={'schema_version':1,'tsa_url':'https://freetsa.org/tsr',
+                  'ca_file':'ca.pem',
+                  'ca_sha256':'2151b61137ffa86bf664691ba67e7da0b19f98c758e3d228d5d8ebf27e044438',
+                  'crl_file':'crl.pem','policy_oid':'1.2.3.4.1','timeout_seconds':45}
+          path.write_text(json.dumps(config,indent=2,sort_keys=True)+'\n',encoding='utf-8')
+          PY
+      - name: Real TSA stamp, v1-v2 synthetic research, tamper rejection and recovery
+        run: |
+          set -euo pipefail
+          python scripts/acceptance.py live --out "$RUNNER_TEMP/acceptance/evidence" --policy "$RUNNER_TEMP/acceptance/trust/policy.json" > "$RUNNER_TEMP/acceptance/live-report.json"
+          python - <<'PY'
+          import json, os, pathlib
+          path=pathlib.Path(os.environ['RUNNER_TEMP'])/'acceptance'/'evidence'/'acceptance-report.json'
+          report=json.loads(path.read_text(encoding='utf-8'))
+          assert report['status']=='PASS' and report['synthetic_only'] is True
+          assert report['github_release']=='NOT_CREATED'
+          assert report['public_availability']=='NOT_PROVEN'
+          assert len(report['versions'])==2
+          for record in report['versions']:
+              assert record['timestamp']['status']=='VERIFIED'
+              assert record['tamper_rejected']=='PASS' and record['restore_byte_equality']=='PASS'
+          print('LIVE ACCEPTANCE SUCCESS (synthetic only; no GitHub release published)')
+          PY
+      - name: Save evidence even if FreeTSA is temporarily unreachable
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: live-acceptance-${{ github.sha }}
+          path: ${{ runner.temp }}/acceptance/
+          if-no-files-found: warn
+          retention-days: 14
+
+  fresh-verification:
+    needs: [public-tsa]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: '3.12'
+      - name: Independently install the hash-locked verifier
+        run: |
+          set -euo pipefail
+          python -m pip install --require-hashes -r requirements-build.lock
+          python -m pip install --require-hashes --no-build-isolation -r requirements.lock
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: live-acceptance-${{ github.sha }}
+          path: ${{ runner.temp }}/received/
+      - name: Fetch fresh trust data instead of trusting archived CA/CRLs
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/trust"
+          curl --proto '=https' --tlsv1.2 --fail --max-time 45 https://freetsa.org/files/cacert.pem -o "$RUNNER_TEMP/trust/ca.pem"
+          echo '2151b61137ffa86bf664691ba67e7da0b19f98c758e3d228d5d8ebf27e044438' "$RUNNER_TEMP/trust/ca.pem" | sha256sum -c -
+          curl --proto '=https' --tlsv1.2 --fail --max-time 45 https://www.freetsa.org/crl/root_ca.crl -o "$RUNNER_TEMP/trust/crl.pem"
+          openssl crl -in "$RUNNER_TEMP/trust/crl.pem" -noout -verify -CAfile "$RUNNER_TEMP/trust/ca.pem"
+          python - <<'PY'
+          import json, os, pathlib
+          path=pathlib.Path(os.environ['RUNNER_TEMP'])/'trust'/'policy.json'
+          config={'schema_version':1,'tsa_url':'https://freetsa.org/tsr','ca_file':'ca.pem',
+                  'ca_sha256':'2151b61137ffa86bf664691ba67e7da0b19f98c758e3d228d5d8ebf27e044438',
+                  'crl_file':'crl.pem','policy_oid':'1.2.3.4.1','timeout_seconds':45}
+          path.write_text(json.dumps(config,indent=2,sort_keys=True)+'\n',encoding='utf-8')
+          PY
+      - name: Restore and verify both versions in a new runner
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json, os, pathlib, subprocess, sys
+          base=pathlib.Path(os.environ['RUNNER_TEMP'])
+          receipt=json.loads((base/'received'/'evidence'/'acceptance-report.json').read_text('utf-8'))
+          assert receipt['status']=='PASS' and receipt['synthetic_only'] is True
+          assert receipt['source_commit']==os.environ['GITHUB_SHA']
+          assert receipt['github_release']=='NOT_CREATED'
+          for version in ('v1','v2'):
+              rec=next(x for x in receipt['versions'] if x['version']==version)
+              archive=base/'received'/'evidence'/f'{version}.opk.zip'
+              out=base/f'restored-{version}'
+              subprocess.run([sys.executable,'scripts/preserve.py','restore',str(archive),
+                              '--out',str(out),'--expected-sha256',rec['archive_sha256'],
+                              '--policy',str(base/'trust'/'policy.json')],check=True)
+              subprocess.run([sys.executable,'scripts/verify_release.py',str(out/'bundle')],check=True)
+              subprocess.run([sys.executable,'scripts/timestamp.py','verify',str(out/'bundle'),
+                              '--policy',str(base/'trust'/'policy.json')],check=True)
+          print('FRESH RUNNER VERIFIED: v1/v2 bytes, SHA-256, TSA signatures and current CRLs')
+          print('This does NOT establish first public availability, human review or archival durability.')
+          PY

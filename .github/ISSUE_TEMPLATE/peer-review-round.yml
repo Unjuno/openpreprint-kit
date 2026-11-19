@@ -1,0 +1,60 @@
+name: Public peer-review round
+description: Open a public, version-pinned collaborative review round
+title: "[Peer review] <short paper title> <version>"
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This repository is public. Do not include confidential manuscripts, personal data, patient data, private contact details, or unpublished material without permission. This workflow is public and is not anonymous or blinded.
+  - type: input
+    id: release_url
+    attributes:
+      label: Exact versioned GitHub Release URL
+      description: Link to the immutable version under review.
+      placeholder: https://github.com/OWNER/REPO/releases/tag/v1
+    validations:
+      required: true
+  - type: input
+    id: paper_sha256
+    attributes:
+      label: PDF SHA-256 (64 lowercase hexadecimal characters)
+      description: Pin the exact paper bytes. Revisions require a new release and a new round.
+      placeholder: 0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+    validations:
+      required: true
+  - type: input
+    id: review_deadline
+    attributes:
+      label: Proposed review deadline (UTC)
+      placeholder: YYYY-MM-DD
+    validations:
+      required: true
+  - type: dropdown
+    id: review_scope
+    attributes:
+      label: Requested review scope
+      options:
+        - Methods and reproducibility
+        - Results and interpretation
+        - Related work and citations
+        - Data, code and materials
+        - Full scholarly review
+    validations:
+      required: true
+  - type: textarea
+    id: questions
+    attributes:
+      label: Questions for reviewers
+      description: Keep this focused on the pinned version and its public materials.
+      placeholder: What should reviewers examine?
+    validations:
+      required: true
+  - type: checkboxes
+    id: publication_consent
+    attributes:
+      label: Public review terms
+      options:
+        - label: I am authorized to request a public review of this version, and I understand that round metadata, public reviews, author responses and editor decisions will be visible in this repository.
+          required: true
+        - label: I will not place confidential, personal, clinical or otherwise restricted information in this public round.
+          required: true

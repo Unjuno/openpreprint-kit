@@ -1,0 +1,66 @@
+[
+  {
+    "repository": "Unjuno/opk-demo-acceptance-a",
+    "label": "v1",
+    "verdict": "PASS",
+    "existence_tsa_time_utc": "2026-11-13T20:45:44+00:00",
+    "manifest_sha256": "05157e65104efa6bcce42f1c5c80f5e4eff0d487c7da83f260313cd7719d95b8",
+    "content_integrity": "VERIFIED"
+  },
+  {
+    "repository": "Unjuno/opk-demo-acceptance-a",
+    "label": "v1 (anonymous)",
+    "verdict": "PASS",
+    "existence_tsa_time_utc": "2026-11-13T20:45:44+00:00",
+    "manifest_sha256": "05157e65104efa6bcce42f1c5c80f5e4eff0d487c7da83f260313cd7719d95b8",
+    "content_integrity": "VERIFIED"
+  },
+  {
+    "repository": "Unjuno/opk-demo-acceptance-a",
+    "label": "v2",
+    "verdict": "PASS",
+    "existence_tsa_time_utc": "2026-11-13T20:47:10+00:00",
+    "manifest_sha256": "1dd5aed9146dc2f98193ceb23bbf65409e824e5db656188350370cb28a831d2a",
+    "content_integrity": "VERIFIED"
+  },
+  {
+    "repository": "Unjuno/opk-demo-acceptance-a",
+    "label": "v2 (anonymous)",
+    "verdict": "PASS",
+    "existence_tsa_time_utc": "2026-11-13T20:47:10+00:00",
+    "manifest_sha256": "1dd5aed9146dc2f98193ceb23bbf65409e824e5db656188350370cb28a831d2a",
+    "content_integrity": "VERIFIED"
+  },
+  {
+    "repository": "Unjuno/opk-demo-acceptance-b",
+    "label": "v1",
+    "verdict": "PASS",
+    "existence_tsa_time_utc": "2026-11-13T20:48:41+00:00",
+    "manifest_sha256": "f6be742ed820f4ea3000cca299a607661cda7e9b6b2efcb457c8b02d054f510b",
+    "content_integrity": "VERIFIED"
+  },
+  {
+    "repository": "Unjuno/opk-demo-acceptance-b",
+    "label": "v1 (anonymous)",
+    "verdict": "PASS",
+    "existence_tsa_time_utc": "2026-11-13T20:48:41+00:00",
+    "manifest_sha256": "f6be742ed820f4ea3000cca299a607661cda7e9b6b2efcb457c8b02d054f510b",
+    "content_integrity": "VERIFIED"
+  },
+  {
+    "repository": "Unjuno/opk-demo-acceptance-b",
+    "label": "v2",
+    "verdict": "PASS",
+    "existence_tsa_time_utc": "2026-11-13T20:50:14+00:00",
+    "manifest_sha256": "7c15ac634900283ea8f32e80ac99b9053468967a1372d4cc931226d698eb89aa",
+    "content_integrity": "VERIFIED"
+  },
+  {
+    "repository": "Unjuno/opk-demo-acceptance-b",
+    "label": "v2 (anonymous)",
+    "verdict": "PASS",
+    "existence_tsa_time_utc": "2026-11-13T20:50:14+00:00",
+    "manifest_sha256": "7c15ac634900283ea8f32e80ac99b9053468967a1372d4cc931226d698eb89aa",
+    "content_integrity": "VERIFIED"
+  }
+]

@@ -85,7 +85,7 @@ CLIは成功時0、検証不能/不正入力時1（引数の使い方の誤り�
 ## 現在の制約
 
 CRLは**現在**有効でなければ拒否します。証明書も現在と署名時点の両方で有効期間内である必要があります。
-期限切れの古い署名を長期保存証拠から検証する仕組み、OCSP、自動CRL更新、証拠更新、
+期限切れの古い署名を長期保存証拠から検証する仕組み、OCSP、自動CRL更新、正式なRFC 4998 ERS型の証拠更新、
 独立観測は未実装です。`-no_check_time` 等で検査を省略して成功に見せる方針は採りません。
 ローカル試験は一時CA/TSAとOpenSSLによる本物の署名検査です。HTTPS送信部はモックも使い、
 公開TSAとの実通信を完了したとは主張しません。
@@ -96,3 +96,7 @@ CRLは**現在**有効でなければ拒否します。証明書も現在と署�
 - RFC 5816（署名証明書識別の更新）: https://www.rfc-editor.org/rfc/rfc5816.html
 - OpenSSL ts: https://docs.openssl.org/3.0/man1/openssl-ts/
 - asn1crypto TSP定義: https://github.com/wbond/asn1crypto/blob/master/asn1crypto/tsp.py
+
+## 新しい存在時刻の再固定（完全なLTVではない）
+
+既に有効な証拠ZIPについて、[更新証拠の作成・GitHub配布](FORWARD_RENEWAL.md)では、新しいRFC 3161時刻証明を前の証拠に連結できます。元の署名や証明書が失効してから救済することはできず、現行の検証は依然として現在のCRL/証明書の有効性を要求します。

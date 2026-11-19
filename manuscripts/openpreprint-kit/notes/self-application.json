@@ -1,0 +1,61 @@
+{
+  "author_approved": false,
+  "cases": [
+    {
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "PASS: release assets and SHA256SUMS are internally consistent\nWARNING: no independent trusted fingerprint supplied; authenticity NOT established\nNOTE: existence time, public availability and authorship are NOT verified\n",
+      "test": "candidate_integrity"
+    },
+    {
+      "returncode": 1,
+      "stderr": "FAIL: checksum/size mismatch: paper.pdf\nFAIL: SHA256SUMS does not match the manifest and assets\nFAIL: metadata paper_sha256 is inconsistent with paper.pdf\nFAIL: research catalog is not bound to this paper version\n",
+      "stdout": "",
+      "test": "changed_pdf"
+    },
+    {
+      "returncode": 1,
+      "stderr": "FAIL: checksum/size mismatch: research-assets.tar\nFAIL: SHA256SUMS does not match the manifest and assets\n",
+      "stdout": "",
+      "test": "changed_data"
+    },
+    {
+      "returncode": 1,
+      "stderr": "FAIL: invalid JSON: Extra data: line 35 column 1 (char 1059)\n",
+      "stdout": "",
+      "test": "changed_manifest"
+    },
+    {
+      "returncode": 1,
+      "stderr": "FAIL: unexpected bundle contents; missing=['citation.bib'], extra=[]\n",
+      "stdout": "",
+      "test": "missing_citation"
+    },
+    {
+      "returncode": 1,
+      "stderr": "ERROR: license is still a placeholder\nERROR: v0 is a draft version; set a public release version\nFAIL: 2 error(s), 0 warning(s)\n",
+      "stdout": "",
+      "test": "unapproved_draft_is_blocked"
+    },
+    {
+      "expected_failure_cause": "source identity mismatch; timestamp checking was not reached",
+      "returncode": 1,
+      "stderr": "{\"authorship\": \"NOT_PROVEN\", \"error\": \"source identity mismatch: release does not declare requested repository/version\", \"first_publication\": \"NOT_PROVEN\", \"scope\": \"existence\", \"verdict\": \"FAIL\"}\n",
+      "stdout": "",
+      "test": "unpublished_local_bundle_has_no_source_identity"
+    }
+  ],
+  "draft": "draft-1",
+  "immutable_release_published": false,
+  "independent_review_performed": false,
+  "initial_pdf_rejected": "Pandoc default page-view OpenAction; corrected in typesetting options without weakening OPK validator",
+  "input_assets": 7,
+  "kit_baseline": "940d0d06d957cd0708f644a595911bdbc3fffa64",
+  "license_granted": false,
+  "manifest_sha256": "9cf6a972e5a6b2e62f188a8b60a2ec6ee9e47b37a7dcfd68516e4acb9c6715ed",
+  "metadata_is_provisional": true,
+  "paper_pdf_sha256": "2ca537ba5318c9181ba286c12a040ddddd802eed42bd5b5b670a1dd9b8f9ca6a",
+  "schema_version": 1,
+  "status": "LOCAL_SELF_APPLICATION_PASS",
+  "timestamp_obtained": false
+}

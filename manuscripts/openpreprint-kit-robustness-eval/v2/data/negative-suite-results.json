@@ -1,0 +1,196 @@
+{
+  "fails": 0,
+  "false_accepts": 0,
+  "fixed_spec": "C:\\Users\\junny\\OpenPreprintKitEvidence\\negative-suite-2026-11-14\\negative-suite-spec.json",
+  "kind": "negative-suite-results",
+  "passes": 23,
+  "results": [
+    {
+      "detail": "checksum/size mismatch: paper.pdf; SHA256SUMS does not match the manifest and assets; metadata paper_sha256 is inconsistent with paper.pdf; research catalog is not bound to this paper version",
+      "expected": "REJECTED",
+      "id": 1,
+      "name": "PDF改変 (bundle integrity)",
+      "rejected": true,
+      "verdict": "PASS"
+    },
+    {
+      "detail": "checksum/size mismatch: research-assets.tar; SHA256SUMS does not match the manifest and assets; research member checksum mismatch: data/synthetic.csv",
+      "expected": "REJECTED",
+      "id": 2,
+      "name": "データ改変 (a: verify)",
+      "rejected": true,
+      "verdict": "PASS"
+    },
+    {
+      "detail": "verify_proof rejected re-consistent tampered bundle",
+      "expected": "REJECTED",
+      "id": 2,
+      "name": "データ改変 (b: TSA imprint) — variant",
+      "rejected": true,
+      "verdict": "PASS"
+    },
+    {
+      "detail": "checksum/size mismatch: research-assets.tar; SHA256SUMS does not match the manifest and assets; research member checksum mismatch: analysis/reproduce.py",
+      "expected": "REJECTED",
+      "id": 3,
+      "name": "コード改変 (a: verify)",
+      "rejected": true,
+      "verdict": "PASS"
+    },
+    {
+      "detail": "verify_proof rejected",
+      "expected": "REJECTED",
+      "id": 3,
+      "name": "コード改変 (b: TSA imprint) — variant",
+      "rejected": true,
+      "verdict": "PASS"
+    },
+    {
+      "detail": "checksum/size mismatch: CITATION.cff; SHA256SUMS does not match the manifest and assets",
+      "expected": "REJECTED",
+      "id": 4,
+      "name": "manifest改変 (a: verify)",
+      "rejected": true,
+      "verdict": "PASS"
+    },
+    {
+      "detail": "verify_proof rejected",
+      "expected": "REJECTED",
+      "id": 4,
+      "name": "manifest改変 (b: TSA imprint) — variant",
+      "rejected": true,
+      "verdict": "PASS"
+    },
+    {
+      "detail": "unexpected bundle contents; missing=['citation.bib'], extra=['timestamp.tsq', 'timestamp.tsr']",
+      "expected": "REJECTED",
+      "id": 5,
+      "name": "資産欠落 (citation.bib 欠落)",
+      "rejected": true,
+      "verdict": "PASS"
+    },
+    {
+      "detail": "unexpected bundle contents; missing=[], extra=['extra.txt', 'timestamp.tsq', 'timestamp.tsr']",
+      "expected": "REJECTED",
+      "id": 6,
+      "name": "余計なファイル (extra.txt)",
+      "rejected": true,
+      "verdict": "PASS"
+    },
+    {
+      "detail": "verify_all rejected wrong repository",
+      "expected": "REJECTED",
+      "id": 7,
+      "name": "別リポジトリ",
+      "rejected": true,
+      "verdict": "PASS"
+    },
+    {
+      "detail": "source identity mismatch: release does not declare requested repository/version",
+      "expected": "REJECTED",
+      "id": 8,
+      "name": "別版 (v2 扱い)",
+      "rejected": true,
+      "verdict": "PASS"
+    },
+    {
+      "detail": "CA bundle SHA-256 does not match the independently trusted pin",
+      "expected": "REJECTED",
+      "id": 9,
+      "name": "誤CA指紋",
+      "rejected": true,
+      "verdict": "PASS"
+    },
+    {
+      "detail": "verify_digest rejected wrong OID",
+      "expected": "REJECTED",
+      "id": 10,
+      "name": "誤policy OID",
+      "rejected": true,
+      "verdict": "PASS"
+    },
+    {
+      "detail": "verify_digest rejected mixed nonce",
+      "expected": "REJECTED",
+      "id": 11,
+      "name": "nonce不一致",
+      "rejected": true,
+      "verdict": "PASS"
+    },
+    {
+      "detail": "verify_digest rejected forged signature",
+      "expected": "REJECTED",
+      "id": 12,
+      "name": "署名偽造",
+      "rejected": true,
+      "verdict": "PASS"
+    },
+    {
+      "detail": "verify_digest rejected revoked TSA cert",
+      "expected": "REJECTED",
+      "id": 13,
+      "name": "失効TSA",
+      "rejected": true,
+      "verdict": "PASS"
+    },
+    {
+      "detail": "verify_digest rejected expired TSA cert",
+      "expected": "REJECTED",
+      "id": 14,
+      "name": "期限切れTSA",
+      "rejected": true,
+      "verdict": "PASS"
+    },
+    {
+      "detail": "verify_digest rejected stale CRL: OpenSSL verification failed: Using configuration from /usr/ssl/openssl.cnf\n100000000A000000:error:1C8000DE:Provider routines:file_set_ctx_params:search only supported for directories:providers/impleme; CRL: lastUpdate=Dec  1 00:00:00 2019 GMT | nextUpdate=Jan  1 00:00:00 2020 GMT",
+      "expected": "REJECTED",
+      "id": 15,
+      "name": "古いCRL",
+      "rejected": true,
+      "verdict": "PASS"
+    },
+    {
+      "detail": "unexpected, duplicate, or unsafe archive member",
+      "expected": "REJECTED",
+      "id": 16,
+      "name": "ZIPパストラバーサル",
+      "rejected": true,
+      "verdict": "PASS"
+    },
+    {
+      "detail": "unexpected, duplicate, or unsafe archive member",
+      "expected": "REJECTED",
+      "id": 17,
+      "name": "重複member",
+      "rejected": true,
+      "verdict": "PASS"
+    },
+    {
+      "detail": "compressed, encrypted, linked, or oversized archive member",
+      "expected": "REJECTED",
+      "id": 18,
+      "name": "symlink member",
+      "rejected": true,
+      "verdict": "PASS"
+    },
+    {
+      "detail": "verify_public rejected wrong observer key/pin",
+      "expected": "REJECTED",
+      "id": 19,
+      "name": "誤観測鍵",
+      "rejected": true,
+      "verdict": "PASS"
+    },
+    {
+      "detail": "verify_public rejected re-signed tampered observation",
+      "expected": "REJECTED",
+      "id": 20,
+      "name": "観測後の再署名",
+      "rejected": true,
+      "verdict": "PASS"
+    }
+  ],
+  "schema_version": 1,
+  "toolkit_main": "2cd536caa4c3fbc31b1fe32274e35b23ff654259",
+  "total": 23
+}

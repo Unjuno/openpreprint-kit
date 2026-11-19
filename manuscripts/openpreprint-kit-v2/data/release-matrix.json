@@ -1,0 +1,297 @@
+[
+  {
+    "repository": "Unjuno/openpreprint-kit-paper",
+    "version": "v1",
+    "release_id": "RE_kwDOVtdYwc4agPYT",
+    "tag": "v1",
+    "target_commit": "804cb76a4cf5eea65349fc7a8f01e2ce00e1176d",
+    "published_at": "2026-11-13T19:39:48Z",
+    "is_immutable": true,
+    "is_draft": false,
+    "is_prerelease": false,
+    "asset_count": 11,
+    "asset_digests_match_anonymous_download": true,
+    "assets": {
+      "citation.bib": {
+        "sha256": "c8c9920650fc39eab5ef58bc0f3145d791ecf3f62b99a78cb53c0d501150907f",
+        "matches_github_digest": true
+      },
+      "CITATION.cff": {
+        "sha256": "6a7cce39b4d000dcdfc0bccff7b6020d1662e24f5031377519f1ff09348f1043",
+        "matches_github_digest": true
+      },
+      "manifest.json": {
+        "sha256": "4ec582630b9ca2ae7c8f9abe519ff613e852840bb5c75856eef15bccedbb9f56",
+        "matches_github_digest": true
+      },
+      "paper.pdf": {
+        "sha256": "0860b735379fb1b9b223f5d535442dae8421f456d7ae1c6bf6ce8d3141a1b07c",
+        "matches_github_digest": true
+      },
+      "preprint-metadata.json": {
+        "sha256": "2f804f6930ea0a0fb80105304524013a784cae6fd411db4204986dc3de76f2e5",
+        "matches_github_digest": true
+      },
+      "RELEASE_NOTES.md": {
+        "sha256": "9ca2c9d78d998f7e8a9a1d3ee9eb27a70eeead19b87af7f8d0e1c85c37c24208",
+        "matches_github_digest": true
+      },
+      "research-assets.json": {
+        "sha256": "cd481c0726f119ace1741bca85e3d46a80837b7c0af1d692d183b344107d2aaa",
+        "matches_github_digest": true
+      },
+      "research-assets.tar": {
+        "sha256": "9677fe710de86972f343efae69f1fde62374a1bee3891d0b3806a1a2c4754498",
+        "matches_github_digest": true
+      },
+      "SHA256SUMS": {
+        "sha256": "aa8b45af4f9304ce0a54daaaf3250487cb0b3855268a1f0e9670f233a83cf3c2",
+        "matches_github_digest": true
+      },
+      "timestamp.tsq": {
+        "sha256": "99ec9d2608024e7402f12362264ed4020c7b2d14b884af26eb41c83a18acdcff",
+        "matches_github_digest": true
+      },
+      "timestamp.tsr": {
+        "sha256": "ca0695caa687e952871ad9b8cd69d9370604bc1f303b412ed7c6287ce18ce737",
+        "matches_github_digest": true
+      }
+    }
+  },
+  {
+    "repository": "Unjuno/opk-demo-acceptance-a",
+    "version": "v1",
+    "release_id": "RE_kwDOVtk8kM4ageYz",
+    "tag": "v1",
+    "target_commit": "a27ab50f8effca89abdc72ce5d6744c1510e8697",
+    "published_at": "2026-11-13T20:45:53Z",
+    "is_immutable": true,
+    "is_draft": false,
+    "is_prerelease": true,
+    "asset_count": 11,
+    "asset_digests_match_anonymous_download": true,
+    "assets": {
+      "citation.bib": {
+        "sha256": "16ae9f5197d594c7f3b0369f263cae3f56dcd649faf0a037fcc7abe5aa6fb87d",
+        "matches_github_digest": true
+      },
+      "CITATION.cff": {
+        "sha256": "693d0df1a9a32e408163b25dbb6c30f9b021369a4ac0e3149e2cb00f27b8a707",
+        "matches_github_digest": true
+      },
+      "manifest.json": {
+        "sha256": "05157e65104efa6bcce42f1c5c80f5e4eff0d487c7da83f260313cd7719d95b8",
+        "matches_github_digest": true
+      },
+      "paper.pdf": {
+        "sha256": "bcddc1469d6ef7ba99a1a827c6ad1ff1a242bbd63765945d14b9ba8c465e2089",
+        "matches_github_digest": true
+      },
+      "preprint-metadata.json": {
+        "sha256": "744e211901127ce983b6b91868792b282440e86be48f6d4a12b0eb0b03c61af1",
+        "matches_github_digest": true
+      },
+      "RELEASE_NOTES.md": {
+        "sha256": "ab164e6daa0a10ecf01822a4887bbc9826e08fac788531b976d821c0bd30e6aa",
+        "matches_github_digest": true
+      },
+      "research-assets.json": {
+        "sha256": "410fb35673c603b48504b3d43c5b77df00b2832e69653f6f395cd5feff81a487",
+        "matches_github_digest": true
+      },
+      "research-assets.tar": {
+        "sha256": "259cb2663622431eb869e0eda8c0263ae8a61f900a44f9d337b10b934f9742a7",
+        "matches_github_digest": true
+      },
+      "SHA256SUMS": {
+        "sha256": "7e3c2b0da877ed2754e0a0601b25bce9acfca5f64a437e6a524d27f1ec0c3a70",
+        "matches_github_digest": true
+      },
+      "timestamp.tsq": {
+        "sha256": "eec760d3a7374a65289f8a260dbe6468673d64d41324908ba96ffa800209fc79",
+        "matches_github_digest": true
+      },
+      "timestamp.tsr": {
+        "sha256": "f280344b5912ff4740e999b802561d0c163e4878b1892ab871b8019319bb29ec",
+        "matches_github_digest": true
+      }
+    }
+  },
+  {
+    "repository": "Unjuno/opk-demo-acceptance-a",
+    "version": "v2",
+    "release_id": "RE_kwDOVtk8kM4agesM",
+    "tag": "v2",
+    "target_commit": "86f3cf2e4afe507253cb9346b0489d1edf175072",
+    "published_at": "2026-11-13T20:47:18Z",
+    "is_immutable": true,
+    "is_draft": false,
+    "is_prerelease": true,
+    "asset_count": 11,
+    "asset_digests_match_anonymous_download": true,
+    "assets": {
+      "citation.bib": {
+        "sha256": "fe51c8036b90ae9e4df7d0394577e563cdad006d1752ec6986610072f05173ae",
+        "matches_github_digest": true
+      },
+      "CITATION.cff": {
+        "sha256": "5ae39acd3898a057d77f9ebbd89d3640edbb09e2d0f3592459fc3fb81b94aa8c",
+        "matches_github_digest": true
+      },
+      "manifest.json": {
+        "sha256": "1dd5aed9146dc2f98193ceb23bbf65409e824e5db656188350370cb28a831d2a",
+        "matches_github_digest": true
+      },
+      "paper.pdf": {
+        "sha256": "8bb98f16353a47ff7d0b3fc824ccb68a7be0327174382626635e701d44b8ea7d",
+        "matches_github_digest": true
+      },
+      "preprint-metadata.json": {
+        "sha256": "2c46f6471baec5362f1b38a7e497e67b095cedcfd774a529554287d7a7689566",
+        "matches_github_digest": true
+      },
+      "RELEASE_NOTES.md": {
+        "sha256": "6abb087303e2ddecf7d7c0394f96ad7a34b841715c07dbbfc3f19cd6e9fc9a68",
+        "matches_github_digest": true
+      },
+      "research-assets.json": {
+        "sha256": "6ffd0b132fc941305c280a628d2ae368d0bd8931f81286969229c1893ed4f311",
+        "matches_github_digest": true
+      },
+      "research-assets.tar": {
+        "sha256": "6e8530495c7e8ba05dfe9af3acab1dcf2da91f92c414285528709059e380a182",
+        "matches_github_digest": true
+      },
+      "SHA256SUMS": {
+        "sha256": "a7371fdee2d95e0daf784ef005c8b09312acd208cc48d9005e3face1b3072ff8",
+        "matches_github_digest": true
+      },
+      "timestamp.tsq": {
+        "sha256": "0f7428cfb220835632dca54fa90583c2e5eeca1affa69202892288c09f7d9dc0",
+        "matches_github_digest": true
+      },
+      "timestamp.tsr": {
+        "sha256": "704ff5ed0f56ab9874cfb5e5170e21e74b6e971b4abdf5dab1fe7740bf42a277",
+        "matches_github_digest": true
+      }
+    }
+  },
+  {
+    "repository": "Unjuno/opk-demo-acceptance-b",
+    "version": "v1",
+    "release_id": "RE_kwDOVtlPK84agfAx",
+    "tag": "v1",
+    "target_commit": "78e8ef8dfaec8506a6de0391fcd6de80afd13686",
+    "published_at": "2026-11-13T20:48:51Z",
+    "is_immutable": true,
+    "is_draft": false,
+    "is_prerelease": true,
+    "asset_count": 11,
+    "asset_digests_match_anonymous_download": true,
+    "assets": {
+      "citation.bib": {
+        "sha256": "8fa37579a970220d28d29b18ac0c9afabbc4558f39cddb87da7e34a5cbe2fd59",
+        "matches_github_digest": true
+      },
+      "CITATION.cff": {
+        "sha256": "3758c4ab0b4d2f096c8e09edbfe08fa691c17e9a68f6aa521995b9b8187c62d2",
+        "matches_github_digest": true
+      },
+      "manifest.json": {
+        "sha256": "f6be742ed820f4ea3000cca299a607661cda7e9b6b2efcb457c8b02d054f510b",
+        "matches_github_digest": true
+      },
+      "paper.pdf": {
+        "sha256": "bcddc1469d6ef7ba99a1a827c6ad1ff1a242bbd63765945d14b9ba8c465e2089",
+        "matches_github_digest": true
+      },
+      "preprint-metadata.json": {
+        "sha256": "a7f65703f33c88624be9f65bb6f848e31312625d8cdb618d27721fe03ab4a41a",
+        "matches_github_digest": true
+      },
+      "RELEASE_NOTES.md": {
+        "sha256": "c8961f26cea50c87194164b7f697120fc79570cf388d65c36936bfc645365eaf",
+        "matches_github_digest": true
+      },
+      "research-assets.json": {
+        "sha256": "9e52491707c89d7f9720744a20d8582746a0e5f40709c96ca4c402da6caa5e19",
+        "matches_github_digest": true
+      },
+      "research-assets.tar": {
+        "sha256": "180c5385700eea8086eca53557d19b44741337ee499460dc78ef1d1a72b48d65",
+        "matches_github_digest": true
+      },
+      "SHA256SUMS": {
+        "sha256": "682317a244d8010f7340591df51035ff339d8d070e5a62d41916af65f712a89b",
+        "matches_github_digest": true
+      },
+      "timestamp.tsq": {
+        "sha256": "3b38b1258aab5242dabaeae8333dce9988648a5e66d92006f97f5cdee34b427c",
+        "matches_github_digest": true
+      },
+      "timestamp.tsr": {
+        "sha256": "92b2b260781754fbc799079533f7db7c2fe091d56abdf82b595639c10e4d6ec2",
+        "matches_github_digest": true
+      }
+    }
+  },
+  {
+    "repository": "Unjuno/opk-demo-acceptance-b",
+    "version": "v2",
+    "release_id": "RE_kwDOVtlPK84agfVl",
+    "tag": "v2",
+    "target_commit": "6c281c97a180e951517b935a392915e06901ba34",
+    "published_at": "2026-11-13T20:50:22Z",
+    "is_immutable": true,
+    "is_draft": false,
+    "is_prerelease": true,
+    "asset_count": 11,
+    "asset_digests_match_anonymous_download": true,
+    "assets": {
+      "citation.bib": {
+        "sha256": "bf89c3d5963c31f1a385e88a84c730b7ba56cd82336ce92d3f25320f6f7bcdc5",
+        "matches_github_digest": true
+      },
+      "CITATION.cff": {
+        "sha256": "80b3ad9c128dca6cbf86fe67613b1b787d00536a57ac9fc899ca9f5cda85cbf6",
+        "matches_github_digest": true
+      },
+      "manifest.json": {
+        "sha256": "7c15ac634900283ea8f32e80ac99b9053468967a1372d4cc931226d698eb89aa",
+        "matches_github_digest": true
+      },
+      "paper.pdf": {
+        "sha256": "8bb98f16353a47ff7d0b3fc824ccb68a7be0327174382626635e701d44b8ea7d",
+        "matches_github_digest": true
+      },
+      "preprint-metadata.json": {
+        "sha256": "15a0fd13519603d6209a8e419f1f5c1c584b0bfb90d50c5a81ed1c707054517c",
+        "matches_github_digest": true
+      },
+      "RELEASE_NOTES.md": {
+        "sha256": "d09918202f8b18c0aef02e853694ddf0c09cc0a855ae116b3e0a86d3eb79ff62",
+        "matches_github_digest": true
+      },
+      "research-assets.json": {
+        "sha256": "8322c0cf0459064b8ab6dcb876cdbc848fd1a53978e96a80e9a74aaa45019cc2",
+        "matches_github_digest": true
+      },
+      "research-assets.tar": {
+        "sha256": "aa77d808a9363268333a4ee05299a9f4124416e2a3420b573bf6917665a3ac5d",
+        "matches_github_digest": true
+      },
+      "SHA256SUMS": {
+        "sha256": "3548dc482da0ffd9a8830971551de5b284e83b8ea6445f0adf97749bd062e9db",
+        "matches_github_digest": true
+      },
+      "timestamp.tsq": {
+        "sha256": "e40fe1144ca09fa6d875feb577f1b13fd85b07f1bf773c331dad08e1438a13c8",
+        "matches_github_digest": true
+      },
+      "timestamp.tsr": {
+        "sha256": "81b82be2a7c8aedf7d3fa8310cfc6abb162fe85b7aa13a911aa65a384a389a01",
+        "matches_github_digest": true
+      }
+    }
+  }
+]

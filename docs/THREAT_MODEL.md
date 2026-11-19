@@ -56,3 +56,20 @@ Scientific merit, human identity, ethics approval, rights and formal editorial d
 Read SECURITY.md before reporting sensitive problems. Use synthetic data, a failing regression
 test, a reviewed fix and a full green suite. Never call self-review an independent security audit.
 See RELEASE_READINESS.md for the conditions blocking v1.0 and OPERATIONS.md for recovery.
+
+## Research-asset and confidential-record threat boundaries (2026-11-06)
+
+- Paper/public data/code bytes and anonymous private HMAC commitments are all
+  included in the same manifest before the TSA signature. Altering any file
+  invalidates the original signed manifest, assuming the TSA trust chain is valid.
+- SHA-256 does not make a record uneditable. Release deletion, forced repository
+  rewriting, or failure to preserve independent copies can erase evidence.
+- Low-entropy private documents must **not** have their unsalted SHA-256
+  publicly released. Use an HMAC with a unique secret per record, held offline.
+  Public verification requires selective revelation of that per-record key and
+  original; key loss or disclosure changes the trust model.
+- Explicit opt-in and path checks cannot guarantee a public dataset is free of
+  personal data, identifiers or third-party rights. Dataset publication requires
+  prior human review; real patient originals and keys never belong in GitHub.
+- A declaration that code analyzes a dataset is provenance metadata, not proof
+  of reproducible computation or independent review.

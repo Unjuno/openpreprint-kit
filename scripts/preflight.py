@@ -12,6 +12,7 @@ import os
 from pathlib import Path
 import re
 import sys
+import time
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -69,9 +70,25 @@ def require_object(get: Get, path: str) -> dict:
     return data
 
 
-def require_immutable(get: Get) -> None:
-    if require_object(get, '/immutable-releases').get('enabled') is not True:
-        raise ValueError('immutable releases are not enabled; publication stopped')
+def require_immutable(get: Get, attempts: int = 6, delay_seconds: float = 1.0) -> None:
+    """Read immutable-releases with a bounded retry.
+
+    GitHub applies the PUT-enable read-back with eventual consistency: a
+    GET immediately after PUT /immutable-releases has been observed to return
+    enabled != true on a freshly created repository. Retry a bounded number of
+    times; HTTP errors and a persistent disabled/missing setting still stop
+    publication exactly as before.
+    """
+    attempts = max(1, attempts)
+    for attempt in range(attempts):
+        status, data = get('/immutable-releases')
+        if status != 200:
+            raise ValueError(f'cannot confirm /immutable-releases (HTTP {status})')
+        if isinstance(data, dict) and data.get('enabled') is True:
+            return
+        if attempt + 1 < attempts:
+            time.sleep(delay_seconds)
+    raise ValueError('immutable releases are not enabled; publication stopped')
 
 
 def preflight(repository: str, version: str, commit: str, get: Get) -> dict:

@@ -1,0 +1,44 @@
+schema_version: 1
+public_assets:
+- path: data/baseline-ci.txt.gz
+  role: dataset
+  description: First-paper public engineering evidence; no personal records; paper CC BY 4.0.
+  license: MIT
+  public_confirmed: true
+- path: data/provenance.json
+  role: dataset
+  description: First-paper public engineering evidence; no personal records; paper CC BY 4.0.
+  license: MIT
+  public_confirmed: true
+- path: data/results.json
+  role: dataset
+  description: First-paper public engineering evidence; no personal records; paper CC BY 4.0.
+  license: MIT
+  public_confirmed: true
+- path: data/test-counts.csv
+  role: dataset
+  description: First-paper public engineering evidence; no personal records; paper CC BY 4.0.
+  license: MIT
+  public_confirmed: true
+- path: analysis/summarize_ci.py
+  role: analysis_code
+  description: First-paper public engineering evidence; no personal records; paper CC BY 4.0.
+  license: MIT
+  public_confirmed: true
+- path: supplements/LICENSE-NOTICE.txt
+  role: supplementary
+  description: First-paper public engineering evidence; no personal records; paper CC BY 4.0.
+  license: CC-BY-4.0
+  public_confirmed: true
+- path: supplements/paper.md
+  role: supplementary
+  description: First-paper public engineering evidence; no personal records; paper CC BY 4.0.
+  license: CC-BY-4.0
+  public_confirmed: true
+relations:
+- source: analysis/summarize_ci.py
+  target: data/baseline-ci.txt.gz
+  kind: analyzes
+- source: data/test-counts.csv
+  target: analysis/summarize_ci.py
+  kind: produced_by

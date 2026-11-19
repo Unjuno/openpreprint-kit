@@ -1,0 +1,17 @@
+# First-paper v1 author display name and manuscript license confirmed by user on 2026-11-13.
+# This metadata is NOT cryptographic proof of authorship or a GitHub Release.
+schema_version: 1
+title: 'OpenPreprint Kit: GitHub上の論文・研究データを検証可能にする公開キット'
+authors:
+- name: Unjuno
+  orcid: null
+abstract: GitHubを公開基盤とし、論文・研究データ・コードをハッシュとRFC 3161時刻証拠で結合するキットの設計報告。固定した実装のCIログ274件を再集計し、本稿への自己適用と信頼上の限界を示す。
+keywords:
+- preprint
+- research data
+- RFC 3161
+- GitHub
+- reproducibility
+version: v1
+paper: paper/paper.pdf
+license: CC-BY-4.0

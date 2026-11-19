@@ -1,0 +1,22 @@
+{
+  "approval_basis": "USER_CONFIRMED_NOT_ID_VERIFIED",
+  "archive_sha256": "3e78455af37a0872d994d9d3c12eca6a1db1568a86671d55aa71ac020aa76a3d",
+  "author_approved": true,
+  "authorship": "NOT_PROVEN",
+  "display_author": "Unjuno",
+  "first_publication": "NOT_PROVEN",
+  "independent_security_audit": false,
+  "independent_witness": false,
+  "license": "CC-BY-4.0",
+  "license_granted": true,
+  "manifest_sha256": "cf5945ce23fc253d00ed60da072fb90eb226f607f944d8a521b5f39bbbe858b2",
+  "paper_release_published": false,
+  "paper_sha256": "0860b735379fb1b9b223f5d535442dae8421f456d7ae1c6bf6ce8d3141a1b07c",
+  "public_availability": "NOT_PROVEN",
+  "retention": "GITHUB_ACTIONS_ARTIFACT_14_DAYS_NOT_PERMANENT",
+  "schema_version": 1,
+  "scope": "APPROVED_MANUSCRIPT_EXISTENCE_ONLY",
+  "source_commit": "7b1fc1d34ede8aebeb01bd869350ef2140be528e",
+  "tsa_accuracy_microseconds": null,
+  "tsa_time_utc": "2026-11-12T18:26:50+00:00"
+}

@@ -16,8 +16,10 @@ import shutil
 import sys
 
 import yaml
+from yaml_strict import safe_load_unique
 
 from validate import ROOT, validate
+from research_package import collect, create_research
 
 REPOSITORY_RE = re.compile(r"^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$")
 COMMIT_RE = re.compile(r"^[a-fA-F0-9]{40}$")
@@ -64,6 +66,25 @@ def bibtex_author(author: dict) -> str:
     return escaped_bibtex(author["family_names"] + ", " + author["given_names"])
 
 
+def _validated_paper_path(metadata: dict) -> Path:
+    """Re-check the paper path at the moment of copy, after validation."""
+    name = metadata.get("paper")
+    if not isinstance(name, str) or not name:
+        raise ValueError("paper path must be a non-empty string")
+    candidate = Path(name)
+    if candidate.is_absolute() or ".." in candidate.parts:
+        raise ValueError("paper path must stay inside the repository")
+    parts = candidate.parts
+    for i in range(1, len(parts)):
+        if (ROOT / Path(*parts[:i])).is_symlink():
+            raise ValueError("validated paper path has an unsafe ancestor")
+    resolved = (ROOT / candidate).resolve()
+    if (not resolved.is_relative_to(ROOT) or resolved.suffix.lower() != ".pdf"
+            or (ROOT / candidate).is_symlink() or not resolved.is_file()):
+        raise ValueError("validated paper path is no longer safe")
+    return resolved
+
+
 def create_bundle(output: Path, repository: str | None, commit: str | None) -> None:
     if repository is not None and not REPOSITORY_RE.fullmatch(repository):
         raise ValueError("--repository must be OWNER/REPO")
@@ -71,12 +92,18 @@ def create_bundle(output: Path, repository: str | None, commit: str | None) -> N
         raise ValueError("--commit must be a 40-digit Git commit SHA")
     if (repository is None) != (commit is None):
         raise ValueError("--repository and --commit must be supplied together")
-    if validate(strict=True) != 0:
+    # Use the EXACT metadata object that strict validation checked. A second
+    # untrusted re-read would open a TOCTOU window in which the declared paper
+    # path can be swapped for an arbitrary local file (secret disclosure).
+    verdict = validate(strict=True, return_data=True)
+    if not isinstance(verdict, tuple):  # defensive: caller must opt in to bound data
         raise ValueError("strict validation failed; release bundle not built")
-
-    with (ROOT / "preprint.yaml").open(encoding="utf-8") as source:
-        metadata = yaml.safe_load(source)
-    paper_path = (ROOT / metadata["paper"]).resolve()
+    rc, metadata = verdict
+    if rc != 0 or not isinstance(metadata, dict):
+        raise ValueError("strict validation failed; release bundle not built")
+    paper_path = _validated_paper_path(metadata)
+    # Validate public disclosure declarations and private receipt formats before creating dist.
+    research_plan = collect(ROOT)
     output = output.resolve()
     if output == ROOT or output == paper_path or output == ROOT / "paper":
         raise ValueError("output cannot overwrite the repository or paper")
@@ -151,12 +178,15 @@ def create_bundle(output: Path, repository: str | None, commit: str | None) -> N
     )
     (output / "RELEASE_NOTES.md").write_text(notes, encoding="utf-8")
 
+    if research_plan is not None:
+        create_research(ROOT, output, research_plan, paper_sha, metadata["version"])
+    names = (*PAYLOAD_FILES, *(("research-assets.json", "research-assets.tar") if research_plan is not None else ()))
     files = {
         filename: {
             "sha256": sha256_file(output / filename),
             "size_bytes": (output / filename).stat().st_size,
         }
-        for filename in PAYLOAD_FILES
+        for filename in names
     }
     manifest = {"schema_version": 1, "algorithm": "sha256", "files": files}
     (output / "manifest.json").write_text(
@@ -167,7 +197,7 @@ def create_bundle(output: Path, repository: str | None, commit: str | None) -> N
     (output / "SHA256SUMS").write_text(
         "".join(f"{sums[name]}  {name}\n" for name in sorted(sums)), encoding="ascii"
     )
-    print(f"PASS: created {len(PAYLOAD_FILES) + 2} release assets in {output}")
+    print(f"PASS: created {len(names) + 2} release assets in {output}")
     print("WARNING: these files are not a cryptographic timestamp or publication proof")
 
 

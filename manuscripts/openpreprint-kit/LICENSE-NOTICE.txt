@@ -1,0 +1,8 @@
+First-paper manuscript (paper.md and its rendered PDF): CC BY 4.0.
+Display author: Unjuno. User confirmed this by conversation on 2026-11-13.
+This is a record of the requested publication metadata, not a cryptographically
+signed identity, copyright ownership, affiliation or peer-review attestation.
+New analysis scripts: MIT, as in the toolkit LICENSE.
+Retained test log: generated from the cited MIT-licensed project; keep attribution.
+The manuscript is not a GitHub immutable Release until the publish gate passes.
+No medical originals, private HMAC keys or private signing keys are included.

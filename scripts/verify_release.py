@@ -28,6 +28,7 @@ def sha256_file(path: Path) -> str:
     return digest.hexdigest()
 
 
+RESEARCH_FILES = {"research-assets.json", "research-assets.tar"}
 EXPECTED_FILES = set(PAYLOAD_FILES) | {"manifest.json", "SHA256SUMS"}
 EVIDENCE_FILES = {"timestamp.tsq", "timestamp.tsr"}
 HEX_SHA256 = re.compile(r"^[0-9a-f]{64}$")
@@ -48,8 +49,10 @@ def verify(folder: Path, expected_paper_sha256: str | None) -> list[str]:
     if not folder.is_dir() or folder.is_symlink():
         return ["bundle must be a real directory"]
     actual_files = {item.name for item in folder.iterdir()}
-    if actual_files not in (EXPECTED_FILES, EXPECTED_FILES | EVIDENCE_FILES):
-        errors.append(f"unexpected bundle contents; missing={sorted(EXPECTED_FILES - actual_files)}, extra={sorted(actual_files - EXPECTED_FILES)}")
+    research_present = bool(actual_files & RESEARCH_FILES)
+    expected = EXPECTED_FILES | (RESEARCH_FILES if research_present else set())
+    if actual_files not in (expected, expected | EVIDENCE_FILES):
+        errors.append(f"unexpected bundle contents; missing={sorted(expected - actual_files)}, extra={sorted(actual_files - expected)}")
         return errors
     for name in actual_files:
         item = folder / name
@@ -65,11 +68,12 @@ def verify(folder: Path, expected_paper_sha256: str | None) -> list[str]:
     if not isinstance(manifest, dict) or type(manifest.get("schema_version")) is not int or manifest["schema_version"] != 1 or manifest.get("algorithm") != "sha256":
         return ["unsupported manifest schema or algorithm"]
     contents = manifest.get("files")
-    if not isinstance(contents, dict) or set(contents) != set(PAYLOAD_FILES):
-        return ["manifest must list exactly the five payload assets"]
+    names = (*PAYLOAD_FILES, *(sorted(RESEARCH_FILES) if research_present else ()))
+    if not isinstance(contents, dict) or set(contents) != set(names):
+        return ["manifest must list exactly the declared payload assets"]
 
     digest_values = {}
-    for name in PAYLOAD_FILES:
+    for name in names:
         item = contents[name]
         if not isinstance(item, dict) or set(item) != {"sha256", "size_bytes"}:
             errors.append(f"invalid manifest entry: {name}")
@@ -86,7 +90,7 @@ def verify(folder: Path, expected_paper_sha256: str | None) -> list[str]:
         digest_values[name] = actual_digest
 
     digest_values["manifest.json"] = sha256_file(folder / "manifest.json")
-    expected_sums = "".join(f"{digest_values[name]}  {name}\n" for name in sorted(digest_values)) if len(digest_values) == len(PAYLOAD_FILES) + 1 else None
+    expected_sums = "".join(f"{digest_values[name]}  {name}\n" for name in sorted(digest_values)) if len(digest_values) == len(names) + 1 else None
     if expected_sums is None or (folder / "SHA256SUMS").read_text(encoding="utf-8") != expected_sums:
         errors.append("SHA256SUMS does not match the manifest and assets")
 
@@ -94,6 +98,10 @@ def verify(folder: Path, expected_paper_sha256: str | None) -> list[str]:
         errors.append("preprint-metadata.json must contain an object")
     elif metadata.get("paper_sha256") != digest_values.get("paper.pdf"):
         errors.append("metadata paper_sha256 is inconsistent with paper.pdf")
+    if research_present and isinstance(metadata, dict):
+        # File hashes and sizes are necessary but insufficient: also validate TAR internals.
+        from verify_research import verify_research_bundle
+        errors.extend(verify_research_bundle(folder, digest_values.get("paper.pdf", ""), metadata.get("version", "")))
     if expected_paper_sha256 is not None:
         if not HEX_SHA256.fullmatch(expected_paper_sha256):
             errors.append("expected hash must be 64 lowercase hex digits")

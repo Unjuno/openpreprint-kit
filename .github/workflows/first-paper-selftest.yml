@@ -1,0 +1,63 @@
+name: First-paper self-application (approved v1, no publication)
+
+on:
+  pull_request:
+    paths:
+      - 'manuscripts/openpreprint-kit/**'
+      - 'scripts/**'
+      - 'tests/test_first_paper_self_application.py'
+      - '.github/workflows/first-paper-selftest.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'manuscripts/openpreprint-kit/**'
+      - 'scripts/**'
+      - 'tests/test_first_paper_self_application.py'
+      - '.github/workflows/first-paper-selftest.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  self-application:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: '3.12'
+      - name: Install hash-locked Python dependencies
+        run: |
+          python -m pip install --require-hashes -r requirements-build.lock
+          python -m pip install --require-hashes --no-build-isolation -r requirements.lock
+      - name: Install Japanese PDF typesetting tools
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends pandoc texlive-xetex lmodern texlive-lang-cjk texlive-lang-chinese texlive-fonts-recommended fonts-noto-cjk fonts-liberation fonts-dejavu-core
+      - name: Typeset actual first paper and run the kit against it
+        shell: bash
+        run: |
+          set -euo pipefail
+          export SOURCE_DATE_EPOCH=1794528000
+          pandoc manuscripts/openpreprint-kit/paper.md --from markdown --pdf-engine=xelatex --output "$RUNNER_TEMP/first-paper-draft.pdf"
+          python scripts/first_paper_selftest.py \
+            --manuscript manuscripts/openpreprint-kit \
+            --paper-pdf "$RUNNER_TEMP/first-paper-draft.pdf" \
+            --report "$RUNNER_TEMP/first-paper-selftest.json" \
+            | tee "$RUNNER_TEMP/first-paper-selftest-output.txt"
+      - name: Retain v1 candidate and scoped test result (not a Release)
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: first-paper-draft-selftest-${{ github.sha }}
+          path: |
+            ${{ runner.temp }}/first-paper-draft.pdf
+            ${{ runner.temp }}/first-paper-selftest.json
+            ${{ runner.temp }}/first-paper-selftest-output.txt
+          if-no-files-found: error
+          retention-days: 14

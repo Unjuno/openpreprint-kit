@@ -17,7 +17,18 @@ class ValidatePreprintTest(unittest.TestCase):
         (self.root / "scripts").mkdir()
         (self.root / "paper").mkdir()
         shutil.copy2(SOURCE_ROOT / "scripts" / "validate.py", self.root / "scripts" / "validate.py")
-        shutil.copy2(SOURCE_ROOT / "preprint.yaml", self.root / "preprint.yaml")
+        shutil.copy2(SOURCE_ROOT / "scripts" / "yaml_strict.py", self.root / "scripts" / "yaml_strict.py")
+        # Test inputs must not depend on an author's live manuscript metadata.
+        (self.root / "preprint.yaml").write_text('''schema_version: 1
+title: "Untitled Preprint"
+authors:
+  - name: "Replace with author name"
+abstract: "Replace with an abstract."
+keywords: []
+version: v0
+paper: paper/paper.pdf
+license: UNSPECIFIED
+''', encoding="utf-8")
 
     def tearDown(self):
         self.temp_dir.cleanup()
@@ -40,7 +51,7 @@ class ValidatePreprintTest(unittest.TestCase):
 
     def test_non_string_title_reports_error_without_crashing(self):
         path = self.root / "preprint.yaml"
-        path.write_text(path.read_text().replace('title: "Untitled Preprint"', 'title: []'), encoding="utf-8")
+        path.write_text(path.read_text(encoding='utf-8').replace('title: "Untitled Preprint"', 'title: []'), encoding="utf-8")
         result = self.run_validator()
         self.assertEqual(result.returncode, 1)
         self.assertIn("title must be a non-empty string", result.stderr)
@@ -49,3 +60,4 @@ class ValidatePreprintTest(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
