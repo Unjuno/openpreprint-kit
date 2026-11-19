@@ -145,7 +145,7 @@ def _check_signed_time_order(signed_times: list[str], policies: list[str]) -> st
         if same_policy:
             if later < earlier:
                 raise ValueError(
-                    f'renewal step time went backwards (same TSA policy): {earlier.isoformat()} < {later.isoformat()}')
+                    f'renewal step time went backwards (same TSA policy): {later.isoformat()} < {earlier.isoformat()}')
         else:
             if later <= earlier:
                 raise ValueError(
