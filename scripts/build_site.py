@@ -79,9 +79,14 @@ def build_site(bundle: Path, root: Path, output: Path, repository: str) -> None:
         if replacement:
             url = f'https://github.com/{repository}/releases/tag/{replacement["version"]}'
             replacement_html = f'<p>Replacement record: <a href="{escape(url, quote=True)}">{escape(replacement["version"])}</a> — PDF SHA-256 <code>{replacement["paper_sha256"]}</code>. Publication of that link is not verified here.</p>'
+        round_issue = event.get('round_issue')
+        round_html = (f'<p>Review round: <a href="{escape(round_issue, quote=True)}">{escape(round_issue)}</a></p>'
+                      if round_issue else '')
+        decision = event.get('decision')
+        decision_html = f'<p>Declared editorial decision: <strong>{escape(decision)}</strong></p>' if decision else ''
         notices.append(f'<article><h3>{escape(event["kind"])}</h3><p>{escape(event["summary"])}</p>'
                        f'<p>Claimed actor: {escape(event["actor"])} · Claimed UTC: {escape(event["recorded_at"])}</p>'
-                       f'<p>Declared conflicts: {escape(event["conflicts"])}</p>{replacement_html}{"".join(reports)}</article>')
+                       f'<p>Declared conflicts: {escape(event["conflicts"])}</p>{decision_html}{round_html}{replacement_html}{"".join(reports)}</article>')
     research_section = ''
     if (bundle / 'research-assets.json').is_file():
         catalog = json.loads((bundle / 'research-assets.json').read_text('utf-8'), object_pairs_hook=unique_object)

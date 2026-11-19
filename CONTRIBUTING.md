@@ -15,6 +15,7 @@ Use full commit SHAs for Actions. Never run untrusted fork code with write token
 `pull_request_target` secrets. No TSA private keys, personal tokens or sensitive research data.
 
 Scientific review records require human consent and conflict disclosures; see
-[review policy](docs/REVIEW_POLICY.md). Append corrections rather than editing old events.
+[review policy](docs/REVIEW_POLICY.md) and the [GitHub collaborative review workflow](docs/PEER_REVIEW_GITHUB.md).
+Append corrections rather than editing old events.
 Breaking evidence formats require versioned schemas and compatibility tests.
 A tool release and a paper release are distinct; do not publish the template as a real paper.
