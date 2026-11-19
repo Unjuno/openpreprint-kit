@@ -109,6 +109,51 @@ def _source(archive: Path, archive_pin: str, policy: Path,
     return details
 
 
+def _check_signed_time_order(signed_times: list[str], policies: list[str]) -> str:
+    """Honest statement about what the chain's signed times prove.
+
+    RFC 3161 signature time shows that a TSA saw the digest at that moment
+    (with whatever accuracy it records, often NOT_SET). It never proves
+    the order in which independent clients submitted renewals, nor historical
+    LTV. Between the ORIGINAL existence stamp and each renewal step, and
+    between consecutive renewal steps, the following acceptance rules apply:
+
+    - All steps signed by the same policy OID (same TSA trust choice):
+      non-decreasing times are required. Equal times are tolerated ONLY when
+      the same TSA OID signed repeatedly (the operator's signalization choice,
+      not a global clock claim).
+    - Steps signed by different policy OIDs (cross-TSA): times must be strictly
+      increasing; equal or reversed times reject the chain because two TSAs do
+      not share a trusted clock.
+    - Unparseable/missing times reject the chain.
+    - The result never claims LTV, and is recorded separately for callers.
+    """
+    import datetime as _dt
+    if not signed_times:
+        return 'UNKNOWN'
+    instants = []
+    for value in signed_times:
+        try:
+            instant = _dt.datetime.fromisoformat(value)
+        except (TypeError, ValueError):
+            raise ValueError('renewal signature time is not a valid ISO-8601 timestamp: ' + value)
+        if instant.tzinfo is None:
+            raise ValueError('renewal signature time must be timezone-aware UTC: ' + value)
+        instants.append(instant.astimezone(_dt.timezone.utc))
+    same_policy = len(set(policies)) == 1
+    for earlier, later in zip(instants, instants[1:]):
+        if same_policy:
+            if later < earlier:
+                raise ValueError(
+                    f'renewal step time went backwards (same TSA policy): {earlier.isoformat()} < {later.isoformat()}')
+        else:
+            if later <= earlier:
+                raise ValueError(
+                    'cross-TSA renewal steps must be strictly increasing: '
+                    f'{earlier.isoformat()} >= {later.isoformat()}')
+    return 'NON_DECREASING_SAME_TSA_POLICY' if same_policy else 'STRICTLY_INCREASING_CROSS_TSA_POLICY'
+
+
 def verify_chain(archive: Path, archive_pin: str, source_policy: Path,
                  chain: Path, expected_chain_sha256: str, renewal_policies: list[Path],
                  repository: str, version: str) -> dict:
@@ -149,10 +194,11 @@ def verify_chain(archive: Path, archive_pin: str, source_policy: Path,
         previous = _hash_step_parts([statement_bytes, query, response])
     if previous != expected_chain_sha256:
         raise ValueError('renewal chain does not match independently pinned terminal digest')
+    ordering = _check_signed_time_order(signed_times, policies)
     return {'status': 'PASS', 'source_archive_sha256': archive_pin,
             'source_repository': repository, 'source_version': version,
             'chain_sha256': previous, 'steps': len(paths), 'tsa_policies': policies,
-            'tsa_signed_times_utc': signed_times,
+            'tsa_signed_times_utc': signed_times, 'time_order': ordering,
             'revocation': 'CURRENT_CRLS_REQUIRED_FOR_ORIGINAL_AND_ALL_RENEWALS',
             'historical_ltv': 'NOT_ESTABLISHED', 'independent_custody': 'NOT_PROVEN',
             'first_publication': 'NOT_PROVEN'}

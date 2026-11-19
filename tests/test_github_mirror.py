@@ -38,6 +38,9 @@ class FakeGitHub:
         self.source_missing = False
         self.source_corrupt = False
         self.source_immutable = True
+        self.source_tag_object = None   # explicit override for git/ref/tags/<version>
+        self.source_tag_objects = None  # dict: sha -> object for annotated tag chains
+        self.source_ref_unavailable = False
 
     def tools(self):
         self.calls.append(('tools',))
@@ -52,6 +55,18 @@ class FakeGitHub:
             if self.source_missing: return None
             return {'tag_name':version,'draft':False,'immutable':self.source_immutable,
                     'assets':[{'name':n} for n in self.source_assets[version]]}
+        if self.source and path.startswith('repos/' + self.source + '/git/ref/tags/'):
+            if self.source_ref_unavailable:
+                return None
+            if self.source_tag_object is not None:
+                return {'object': self.source_tag_object}
+            return {'object': {'type': 'commit', 'sha': 'a' * 40}}
+        if self.source and path.startswith('repos/' + self.source + '/git/tags/'):
+            if self.source_tag_objects is None:
+                raise AssertionError('unexpected source annotated tag object lookup: ' + path)
+            sha = path.rsplit('/', 1)[-1]
+            obj = self.source_tag_objects.get(sha)
+            return {'object': obj} if isinstance(obj, dict) else None
         if method != 'GET':
             raise AssertionError('unexpected mutable GitHub API call: ' + method)
         if path == main:
@@ -190,6 +205,40 @@ class GithubMirrorTests(unittest.TestCase):
         self.assertEqual(result['source_publication'], 'PUBLIC_IMMUTABLE_ASSETS_MATCH')
         self.assertEqual(result['github_attestation'], 'NOT_VERIFIED_BY_ANONYMOUS_MODE')
         self.assertFalse(any(c[0] == 'command' for c in self.remote.calls[before_verify:]))
+
+    def test_strict_verify_rejects_source_tag_pointing_to_wrong_commit(self):
+        report = self.publish()
+        self.remote.source_tag_object = {'type': 'commit', 'sha': 'e' * 40}
+        with self.assertRaisesRegex(ValueError, 'resolves to commit'):
+            self.verify(pin=report['receipt_sha256'], require_source_release=True)
+        self.assertFalse(self.fetched.exists())
+
+    def test_strict_verify_accepts_annotated_tag_chain_to_commit(self):
+        report = self.publish()
+        self.remote.source_tag_object = {'type': 'tag', 'sha': 'c' * 40}
+        self.remote.source_tag_objects = {'c' * 40: {'type': 'commit', 'sha': 'a' * 40}}
+        result = self.verify(pin=report['receipt_sha256'], require_source_release=True)
+        self.assertEqual(result['source_publication'], 'PUBLIC_IMMUTABLE_ASSETS_MATCH')
+
+    def test_strict_verify_rejects_annotated_tag_depth_exhaustion(self):
+        report = self.publish()
+        self.remote.source_tag_object = {'type': 'tag', 'sha': 'c' * 40}
+        self.remote.source_tag_objects = {'c' * 40: {'type': 'tag', 'sha': 'd' * 40},
+                                          'd' * 40: {'type': 'tag', 'sha': 'e' * 40},
+                                          'e' * 40: {'type': 'tag', 'sha': 'f' * 40},
+                                          'f' * 40: {'type': 'tag', 'sha': '1' * 40},
+                                          '1' * 40: {'type': 'tag', 'sha': '2' * 40},
+                                          '2' * 40: {'type': 'tag', 'sha': '3' * 40}}
+        with self.assertRaisesRegex(ValueError, 'maximum permitted depth'):
+            self.verify(pin=report['receipt_sha256'], require_source_release=True)
+        self.assertFalse(self.fetched.exists())
+
+    def test_strict_verify_rejects_unavailable_source_tag_ref(self):
+        report = self.publish()
+        self.remote.source_ref_unavailable = True
+        with self.assertRaisesRegex(ValueError, 'tag ref is unavailable'):
+            self.verify(pin=report['receipt_sha256'], require_source_release=True)
+        self.assertFalse(self.fetched.exists())
 
     def test_strict_verify_rejects_deleted_public_source_release(self):
         report = self.publish()

@@ -150,6 +150,63 @@ class ResearchBundleTests(unittest.TestCase):
         finally:
             external.unlink()
 
+    # --- safe_read_bytes unit tests (POSIX containment walking + Windows handle check) ---
+
+    def _import_rp(self):
+        import importlib
+        return importlib.import_module('research_package')
+
+    def test_safe_read_returns_regular_file_bytes(self):
+        rp = self._import_rp()
+        target = self.root / 'data' / 'synthetic.csv'
+        self.assertEqual(rp.safe_read_bytes(self.root, 'data/synthetic.csv'),
+                         target.read_bytes())
+
+    def test_safe_read_rejects_leaf_symlink(self):
+        if not hasattr(os, 'symlink'):
+            self.skipTest('no symlink support on this host')
+        rp = self._import_rp()
+        (self.root / 'data' / 'synthetic.csv').unlink()
+        external = self.root.parent / (self.root.name + '-outside.csv')
+        external.write_bytes(b'secret')
+        try:
+            try:
+                (self.root / 'data' / 'synthetic.csv').symlink_to(external)
+            except OSError as exc:
+                if getattr(exc, 'winerror', None) == 1314:
+                    self.skipTest('Windows symlink privilege unavailable')
+                raise
+            with self.assertRaises((OSError, ValueError)):
+                rp.safe_read_bytes(self.root, 'data/synthetic.csv')
+        finally:
+            (self.root / 'data').mkdir(exist_ok=True) if not (self.root / 'data').exists() else None
+            (self.root / 'data' / 'synthetic.csv').unlink(missing_ok=True)
+            external.unlink()
+
+    def test_safe_read_rejects_ancestor_junction(self):
+        if sys.platform != 'win32':
+            self.skipTest('junction check is Windows-specific')
+        rp = self._import_rp()
+        outside = self.root.parent / (self.root.name + '-ancestor')
+        outside.mkdir()
+        (outside / 'synthetic.csv').write_bytes(b'outsider')
+        original = self.root / 'data'
+        target = outside
+        try:
+            import shutil as _shutil
+            _shutil.move(str(original), str(target / 'data-moved'))
+            res = subprocess.run(['cmd', '/c', 'mklink', '/J', str(original), str(target)],
+                                 capture_output=True)
+            if res.returncode:
+                self.skipTest('junction creation unavailable on this host')
+            with self.assertRaises((OSError, ValueError)):
+                rp.safe_read_bytes(self.root, 'data/synthetic.csv')
+        finally:
+            (self.root / 'data').unlink() if (self.root / 'data').is_symlink() or getattr(self.root / 'data', 'is_junction', lambda: False)() else None
+            # restore original directory
+            if not (self.root / 'data').exists():
+                (target / 'data-moved').rename(original)
+
     def test_forged_tar_member_rejected_even_after_manifest_rehash(self):
         # Rehashing outer checksums cannot make an extra undeclared TAR member valid.
         self.make_bundle()

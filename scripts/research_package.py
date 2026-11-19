@@ -6,6 +6,7 @@ from io import BytesIO
 import hashlib
 import json
 from pathlib import Path
+import os
 import tarfile
 
 import yaml
@@ -14,6 +15,124 @@ from verify_research import (ALLOWED_ROLES, ARCHIVE, CATALOG, ID_RE, MAX_FILES,
                              MAX_SINGLE_BYTES, MAX_TOTAL_BYTES, RELATIONS, path_ok, receipt_ok)
 
 CONFIG = 'research-assets.yaml'
+
+
+# --- Race-safe file reading ------------------------------------------------
+# The previous implementation re-checked containment and then called
+# path.read_bytes() as two separate operations, which left a window in which
+# an attacker who can swap a parent directory (symlink/junction) for one
+# pointing outside the repository could feed us a secret file. We therefore
+# read through a single handle whose path is verified against the repository
+# DURING the open: POSIX walks the component chain with dir_fd + O_NOFOLLOW;
+# Windows opens with CreateFileW and validates the resolved final path via
+# GetFinalPathNameByHandleW. If either platform cannot prove containment, we
+# fail closed rather than read bytes.
+
+
+def _escape_report(rel: str) -> ValueError:
+    return ValueError('research file escaped repository root (reparse point or symlink): ' + rel)
+
+
+def _normalize_windows_path(path: str) -> str:
+    norm = path.replace('/', '\\')
+    lowered = norm.lower()
+    if lowered.startswith('\\\\?\\'):
+        lowered = lowered[4:]
+    if lowered.startswith('\\\\.\\'):
+        lowered = lowered[4:]
+    while lowered.endswith('\\'):
+        lowered = lowered[:-1]
+    return lowered
+
+
+def _windows_read(root: Path, rel: str, max_bytes: int) -> bytes:
+    import ctypes
+    from ctypes import wintypes
+
+    target = (root / rel.replace('/', '\\')).absolute()
+    root_real = _normalize_windows_path(str(root.resolve()))
+    k32 = ctypes.WinDLL('kernel32', use_last_error=True)
+    GENERIC_READ = 0x80000000
+    FILE_SHARE_READ = FILE_SHARE_WRITE = FILE_SHARE_DELETE = 0x1 | 0x2 | 0x4
+    OPEN_EXISTING = 3
+    FILE_ATTRIBUTE_NORMAL = 0x80
+    FILE_FLAG_BACKUP_SEMANTICS = 0x02000000
+
+    handle = k32.CreateFileW(str(target), GENERIC_READ,
+                             FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,
+                             None, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, None)
+    if handle == wintypes.HANDLE(-1).value:
+        raise OSError(ctypes.get_last_error(), 'open failed: ' + rel)
+    try:
+        buf = ctypes.create_unicode_buffer(32768)
+        n = k32.GetFinalPathNameByHandleW(handle, buf, 32768, 0x0)  # 0 = normalized
+        if n == 0:
+            raise _escape_report(rel)
+        final = _normalize_windows_path(buf.value)
+        if not final.startswith(root_real + '\\') and final != root_real:
+            raise _escape_report(rel)
+        remainder = final[len(root_real):].lstrip('\\')
+        if remainder.lower() != rel.replace('/', '\\').lower():
+            raise _escape_report(rel)
+        data = bytearray()
+        chunk = ctypes.create_string_buffer(65536)
+        read = wintypes.DWORD()
+        while True:
+            ok = k32.ReadFile(handle, chunk, 65536, ctypes.byref(read), None)
+            if not ok:
+                raise OSError('read failed: ' + rel)
+            if read.value == 0:
+                break
+            data += chunk.raw[:read.value]
+            if len(data) > max_bytes:
+                raise ValueError('research file exceeds the permitted byte limit: ' + rel)
+        return bytes(data)
+    finally:
+        k32.CloseHandle(handle)
+
+
+def _posix_read(root: Path, rel: str, max_bytes: int) -> bytes:
+    parts = rel.split('/')
+    root_dir = os.open(os.fspath(root), os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW | os.O_CLOEXEC)
+    fd = root_dir
+    root_dir = None
+    leaf = None
+    try:
+        for part in parts[:-1]:
+            parent = fd
+            fd = os.open(part, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW | os.O_CLOEXEC,
+                         dir_fd=parent)
+            os.close(parent)
+        leaf = fd
+        fd = None
+        if not _is_regular(leaf):
+            raise OSError('research file is not a regular file: ' + rel)
+        data = bytearray()
+        while len(data) <= max_bytes:
+            chunk = os.read(leaf, 65536)
+            if not chunk:
+                break
+            data += chunk
+            if len(data) > max_bytes:
+                raise ValueError('research file exceeds the permitted byte limit: ' + rel)
+        return bytes(data)
+    finally:
+        for candidate in (root_dir, fd, leaf):
+            if candidate is not None:
+                os.close(candidate)
+
+
+def _is_regular(fd: int) -> bool:
+    import stat
+    return stat.S_ISREG(os.fstat(fd).st_mode)
+
+
+def safe_read_bytes(root: Path, rel: str, max_bytes: int = MAX_SINGLE_BYTES) -> bytes:
+    if os.name == 'posix':
+        return _posix_read(root, rel, max_bytes)
+    if os.name == 'nt':
+        return _windows_read(root, rel, max_bytes)
+    raise OSError('unsupported platform for race-safe research reads')
 
 
 def path_is_safe(root: Path, rel: str, path: Path) -> bool:
@@ -85,7 +204,7 @@ def collect(root: Path) -> tuple[list[dict], list[dict], dict[str, Path]] | None
             rel = receipt.relative_to(root).as_posix()
             if not path_ok(rel, private=True) or not receipt.is_file() or receipt.is_symlink():
                 raise ValueError('unsafe private receipt entry')
-            data = receipt.read_bytes()
+            data = safe_read_bytes(root, rel, MAX_SINGLE_BYTES)
             if not receipt_ok(data, rel):
                 raise ValueError('invalid confidential record commitment')
             files[rel] = receipt
@@ -137,7 +256,7 @@ def create_research(root: Path, output: Path, plan: tuple, paper_sha256: str, ve
             if (not path_ok(filename, private=(entry['role'] == 'private_commitment'))
                     or not path_is_safe(root, filename, path)):
                 raise ValueError('research file changed or became unsafe during preparation')
-            content = path.read_bytes()
+            content = safe_read_bytes(root, filename, MAX_TOTAL_BYTES)
             total_bytes += len(content)
             if len(content) > MAX_SINGLE_BYTES or total_bytes > MAX_TOTAL_BYTES:
                 raise ValueError('research data byte limit exceeded while building')

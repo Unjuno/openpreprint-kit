@@ -341,3 +341,50 @@ class RenewalTests(unittest.TestCase):
         self.assertEqual(json.loads(p.stdout)['status'], 'PLAN_ONLY')
         self.assertFalse(self.output.exists())
 
+    # --- time-order rules for renewal chain signatures ---
+
+    def _check(self, times, policies):
+        m = self.module()
+        return m._check_signed_time_order(times, policies)
+
+    def test_same_policy_nondescresing_times_accepted(self):
+        self.assertEqual(
+            self._check(['2026-11-01T00:00:00+00:00',
+                         '2026-11-01T00:00:00+00:00',
+                         '2026-11-02T00:00:00+00:00'],
+                        ['1.2.3.4.1', '1.2.3.4.1', '1.2.3.4.1']),
+            'NON_DECREASING_SAME_TSA_POLICY')
+
+    def test_same_policy_out_of_order_times_rejected(self):
+        with self.assertRaisesRegex(ValueError, 'went backwards'):
+            self._check(['2026-11-02T00:00:00+00:00',
+                         '2026-11-01T00:00:00+00:00'],
+                        ['1.2.3.4.1', '1.2.3.4.1'])
+
+    def test_cross_policy_strictly_increasing_accepted(self):
+        self.assertEqual(
+            self._check(['2026-11-01T00:00:00+00:00',
+                         '2026-11-01T00:00:01+00:00'],
+                        ['1.2.3.4.1', '1.2.3.4.2']),
+            'STRICTLY_INCREASING_CROSS_TSA_POLICY')
+
+    def test_cross_policy_equal_times_rejected(self):
+        with self.assertRaisesRegex(ValueError, 'strictly increasing'):
+            self._check(['2026-11-01T00:00:00+00:00',
+                         '2026-11-01T00:00:00+00:00'],
+                        ['1.2.3.4.1', '1.2.3.4.2'])
+
+    def test_cross_policy_out_of_order_times_rejected(self):
+        with self.assertRaisesRegex(ValueError, 'strictly increasing'):
+            self._check(['2026-11-02T00:00:00+00:00',
+                         '2026-11-01T00:00:00+00:00'],
+                        ['1.2.3.4.1', '1.2.3.4.2'])
+
+    def test_unparseable_or_naive_time_rejected(self):
+        with self.assertRaisesRegex(ValueError, 'timezone-aware|ISO-8601'):
+            self._check(['not-a-time', '2026-11-01T00:00:00+00:00'],
+                        ['1.2.3.4.1', '1.2.3.4.1'])
+        with self.assertRaisesRegex(ValueError, 'timezone-aware|ISO-8601'):
+            self._check(['2026-11-01 00:00:00'],
+                        ['1.2.3.4.1'])
+

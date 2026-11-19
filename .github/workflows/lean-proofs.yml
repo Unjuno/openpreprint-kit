@@ -1,0 +1,48 @@
+name: Lean formal proofs
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  lean:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Install elan (pinned Lean toolchain)
+        run: |
+          set -euo pipefail
+          curl --proto '=https' --tlsv1.2 -sSf https://release.lean-lang.org/elan/install.sh -o /tmp/elan-init.sh
+          sh /tmp/elan-init.sh -y
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+      - name: Record Lean runtime
+        run: elan --version && lean --version
+      - name: Build and kernel-check all theorems
+        run: |
+          set -euo pipefail
+          cd formal
+          lean --version
+          lake build OpenPreprintFormal
+      - name: Check that no proof contains sorry/admit/axiom
+        run: |
+          set -euo pipefail
+          ! grep -RIn '\bsorry\b\|\badmit\b\|axiom ' formal --include='*.lean'
+      - name: Regenerate vectors and require repository to be unchanged
+        run: |
+          set -euo pipefail
+          python -m pip install --require-hashes -r requirements-build.lock && python -m pip install --require-hashes --no-build-isolation -r requirements.lock
+          python formal/vectors.py
+          git diff --exit-code -- formal/vectors.json formal/OpenPreprintFormal/GeneratedVectors.lean
+      - name: Run Python-vs-Lean differential test
+        run: |
+          set -euo pipefail
+          python formal/differential.py --check
+          python -m pip install --require-hashes -r requirements-hypothesis.lock
+          python formal/differential.py
