@@ -1,6 +1,7 @@
 """Test-only PDF fixtures. These are not scholarly papers."""
 from pathlib import Path
 from pypdf import PdfWriter
+from pypdf.actions import JavaScript
 
 
 def write_pdf(path: Path, *, pages: int = 1, javascript: bool = False,
@@ -9,7 +10,7 @@ def write_pdf(path: Path, *, pages: int = 1, javascript: bool = False,
     for _ in range(pages):
         writer.add_blank_page(width=595, height=842)
     if javascript:
-        writer.add_js("app.alert('test-only, never execute')")
+        writer.add_open_action(JavaScript("app.alert('test-only, never execute')"))
     if encrypted:
         writer.encrypt("test-password")
     if attachment:
