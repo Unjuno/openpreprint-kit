@@ -6,14 +6,14 @@ requires explicit authorization. No document parser can replace an isolated rend
 
 ## PDF parser
 
-- **Pinned:** `pypdf==6.21.4` (released 2026-10-28).
+- **Pinned (proposed v7 migration):** `pypdf==7.1.0` (released 2026-11-13); previous tested baseline was `6.21.4`.
 - **Minimum known patched version for 2026-10-30 advisory:** `6.21.3`.
 - **Never use for publication:** `pypdf==5.9.0`, used in a local exploratory test. It is
   affected by published resource-exhaustion advisories; it was replaced before merge.
 - Sources:
   - https://github.com/py-pdf/pypdf/security/advisories/GHSA-62m5-6wh8-28x7
   - https://github.com/py-pdf/pypdf/security/advisories/GHSA-9mvc-8737-8j8h
-  - https://pypi.org/project/pypdf/6.21.4/
+  - https://pypi.org/project/pypdf/7.1.0/
 
 The PDF limit is 25 MiB / 500 pages with bounded object traversal. These constraints reduce
 but do **not eliminate** parser denial-of-service risks. The tests do not prove absence of vulnerabilities.

@@ -1,6 +1,7 @@
 __pycache__/
 *.py[cod]
 .pytest_cache/
+formal/.lake/
 .venv/
 *.aux
 *.bbl

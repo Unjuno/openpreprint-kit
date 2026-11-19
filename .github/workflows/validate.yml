@@ -25,6 +25,9 @@ jobs:
           python-version: ${{ matrix.python }}
       - name: Install dependencies
         run: python -m pip install --require-hashes -r requirements-build.lock && python -m pip install --require-hashes --no-build-isolation -r requirements.lock # locked requirements.txt + requirements-publication-checks.txt
+      - name: Install test-only Hypothesis (3.12 only; requires Python >= 3.11)
+        if: matrix.python == '3.12'
+        run: python -m pip install --require-hashes -r requirements-hypothesis.lock
       - name: Record crypto runtime
         run: openssl version
       - name: Validate draft metadata

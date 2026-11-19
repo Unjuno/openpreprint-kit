@@ -183,7 +183,9 @@ class AnonymousGateway(GitHubGateway):
     def api(self, method: str, path: str, data=None, *, allow_missing: bool = False):
         if method != 'GET' or data is not None or not re.fullmatch(
                 r'repos/[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+'
-                r'(?:/releases/tags/(?:opk-custody-[0-9a-f]{24}|v[0-9]+(?:\.[0-9]+){0,2}))?',
+                r'(?:/releases/tags/(?:opk-custody-[0-9a-f]{24}|v[0-9]+(?:\.[0-9]+){0,2})'
+                r'|/git/ref/tags/(?:opk-custody-[0-9a-f]{24}|v[0-9]+(?:\.[0-9]+){0,2})'
+                r'|/git/tags/[0-9a-f]{40})?',
                 path, re.ASCII):
             raise ValueError('anonymous verifier supports only public GitHub repository/release GET')
         endpoint = 'https://api.github.com/' + path
@@ -267,6 +269,37 @@ def _check_remote(gateway, source: str, mirror: str, tag: str, catalog_pin: str,
     return report
 
 
+def _resolve_tag_commit(gateway, repository: str, tag: str, max_depth: int = 5) -> str:
+    """Resolve an annotated/lightweight Git tag to the commit it names.
+
+    `target_commitish` on a GitHub Release is the branch/tag string passed at
+    creation time, not proof of what the tag ref resolves to. Any divergence
+    (tag moved, renamed, or pointing at a different commit) must fail closed.
+    Annotated tags resolve through `git/tags/<sha>` repeatedly, consuming no
+    more than max_depth levels.
+    """
+    ref = gateway.api('GET', f'repos/{repository}/git/ref/tags/{tag}', allow_missing=True)
+    if not isinstance(ref, dict) or not isinstance(ref.get('object'), dict):
+        raise ValueError('source Release tag ref is unavailable: ' + tag)
+    obj = ref['object']
+    for _ in range(max_depth):
+        obj_type = obj.get('type')
+        obj_sha = obj.get('sha')
+        if not isinstance(obj_type, str) or not isinstance(obj_sha, str) \
+                or re.fullmatch(r'[0-9a-f]{40}\Z', obj_sha) is None:
+            raise ValueError('tag ref object is malformed: ' + tag)
+        if obj_type == 'commit':
+            return obj_sha.lower()
+        if obj_type != 'tag':
+            raise ValueError('tag ref does not name a commit: ' + tag)
+        inner = gateway.api('GET', f'repos/{repository}/git/tags/{obj_sha}',
+                            allow_missing=True)
+        obj = inner.get('object') if isinstance(inner, dict) else None
+        if not isinstance(obj, dict):
+            raise ValueError('annotated tag object is unavailable: ' + tag)
+    raise ValueError('tag chain exceeds the maximum permitted depth: ' + tag)
+
+
 def _verify_public_source(gateway, source: str, storage: Path,
                           entries: list[dict], policy: Path, *,
                           verify_attestations: bool = True) -> None:
@@ -288,6 +321,10 @@ def _verify_public_source(gateway, source: str, storage: Path,
             if (not isinstance(release,dict) or release.get('tag_name')!=version
                     or release.get('draft') is not False or release.get('immutable') is not True):
                 raise ValueError('source Release must exist and be public and immutable: ' + version)
+            resolved=_resolve_tag_commit(gateway, source, version)
+            if resolved != item['source_commit'].lower():
+                raise ValueError('source Release tag ' + version + ' resolves to commit '
+                                 + resolved + ' but custody expects ' + item['source_commit'].lower())
             restored=base/version
             restore(storage/item['filename'],restored,item['archive_sha256'],policy)
             bundle=restored/'bundle'

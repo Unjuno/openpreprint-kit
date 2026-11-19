@@ -39,7 +39,7 @@ class FirstPaperLauncherTests(unittest.TestCase):
         self.assertEqual(r.returncode,0,r.stderr)
 
     def test_fixed_inputs_and_trust_are_explicit(self):
-        text=SCRIPT.read_text()
+        text=SCRIPT.read_text(encoding='utf-8')
         self.assertIn('43279522755',text)
         self.assertIn('manuscripts/openpreprint-kit/approved-v1/paper.pdf',text)
         self.assertNotIn('gh run download',text)
@@ -64,3 +64,4 @@ class FirstPaperLauncherTests(unittest.TestCase):
                 capture_output=True,text=True,timeout=10)
             self.assertNotEqual(r.returncode,0)
             self.assertEqual(set(Path(tmp).iterdir()),before)
+

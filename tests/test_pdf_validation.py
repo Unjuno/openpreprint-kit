@@ -36,7 +36,7 @@ class PdfPublicationTests(unittest.TestCase):
 
     def test_dependency_manifest_uses_known_patched_pypdf(self):
         requirements = (ROOT / "requirements.txt").read_text(encoding="utf-8")
-        self.assertIn("pypdf==6.21.4", requirements,
+        self.assertIn("pypdf==7.1.0", requirements,
                       "Unpatched PDF parser versions are forbidden for publication")
 
     def test_valid_structural_pdf_passes(self):

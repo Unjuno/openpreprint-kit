@@ -34,7 +34,7 @@ class ApprovedPaperInputTests(unittest.TestCase):
             self.assertFalse(any(name.endswith('.key') for name in z.namelist()))
 
     def test_launcher_does_not_require_temporary_artifact_download(self):
-        launcher = (ROOT / 'scripts/publish_first_paper.sh').read_text()
+        launcher = (ROOT / 'scripts/publish_first_paper.sh').read_text(encoding='utf-8')
         self.assertNotIn('gh run download', launcher)
         self.assertIn('manuscripts/openpreprint-kit/approved-v1/paper.pdf', launcher)
         self.assertLess(launcher.index('sha256sum -c'), launcher.index('gh auth status'))
@@ -61,10 +61,11 @@ class ApprovedPaperInputTests(unittest.TestCase):
     def test_evidence_copy_is_not_mislabeled_as_a_public_release(self):
         path = ROOT / 'evidence/first-paper/approved-v1/retention.json'
         self.assertTrue(path.is_file(), 'retention receipt missing')
-        report = json.loads(path.read_text())
+        report = json.loads(path.read_text(encoding='utf-8'))
         self.assertEqual(report['scope'], 'RETAINED_APPROVED_PREPUBLICATION_INPUT_NOT_A_RELEASE')
         self.assertFalse(report['public_paper_release'])
         self.assertEqual(report['origin_run'], 43279522755)
 
 
 if __name__ == '__main__': unittest.main()
+

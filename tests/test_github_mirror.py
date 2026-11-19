@@ -38,6 +38,9 @@ class FakeGitHub:
         self.source_missing = False
         self.source_corrupt = False
         self.source_immutable = True
+        self.source_tag_object = None   # explicit override for git/ref/tags/<version>
+        self.source_tag_objects = None  # dict: sha -> object for annotated tag chains
+        self.source_ref_unavailable = False
 
     def tools(self):
         self.calls.append(('tools',))
@@ -52,6 +55,18 @@ class FakeGitHub:
             if self.source_missing: return None
             return {'tag_name':version,'draft':False,'immutable':self.source_immutable,
                     'assets':[{'name':n} for n in self.source_assets[version]]}
+        if self.source and path.startswith('repos/' + self.source + '/git/ref/tags/'):
+            if self.source_ref_unavailable:
+                return None
+            if self.source_tag_object is not None:
+                return {'object': self.source_tag_object}
+            return {'object': {'type': 'commit', 'sha': 'a' * 40}}
+        if self.source and path.startswith('repos/' + self.source + '/git/tags/'):
+            if self.source_tag_objects is None:
+                raise AssertionError('unexpected source annotated tag object lookup: ' + path)
+            sha = path.rsplit('/', 1)[-1]
+            obj = self.source_tag_objects.get(sha)
+            return {'object': obj} if isinstance(obj, dict) else None
         if method != 'GET':
             raise AssertionError('unexpected mutable GitHub API call: ' + method)
         if path == main:
@@ -191,6 +206,40 @@ class GithubMirrorTests(unittest.TestCase):
         self.assertEqual(result['github_attestation'], 'NOT_VERIFIED_BY_ANONYMOUS_MODE')
         self.assertFalse(any(c[0] == 'command' for c in self.remote.calls[before_verify:]))
 
+    def test_strict_verify_rejects_source_tag_pointing_to_wrong_commit(self):
+        report = self.publish()
+        self.remote.source_tag_object = {'type': 'commit', 'sha': 'e' * 40}
+        with self.assertRaisesRegex(ValueError, 'resolves to commit'):
+            self.verify(pin=report['receipt_sha256'], require_source_release=True)
+        self.assertFalse(self.fetched.exists())
+
+    def test_strict_verify_accepts_annotated_tag_chain_to_commit(self):
+        report = self.publish()
+        self.remote.source_tag_object = {'type': 'tag', 'sha': 'c' * 40}
+        self.remote.source_tag_objects = {'c' * 40: {'type': 'commit', 'sha': 'a' * 40}}
+        result = self.verify(pin=report['receipt_sha256'], require_source_release=True)
+        self.assertEqual(result['source_publication'], 'PUBLIC_IMMUTABLE_ASSETS_MATCH')
+
+    def test_strict_verify_rejects_annotated_tag_depth_exhaustion(self):
+        report = self.publish()
+        self.remote.source_tag_object = {'type': 'tag', 'sha': 'c' * 40}
+        self.remote.source_tag_objects = {'c' * 40: {'type': 'tag', 'sha': 'd' * 40},
+                                          'd' * 40: {'type': 'tag', 'sha': 'e' * 40},
+                                          'e' * 40: {'type': 'tag', 'sha': 'f' * 40},
+                                          'f' * 40: {'type': 'tag', 'sha': '1' * 40},
+                                          '1' * 40: {'type': 'tag', 'sha': '2' * 40},
+                                          '2' * 40: {'type': 'tag', 'sha': '3' * 40}}
+        with self.assertRaisesRegex(ValueError, 'maximum permitted depth'):
+            self.verify(pin=report['receipt_sha256'], require_source_release=True)
+        self.assertFalse(self.fetched.exists())
+
+    def test_strict_verify_rejects_unavailable_source_tag_ref(self):
+        report = self.publish()
+        self.remote.source_ref_unavailable = True
+        with self.assertRaisesRegex(ValueError, 'tag ref is unavailable'):
+            self.verify(pin=report['receipt_sha256'], require_source_release=True)
+        self.assertFalse(self.fetched.exists())
+
     def test_strict_verify_rejects_deleted_public_source_release(self):
         report = self.publish()
         self.remote.source_missing = True
@@ -283,7 +332,7 @@ class GithubMirrorTests(unittest.TestCase):
         self.remote.corrupt_public=True
         with self.assertRaisesRegex(ValueError,'SHA-256|mismatch'):
             self.publish()
-        report=json.loads((self.output/'mirror-report.json').read_text())
+        report=json.loads((self.output/'mirror-report.json').read_text(encoding='utf-8'))
         self.assertEqual(report['status'],'FAIL')
         self.assertIn(report['stage'],('PUBLISHED_PENDING_AUDIT','PUBLIC_AUDIT'))
         self.assertEqual(report['rollback'],'NOT_PERFORMED')
@@ -316,6 +365,29 @@ class GithubMirrorTests(unittest.TestCase):
             response=m.AnonymousGateway().api('GET','repos/archiver/evidence')
         self.assertEqual(response['full_name'],self.mirror)
 
+    def test_anonymous_gateway_allows_tag_resolution_paths(self):
+        # _resolve_tag_commit() must work with the default anonymous gateway;
+        # otherwise --require-source-release can never succeed outside tests
+        # that inject a permissive fake gateway.
+        m = self.module()
+        reached = RuntimeError('reached network layer')
+        with patch('urllib.request.build_opener', side_effect=reached):
+            for path in ('repos/example/science-paper/git/ref/tags/v1',
+                         'repos/example/science-paper/git/ref/tags/opk-custody-' + 'a' * 24,
+                         'repos/example/science-paper/git/tags/' + 'a' * 40):
+                with self.assertRaises(RuntimeError):
+                    m.AnonymousGateway().api('GET', path)
+
+    def test_anonymous_gateway_still_rejects_other_git_paths(self):
+        m = self.module()
+        with patch('urllib.request.build_opener',
+                   side_effect=RuntimeError('must not reach network layer')):
+            for path in ('repos/example/science-paper/git/refs/heads/main',
+                         'repos/example/science-paper/git/tags/' + 'a' * 39,
+                         'repos/example/science-paper/git/ref/tags/' + 'x' * 300):
+                with self.assertRaisesRegex(ValueError, 'anonymous verifier'):
+                    m.AnonymousGateway().api('GET', path)
+
     def test_external_verify_does_not_query_admin_immutable_setting(self):
         self.publish()
         initial=list(self.remote.calls)
@@ -334,3 +406,4 @@ class GithubMirrorTests(unittest.TestCase):
         report=self.publish()
         self.assertFalse(any(x.endswith(('.key','.pem','.p12')) for x in self.remote.files))
         self.assertNotIn('INDEPENDENT',json.dumps(report))
+

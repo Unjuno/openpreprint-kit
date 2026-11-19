@@ -9,7 +9,7 @@ class LiveWorkflowTests(unittest.TestCase):
     def setUp(self):
         self.path=ROOT/'.github/workflows/live-acceptance.yml'
         self.assertTrue(self.path.is_file())
-        self.raw=self.path.read_text()
+        self.raw=self.path.read_text(encoding='utf-8')
         self.workflow=yaml.load(self.raw,Loader=yaml.BaseLoader)
 
     def test_manual_synthetic_only(self):
@@ -39,3 +39,4 @@ class LiveWorkflowTests(unittest.TestCase):
                     self.assertNotIn('${{',step['run'])
         self.assertNotIn('secrets.',self.raw)
         self.assertNotIn('contents: write',self.raw)
+

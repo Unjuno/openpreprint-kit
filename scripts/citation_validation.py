@@ -14,6 +14,7 @@ import subprocess
 import sys
 
 import yaml
+from verify_release import unique_object
 from yaml_strict import safe_load_unique
 
 MAX_CITATION_BYTES = 1024 * 1024
@@ -46,6 +47,15 @@ def expected_authors(metadata_authors: object) -> list[dict]:
     return output
 
 
+def _normalize_bib_text(value: str) -> str:
+    """Undo the common BibTeX escapes emitted by prepare_release.py."""
+    text = value.strip()
+    text = text.replace(r"\textbackslash{}", "\\")
+    for token in (r"\{", r"\}", r"\%", r"\&", r"\_", r"\#", r"\$"):
+        text = text.replace(token, token[1])
+    return " ".join(text.split())
+
+
 def cffconvert_binary() -> str:
     """Prefer the executable installed for this Python, even without venv activation.
 
@@ -70,7 +80,8 @@ def validate_citations(folder: Path) -> None:
     metadata_path = folder / "preprint-metadata.json"
     cff = safe_load_unique(read_text(cff_path))
     bib_text = read_text(bib_path)
-    metadata = json.loads(read_text(metadata_path))
+    # Fail closed on ambiguous JSON, as every other verifier in the kit does.
+    metadata = json.loads(read_text(metadata_path), object_pairs_hook=unique_object)
     if not isinstance(cff, dict) or cff.get("cff-version") != "1.2.0":
         raise ValueError("CFF must contain valid version 1.2.0 metadata")
     if not isinstance(metadata, dict):
@@ -104,6 +115,21 @@ def validate_citations(folder: Path) -> None:
     if any(not isinstance(entries[0].get(key), str) or not entries[0][key].strip()
            for key in ("title", "author", "note")):
         raise ValueError("BibTeX must include title, author and note")
+    # Bind the citation content to the already-validated publication metadata.
+    # Previously any non-empty title/author/note passed, so a substituted or
+    # mis-generated BibTeX entry reached a PASS verdict.
+    entry = entries[0]
+    if _normalize_bib_text(entry["title"]) != _normalize_bib_text(str(metadata.get("title", ""))):
+        raise ValueError("BibTeX title does not match publication metadata")
+    expected_author = " and ".join(
+        "{" + a["name"] + "}" if "name" in a
+        else str(a.get("family-names", "")) + ", " + str(a.get("given-names", ""))
+        for a in expected_authors(metadata.get("authors"))
+    )
+    if _normalize_bib_text(entry["author"]) != _normalize_bib_text(expected_author):
+        raise ValueError("BibTeX author does not match publication metadata")
+    if str(metadata.get("version", "")) not in entry["note"]:
+        raise ValueError("BibTeX note does not match publication version")
 
 
 def main() -> int:

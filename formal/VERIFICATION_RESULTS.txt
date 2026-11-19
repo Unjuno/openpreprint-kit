@@ -1,0 +1,74 @@
+DATE: 2026-11-18 (iteration 3; fresh re-run)
+LEAN: leanprover/lean4:v4.35.0 (pinned in lean-toolchain)
+=== lean build ===
+Build completed successfully (5 jobs).
+=== Lean model eval ===
+RA-01	true	true
+RA-02	true	true
+RA-03	true	true
+RA-04	true	true
+RA-05	false	false
+RA-06	false	false
+RA-07	false	false
+RA-08	false	false
+RA-09	false	false
+RA-10	false	false
+RA-11	true	true
+ST-01	verified	verified
+ST-02	draft	draft
+ST-03	draft	draft
+ST-04	draft	draft
+ST-05	draft	draft
+ST-06	draft	draft
+ST-07	draft	draft
+ST-08	draft	draft
+ST-09	published	published
+ST-10	verified	verified
+ST-11	published	published
+ST-12	verified	verified
+ST-13	verified	verified
+EB-01	true	true
+EB-02	false	false
+EB-03	false	false
+EB-04	true	true
+EB-05	false	false
+EB-06	true	true
+CL-01	true	true
+CL-02	false	false
+CL-03	false	false
+=== Python-vs-Lean differential ===
+RA-01	python=true	lean=true	MATCH
+RA-02	python=true	lean=true	MATCH
+RA-03	python=true	lean=true	MATCH
+RA-04	python=true	lean=true	MATCH
+RA-05	python=false	lean=false	MATCH
+RA-06	python=false	lean=false	MATCH
+RA-07	python=false	lean=false	MATCH
+RA-08	python=false	lean=false	MATCH
+RA-09	python=false	lean=false	MATCH
+RA-10	python=false	lean=false	MATCH
+RA-11	python=true	lean=true	MATCH
+ST-01	python=verified	lean=verified	MATCH
+ST-02	python=draft	lean=draft	MATCH
+ST-03	python=draft	lean=draft	MATCH
+ST-04	python=draft	lean=draft	MATCH
+ST-05	python=draft	lean=draft	MATCH
+ST-06	python=draft	lean=draft	MATCH
+ST-07	python=draft	lean=draft	MATCH
+ST-08	python=draft	lean=draft	MATCH
+ST-09	python=published	lean=published	MATCH
+ST-10	python=verified	lean=verified	MATCH
+ST-11	python=published	lean=published	MATCH
+ST-12	python=verified	lean=verified	MATCH
+ST-13	python=verified	lean=verified	MATCH
+EB-01	python=true	lean=true	MATCH
+EB-02	python=false	lean=false	MATCH
+EB-03	python=false	lean=false	MATCH
+EB-04	python=true	lean=true	MATCH
+EB-05	python=false	lean=false	MATCH
+EB-06	python=true	lean=true	MATCH
+CL-01	python=true	lean=true	MATCH
+CL-02	python=false	lean=false	MATCH
+CL-03	python=false	lean=false	MATCH
+
+33/33 vectors agree across Python and Lean

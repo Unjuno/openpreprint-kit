@@ -1,0 +1,6 @@
+name = "openpreprint_formal"
+version = "0.1.0"
+packages = []
+
+[[lean_lib]]
+name = "OpenPreprintFormal"
