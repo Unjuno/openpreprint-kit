@@ -201,9 +201,7 @@ RFC 3161要求と応答です。研究データ等を含む場合はJSONカタ�
 
 ## レビューと訂正
 
-[査読・訂正方針](docs/REVIEW_POLICY.md)に従い、公開許諾を得た報告を`reviews/evidence/`へ置き、
-`reviews/record.json`へ追記します。名前と日時は申告情報であり、CI成功やAI評価を「査読済み」とは表示しません。
-原版を消して修正せず、新版と理由を残します。機密査読は公開リポジトリで行いません。
+[査読・訂正方針](docs/REVIEW_POLICY.md)と[GitHub共同査読ガイド](docs/PEER_REVIEW_GITHUB.md)に従い、公開ラウンドIssue、個別レビューPR、著者応答、編集判断を追記します。対象versionとPDF SHA-256を固定し、異なる2人以上の査読者を要求します。名前と日時は申告情報であり、GitHub PR承認やCI成功を「査読済み」とは扱いません。原版を消して修正せず、新版と理由を残します。機密・匿名査読は公開リポジトリで行いません。
 
 ```bash
 python scripts/build_site.py downloaded-release --repository OWNER/PAPER --output site
