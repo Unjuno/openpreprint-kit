@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 from pathlib import Path
 import shutil
 import subprocess
@@ -87,7 +88,7 @@ class CustodyTests(unittest.TestCase):
         self.assertEqual(receipt['status'], 'PASS')
         self.assertEqual(receipt['archive_count'], 2)
         self.assertEqual(receipt['offsite_custody'], 'NOT_ATTESTED')
-        catalog = json.loads((self.store / 'custody.json').read_text())
+        catalog = json.loads((self.store / 'custody.json').read_text(encoding='utf-8'))
         self.assertEqual([x['version'] for x in catalog['entries']], ['v1', 'v2'])
         result = self.audit(receipt['catalog_sha256'])
         self.assertEqual(result['status'], 'PASS')
@@ -123,7 +124,7 @@ class CustodyTests(unittest.TestCase):
         (self.store / 'important').write_text('keep', encoding='utf-8')
         with self.assertRaisesRegex(ValueError, 'already exists'):
             self.deposit()
-        self.assertEqual((self.store / 'important').read_text(), 'keep')
+        self.assertEqual((self.store / 'important').read_text(encoding='utf-8'), 'keep')
 
     def test_audit_rejects_replaced_or_deleted_archive(self):
         receipt = self.deposit()
@@ -137,7 +138,7 @@ class CustodyTests(unittest.TestCase):
     def test_audit_rejects_catalog_rewrite_even_with_mirroring_attack(self):
         receipt = self.deposit()
         catalog = self.store / 'custody.json'
-        data = json.loads(catalog.read_text())
+        data = json.loads(catalog.read_text(encoding='utf-8'))
         data['entries'][0]['archive_sha256'] = '0' * 64
         catalog.write_text(json.dumps(data), encoding='utf-8')
         with self.assertRaisesRegex(ValueError, 'catalog SHA-256 mismatch'):
@@ -152,7 +153,12 @@ class CustodyTests(unittest.TestCase):
     def test_audit_rejects_symlink(self):
         receipt = self.deposit()
         (self.store / 'v1.opk.zip').unlink()
-        (self.store / 'v1.opk.zip').symlink_to(self.sources / 'v1.opk.zip')
+        try:
+            (self.store / 'v1.opk.zip').symlink_to(self.sources / 'v1.opk.zip')
+        except OSError as exc:
+            if os.name == 'nt' and getattr(exc, 'winerror', None) == 1314:
+                self.skipTest('Windows symlink privilege unavailable')
+            raise
         with self.assertRaisesRegex(ValueError, 'symlink'):
             self.audit(receipt['catalog_sha256'])
 
@@ -179,7 +185,7 @@ class CustodyTests(unittest.TestCase):
     def test_audit_fails_closed_on_wrong_repository_type(self):
         receipt = self.deposit()
         catalog_file = self.store / 'custody.json'
-        payload = json.loads(catalog_file.read_text())
+        payload = json.loads(catalog_file.read_text(encoding='utf-8'))
         payload['repository'] = 12
         catalog_file.write_text(json.dumps(payload), encoding='utf-8')
         altered_pin = hashlib.sha256(catalog_file.read_bytes()).hexdigest()
@@ -225,3 +231,4 @@ class CustodyTests(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+

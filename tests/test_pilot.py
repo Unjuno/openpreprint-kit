@@ -220,7 +220,7 @@ class OperationalPilotTests(unittest.TestCase):
         self.gateway.corrupt_draft=True
         with self.assertRaises(ValueError): self.apply()
         self.assertTrue(all(v['draft'] for v in self.gateway.releases.values()))
-        r=json.loads((self.root/'run'/'pilot-report.json').read_text())
+        r=json.loads((self.root/'run'/'pilot-report.json').read_text(encoding='utf-8'))
         self.assertEqual(r['status'],'FAIL')
         self.assertEqual(r['releases'][0]['state'],'DRAFT_CREATED')
 
@@ -232,7 +232,7 @@ class OperationalPilotTests(unittest.TestCase):
     def test_post_publication_failure_is_not_reported_as_rollback(self):
         self.gateway.fail_attestation=True
         with self.assertRaises(ValueError): self.apply()
-        r=json.loads((self.root/'run'/'pilot-report.json').read_text())
+        r=json.loads((self.root/'run'/'pilot-report.json').read_text(encoding='utf-8'))
         self.assertEqual(r['status'],'FAIL')
         self.assertEqual(r['releases'][0]['state'],'PUBLIC_VERIFICATION_PENDING')
         self.assertFalse(next(iter(self.gateway.releases.values()))['draft'])
@@ -240,11 +240,12 @@ class OperationalPilotTests(unittest.TestCase):
     def test_old_version_mutation_is_detected_after_v2(self):
         self.gateway.drift_v1=True
         with self.assertRaises(ValueError): self.apply()
-        r=json.loads((self.root/'run'/'pilot-report.json').read_text())
+        r=json.loads((self.root/'run'/'pilot-report.json').read_text(encoding='utf-8'))
         self.assertEqual(r['status'],'FAIL')
 
     def test_existing_output_is_not_touched(self):
         (self.root/'run').mkdir(); (self.root/'run'/'keep').write_text('unchanged')
         with self.assertRaisesRegex(ValueError,'output'): self.apply()
-        self.assertEqual((self.root/'run'/'keep').read_text(),'unchanged')
+        self.assertEqual((self.root/'run'/'keep').read_text(encoding='utf-8'),'unchanged')
         self.assertEqual(self.gateway.calls,[])
+

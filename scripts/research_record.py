@@ -253,7 +253,8 @@ def main() -> int:
             result['round'] = round_summary
         print(json.dumps(result))
         return 0
-    except (OSError, ValueError, TypeError, KeyError) as exc:
+    except (OSError, ValueError, TypeError, KeyError, RecursionError) as exc:
+        # Nested untrusted JSON must fail without an uncaught traceback.
         print(f'FAIL: {exc}', file=sys.stderr); return 1
 
 

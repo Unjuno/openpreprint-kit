@@ -2,6 +2,7 @@
 from pathlib import Path
 import importlib.util
 import json
+import os
 import shutil
 import sys
 import tempfile
@@ -116,7 +117,12 @@ class CitationValidationTests(unittest.TestCase):
 
     def test_bibtex_symlink_is_rejected(self):
         (self.folder / "citation.bib").unlink()
-        (self.folder / "citation.bib").symlink_to(self.folder / "CITATION.cff")
+        try:
+            (self.folder / "citation.bib").symlink_to(self.folder / "CITATION.cff")
+        except OSError as exc:
+            if os.name == 'nt' and getattr(exc, 'winerror', None) == 1314:
+                self.skipTest('Windows symlink privilege unavailable')
+            raise
         with self.assertRaisesRegex(ValueError, "symlink"):
             self.validated()
 

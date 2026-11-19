@@ -9,7 +9,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from pypdf import PdfReader
-from pypdf.generic import ArrayObject, DictionaryObject, IndirectObject
+from pypdf.generic import ArrayObject, DictionaryObject, IndirectObject, NameObject
 
 MAX_PDF_BYTES = 25 * 1024 * 1024
 MAX_PAGES = 500
@@ -17,8 +17,15 @@ MAX_GRAPH_OBJECTS = 50000
 MAX_GRAPH_DEPTH = 160
 REJECT_KEYS = frozenset({
     "/AA", "/AcroForm", "/OpenAction", "/JS", "/JavaScript", "/Launch",
-    "/EmbeddedFiles", "/RichMedia", "/XFA", "/GoToR", "/SubmitForm",
-    "/ImportData", "/Movie", "/Sound", "/3D", "/Rendition",
+    "/EmbeddedFiles", "/AF", "/EF", "/Filespec", "/RichMedia", "/XFA",
+    "/GoToR", "/SubmitForm", "/ImportData", "/Movie", "/Sound", "/3D",
+    "/Rendition",
+})
+# These appear as the VALUE of /S (action type) or /Subtype (annotation type),
+# e.g. an annotation /A << /S /Launch /F ... >>. Key-only checks miss them.
+REJECT_NAMES = frozenset({
+    "/Launch", "/GoToR", "/SubmitForm", "/ImportData", "/Movie", "/Sound",
+    "/3D", "/Rendition", "/RichMedia", "/JavaScript", "/JS", "/EmbeddedFiles",
 })
 
 
@@ -63,7 +70,12 @@ def inspect_pdf(path: Path) -> tuple[int, int]:
                     if id(value) in seen_direct:
                         continue
                     seen_direct.add(id(value))
-                    forbidden = REJECT_KEYS.intersection(map(str, value.keys()))
+                    forbidden = set(REJECT_KEYS.intersection(map(str, value.keys())))
+                    for key in (NameObject("/S"), NameObject("/Subtype")):
+                        if key in value:
+                            item = value.raw_get(key)
+                            if isinstance(item, NameObject) and str(item) in REJECT_NAMES:
+                                forbidden.add(str(item))
                     if forbidden:
                         raise ValueError("PDF contains interactive/embedded content: " + ", ".join(sorted(forbidden)))
                     # raw_get preserves indirect references and avoids decoding streams.

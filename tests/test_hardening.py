@@ -65,9 +65,9 @@ class HardeningTests(unittest.TestCase):
     def test_duplicate_manifest_key_is_rejected(self):
         self.h.make_bundle()
         path = self.h.bundle / "manifest.json"
-        path.write_text(path.read_text().replace('{', '{"algorithm":"sha512",', 1))
+        path.write_text(path.read_text(encoding='utf-8').replace('{', '{"algorithm":"sha512",', 1))
         sums = self.h.bundle / "SHA256SUMS"
-        lines = sums.read_text().splitlines()
+        lines = sums.read_text(encoding='utf-8').splitlines()
         lines = [hashlib.sha256(path.read_bytes()).hexdigest() + "  manifest.json"
                  if line.endswith("  manifest.json") else line for line in lines]
         sums.write_text("\n".join(lines) + "\n")
@@ -92,3 +92,4 @@ class HardeningTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+

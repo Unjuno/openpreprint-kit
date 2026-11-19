@@ -105,7 +105,7 @@ class PublicationRecoveryTests(unittest.TestCase):
         self.out.mkdir(); (self.out / 'keep').write_text('old evidence')
         with self.assertRaisesRegex(ValueError, 'new|exist'):
             self.run_verification()
-        self.assertEqual((self.out / 'keep').read_text(), 'old evidence')
+        self.assertEqual((self.out / 'keep').read_text(encoding='utf-8'), 'old evidence')
         self.assertEqual(self.gateway.calls, [])
 
     def test_tag_target_must_match_time_stamped_source_commit(self):
@@ -136,7 +136,7 @@ class PublicationRecoveryTests(unittest.TestCase):
         self.gateway.releases[(self.repository, 'v1')]['assets']['paper.pdf'] += b'CORRUPT'
         with self.assertRaises(ValueError):
             self.run_verification()
-        info = json.loads((self.out / 'verification-report.json').read_text())
+        info = json.loads((self.out / 'verification-report.json').read_text(encoding='utf-8'))
         self.assertEqual(info['status'], 'FAIL')
         self.assert_read_only()
 
@@ -157,7 +157,7 @@ class PublicationRecoveryTests(unittest.TestCase):
         source['paper/paper.pdf'] = b'DIFFERENT_SOURCE_PAPER'
         with self.assertRaisesRegex(ValueError, 'paper/paper.pdf'):
             self.run_verification()
-        self.assertEqual(json.loads((self.out / 'verification-report.json').read_text())['status'], 'FAIL')
+        self.assertEqual(json.loads((self.out / 'verification-report.json').read_text(encoding='utf-8'))['status'], 'FAIL')
         self.assert_read_only()
 
     def test_published_paper_is_rejected_if_source_analysis_is_different(self):
@@ -179,7 +179,7 @@ class PublicationRecoveryTests(unittest.TestCase):
         self.assert_read_only()
 
     def test_archive_is_created_before_public_promotion(self):
-        text = (ROOT / 'scripts/first_paper_publish.py').read_text()
+        text = (ROOT / 'scripts/first_paper_publish.py').read_text(encoding='utf-8')
         promotion = text.index("report['state'] = 'PROMOTION_REQUESTED'")
         self.assertLess(text.index('packed = pack('), promotion,
                         'a post-publication failure must already have portable recovery evidence')
@@ -194,7 +194,7 @@ class PublicationRecoveryTests(unittest.TestCase):
         publisher().require_template_origin(repo, 'example/kit')
 
     def test_creator_uses_template_without_mutating_the_toolkit(self):
-        text = (ROOT / 'scripts/first_paper_publish.py').read_text()
+        text = (ROOT / 'scripts/first_paper_publish.py').read_text(encoding='utf-8')
         self.assertIn("'--template', template", text)
         self.assertIn('template_repository', text)
         self.assertNotIn("gateway.api('PATCH', 'repos/' + template", text)
@@ -202,3 +202,4 @@ class PublicationRecoveryTests(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+

@@ -195,7 +195,7 @@ def verify_digest(digest: bytes, query: bytes, response: bytes, policy: dict) ->
         env = dict(os.environ, SSL_CERT_FILE=str(ca), SSL_CERT_DIR=str(work / "empty-store"))
         args = ["ts", "-verify", "-queryfile", str(work / "request.tsq"),
                 "-in", str(work / "response.tsr"), "-CAfile", str(ca),
-                "-CApath", str(work / "empty-store"), "-CAstore", str(ca), "-auth_level", "2"]
+                "-CApath", str(work / "empty-store"), "-auth_level", "2"]
         # Only explicit roots. Embedded certificates are untrusted chain material.
         openssl(args + ["-crl_check_all"], policy["timeout_seconds"], env)
         # Also require validity at the signed time; NOT historical revocation proof.

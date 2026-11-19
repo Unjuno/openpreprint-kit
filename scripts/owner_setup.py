@@ -47,6 +47,13 @@ def configure(repository: str, apply: bool, template: bool, api: API = gh_api) -
     checked=api('GET',path,None)
     if not isinstance(current,dict) or type(current.get('enabled')) is not bool or not isinstance(checked,dict):
         raise ValueError('cannot confirm configuration after API calls')
+    # Re-validate identity/visibility/administration at read-back time: the
+    # repository may have changed between the two GETs or after an apply write.
+    if (str(checked.get('full_name','')).lower()!=repository.lower()
+            or checked.get('private') is not False
+            or not isinstance(checked.get('permissions'),dict)
+            or checked['permissions'].get('admin') is not True):
+        raise ValueError('repository identity/visibility/administration changed during configuration; NO PASS claimed')
     ready=current['enabled'] is True and (not template or checked.get('is_template') is True)
     if apply and not ready: raise ValueError('read-back did not confirm the requested settings; inspect partial changes')
     return {'status':'PASS' if ready else 'ACTION_REQUIRED','mode':'APPLY' if apply else 'READ_ONLY',

@@ -20,6 +20,21 @@ import time
 ROOT=Path(__file__).resolve().parents[1]
 
 
+def _protect_windows_private_dir(path: Path) -> None:
+    """Give synthetic private fixtures an explicit, locale-independent DACL."""
+    if os.name != 'nt':
+        return
+    import private_seal
+    user_sid = private_seal._windows_acl_snapshot(path)['currentUserSid']
+    sddl = (f'O:{user_sid}G:{user_sid}D:P'
+            f'(A;OICI;FA;;;{user_sid})(A;OICI;FA;;;S-1-5-18)'
+            '(A;OICI;FA;;;S-1-5-32-544)')
+    private_seal._windows_replace_acl(path, sddl)
+    if not private_seal._windows_acl_is_private(
+            private_seal._windows_acl_snapshot(path), allow_trusted_inheritance=True):
+        raise ValueError('cannot verify protected synthetic Windows fixture directory')
+
+
 def run(script: Path, *args: object, expected: int = 0) -> str:
     result=subprocess.run([sys.executable,str(script),*map(str,args)],capture_output=True,text=True,timeout=120)
     if result.returncode!=expected:
@@ -69,6 +84,7 @@ def fixture(output: Path, version: str, *, export_source: bool = False) -> dict:
         (repo/'research-assets.yaml').write_text(yaml.safe_dump(research),encoding='utf-8')
         (repo/'reviews'/'record.json').write_text('{"schema_version":1,"events":[]}\n',encoding='utf-8')
         private=work/'private'; private.mkdir(mode=0o700)
+        _protect_windows_private_dir(private)
         original=private/'synthetic-record.json'; original.write_bytes(b'{"type":"NO_PATIENT_PRIVATE_FIXTURE","value":123}\n')
         key=private/'per-record.key'
         run(repo/'scripts'/'private_seal.py','seal',original,'--key-output',key)
@@ -95,7 +111,7 @@ def fixture(output: Path, version: str, *, export_source: bool = False) -> dict:
             public_paths = ['preprint.yaml', 'research-assets.yaml', 'paper/paper.pdf',
                             'data/synthetic.csv', 'analysis/reproduce.py', str(receipt.relative_to(repo))]
             for relative in public_paths:
-                destination = output / 'source' / relative
+                destination = output / 'source' / Path(relative)
                 destination.parent.mkdir(parents=True, exist_ok=True)
                 shutil.copyfile(repo / relative, destination)
             report['source_export'] = 'ALLOWLISTED_SYNTHETIC_ONLY'
