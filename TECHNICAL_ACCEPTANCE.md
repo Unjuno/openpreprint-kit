@@ -1,7 +1,7 @@
 # OpenPreprint Kit — TECHNICAL_ACCEPTANCE
 
 作成日: 2026-11-17 (JST)
-**対象SHA: `811dc84367c88a81dbf062fa5d262f5d10a41180`**
+**対象SHA: `cbd537527f5e4c037cad7a1284d24830ee0b91e2`**
 正式受入基準: [docs/V1_ACCEPTANCE.md](docs/V1_ACCEPTANCE.md) — **緩和・置換していない**。本文書は技術品質の補助記録であり、G0〜G7 の合格判定を代行しない。
 
 ## 1. 対象と必須機能
@@ -36,6 +36,7 @@
 | CI (PR #51 修正後 0efeada) | Validate 3.10/3.12・Quality (Ubuntu+Windows)・CodeQL・selftest・portable **すべて success** | `44107268710`, `44107268574`, `44107268524` |
 | CI (PR #51 旧 1ad50ce) | **FAIL** (macOS job timeout 25 > guard 15) — 修正して履歴保持 | `44169617220` |
 | CI (PR #51 最新 695b232) | Validate 3.10/3.12・Quality (Ubuntu/Windows/**macOS**)・CodeQL・selftest・portable **すべて success** | `44172420938`, `44172420972`, `44172421056` |
+| CI (PR #51 current HEAD cbd5375) | Validate 3.10/3.12 / Quality / Windows+macOS+Ubuntu portable / CodeQL / Lean proofs / self-application **all success** (self-application timeout 15→25 min) | `44478578595`–`44478578777` |
 | CodeQL | open alerts **0** | `gh api .../code-scanning/alerts` |
 
 ### OS / skip の内訳 (15件、いずれも意図的な環境ゲート)
@@ -49,6 +50,21 @@
 
 既存20件の否定ケース (改変・誤CA・nonce不一致・失効TSA・古いCRL・ZIPtraversal・重複member・symlink等) は維持・誤受理0。
 加えて AUD-01〜17 の再現17件と Hypothesis 7性質を追加。
+
+
+## 3a. 2026-11-19 追加ハードニング（本PR内）
+
+| 作業 | 結果 | 証拠 |
+|---|---|---|
+| AUD-05 再評価: POSIX 側は `dir_fd` を基点とする `O_NOFOLLOW` ウォークで読取、Windows は `CreateFileW` + `GetFinalPathNameByHandleW` で最終パスを検証。祖先差し替え/葉 symlink/junction 拒否を回帰テスト化 | 完了 | `scripts/research_package.py`、`tests/test_research_package.py` |
+| GitHub ミラー `_verify_public_source` へ annotated tag 対応の tag→commit 解決を追加（深度上限 5、不正な target/ref は拒否） | 完了 | `scripts/github_mirror.py`、`_resolve_tag_commit()`、`tests/test_github_mirror.py` (4 新規テスト) |
+| 更新チェーン `verify_chain()` へ署名時刻の順序検証を追加（同一 policy: 非減少／異なる OID: 厳密増加／不正な時刻: 拒否、`time_order` 属性を返す） | 完了 | `scripts/renewal.py`、`docs/TIMESTAMP-TIME-ORDER.md`、`tests/test_renewal.py` (6 新規テスト) |
+| Lean 4 形式検証を**必須 CI** に統合（`lean-proofs.yml`）：`lake build OpenPreprintFormal`、sorry/admit/axiom 戦術行の拒否、ベクトル再生成決定性検査、Python–Lean 差分検査 | 完了 | `.github/workflows/lean-proofs.yml`、PR #51 head `cbd5375`（CI 全成功） |
+| first-paper-selftest の timeout を 15→25 分に引上げ（texlive の `Building format(s) --all` がフレッシュランナーで 15 分を超えることを確認） | 完了 | `.github/workflows/first-paper-selftest.yml` |
+| ローカル実行: `unittest discover -s tests` → **416 件 / 23 skip / OK** | 完了（本機） | 実行コマンドと時刻は本ファイル §3 の更新を参照 |
+
+**AUD-05 残存 TOCTOU の評価**: 従来の `path_is_safe()` → `read_bytes()` という2操作間の競合窓を、ハンドルベースの検証読みへ置換した。
+
 
 ## 4. Lean で証明した性質 / 未証明
 
@@ -93,23 +109,31 @@
 |---|---|
 | `scripts/publish_manuscript.py` | `b2c9eb1fdfd8fd128c5f68899b464d5c9d8f51d258621dd13f7d0e5c38143c06` |
 | `scripts/owner_setup.py` | `631948ef43775a481b19b44835b30d2b37d4afad79d8d6b208db4ad87a31f145` |
-| `scripts/research_package.py` | `dfd9e8778406e4bac5b39bcf810d4618fe9c096e47b8dbe77141ba73634d0316` |
+| `scripts/research_package.py` | `820831451a6181ac5f7373ebb774117db27ae30728791c42b72744490e966dc6` |
 | `.github/workflows/quality.yml` | `ebb15d166e6f8612a44f772ddaefddca474aa9e088204525ca0b3c5e6d9751f9` |
 | `scripts/validate.py` | `7af553deb20ee66fd620875425f55603f1413c1e9b8025f10e58c5511bd78add` |
 | `scripts/prepare_release.py` | `92ec64adc714699b2e39b0bab7dd1d295226a98c2291467cce837bb24c115e25` |
 | `scripts/pdf_validation.py` | `d84e7d83c27935cc83e45a260fa365acf083889173d5ae3775490809572ed9ba` |
 | `scripts/private_seal.py` | `cba152d68f2f56db84a7c14090f2d611be50f41cc9a4e5a72520feaae4e3ad79` |
-| `tests/test_hardening_regressions_iter4.py` | `7d2fc454853656489b30cd01a18943fd8dae77fae07785aa792f6695e699c2f2` |
+| `tests/test_hardening_regressions_iter4.py` | `1ef3fa48e80e66d78338254f143fefabaae26caa51a4a1efe016334ed1c8e1ea` |
 | `docs/TECHNICAL_AUDIT_2026-11-18-CYCLE6.md` | `9146c432dbe4832bf6ef482b2538a2d646a9f4db10729553b08f3b715e7c35e7` |
 | `docs/TECHNICAL_AUDIT_2026-11-18-CYCLE5.md` | `83ad3e2650aced33478d644a3ecb0e3acfb3e5e451fd16313744500be2e71bcd` |
 | `docs/TECHNICAL_AUDIT_2026-11-18-CYCLE4.md` | `58263fe708b25e7af8627689def2a044a46c38435afd1236f2e09b4853863bb2` |
-| `scripts/commitment_history.py` | `841cf2b6a55a8f39dfc690c4c76efdff44cbeb7ca1f36a1440a7f13bfae1dabc` |
+| `scripts/commitment_history.py` | `5bc74df7cea008d010a5e3ba503dbf6b2963cd84c5bed4686e4d0252c2a55275` |
 | `scripts/research_record.py` | `3da86eea83d660fd7f410041446d092fc535645c7de4e5b047d8346d2290676e` |
+| `scripts/github_mirror.py` | `ec85a583a2f686b3477b86f682216de192ef35cae4a4f7add77b5020bdf39c21` |
+| `scripts/renewal.py` | `68812d05071b1f70286fcdf78797d2108ee8f7f866da2f125fafd51df8dee2ab` |
+| `docs/TIMESTAMP-TIME-ORDER.md` | `6e806c631a2f691025fd7716bd5d5c15417b7f2226f5d8ea524cbcf337261111` |
+| `.github/workflows/lean-proofs.yml` | `bcbbc7b74c2d269ea45a3e3af85d5132010e526db4d62c1ae16e46cf70a19dea` |
+| `.github/workflows/first-paper-selftest.yml` | `2a14a718e5e6d4c71000f60c0322477a9ef0a025ed7a1bab08b6f56ed78e9f51` |
+| `tests/test_github_mirror.py` | `3679263c0a2ade100c1d7f5bfe4e88ab36c8f3d89040487f9433ceba143ffee6` |
+| `tests/test_research_package.py` | `33cd47c22433ee851757003afe7512183b0222c9c042eecd82e2c244a81ae367` |
+| `tests/test_renewal.py` | `3e51cfb59069e7adfb1aca1576748bec168406c445a9ff56d1948b371ba2d4eb` |
 | `scripts/first_paper_selftest.py` | `1ac9d884444e0f69cad10b96cc0ffd368b858184bbff91353ab69b761d50f287` |
 | `scripts/citation_validation.py` | `f4eba138d264d0e1f701d6323bc061b20ed9244147c55d3ae87fddf083d6a3b9` |
-| `tests/test_hardening_regressions.py` | `5ea3a53f30597d0c8b67573811fc90188e5db8bf7cfe6935f6649adbf6efb9e1` |
-| `tests/test_hardening_regressions_iter3.py` | `e89dd7d32de750c7533b29be6099f01189a43c9095bcf1ae4662b5ca6692c19c` |
-| `tests/test_hypothesis_properties.py` | `c986877a05ac49f20f7ec313ceae74d9a7c27f9eb7298d2fcc04db9583970223` |
+| `tests/test_hardening_regressions.py` | `0879b8f78b602f4ddb81affcd9725697765f89d12ea1cfba4ecc5b76b6e5ae8e` |
+| `tests/test_hardening_regressions_iter3.py` | `f4c10fc746bfcd1bcc6c9f8611dd0b2dfae7d79f33ed4910b5010cc2e0b0724c` |
+| `tests/test_hypothesis_properties.py` | `a9f171a0b89b0edc52e12c87d73e621791a7ced5481d980e9cb5f85bd7a83d03` |
 | `formal/lean_results.txt` | `1e8d435df5354052ec0df1dbc49662b5b88e3c6b9fee4e283f2f2c41b0a97a82` |
 | `formal/vectors.json` | `23dcde263ca4f52a13f469d65ae41368e3645289b5dcbc9968c1d99727896785` |
 | `formal/VERIFICATION_RESULTS.txt` | `be6506a5b374f1c0ada4a94a27e0ea01091ef9fd2f19b0cc8f18547822e07bb1` |
