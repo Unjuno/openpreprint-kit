@@ -33,8 +33,13 @@ class CitationValidationTests(unittest.TestCase):
             "authors": [{"family_names": "Doe", "given_names": "Jane"}],
         }
         (self.folder / "preprint-metadata.json").write_text(json.dumps(self.metadata), encoding="utf-8")
-        self.fake_bib = SimpleNamespace(loads=lambda x: SimpleNamespace(entries=[{
-            "ENTRYTYPE": "misc", "title": "Sample", "author": "Doe, Jane", "note": "v1"}]))
+        def fake_parse(text):
+            entry = SimpleNamespace(
+                entry_type="misc",
+                fields_dict={key: SimpleNamespace(value=value) for key, value in {
+                    "title": "Sample", "author": "Doe, Jane", "note": "v1"}.items()})
+            return SimpleNamespace(entries=[entry], failed_blocks=[])
+        self.fake_bib = SimpleNamespace(parse_string=fake_parse)
 
     def tearDown(self):
         self.temp.cleanup()
@@ -81,9 +86,24 @@ class CitationValidationTests(unittest.TestCase):
             self.validated(result=SimpleNamespace(returncode=1, stderr="failed schema", stdout=""))
 
     def test_malformed_bibtex_is_rejected(self):
-        fake = SimpleNamespace(loads=lambda x: SimpleNamespace(entries=[]))
+        fake = SimpleNamespace(parse_string=lambda x: SimpleNamespace(entries=[], failed_blocks=[]))
         with self.assertRaisesRegex(ValueError, "BibTeX"):
             self.validated(fake_bib=fake)
+
+    def test_bibtex_v2_duplicate_or_recovered_block_fails_closed(self):
+        duplicate = SimpleNamespace(parse_string=lambda text:
+            SimpleNamespace(entries=[], failed_blocks=[object()]))
+        with self.assertRaisesRegex(ValueError, "BibTeX parsing failed"):
+            self.validated(fake_bib=duplicate)
+
+    def test_bibtex_v2_missing_field_is_rejected(self):
+        malformed = SimpleNamespace(parse_string=lambda text:
+            SimpleNamespace(entries=[SimpleNamespace(
+                entry_type="misc",
+                fields_dict={"title": SimpleNamespace(value="Sample")}
+            )], failed_blocks=[]))
+        with self.assertRaisesRegex(ValueError, "include title, author and note"):
+            self.validated(fake_bib=malformed)
 
     def test_citation_title_conflict_is_rejected(self):
         cff = dict(self.valid_cff, title="Different title")

@@ -21,7 +21,7 @@ but do **not eliminate** parser denial-of-service risks. The tests do not prove 
 ## Other dependencies
 
 PyYAML and asn1crypto are pinned to explicit versions. Publication citation checks use
-`cffconvert==2.0.0` (CFF 1.2.0 schema) and `bibtexparser==1.4.3`, with transitive
+`cffconvert==2.0.0` (CFF 1.2.0 schema) and `bibtexparser==2.1.0` (v2 Library/Entry API, strict malformed block rejection), with transitive
 packages resolved by pip. Python 3.10/3.12 release CI must pass after any change.
 
 **Still required for v1.0:** resolved transitive versions and **distribution SHA-256 hashes**,
