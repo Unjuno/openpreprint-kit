@@ -51,7 +51,7 @@ license: UNSPECIFIED
 
     def test_non_string_title_reports_error_without_crashing(self):
         path = self.root / "preprint.yaml"
-        path.write_text(path.read_text().replace('title: "Untitled Preprint"', 'title: []'), encoding="utf-8")
+        path.write_text(path.read_text(encoding='utf-8').replace('title: "Untitled Preprint"', 'title: []'), encoding="utf-8")
         result = self.run_validator()
         self.assertEqual(result.returncode, 1)
         self.assertIn("title must be a non-empty string", result.stderr)
@@ -60,3 +60,4 @@ license: UNSPECIFIED
 
 if __name__ == "__main__":
     unittest.main()
+

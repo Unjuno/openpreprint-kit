@@ -58,10 +58,10 @@ class ResearchBundleTests(unittest.TestCase):
 
     def test_public_files_bundle_and_verify(self):
         self.make_bundle()
-        manifest = json.loads((self.bundle / 'manifest.json').read_text())
+        manifest = json.loads((self.bundle / 'manifest.json').read_text(encoding='utf-8'))
         self.assertIn('research-assets.tar', manifest['files'])
         self.assertIn('research-assets.json', manifest['files'])
-        catalog = json.loads((self.bundle / 'research-assets.json').read_text())
+        catalog = json.loads((self.bundle / 'research-assets.json').read_text(encoding='utf-8'))
         self.assertEqual([x['path'] for x in catalog['entries']], ['analysis/fit.py', 'data/synthetic.csv'])
         self.assertEqual(catalog['relations'][0]['kind'], 'analyzes')
         with tarfile.open(self.bundle / 'research-assets.tar', mode='r:') as archive:
@@ -150,6 +150,115 @@ class ResearchBundleTests(unittest.TestCase):
         finally:
             external.unlink()
 
+    # --- safe_read_bytes unit tests (POSIX containment walking + Windows handle check) ---
+
+    def _import_rp(self):
+        import importlib
+        return importlib.import_module('research_package')
+
+    def test_safe_read_returns_regular_file_bytes(self):
+        rp = self._import_rp()
+        target = self.root / 'data' / 'synthetic.csv'
+        self.assertEqual(rp.safe_read_bytes(self.root, 'data/synthetic.csv'),
+                         target.read_bytes())
+
+    def test_safe_read_rejects_leaf_symlink(self):
+        if not hasattr(os, 'symlink'):
+            self.skipTest('no symlink support on this host')
+        rp = self._import_rp()
+        (self.root / 'data' / 'synthetic.csv').unlink()
+        external = self.root.parent / (self.root.name + '-outside.csv')
+        external.write_bytes(b'secret')
+        try:
+            try:
+                (self.root / 'data' / 'synthetic.csv').symlink_to(external)
+            except OSError as exc:
+                if getattr(exc, 'winerror', None) == 1314:
+                    self.skipTest('Windows symlink privilege unavailable')
+                raise
+            with self.assertRaises((OSError, ValueError)):
+                rp.safe_read_bytes(self.root, 'data/synthetic.csv')
+        finally:
+            (self.root / 'data').mkdir(exist_ok=True) if not (self.root / 'data').exists() else None
+            (self.root / 'data' / 'synthetic.csv').unlink(missing_ok=True)
+            external.unlink()
+
+    def test_safe_read_rejects_ancestor_junction(self):
+        if sys.platform != 'win32':
+            self.skipTest('junction check is Windows-specific')
+        rp = self._import_rp()
+        outside = self.root.parent / (self.root.name + '-ancestor')
+        outside.mkdir()
+        (outside / 'synthetic.csv').write_bytes(b'outsider')
+        original = self.root / 'data'
+        target = outside
+        try:
+            import shutil as _shutil
+            _shutil.move(str(original), str(target / 'data-moved'))
+            res = subprocess.run(['cmd', '/c', 'mklink', '/J', str(original), str(target)],
+                                 capture_output=True)
+            if res.returncode:
+                self.skipTest('junction creation unavailable on this host')
+            with self.assertRaises((OSError, ValueError)):
+                rp.safe_read_bytes(self.root, 'data/synthetic.csv')
+        finally:
+            (self.root / 'data').unlink() if (self.root / 'data').is_symlink() or getattr(self.root / 'data', 'is_junction', lambda: False)() else None
+            # restore original directory
+            if not (self.root / 'data').exists():
+                (target / 'data-moved').rename(original)
+
+    def test_safe_read_returns_multi_chunk_file_within_limit(self):
+        # Forces several ReadFile/os.read iterations (chunk size is 65536).
+        rp = self._import_rp()
+        target = self.root / 'data' / 'large.bin'
+        payload = bytes(range(256)) * 300  # 76800 bytes
+        target.write_bytes(payload)
+        self.assertEqual(rp.safe_read_bytes(self.root, 'data/large.bin',
+                                            len(payload)), payload)
+
+    def test_safe_read_rejects_file_over_limit(self):
+        rp = self._import_rp()
+        target = self.root / 'data' / 'limited.bin'
+        target.write_bytes(b'x' * 2048)
+        with self.assertRaisesRegex(ValueError, 'byte limit'):
+            rp.safe_read_bytes(self.root, 'data/limited.bin', 1024)
+
+    def test_win32_api_declares_pointer_safe_signatures(self):
+        # A bare ctypes.WinDLL() defaults every restype to c_long (32-bit).
+        # On 64-bit Windows that truncates HANDLE values and makes the
+        # INVALID_HANDLE_VALUE comparison compare -1 against 2**64-1.
+        # Guarding the declarations themselves turns that silent mismatch
+        # into a deterministic test failure on every Windows runner.
+        if sys.platform != 'win32':
+            self.skipTest('Win32 handle declarations are Windows-specific')
+        import ctypes
+        from ctypes import wintypes
+        rp = self._import_rp()
+        api = rp._win32_api()
+        self.assertIs(api.CreateFileW.restype, wintypes.HANDLE)
+        self.assertEqual(api.CreateFileW.argtypes[0], wintypes.LPCWSTR)
+        self.assertEqual(api.CreateFileW.argtypes[3], wintypes.LPVOID)
+        self.assertIs(api.GetFinalPathNameByHandleW.restype, wintypes.DWORD)
+        self.assertEqual(api.GetFinalPathNameByHandleW.argtypes[0], wintypes.HANDLE)
+        self.assertIs(api.ReadFile.restype, wintypes.BOOL)
+        self.assertEqual(api.ReadFile.argtypes[0], wintypes.HANDLE)
+        self.assertEqual(api.ReadFile.argtypes[3],
+                         ctypes.POINTER(wintypes.DWORD))
+        self.assertEqual(api.CloseHandle.argtypes, [wintypes.HANDLE])
+        self.assertIs(api.CloseHandle.restype, wintypes.BOOL)
+
+    def test_win32_missing_file_reports_open_failure_not_containment(self):
+        # Before the pointer-safe fix, CreateFileW returned -1 (c_long), the
+        # invalid-handle check missed it, and the resulting ERROR_INVALID_HANDLE
+        # from GetFinalPathNameByHandleW was misreported as a containment
+        # escape. Missing files must be reported as open failures.
+        if sys.platform != 'win32':
+            self.skipTest('Win32 handle behavior is Windows-specific')
+        rp = self._import_rp()
+        with self.assertRaises(OSError) as caught:
+            rp._windows_read(self.root, 'data/does-not-exist.csv', 1024)
+        self.assertIn('open failed', str(caught.exception))
+
     def test_forged_tar_member_rejected_even_after_manifest_rehash(self):
         # Rehashing outer checksums cannot make an extra undeclared TAR member valid.
         self.make_bundle()
@@ -161,7 +270,7 @@ class ResearchBundleTests(unittest.TestCase):
             tar.addfile(info, BytesIO(payload))
         # A malicious actor can update every ordinary SHA digest, but not a prior RFC 3161 stamp.
         manifest_file = self.bundle / 'manifest.json'
-        manifest = json.loads(manifest_file.read_text())
+        manifest = json.loads(manifest_file.read_text(encoding='utf-8'))
         archive = self.bundle / 'research-assets.tar'
         manifest['files'][archive.name]['sha256'] = hashlib.sha256(archive.read_bytes()).hexdigest()
         manifest['files'][archive.name]['size_bytes'] = archive.stat().st_size
@@ -180,7 +289,7 @@ class ResearchBundleTests(unittest.TestCase):
         receipt = {'schema_version': 1, 'record_id': rid, 'algorithm': 'HMAC-SHA256', 'commitment': 'b' * 64}
         (receipts / (rid + '.json')).write_text(json.dumps(receipt))
         self.make_bundle()
-        catalog = json.loads((self.bundle / 'research-assets.json').read_text())
+        catalog = json.loads((self.bundle / 'research-assets.json').read_text(encoding='utf-8'))
         private = [e for e in catalog['entries'] if e['role'] == 'private_commitment']
         self.assertEqual(len(private), 1)
         archive_data = (self.bundle / 'research-assets.tar').read_bytes()
@@ -197,3 +306,4 @@ class ResearchBundleTests(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+

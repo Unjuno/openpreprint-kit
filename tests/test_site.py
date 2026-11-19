@@ -37,7 +37,7 @@ class SiteTests(unittest.TestCase):
         spec=importlib.util.spec_from_file_location('opk_site',p);m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m);return m
     def build(self):
         self.module().build_site(self.bundle,self.root,self.output,'example/paper')
-        return (self.output/'index.html').read_text()
+        return (self.output/'index.html').read_text(encoding='utf-8')
     def test_default_is_unreviewed_and_not_time_verified(self):
         text=self.build();self.assertIn('UNREVIEWED_PREPRINT',text);self.assertIn('NOT_VERIFIED',text)
     def test_untrusted_html_is_escaped(self):
@@ -80,7 +80,7 @@ class SiteTests(unittest.TestCase):
             'version':'v1','entries':entries,'relations':[]
         }),encoding='utf-8')
         manifest_file=self.bundle/'manifest.json'
-        manifest=json.loads(manifest_file.read_text())
+        manifest=json.loads(manifest_file.read_text(encoding='utf-8'))
         for name in ('research-assets.json','research-assets.tar'):
             raw=(self.bundle/name).read_bytes()
             manifest['files'][name]={'sha256':hashlib.sha256(raw).hexdigest(),'size_bytes':len(raw)}
@@ -103,3 +103,4 @@ class SiteTests(unittest.TestCase):
         with self.assertRaises(ValueError):self.module().build_site(self.bundle,self.root,self.bundle/'site','example/paper')
     def test_unsafe_repository_is_rejected(self):
         with self.assertRaises(ValueError):self.module().build_site(self.bundle,self.root,self.output,'javascript:alert(1)')
+

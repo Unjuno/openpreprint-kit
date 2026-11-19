@@ -227,10 +227,17 @@ def execute(manuscript: Path, version: str, repository: str, new_repo: bool,
             journal()
             gateway.api('PUT', f'repos/{repository}/immutable-releases')
         else:
+            # Both availability gates are READ-ONLY and must precede any write
+            # to the destination. Previously the git-ref/tag check ran inside
+            # preflight() only AFTER _commit_inputs() pushed a source commit.
             have_status = gateway.api('GET', f'repos/{repository}/releases/tags/{version}',
                                       allow_missing=True)
             if have_status is not None:
                 raise ValueError('release tag already exists; refusing to overwrite or modify it')
+            tag_ref = gateway.api('GET', f'repos/{repository}/git/ref/tags/{version}',
+                                  allow_missing=True)
+            if tag_ref is not None:
+                raise ValueError('git tag already exists; refusing to overwrite or modify it')
 
         require_immutable(_get(gateway, repository))
 
@@ -274,6 +281,17 @@ def execute(manuscript: Path, version: str, repository: str, new_repo: bool,
         gateway.command(['release', 'edit', version, '--repo', repository,
                          '--draft=false', '--latest=false'])
         report['state'] = 'PUBLIC_VERIFICATION_PENDING'; journal()
+        # Read the published Release back and require immutability/non-draft
+        # identity and asset set BEFORE claiming PASS. The repository-level
+        # setting alone does not prove this specific Release is immutable.
+        release = gateway.api('GET', f'repos/{repository}/releases/tags/{version}')
+        if not isinstance(release, dict) or (
+                release.get('immutable') is not True or release.get('draft') is not False
+                or release.get('tag_name') != version
+                or {a['name'] for a in release.get('assets', [])}
+                != {p.name for p in bundle.iterdir()}):
+            raise ValueError('public Release failed immutable/draft/tag/asset readback; NO rollback claimed')
+        report.update(release_immutable_readback=True)
         checked = verify_all(downloaded, policy_path, repository, version, 'existence',
                              expected_paper_sha256=paper_sha256)
         restored_dir = output / 'restored'
@@ -320,7 +338,7 @@ def main() -> int:
     a = p.parse_args()
     if not VERSION_RE.fullmatch(a.version or ''):
         print('FAIL: invalid --version', file=sys.stderr); return 2
-    if not ((a.plan or a.verify_inputs or a.publish) and not (a.verify_inputs and a.publish)):
+    if sum(bool(x) for x in (a.plan, a.verify_inputs, a.publish)) != 1:
         print('FAIL: choose exactly one of --plan/--verify-inputs/--publish', file=sys.stderr); return 2
     try:
         if a.plan:

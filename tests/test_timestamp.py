@@ -297,12 +297,12 @@ class TimestampTests(unittest.TestCase):
         self.make_evidence()
         (self.bundle / "paper.pdf").write_bytes(b"%PDF-1.7\nDifferent paper\n")
         path = self.bundle / "preprint-metadata.json"
-        record = json.loads(path.read_text())
+        record = json.loads(path.read_text(encoding='utf-8'))
         record["paper_sha256"] = hashlib.sha256((self.bundle / "paper.pdf").read_bytes()).hexdigest()
         record["paper_size_bytes"] = (self.bundle / "paper.pdf").stat().st_size
         path.write_text(json.dumps(record))
         manifest_file = self.bundle / "manifest.json"
-        manifest = json.loads(manifest_file.read_text())
+        manifest = json.loads(manifest_file.read_text(encoding='utf-8'))
         for name in manifest["files"]:
             data = (self.bundle / name).read_bytes()
             manifest["files"][name] = {"sha256": hashlib.sha256(data).hexdigest(), "size_bytes": len(data)}
@@ -444,3 +444,4 @@ class TransportTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+

@@ -254,7 +254,11 @@ def receipt_data(receipt: Path) -> dict:
         return obj
     if receipt.is_symlink() or not receipt.is_file() or receipt.stat().st_size > 4096:
         raise ValueError('invalid receipt')
-    data = loads(receipt.read_text('utf-8'), object_pairs_hook=no_duplicates)
+    with receipt.open('r', encoding='utf-8') as handle:
+        text = handle.read(4097)  # bounded read even if the file grows after stat()
+    if len(text) > 4096:
+        raise ValueError('invalid receipt')
+    data = loads(text, object_pairs_hook=no_duplicates)
     if (not isinstance(data, dict) or set(data) != {'schema_version', 'record_id', 'algorithm', 'commitment'}
             or type(data['schema_version']) is not int or data['schema_version'] != 1
             or data['algorithm'] != 'HMAC-SHA256'
@@ -313,7 +317,12 @@ def verify(source: Path, key_path: Path, receipt_path: Path) -> bool:
     data = receipt_data(receipt_path)
     if key_path.is_symlink() or not key_path.is_file():
         raise ValueError('private key missing or unsafe')
-    key = key_path.read_bytes()
+    if key_path.stat().st_size != 32:
+        raise ValueError('private key must be exactly 32 bytes')
+    with key_path.open('rb') as handle:
+        key = handle.read(33)  # bounded: never materialize an oversized key
+    if len(key) != 32:
+        raise ValueError('private key must be exactly 32 bytes')
     return hmac.compare_digest(commit_file(source, key), data['commitment'])
 
 

@@ -44,7 +44,12 @@ def valid_orcid(value: str) -> bool:
     return digits[-1] == ("X" if check == 10 else str(check))
 
 
-def validate(strict: bool) -> int:
+def validate(strict: bool, *, return_data: bool = False) -> int | tuple[int, dict]:
+    """Return an exit code, or (exit_code, validated_metadata) when requested.
+
+    Returning the exact object that was checked lets callers avoid a second
+    untrusted re-read of preprint.yaml (a TOCTOU window before publication).
+    """
     errors: list[str] = []
     warnings: list[str] = []
     try:
@@ -140,9 +145,11 @@ def validate(strict: bool) -> int:
         print(f"ERROR: {issue}", file=sys.stderr)
     if errors:
         print(f"FAIL: {len(errors)} error(s), {len(warnings)} warning(s)", file=sys.stderr)
-        return 1
-    print(f"PASS: metadata checked ({len(warnings)} warning(s)); strict={strict}")
-    return 0
+        result = 1
+    else:
+        print(f"PASS: metadata checked ({len(warnings)} warning(s)); strict={strict}")
+        result = 0
+    return (result, data) if return_data else result
 
 
 def main() -> int:

@@ -133,7 +133,7 @@ class RenewalTests(unittest.TestCase):
         self.assertEqual(len(self.recorded_requests), 2)
         report = self.verify(chain, result['chain_sha256'], [self.policy1, self.policy2])
         self.assertEqual(report['status'], 'PASS')
-        statement2 = json.loads((chain / 'step-0002' / 'statement.json').read_text())
+        statement2 = json.loads((chain / 'step-0002' / 'statement.json').read_text(encoding='utf-8'))
         first_pin = self.module().step_digest(self.output / 'step-0001')
         self.assertEqual(statement2['previous_step_sha256'], first_pin)
         self.assertEqual(report['tsa_policies'], ['1.2.3.4.1', '1.2.3.4.1'])
@@ -191,7 +191,7 @@ class RenewalTests(unittest.TestCase):
     def test_existing_destination_is_never_overwritten(self):
         self.output.mkdir(); (self.output / 'important').write_text('keep')
         with self.assertRaises(ValueError): self.first()
-        self.assertEqual((self.output / 'important').read_text(), 'keep')
+        self.assertEqual((self.output / 'important').read_text(encoding='utf-8'), 'keep')
         self.assertFalse(self.recorded_requests)
 
     def test_unknown_files_and_links_rejected(self):
@@ -340,3 +340,92 @@ class RenewalTests(unittest.TestCase):
         self.assertEqual(p.returncode, 0, p.stderr)
         self.assertEqual(json.loads(p.stdout)['status'], 'PLAN_ONLY')
         self.assertFalse(self.output.exists())
+
+    # --- time-order rules for renewal chain signatures ---
+
+    def _check(self, times, policies):
+        m = self.module()
+        return m._check_signed_time_order(times, policies)
+
+    def test_same_policy_nondescresing_times_accepted(self):
+        self.assertEqual(
+            self._check(['2026-11-01T00:00:00+00:00',
+                         '2026-11-01T00:00:00+00:00',
+                         '2026-11-02T00:00:00+00:00'],
+                        ['1.2.3.4.1', '1.2.3.4.1', '1.2.3.4.1']),
+            'NON_DECREASING_SAME_TSA_POLICY')
+
+    def test_same_policy_out_of_order_times_rejected(self):
+        with self.assertRaisesRegex(ValueError, 'went backwards'):
+            self._check(['2026-11-02T00:00:00+00:00',
+                         '2026-11-01T00:00:00+00:00'],
+                        ['1.2.3.4.1', '1.2.3.4.1'])
+
+    def test_cross_policy_strictly_increasing_accepted(self):
+        self.assertEqual(
+            self._check(['2026-11-01T00:00:00+00:00',
+                         '2026-11-01T00:00:01+00:00'],
+                        ['1.2.3.4.1', '1.2.3.4.2']),
+            'STRICTLY_INCREASING_CROSS_TSA_POLICY')
+
+    def test_cross_policy_equal_times_rejected(self):
+        with self.assertRaisesRegex(ValueError, 'strictly increasing'):
+            self._check(['2026-11-01T00:00:00+00:00',
+                         '2026-11-01T00:00:00+00:00'],
+                        ['1.2.3.4.1', '1.2.3.4.2'])
+
+    def test_cross_policy_out_of_order_times_rejected(self):
+        with self.assertRaisesRegex(ValueError, 'strictly increasing'):
+            self._check(['2026-11-02T00:00:00+00:00',
+                         '2026-11-01T00:00:00+00:00'],
+                        ['1.2.3.4.1', '1.2.3.4.2'])
+
+    def _origin_check(self, origin, first_time, first_policy, first_accuracy=0):
+        return self.module()._check_origin_to_first_renewal(
+            origin, first_time, first_policy, first_accuracy)
+
+    def test_origin_to_first_backward_rejected(self):
+        # A renewal timestamp strictly earlier than the original existence
+        # stamp cannot extend existence forward: accepting it misrepresents
+        # the evidence, even if renewal-to-renewal times look ordered.
+        origin = {'tsa_time_utc': '2026-11-02T00:00:00+00:00',
+                  'policy_oid': '1.2.3.4.1', 'accuracy_microseconds': 0}
+        with self.assertRaisesRegex(ValueError, 'precedes the original existence stamp'):
+            self._origin_check(origin, '2026-11-01T00:00:00+00:00', '1.2.3.4.1', 0)
+
+    def test_origin_to_first_cross_tsa_equal_time_reports_uncertainty(self):
+        # Different TSAs do not share a clock. Equal or overlapping signed
+        # times must NOT be reported as a proven strict order.
+        origin = {'tsa_time_utc': '2026-11-01T00:00:00+00:00',
+                  'policy_oid': '1.2.3.4.1', 'accuracy_microseconds': 1_000_000}
+        verdict = self._origin_check(origin, '2026-11-01T00:00:00+00:00',
+                                     '1.2.3.4.2', 1_000_000)
+        self.assertEqual(verdict, 'CROSS_TSA_ORDER_NOT_PROVEN_CLOCK_SKEW')
+
+    def test_origin_to_first_clear_forward_same_policy(self):
+        origin = {'tsa_time_utc': '2026-11-01T00:00:00+00:00',
+                  'policy_oid': '1.2.3.4.1', 'accuracy_microseconds': 0}
+        verdict = self._origin_check(origin, '2026-11-02T00:00:00+00:00',
+                                     '1.2.3.4.1', 0)
+        self.assertEqual(verdict, 'FORWARD_SAME_TSA_POLICY_FROM_ORIGIN')
+
+    def test_verify_chain_reports_origin_existence_stamp(self):
+        result = self.first()
+        report = self.verify(self.output, result['chain_sha256'], [self.policy1])
+        stamp = report['origin_existence_stamp']
+        self.assertTrue(isinstance(stamp.get('policy_oid'), str) and stamp['policy_oid'])
+        self.assertIn('tsa_time_utc', stamp)
+        self.assertIn('accuracy_microseconds', stamp)
+        self.assertIn(report['time_order_origin_to_first'],
+                      ('FORWARD_SAME_TSA_POLICY_FROM_ORIGIN',
+                       'CROSS_TSA_ORDER_NOT_PROVEN_CLOCK_SKEW',
+                       'NON_DECREASING_SAME_TSA_POLICY_FROM_ORIGIN'))
+
+    def test_unparseable_or_naive_time_rejected(self):
+        with self.assertRaisesRegex(ValueError, 'timezone-aware|ISO-8601'):
+            self._check(['not-a-time', '2026-11-01T00:00:00+00:00'],
+                        ['1.2.3.4.1', '1.2.3.4.1'])
+        with self.assertRaisesRegex(ValueError, 'timezone-aware|ISO-8601'):
+            self._check(['2026-11-01 00:00:00'],
+                        ['1.2.3.4.1'])
+

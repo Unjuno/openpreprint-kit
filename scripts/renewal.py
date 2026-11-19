@@ -105,8 +105,100 @@ def _source(archive: Path, archive_pin: str, policy: Path,
             raise ValueError('source preservation ZIP is malformed') from None
         if report['timestamp'] != 'VERIFIED':
             raise ValueError('original source timestamp must verify under current trusted CRLs')
+        evidence = report.get('time_evidence')
+        if (not isinstance(evidence, dict) or evidence.get('status') != 'VERIFIED'
+                or not isinstance(evidence.get('tsa_time_utc'), str)
+                or not isinstance(evidence.get('policy_oid'), str)):
+            raise ValueError('original existence stamp time evidence is unavailable')
         details = source_details(restored, repository, version)
+        details['existence_stamp'] = {
+            'tsa_time_utc': evidence['tsa_time_utc'],
+            'accuracy_microseconds': evidence.get('accuracy_microseconds'),
+            'policy_oid': evidence['policy_oid'],
+        }
     return details
+
+
+def _check_signed_time_order(signed_times: list[str], policies: list[str]) -> str:
+    """Honest statement about what the chain's signed times prove.
+
+    RFC 3161 signature time shows that a TSA saw the digest at that moment
+    (with whatever accuracy it records, often NOT_SET). It never proves
+    the order in which independent clients submitted renewals, nor historical
+    LTV. Between the ORIGINAL existence stamp and each renewal step, and
+    between consecutive renewal steps, the following acceptance rules apply:
+
+    - All steps signed by the same policy OID (same TSA trust choice):
+      non-decreasing times are required. Equal times are tolerated ONLY when
+      the same TSA OID signed repeatedly (the operator's signalization choice,
+      not a global clock claim).
+    - Steps signed by different policy OIDs (cross-TSA): times must be strictly
+      increasing; equal or reversed times reject the chain because two TSAs do
+      not share a trusted clock.
+    - Unparseable/missing times reject the chain.
+    - The result never claims LTV, and is recorded separately for callers.
+    """
+    import datetime as _dt
+    if not signed_times:
+        return 'UNKNOWN'
+    instants = []
+    for value in signed_times:
+        try:
+            instant = _dt.datetime.fromisoformat(value)
+        except (TypeError, ValueError):
+            raise ValueError('renewal signature time is not a valid ISO-8601 timestamp: ' + value)
+        if instant.tzinfo is None:
+            raise ValueError('renewal signature time must be timezone-aware UTC: ' + value)
+        instants.append(instant.astimezone(_dt.timezone.utc))
+    same_policy = len(set(policies)) == 1
+    for earlier, later in zip(instants, instants[1:]):
+        if same_policy:
+            if later < earlier:
+                raise ValueError(
+                    f'renewal step time went backwards (same TSA policy): {later.isoformat()} < {earlier.isoformat()}')
+        else:
+            if later <= earlier:
+                raise ValueError(
+                    'cross-TSA renewal steps must be strictly increasing: '
+                    f'{earlier.isoformat()} >= {later.isoformat()}')
+    return 'NON_DECREASING_SAME_TSA_POLICY' if same_policy else 'STRICTLY_INCREASING_CROSS_TSA_POLICY'
+
+
+def _check_origin_to_first_renewal(origin: dict, first_time: str, first_policy: str,
+                                   first_accuracy: int | None) -> str:
+    """Relate the original existence stamp to the first forward renewal.
+
+    The original archive and a renewal are normally stamped by *different*
+    TSAs, so their clocks are not comparable at second precision. A reversal
+    is rejected only when it exceeds the combined declared accuracy; equal or
+    overlapping times across TSAs are reported as unproven, never as a proven
+    strict order. Nothing here establishes historical LTV or publication time.
+    """
+    import datetime as _dt
+
+    def _parse(value: str, label: str):
+        try:
+            instant = _dt.datetime.fromisoformat(value)
+        except (TypeError, ValueError):
+            raise ValueError(f'{label} is not a valid ISO-8601 timestamp: {value}') from None
+        if instant.tzinfo is None:
+            raise ValueError(f'{label} must be timezone-aware UTC: {value}')
+        return instant.astimezone(_dt.timezone.utc)
+
+    origin_time = _parse(origin['tsa_time_utc'], 'original existence stamp time')
+    renewal_time = _parse(first_time, 'first renewal signature time')
+    origin_accuracy = origin.get('accuracy_microseconds')
+    o_us = origin_accuracy if type(origin_accuracy) is int and origin_accuracy >= 0 else 0
+    f_us = first_accuracy if type(first_accuracy) is int and first_accuracy >= 0 else 0
+    tolerance = _dt.timedelta(microseconds=o_us + f_us)
+    delta = renewal_time - origin_time
+    if delta < -tolerance:
+        raise ValueError('renewal signature time precedes the original existence stamp')
+    if origin.get('policy_oid') == first_policy:
+        if delta < _dt.timedelta(0):
+            return 'NON_DECREASING_SAME_TSA_POLICY_FROM_ORIGIN'
+        return 'FORWARD_SAME_TSA_POLICY_FROM_ORIGIN'
+    return 'CROSS_TSA_ORDER_NOT_PROVEN_CLOCK_SKEW'
 
 
 def verify_chain(archive: Path, archive_pin: str, source_policy: Path,
@@ -122,6 +214,7 @@ def verify_chain(archive: Path, archive_pin: str, source_policy: Path,
     previous = None
     policies = []
     signed_times = []
+    accuracies = []
     for number, (step, path) in enumerate(zip(paths, renewal_policies), 1):
         statement_bytes, query, response = _step_bytes(step)
         statement = json.loads(statement_bytes.decode('utf-8'), object_pairs_hook=unique_object)
@@ -146,13 +239,23 @@ def verify_chain(archive: Path, archive_pin: str, source_policy: Path,
             raise ValueError('renewal timestamp signature did not verify')
         signed_times.append(signature_report['tsa_time_utc'])
         policies.append(signature_report['policy_oid'])
+        accuracies.append(signature_report.get('accuracy_microseconds'))
         previous = _hash_step_parts([statement_bytes, query, response])
     if previous != expected_chain_sha256:
         raise ValueError('renewal chain does not match independently pinned terminal digest')
+    origin_stamp = origin['existence_stamp']
+    origin_order = _check_origin_to_first_renewal(
+        origin_stamp, signed_times[0], policies[0], accuracies[0])
+    ordering = _check_signed_time_order(signed_times, policies)
     return {'status': 'PASS', 'source_archive_sha256': archive_pin,
             'source_repository': repository, 'source_version': version,
             'chain_sha256': previous, 'steps': len(paths), 'tsa_policies': policies,
-            'tsa_signed_times_utc': signed_times,
+            'tsa_signed_times_utc': signed_times, 'time_order': ordering,
+            'origin_existence_stamp': dict(origin_stamp),
+            'time_order_origin_to_first': origin_order,
+            'time_order_note': (
+                'RFC 3161 signature times bound digest existence, not submission order '
+                'or first publication. Cross-TSA clock skew is not proven comparable.'),
             'revocation': 'CURRENT_CRLS_REQUIRED_FOR_ORIGINAL_AND_ALL_RENEWALS',
             'historical_ltv': 'NOT_ESTABLISHED', 'independent_custody': 'NOT_PROVEN',
             'first_publication': 'NOT_PROVEN'}
