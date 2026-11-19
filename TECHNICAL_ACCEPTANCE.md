@@ -1,7 +1,7 @@
 # OpenPreprint Kit — TECHNICAL_ACCEPTANCE
 
 作成日: 2026-11-17 (JST)
-**対象SHA: `cbd537527f5e4c037cad7a1284d24830ee0b91e2`**
+**対象SHA: `76df03bf68b5e915c2c3884bc801fa4acd043417`**
 正式受入基準: [docs/V1_ACCEPTANCE.md](docs/V1_ACCEPTANCE.md) — **緩和・置換していない**。本文書は技術品質の補助記録であり、G0〜G7 の合格判定を代行しない。
 
 ## 1. 対象と必須機能
@@ -60,7 +60,7 @@
 | GitHub ミラー `_verify_public_source` へ annotated tag 対応の tag→commit 解決を追加（深度上限 5、不正な target/ref は拒否） | 完了 | `scripts/github_mirror.py`、`_resolve_tag_commit()`、`tests/test_github_mirror.py` (4 新規テスト) |
 | 更新チェーン `verify_chain()` へ署名時刻の順序検証を追加（同一 policy: 非減少／異なる OID: 厳密増加／不正な時刻: 拒否、`time_order` 属性を返す） | 完了 | `scripts/renewal.py`、`docs/TIMESTAMP-TIME-ORDER.md`、`tests/test_renewal.py` (6 新規テスト) |
 | Lean 4 形式検証を**必須 CI** に統合（`lean-proofs.yml`）：`lake build OpenPreprintFormal`、sorry/admit/axiom 戦術行の拒否、ベクトル再生成決定性検査、Python–Lean 差分検査 | 完了 | `.github/workflows/lean-proofs.yml`、PR #51 head `cbd5375`（CI 全成功） |
-| first-paper-selftest の timeout を 15→25 分に引上げ（texlive の `Building format(s) --all` がフレッシュランナーで 15 分を超えることを確認） | 完了 | `.github/workflows/first-paper-selftest.yml` |
+| first-paper-selftest の timeout は 15 分（operation guard に従う）、required TeX packages は保持（texlive の `Building format(s) --all` がフレッシュランナーで 15 分を超えることを確認） | 完了 | `.github/workflows/first-paper-selftest.yml` |
 | ローカル実行: `unittest discover -s tests` → **416 件 / 23 skip / OK** | 完了（本機） | 実行コマンドと時刻は本ファイル §3 の更新を参照 |
 
 **AUD-05 残存 TOCTOU の評価**: 従来の `path_is_safe()` → `read_bytes()` という2操作間の競合窓を、ハンドルベースの検証読みへ置換した。
@@ -125,7 +125,7 @@
 | `scripts/renewal.py` | `68812d05071b1f70286fcdf78797d2108ee8f7f866da2f125fafd51df8dee2ab` |
 | `docs/TIMESTAMP-TIME-ORDER.md` | `6e806c631a2f691025fd7716bd5d5c15417b7f2226f5d8ea524cbcf337261111` |
 | `.github/workflows/lean-proofs.yml` | `bcbbc7b74c2d269ea45a3e3af85d5132010e526db4d62c1ae16e46cf70a19dea` |
-| `.github/workflows/first-paper-selftest.yml` | `2a14a718e5e6d4c71000f60c0322477a9ef0a025ed7a1bab08b6f56ed78e9f51` |
+| `.github/workflows/first-paper-selftest.yml` | `c1305e456ae498fcd5a35faadbf2ce0b73838eb1393606a14e1029f99952de46` |
 | `tests/test_github_mirror.py` | `3679263c0a2ade100c1d7f5bfe4e88ab36c8f3d89040487f9433ceba143ffee6` |
 | `tests/test_research_package.py` | `33cd47c22433ee851757003afe7512183b0222c9c042eecd82e2c244a81ae367` |
 | `tests/test_renewal.py` | `3e51cfb59069e7adfb1aca1576748bec168406c445a9ff56d1948b371ba2d4eb` |
