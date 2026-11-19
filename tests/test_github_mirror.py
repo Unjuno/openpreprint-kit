@@ -365,6 +365,29 @@ class GithubMirrorTests(unittest.TestCase):
             response=m.AnonymousGateway().api('GET','repos/archiver/evidence')
         self.assertEqual(response['full_name'],self.mirror)
 
+    def test_anonymous_gateway_allows_tag_resolution_paths(self):
+        # _resolve_tag_commit() must work with the default anonymous gateway;
+        # otherwise --require-source-release can never succeed outside tests
+        # that inject a permissive fake gateway.
+        m = self.module()
+        reached = RuntimeError('reached network layer')
+        with patch('urllib.request.build_opener', side_effect=reached):
+            for path in ('repos/example/science-paper/git/ref/tags/v1',
+                         'repos/example/science-paper/git/ref/tags/opk-custody-' + 'a' * 24,
+                         'repos/example/science-paper/git/tags/' + 'a' * 40):
+                with self.assertRaises(RuntimeError):
+                    m.AnonymousGateway().api('GET', path)
+
+    def test_anonymous_gateway_still_rejects_other_git_paths(self):
+        m = self.module()
+        with patch('urllib.request.build_opener',
+                   side_effect=RuntimeError('must not reach network layer')):
+            for path in ('repos/example/science-paper/git/refs/heads/main',
+                         'repos/example/science-paper/git/tags/' + 'a' * 39,
+                         'repos/example/science-paper/git/ref/tags/' + 'x' * 300):
+                with self.assertRaisesRegex(ValueError, 'anonymous verifier'):
+                    m.AnonymousGateway().api('GET', path)
+
     def test_external_verify_does_not_query_admin_immutable_setting(self):
         self.publish()
         initial=list(self.remote.calls)

@@ -183,7 +183,9 @@ class AnonymousGateway(GitHubGateway):
     def api(self, method: str, path: str, data=None, *, allow_missing: bool = False):
         if method != 'GET' or data is not None or not re.fullmatch(
                 r'repos/[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+'
-                r'(?:/releases/tags/(?:opk-custody-[0-9a-f]{24}|v[0-9]+(?:\.[0-9]+){0,2}))?',
+                r'(?:/releases/tags/(?:opk-custody-[0-9a-f]{24}|v[0-9]+(?:\.[0-9]+){0,2})'
+                r'|/git/ref/tags/(?:opk-custody-[0-9a-f]{24}|v[0-9]+(?:\.[0-9]+){0,2})'
+                r'|/git/tags/[0-9a-f]{40})?',
                 path, re.ASCII):
             raise ValueError('anonymous verifier supports only public GitHub repository/release GET')
         endpoint = 'https://api.github.com/' + path
