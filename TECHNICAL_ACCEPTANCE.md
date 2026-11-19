@@ -1,7 +1,7 @@
 # OpenPreprint Kit — TECHNICAL_ACCEPTANCE
 
 作成日: 2026-11-17 (JST)
-**対象SHA: `76df03bf68b5e915c2c3884bc801fa4acd043417`**
+**対象SHA: `0df485378719826d507adf591dd8e9a6eab300c2`**
 正式受入基準: [docs/V1_ACCEPTANCE.md](docs/V1_ACCEPTANCE.md) — **緩和・置換していない**。本文書は技術品質の補助記録であり、G0〜G7 の合格判定を代行しない。
 
 ## 1. 対象と必須機能
