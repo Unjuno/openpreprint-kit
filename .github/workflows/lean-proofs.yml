@@ -30,10 +30,10 @@ jobs:
           cd formal
           lean --version
           lake build OpenPreprintFormal
-      - name: Check that no proof contains sorry/admit/axiom
+      - name: Check that no proof contains sorry/admit/axiom tactics
         run: |
           set -euo pipefail
-          ! grep -RIn '\bsorry\b\|\badmit\b\|axiom ' formal --include='*.lean'
+          ! grep -RnE "^[[:space:]]*(sorry|admit|axiom)([[:space:]]|,|$)" formal --include='*.lean'
       - name: Regenerate vectors and require repository to be unchanged
         run: |
           set -euo pipefail

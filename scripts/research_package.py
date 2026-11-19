@@ -103,7 +103,9 @@ def _posix_read(root: Path, rel: str, max_bytes: int) -> bytes:
             fd = os.open(part, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW | os.O_CLOEXEC,
                          dir_fd=parent)
             os.close(parent)
-        leaf = fd
+        leaf = os.open(parts[-1], os.O_RDONLY | os.O_CLOEXEC | os.O_NOFOLLOW,
+                       dir_fd=fd)
+        os.close(fd)
         fd = None
         if not _is_regular(leaf):
             raise OSError('research file is not a regular file: ' + rel)
