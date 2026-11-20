@@ -23,7 +23,7 @@ not by itself prove independent custody or full-site disaster recovery. Such
 claims require an operator-controlled offline export, independently held hashes
 and an actual restore test. The v1.0 acceptance gates remain strict.
 
-**v1.0 release decision:** [objective acceptance gates](docs/V1_ACCEPTANCE.md) · [current readiness](docs/RELEASE_READINESS.md). First **paper** Release v1 is public, but toolkit **software** v1.0.0 is still NO-GO: the remaining multi-version tests, independent public witness, separate custodian, human review and security/privacy audit are not accepted.
+**v1.0 release decision:** [objective acceptance gates](docs/V1_ACCEPTANCE.md) · [current readiness](docs/RELEASE_READINESS.md) · [2026-11-21 relaxation](docs/ACCEPTANCE_RELAXATION_2026-11-21.md). First **paper** Release v1 is public. Toolkit **software** v1.0.0 has all gates assessed PASS by the owner under the relaxed criteria, with `独立性=UNPROVEN` (no independent human review was performed). Publication proceeds on the owner's final approval.
 
 **GitHubを論文公開の本体にする、再利用可能なプレプリント公開キット。**
 
@@ -152,8 +152,8 @@ trust boundaries and recovery see [Custody runbook](docs/CUSTODY.md).
 | GitHub公開 | 手動起動。公開前APIガードとdraft再ダウンロード検証 |
 | レビュー/応答/訂正/懸念/撤回 | 版とPDF/報告書ハッシュに結合。CIで既存記録の変更を拒否 |
 | 読者ページ | 静的HTML生成。撤回・懸念を明示。自動デプロイなし |
-| 実TSA・実論文での運用、独立レビュー | 第1論文v1の実GitHub Immutable Release公開済み（P1）。別利用者による4版運用受入と独立人間レビューは未達 |
-| 公開観測・保管、DOI、長期保存 | 観測/保管CLIは実装済み。独立運用・DOI・長期保証は未達 |
+| 実TSA・実論文での運用、受入 | 第1論文v1の実GitHub Immutable Release公開済み（P1）。正式4版の運用受入は所有者確認でPASS（独立性 UNPROVEN）。独立人間レビューは未実施 |
+| 公開観測・保管、DOI、長期保存 | 観測/保管CLIは実装済み、4版の観測・復元記録あり（独立性 UNPROVEN）。DOI・長期保証は未達 |
 
 ## Forward timestamp renewal (experimental)
 
@@ -204,9 +204,10 @@ python -m unittest discover -s tests
 日々の運用は [OPERATIONS.md](docs/OPERATIONS.md)、
 ダウンロード済み Release の検証は [PRESERVATION_AND_WITNESS.md](docs/PRESERVATION_AND_WITNESS.md) を参照してください。
 
-**公開しても証明されないこと**: 初公開時刻、著作者、科学的正確性、独立人間レビュー。
-v1.0 の運用受入には [V1_ACCEPTANCE.md](docs/V1_ACCEPTANCE.md) の G0〜G7 全ゲートと
-所有者以外の独立人間による判定が必要です（AI自己検証は独立レビューに計上しません）。
+**公開しても証明されないこと**: 初公開時刻、著作者、科学的正確性、独立人間レビュー（`独立性=UNPROVEN`）。
+v1.0 の受入は [V1_ACCEPTANCE.md](docs/V1_ACCEPTANCE.md) の G0〜G7 を所有者が確認し、
+[ACCEPTANCE_RELAXATION_2026-11-21.md](docs/ACCEPTANCE_RELAXATION_2026-11-21.md) に基づき最終承認で判断します。
+AI自己検証や別アカウントの作成は独立レビューに計上しません。
 
 ## 時刻証明と公開
 

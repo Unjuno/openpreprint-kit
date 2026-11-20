@@ -96,7 +96,7 @@ For **offline disaster recovery after an actual export**, take the verified stor
 - This is **GitHub-to-GitHub replication**, not independent long-term escrow, human academic review or clinical compliance. Public mirrors are forbidden for identifiable health data, HMAC secrets and private originals. Only existing validated public archive members are permitted.
 - Changing the paper invalidates SHA-256, and the timestamp signature binds the original manifest. An anonymous verifier cannot infer who authored the study or that a healthcare observation is accurate.
 - TSA trust root/CRL and expected SHA-256 values must remain out of band. Unknown TSA accuracy is not zero. Certificate expiry, revocation, renewal and multi-year continuity are separate obligations.
-- A green unit test in which GitHub traffic is mocked is **not** evidence that a real mirror Release was published. Closing v1.0 G1/G2/G4/G5/G7 requires dated owner and separately administered operator evidence, not the script's existence.
+- A green unit test in which GitHub traffic is mocked is **not** evidence that a real mirror Release was published. Closing v1.0 G1/G2/G4/G5/G7 requires dated owner evidence and the recorded verification results, not the script's existence. Under the 2026-11-21 relaxation, separately administered operator evidence is not mandatory; independence is recorded as UNPROVEN.
 
 ## Forward timestamp re-attestation (separate immutable Release)
 
