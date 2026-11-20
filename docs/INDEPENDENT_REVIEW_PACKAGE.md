@@ -8,14 +8,15 @@
 
 | 項目 | 値 |
 |---|---|
-| 正式 main | `811dc84367c88a81dbf062fa5d262f5d10a41180` |
-| 提案ブランチ / PR | `hardening/formal-verification-20261117` / [Draft PR #51](https://github.com/Unjuno/openpreprint-kit/pull/51) |
-| 直近コード検証済みSHA | `695b232f65f6`（Validate 3.10/3.12・Quality Ubuntu/Windows/macOS・CodeQL・selftest・portable すべて success） |
-| 現在のPR head | `695b232f65f6`（ドキュメント更新のみの commit が後続する場合あり） |
-| tree hash | `a8a2747e994a7763cca2ba3e4664d2cbdd659b2f` |
-| source zip SHA-256 | `3bef7dc8f4e6351fde3c0bfb8de2826e9c75162311882179b4c619b7788e89c5` |
+| 正式 main | `afbd55b475b7b583bc319a0f76c3555f0539b5fa`（PR #51 は 2026-11-19T16:54Z にマージ済み、merge commit `231f456df737af73dda41ece120a6af6debccbba`） |
+| 作業ブランチ / PR | [PR #51](https://github.com/Unjuno/openpreprint-kit/pull/51) は **MERGED**（元ブランチ `hardening/formal-verification-20261117` の最終 head `9842a82671151549d87496213fcac060a120dd1a`） |
+| 直近コード検証済みSHA | `afbd55b475b7b583bc319a0f76c3555f0539b5fa`（Validate 3.10/3.12・Quality audit/Windows/macOS・CodeQL Python・Lean proofs・self-application の必須 8 チェックすべて success） |
+| 現在の対象 head | `afbd55b475b7b583bc319a0f76c3555f0539b5fa`（受入台帳も同 SHA に同期） |
+| tree hash | `dfb0256d628c7dbc30ec8298536e20b9c070b41b` |
+| source zip SHA-256 | `9af1e73b7b3580ec864ca3564c043b368a48da6e7b34e337376d6a1abd919452`（現 main を `git archive --format=zip --prefix=openpreprint-kit-afbd55b/` で再生成） |
+| 旧スナップショット（参考・上書きしない） | tree hash `a8a2747e994a7763cca2ba3e4664d2cbdd659b2f` / source zip `3bef7dc8f4e6351fde3c0bfb8de2826e9c75162311882179b4c619b7788e89c5`（旧 PR head `695b232f65f6` の提出資料として履歴保持） |
 | 受入基準 | [V1_ACCEPTANCE.md](V1_ACCEPTANCE.md)（緩和・置換禁止） |
-| 技術記録 | [TECHNICAL_ACCEPTANCE.md](../TECHNICAL_ACCEPTANCE.md), [TECHNICAL_AUDIT_2026-11-17.md](TECHNICAL_AUDIT_2026-11-17.md), [TECHNICAL_AUDIT_2026-11-18.md](TECHNICAL_AUDIT_2026-11-18.md) |
+| 技術記録 | [TECHNICAL_ACCEPTANCE.md](../TECHNICAL_ACCEPTANCE.md), [TECHNICAL_AUDIT_2026-11-17.md](TECHNICAL_AUDIT_2026-11-17.md), [TECHNICAL_AUDIT_2026-11-18.md](TECHNICAL_AUDIT_2026-11-18.md), [TECHNICAL_AUDIT_2026-11-19.md](TECHNICAL_AUDIT_2026-11-19.md) |
 
 ## 2. レビュー担当者の選任（所有者が記入）
 
@@ -42,7 +43,7 @@
 - [ ] G5: 別管理ミラーURL、台帳/ハッシュの別経路保管、GitHub非接続4版復元ログを確認。
 - [ ] G6: ライセンス/公開同意/COI、実人間のレビュー1件・訂正演習・撤回演習を確認。
 - [ ] G7: 固定SHAへの外部監査報告、失効/CA更新/復旧の実測、責任者と継続点検手順を確認。
-- [ ] OS 別試験: run `44172420938` で Ubuntu/Windows/**macOS** すべて success。macOS 全 unittest は 403 tests / 3 skips。Python 3.10 は Validate job でカバー。過去の cancelled/FAIL run は履歴として保持。
+- [ ] OS 別試験: 現 main `afbd55b` で Ubuntu/Windows/**macOS** すべて success（必須 8 チェック、run `44598635421`–`44598635711` attempt 2）。macOS 全 unittest は現行 suite の原ログで確認。Python 3.10 は Validate job でカバー。過去の cancelled/FAIL run（例 `44598635711` attempt 1、`44169617220`）は履歴として保持。
 
 ## 4. 証拠の記録形式（各ゲート）
 
@@ -55,7 +56,7 @@ V1_ACCEPTANCE §5 に従い次を記録: `gate_id`, 対象repo/tag/commit, 実�
 - 全ゲートPASS＋所有者の最終承認が得られた場合に限り、固定SHAから v1.0.0 不変Releaseを発行し、全資産を再取得・照合する。
 - 過去のFAIL（例: `44028158017`, `44028158061`）は削除・上書きせず履歴として残す。
 
-## 6. 現状（2026-11-18）
+## 6. 現状（2026-11-21 更新）
 
-独立レビューは**未実施**。全ゲートの reviewer 欄は空。OS 別試験は Windows/Ubuntu/macOS すべて PASSだが、独立レビューは代替不可。
-したがって本パッケージは「提出準備完了」を意味し、「受入完了」を意味しない。
+独立レビューは**未実施**。全ゲートの reviewer 欄は空。対象 SHA と tree/source zip の固定値は現 main `afbd55b` に同期済みで、必須 CI は 8/8 success（macOS は再実行で success）。
+ただし独立レビューは代替不可であり、本パッケージは「提出準備完了」を意味し、「受入完了」を意味しない。v1.0.0 は NO-GO を維持。
