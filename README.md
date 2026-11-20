@@ -180,6 +180,34 @@ Python 3.10以上、OpenSSL 3、PyYAML 6.0.3、asn1crypto 1.5.1、pypdf 7.1.0を
 CI用の `requirements.lock` / `requirements-build.lock` を参照してください。
 ハッシュ整合検査と研究記録/読者ページの処理はPython標準ライブラリで動作します。
 
+### まず試す（公開しない・30秒）
+
+テンプレートから作った直後の仮データでも、ハッシュ照合とテストは実行できます。
+再現性を重視する場合は lock ファイルを使います（CI と同じバージョン）。
+
+```bash
+# 再現性重視（推奨）
+python -m pip install --require-hashes -r requirements-build.lock
+python -m pip install --require-hashes --no-build-isolation -r requirements.lock
+
+# まずは非 strict で構造を確認（仮データのまま）
+python scripts/validate.py
+
+# 全テスト（一時CA/TSAと合成データのみ、外部/publish なし）
+python -m unittest discover -s tests
+```
+
+`--strict` は `preprint.yaml` と PDF を本物に差し替えた後で使います。
+仮データのままではプレースホルダ警告で失敗します。
+
+実際に論文を公開する手順は [FIRST_PAPER_QUICKSTART.md](docs/FIRST_PAPER_QUICKSTART.md)、
+日々の運用は [OPERATIONS.md](docs/OPERATIONS.md)、
+ダウンロード済み Release の検証は [PRESERVATION_AND_WITNESS.md](docs/PRESERVATION_AND_WITNESS.md) を参照してください。
+
+**公開しても証明されないこと**: 初公開時刻、著作者、科学的正確性、独立人間レビュー。
+v1.0 の運用受入には [V1_ACCEPTANCE.md](docs/V1_ACCEPTANCE.md) の G0〜G7 全ゲートと
+所有者以外の独立人間による判定が必要です（AI自己検証は独立レビューに計上しません）。
+
 ## 時刻証明と公開
 
 [時刻証明手順](docs/TIMESTAMPS.md)に従い、独立に確認したCA/CRLとTSA方針から
