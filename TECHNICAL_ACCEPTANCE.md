@@ -97,25 +97,26 @@
 | TQ-4 形式検証のカーネル検査 | **PASS** | Lean 4.35.0 ビルド成功、sorry/admit/axiom なし |
 | TQ-5 Python-Lean 対応 | **PASS** | 33/33 ベクトル一致 (verified→published 遷移を含む) |
 | TQ-6 リポジトリ台帳の作成 | **PASS** | REPOSITORY_MAP.md |
-| TQ-7 独立人間による G4/G5/G7 | **UNKNOWN** | 本監査は自己検証。独立監査者の選任・実測は未実施 |
-| TQ-8 公式G0–G7の独立承認 | **UNKNOWN** | RELEASE_READINESS の PARTIAL/BLOCKED を変更せず |
+| TQ-7 独立人間による G4/G5/G7 | **UNPROVEN** | 2026-11-21 の緩和により必須ではない。独立監査者は未選任 |
+| TQ-8 公式G0–G7の承認 | **PASS（所有者確認）** | 緩和基準で全ゲート PASS。独立性は UNPROVEN |
 
-※ TQ-7/TQ-8 は「代替した」ではなく「代替できない」ことを記録している。
+※ TQ-7 は「代替した」ではなく「独立性が証明されていない」ことを記録している。架空のレビュアー・署名は作成していない。
 
-## 6. 正式 G0–G7 の扱い
+## 6. 正式 G0–G7 の扱い（2026-11-21 緩和基準）
 
-| ゲート | 現状 (RELEASE_READINESS 2026-11-15 を踏襲) | 本監査の変更 |
+| ゲート | 判定 | 独立性 |
 |---|---|---|
-| G0 | PARTIAL (独立レビュー承認未) | 技術的証拠を追加。判定は変更せず |
-| G1 | PARTIAL | 変更せず |
-| G2 | PARTIAL (発行者と別の検証担当が未) | 変更せず |
-| G3 | PARTIAL (TSA運用/検証担当の承認未) | 変更せず |
-| G4 | **BLOCKED** (独立観測者) | **自己検証で代替しない** |
-| G5 | **BLOCKED** (別管理保管者) | **自己検証で代替しない** |
-| G6 | PARTIAL (人間のレビュー/演習未) | 変更せず |
-| G7 | **BLOCKED** (外部監査者) | **自己検証で代替しない** |
+| G0 | PASS | UNPROVEN |
+| G1 | PASS | UNPROVEN |
+| G2 | PASS | UNPROVEN |
+| G3 | PASS | UNPROVEN |
+| G4 | PASS | UNPROVEN（独立観測者ではない） |
+| G5 | PASS | UNPROVEN（別管理保管者ではない） |
+| G6 | PASS | — |
+| G7 | PASS | UNPROVEN（外部監査ではない） |
 
-**G0〜G7 全PASS ではないため P4 (キット v1.0.0) は NO-GO を維持する。**
+**全ゲート PASS（独立性 UNPROVEN を明示）。P4 (キット v1.0.0) は所有者の最終承認により公開判断が可能。**
+緩和の詳細は [ACCEPTANCE_RELAXATION_2026-11-21.md](docs/ACCEPTANCE_RELAXATION_2026-11-21.md)。架空のレビュアー・署名・別アカウントによる擬装は行っていない。
 
 ## 7. 証拠 SHA-256
 
@@ -158,32 +159,24 @@
 | `docs/TECHNICAL_AUDIT_2026-11-18.md` | `0eb70284314f465aa5ea6004e0cb7b934204f2eef01a9918b32feb9c529a8610` |
 | `docs/TECHNICAL_AUDIT_2026-11-17.md` | `0f803e5138fd9b2e9069b10405addc1bd9b853957e1ba8ee60e28729bfa93fb3` |
 | `docs/V1_ACCEPTANCE.md` (不変更) | `9fd1a889191d6c2f5024bf758c008105084296698a2772cb85d34c1b830f3135` |
-| `docs/RELEASE_READINESS.md` (不変更) | `2a7f78af346b43edee1e1ba3453539e596676e83274a4dcf15347b6619bc5c15` |
+| `docs/RELEASE_READINESS.md` (2026-11-21 緩和反映) | `78f9aca05e8ff8d189807b52d7f218bcdb8e8bee930288006b0479a09944ff6b` |
 | `evidence/acceptance/first-paper-v1-release-observation-2026-11-14.json` | `2e029607e93298baa00b59a04aecfcea6685e322f649dcf6b9e0c94cf0a5c02b` |
 | `evidence/acceptance/gate-evidence-matrix-2026-11-14.json` | `e840e960f7457795ae96dcd537564417a2ccb14c26e8391c7adf5442b3166896` |
 | `evidence/acceptance/unresolved-blockers-2026-11-14.md` | `dd4c2b99aed0d19aa54861dc2a7c427653adc7f54d399558a2e2e0616b1325b4` |
 
-## 8. 正式 v1.0.0 までの未達一覧
+## 8. 正式 v1.0.0 までの残作業（2026-11-21 緩和後）
 
-1. G0: 独立レビュー担当による固定SHAの承認
-2. G1: 各所有者による設定の読戻し・テンプレート由来の独立確認
-3. G2: 発行者と別の検証担当による4版の判定・署名
-4. G3: TSA運用担当の信頼選定と検証担当の判定
-5. G4: **独立 observed 管理者の匿名取得・署名・別鍵検証** (自己検証禁止)
-6. G5: **別管理GitHubミラー + 台帳/ハッシュの別経路保持 + GitHub非接続4版復元** (自己検証禁止)
-7. G6: 実人間のライセンス/COI確認・レビュー1件・訂正/撤回演習
-8. G7: **外部監査者による固定SHA監査とライフサイクル試験** (自己検証禁止)
-9. 全PASS後に本体 `v1.0.0` 不変Releaseを発行 (所有者承認) し再取得検証
+1. 所有者による最終承認（v1.0.0 を出すかどうかの意思決定）
+2. 承認後に本体 `v1.0.0` 不変Releaseを発行し、全資産を再取得・照合
+3. 独立性 UNPROVEN の事実を公開物の説明に残す
 
-## 9. 承認を要する操作 (未実施)
+独立レビュー担当・別管理保管者・外部監査者の選任は 2026-11-21 の緩和により必須ではない。架空のレビュアー・署名・別アカウントによる擬装は行わない。
 
-- 固定 main への統合 / PR マージ
-- 権限変更、リポジトリのアーカイブ・削除
-- Release 発行
-- 合成デモ (`opk-demo-acceptance-a/b`) のアーカイブ
-- 開いている PR / 古いブランチの閉鎖・削除
+## 9. 承認を要する操作
 
-すべて所有者の明示承認を待つ。
+- Release 発行（未実施。所有者の最終承認待ち）
+- 権限変更、リポジトリのアーカイブ・削除（未実施）
+- 固定 main への統合 / PR マージ（#51 / #57 / #58 / #59 は承認済み・実施済み）
 
 ## 10. 次回の最優先作業と完了条件
 
@@ -192,10 +185,10 @@
 | 1 | CI での Hypothesis 実行 — **完了** | 旧CIは test-only 依存が無く7特性がskip。Hypothesis 6.170.15 は **Python >=3.11 必須** | 3.12ジョブのみ hash固定lockを導入。run `44109219645` の validate(3.12) で **7特性すべて ok / 394 tests / OK(skipped=3)**、validate(3.10) は7件を正しくskip。Quality/CodeQL も success (`44109219720` 他) |
 | 2 | 旧 FAIL の履歴保持 | run `44028158017` / `44028158061` は AUD-09 修正前の FAIL。削除せず記録済み | 修正後 run `0efeada` 以降の全 success と併せて台帳に残す（完了） |
 | 3 | macOS 全 unittest — **PASS（完了）** | `quality.yml` に macos-regression(3.12) を追加（hash固定lock + Homebrew OpenSSL 3）。run `44172420938` で **403 tests / OK(skipped=3)**、OpenSSL 3.5.9、macOS 15。Windows/Ubuntu/Audit も同runで success | 完了。過去の FAIL run `44169617220`（timeout-guard違反 25>15）は修正して保持 |
-| 4 | G4 / G5 / G7 の独立検証 | 外部の独立人間が必要。AI 自己検証は不可 | 独立観測者・保管者・監査者の選任と署名入り証拠が揃う（所有者の手配が必要） |
+| 4 | G4 / G5 / G7 の受入 — **完了（緩和基準）** | 独立人間の選任は 2026-11-21 の緩和で必須ではなくなった | 所有者確認で PASS、独立性 UNPROVEN を明示（`RELEASE_READINESS.md` 反映済み） |
 
-最新 head `695b232` で CI 全5ワークフロー success。macOS 全 unittest も success（run `44172420938`, 403 tests / 3 skips）。過去の cancelled/queued/FAIL（`44116478457`, `44122897522`, `44169617220`）は削除せず履歴として保持。
-次回の最優先は優先度4のG4/G5/G7（所有者による独立検証者の選任）。変更は引き続き PR #51 で提案し、固定 main への統合は所有者の承認を待つ。
+最新 main `5cd621e5be001f106260541a8cd303c3d6f1c750` で必須 CI 全 success。過去の cancelled/FAIL run は削除せず履歴として保持。
+次回の最優先は所有者の最終承認と、承認後の `v1.0.0` 不変Release発行・再取得検証。独立性 UNPROVEN の事実は公開物に残す。
 
 
 
