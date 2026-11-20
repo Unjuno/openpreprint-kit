@@ -37,12 +37,12 @@
 
 | repo | PR/ブランチ | 分類 | 理由 |
 |---|---|---|---|
-| 本体 | PR #50 Add GitHub collaborative peer review workflow | 延期 | G6 の独立人間レビュー要件と関係するが、レビュー担当の選任・承認が未 |
-| 本体 | PR #19 bump pypdf 6.21.4→7.0.0 | 終了候補 (承認待ち) | `requirements.lock` は 6.21.4 固定。G0 の配布物固定と衝突。更新ならハッシュ再固定と全試験が必要 |
-| 本体 | PR #9 bump bibtexparser 1.4.3→2.1.0 | 終了候補 (承認待ち) | 同上、2.1.0 は CFF 検証と無関係に破壊リスク |
+| 本体 | PR #50 Add GitHub collaborative peer review workflow | マージ済み (2026-11-19T17:13Z) | G6 の独立人間レビュー要件と関係。コードは統合済みだが、レビュー担当の選任・署名は未実施 |
+| 本体 | PR #19 bump pypdf 6.21.4→7.0.0 | クローズ (2026-11-19) | 7.1.0 を採用する PR #55 に置換。`requirements.lock` は pypdf 7.1.0 に再固定済み |
+| 本体 | PR #9 bump bibtexparser 1.4.3→2.1.0 | マージ済み (2026-11-19T17:32Z) | `requirements.lock` は bibtexparser 2.1.0 に再固定済み、全 CI 成功 |
 | 本体 | PR #10 verifiable paper/data provenance | 保持 | 既に `research_package.py` 等として統合済みの可能性。差分確認までは閉鎖しない |
 | 本体 | `feature/*`, `fix/*`, `docs/*`, `gold/*`, `audit/*` の多数 (38本) | 延期 | 固定SHAへ統合済みの履歴ブランチ。削除は履歴証拠の毀損になり得る |
-| 本体 | `dependabot/pip/*` | 延期 | 上記PR#9/#19 と同じくロック固定との調整待ち |
+| 本体 | `dependabot/pip/*` | 解決済み | PR #9 / #55 でロック再固定・全CI成功。現在 open の dependabot PR はなし |
 | 論文/デモ各 | dependabot PR #1–#4 (各4件、計16件) | 延期 | 公開済み不変Releaseには影響しないが、テンプレート由来の依存を更新すると再現性が変わる |
 | 論文/デモ各 | `main` + 4 dependabot ブランチ | 保持 | `main` は公開ソースの基准 |
 

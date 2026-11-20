@@ -1,8 +1,10 @@
 # OpenPreprint Kit
 
-## First paper: v1 immutable GitHub Release published (2026-11-14)
+## First paper: v1 and v2 immutable GitHub Releases published (2026-11-14)
 
 The [first OpenPreprint Kit manuscript](manuscripts/openpreprint-kit/README.md) is publicly available as [the immutable paper v1 Release](https://github.com/Unjuno/openpreprint-kit-paper/releases/tag/v1) (Release ID 444659219; GitHub API: `draft=false`, `immutable=true`, 11 assets). The published `paper.pdf` has the exact approved SHA-256 `0860b735379fb1b9b223f5d535442dae8421f456d7ae1c6bf6ce8d3141a1b07c`. The [owner's publication evidence](https://github.com/Unjuno/openpreprint-kit/issues/5#issuecomment-6863092530) records a **separate approved continuation** after the initial Windows citation-validator subprocess failed; it reports fresh RFC 3161 validation, Release and asset attestations, anonymous retrieval and offline restore. Both the original failure and continuation reports are retained outside the repository. The publication was owner-controlled, **not independent human verification**; the paper is unreviewed, and first-publication time, author identity, scientific correctness, independent custody and toolkit v1.0 acceptance remain unproven. The reusable template root remains v0/UNSPECIFIED. **Do not re-run the one-time `--publish` launcher against this existing paper repository.**
+
+The second immutable Release [v2](https://github.com/Unjuno/openpreprint-kit-paper/releases/tag/v2) (Release ID 445442340, `draft=false`, `immutable=true`, 11 assets) was also published on 2026-11-14. Both versions remain byte-for-byte unchanged; use the versioned Release assets and their attestations, not this editable README. As with v1, publication was owner-controlled and is not independent human verification.
 
 ## GitHub-only publication and preservation (2026-11-12)
 
@@ -172,8 +174,10 @@ python scripts/verify_release.py dist
 python scripts/citation_validation.py dist
 ```
 
-Python 3.10以上、OpenSSL 3、PyYAML 6.0.3、asn1crypto 1.5.1、pypdf 6.21.4を使用します。
-公開前の引用書式検査にはcffconvert 2.0.0、bibtexparser 1.4.3も使用します。
+Python 3.10以上、OpenSSL 3、PyYAML 6.0.3、asn1crypto 1.5.1、pypdf 7.1.0を使用します。
+公開前の引用書式検査にはcffconvert 2.0.0、bibtexparser 2.1.0も使用します。
+正確なバージョンとハッシュは `requirements.txt`、`requirements-publication-checks.txt`、
+CI用の `requirements.lock` / `requirements-build.lock` を参照してください。
 ハッシュ整合検査と研究記録/読者ページの処理はPython標準ライブラリで動作します。
 
 ## 時刻証明と公開
