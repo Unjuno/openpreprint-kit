@@ -19,7 +19,7 @@
 | OS | Windows (日本語ロケール / cp932) |
 | Python | 3.12.10 (3.10 互換は CI の Validate 3.10 で確認、ローカルは 3.12 のみ) |
 | OpenSSL | 3.5.0 (`C:\msys64\ucrt64\bin\openssl.exe`) |
-| 主要依存 | PyYAML 6.0.3, asn1crypto 1.5.1, pypdf 6.21.4, (試験のみ Hypothesis 6.170.15) |
+| 主要依存 | PyYAML 6.0.3, asn1crypto 1.5.1, pypdf 7.1.0, bibtexparser 2.1.0, (試験のみ Hypothesis 6.170.15) |
 | Lean | `leanprover/lean4:v4.35.0` (固定、`formal/lean-toolchain`) |
 
 ## 3. 試験結果
