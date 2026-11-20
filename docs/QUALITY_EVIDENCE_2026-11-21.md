@@ -59,3 +59,20 @@ main `f67dff9` の check-runs。すべて `success`。
 
 技術的品質ゲート: **達成**（CI 7/7 success、重大・高リスク未解決 0、形式検証・回帰試験あり）。
 正式受入: 緩和基準で全ゲート PASS／独立性 UNPROVEN。公開判断は所有者の最終承認による。
+
+
+## 7. 最終 main の固定値（2026-11-21）
+
+- main: `789c5d8afaf275745fb81569542b7f851aaf475a`
+- source zip SHA-256（`git archive --format=zip --prefix=openpreprint-kit-789c5d8/`）: `b3af6ba5e6e1baaf054672b4117582cda07d20a8d72c1c7f59dcc30661de201d`（3,298,796 bytes）
+- ローカル再確認: `python scripts/validate.py` → `PASS: metadata checked (6 warning(s)); strict=False`、`python scripts/research_package.py --check` → `PASS: research catalog validated; assets=0`
+- CI: 必須 7 チェックすべて success（§2 の原ログは `f67dff9` 時点。内容差分はドキュメントのみで、最終 main でも全件 success を確認）
+
+## 8. v1.0.0 発行に必要な所有者側設定（未配置）
+
+- `timestamp-policy.json`（独立選択した CA/policy OID）と信頼できる CRL
+- GitHub Actions secret `OPK_ADMIN_READ_TOKEN`（Administration: read）
+- `preprint.yaml` の実メタデータ（現状は v0 / プレースホルダのまま）
+- リポジトリ設定で Immutable Releases が有効であることの確認
+
+これらが揃うまで v1.0.0 は発行できない（エージェント側で代替しない）。
