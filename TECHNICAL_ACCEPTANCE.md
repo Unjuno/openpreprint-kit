@@ -1,7 +1,7 @@
 # OpenPreprint Kit — TECHNICAL_ACCEPTANCE
 
 作成日: 2026-11-17 (JST)
-**対象SHA: `a0fe226a11b3ace3e127f3161077070bbbee31bf`**
+**対象SHA: `afbd55b475b7b583bc319a0f76c3555f0539b5fa`**（main 最新、PR #51 マージ後 2026-11-21 同期）
 正式受入基準: [docs/V1_ACCEPTANCE.md](docs/V1_ACCEPTANCE.md) — **緩和・置換していない**。本文書は技術品質の補助記録であり、G0〜G7 の合格判定を代行しない。
 
 ## 1. 対象と必須機能
@@ -64,6 +64,20 @@
 | ローカル実行: `unittest discover -s tests` → **416 件 / 23 skip / OK** | 完了（本機） | 実行コマンドと時刻は本ファイル §3 の更新を参照 |
 
 **AUD-05 残存 TOCTOU の評価**: 従来の `path_is_safe()` → `read_bytes()` という2操作間の競合窓を、ハンドルベースの検証読みへ置換した。
+
+
+## 3b. 2026-11-21 main 同期（PR #51 マージ後の追加監査）
+
+| 作業 | 結果 | 証拠 |
+|---|---|---|
+| Windows 64bit の `ctypes` 宣言缺失（既定 `c_long` による HANDLE 切詰め／`INVALID_HANDLE_VALUE` 比較不能）を修正。`_win32_api()` で argtypes/restype を明示し、最終パス解決失敗・不正バイト数・サイズ超過を fail-closed 化 | 完了 | `scripts/research_package.py`、`tests/test_research_package.py`、`docs/TECHNICAL_AUDIT_2026-11-19.md` |
+| RFC 3161: 元証拠 existence stamp と最初の更新ステップの時刻関係を検査。accuracy を超える逆転は拒否、別 TSA の同等時刻は `CROSS_TSA_ORDER_NOT_PROVEN_CLOCK_SKEW` として不確実性を明示 | 完了 | `scripts/renewal.py`、`docs/TIMESTAMP-TIME-ORDER.md`、`tests/test_renewal.py` |
+| Lean CI のインストーラを `elan v4.4.0` tag + SHA-256 `a620ff1641616222c8d37c54845492004bb84d6877cdbc944dd65c1aa685bf53` で固定し実行前に検証。`--default-toolchain none`、toolchain v4.35.0 を CI で再確認 | 完了 | `.github/workflows/lean-proofs.yml`、`tests/test_workflows.py`、`formal/README.md` |
+| `AnonymousGateway` の許可リストに tag→commit 解決 path (`git/ref/tags/*`, `git/tags/<40hex>`) を追加し、CLI の `--require-source-release` を既定 gateway で使用可能化 | 完了 | `scripts/github_mirror.py`、`tests/test_github_mirror.py` |
+| 周辺モジュール監査 (`custody.py`, `verify_evidence.py`, `preserve.py`, `publication_recovery.py`, `source_provenance.py`, `observation.py`): HIGH/MEDIUM の具体的欠陥なし | 完了 | `docs/TECHNICAL_AUDIT_2026-11-19.md` |
+| main `afbd55b` の必須チェック再実行: Validate 3.10/3.12・Quality audit/Windows/macOS・CodeQL Python・Lean proofs・self-application **8/8 success**（旧 run `44598635711` attempt 1 の macOS cancelled は attempt 2 で success） | 完了 | GitHub check-runs on `afbd55b`、run `44598635711` attempt 2 |
+| tree hash | `dfb0256d628c7dbc30ec8298536e20b9c070b41b` | `git rev-parse afbd55b^{tree}` |
+| source zip SHA-256 (当該 SHA を `git archive --format=zip --prefix=openpreprint-kit-afbd55b/` で再生成) | `9af1e73b7b3580ec864ca3564c043b368a48da6e7b34e337376d6a1abd919452` | ローカル生成、3,292,443 bytes |
 
 
 ## 4. Lean で証明した性質 / 未証明

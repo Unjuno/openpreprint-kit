@@ -1,6 +1,6 @@
 # OpenPreprint Kit — REPOSITORY_MAP
 
-対象_MAIN SHA: `811dc84367c88a81dbf062fa5d262f5d10a41180`
+対象_MAIN SHA: `afbd55b475b7b583bc319a0f76c3555f0539b5fa`（2026-11-21 同期。旧基準 `811dc84367c88a81dbf062fa5d262f5d10a41180` は PR #51 の開始点として履歴保持）
 作成日: 2026-11-17 (JST)。情報源: `gh api` / `gh repo list` の読取り専用照会 + ローカル evidence。
 **本ファイルは台帳であり、削除・アーカイブ・PR/ブランチの閉鎖は一切行わない。**
 
