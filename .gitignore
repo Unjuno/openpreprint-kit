@@ -13,6 +13,10 @@ formal/.lake/
 *.synctex.gz
 
 /dist/
+/dist-openpreprint-kit-v1.0.0.zip
+/verify-source-v1/
+/.venv-locked-verify/
+zip-locked-tests*.log
 *.key
 *.p12
 *.pfx
