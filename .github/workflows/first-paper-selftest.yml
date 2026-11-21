@@ -48,7 +48,12 @@ jobs:
         run: |
           set -euo pipefail
           export SOURCE_DATE_EPOCH=1794528000
-          pandoc manuscripts/openpreprint-kit/paper.md --from markdown --pdf-engine=xelatex --output "$RUNNER_TEMP/first-paper-draft.pdf"
+          python scripts/reproducible_pdf_id.py \
+            --source-commit "$GITHUB_SHA" \
+            --output "$RUNNER_TEMP/reproducible-pdf-id.tex"
+          pandoc manuscripts/openpreprint-kit/paper.md --from markdown --pdf-engine=xelatex \
+            --include-before-body "$RUNNER_TEMP/reproducible-pdf-id.tex" \
+            --output "$RUNNER_TEMP/first-paper-draft.pdf"
           python scripts/first_paper_selftest.py \
             --manuscript manuscripts/openpreprint-kit \
             --paper-pdf "$RUNNER_TEMP/first-paper-draft.pdf" \

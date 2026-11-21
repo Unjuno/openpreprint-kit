@@ -119,6 +119,29 @@ class FirstPaperSelfApplicationTests(unittest.TestCase):
         self.assertNotIn('gh release create', content)
         self.assertNotIn('GH_TOKEN', content)
 
+    def test_pdf_trailer_id_is_deterministic_and_source_bound(self):
+        from scripts.reproducible_pdf_id import trailer_id_tex
+        commit = '0123456789abcdef0123456789abcdef01234567'
+        expected = r'\special{pdf:trailerid [<deb87fabd17715bb31ad4cf4ffb9494e><deb87fabd17715bb31ad4cf4ffb9494e>]}' + '\n'
+        first = trailer_id_tex(commit)
+        self.assertEqual(first, trailer_id_tex(commit))
+        self.assertEqual(first, expected)
+        self.assertNotEqual(first, trailer_id_tex('1123456789abcdef0123456789abcdef01234567'))
+        with self.assertRaisesRegex(ValueError, 'full lowercase 40-character Git SHA'):
+            trailer_id_tex('not-a-commit')
+
+    def test_both_pdf_workflows_use_the_same_deterministic_trailer_id(self):
+        workflows = (
+            ROOT / '.github' / 'workflows' / 'first-paper-selftest.yml',
+            ROOT / '.github' / 'workflows' / 'first-paper-live-timestamp.yml',
+        )
+        for workflow in workflows:
+            with self.subTest(workflow=workflow.name):
+                content = workflow.read_text('utf-8')
+                self.assertIn('scripts/reproducible_pdf_id.py', content)
+                self.assertIn('--source-commit "$GITHUB_SHA"', content)
+                self.assertIn('--include-before-body "$RUNNER_TEMP/reproducible-pdf-id.tex"', content)
+
     def test_workflow_explicitly_installs_pandoc_required_lmodern_style(self):
         workflow = ROOT / '.github' / 'workflows' / 'first-paper-selftest.yml'
         content = workflow.read_text('utf-8')
@@ -248,9 +271,11 @@ class FirstPaperLiveTimestampWorkflowTests(unittest.TestCase):
         self.assertTrue(workflow.is_file())
         parsed = yaml.load(workflow.read_text('utf-8'), Loader=yaml.BaseLoader)
         self.assertEqual(parsed['permissions'], {'contents': 'read'})
-        self.assertEqual(set(parsed['on']), {'push', 'workflow_dispatch'})
+        self.assertEqual(set(parsed['on']), {'pull_request', 'push', 'workflow_dispatch'})
         self.assertEqual(parsed['on']['push']['branches'], ['main'])
         self.assertIn('first-paper-live-timestamp.yml', ' '.join(parsed['on']['push']['paths']))
+        self.assertIn('first-paper-selftest.yml', ' '.join(parsed['on']['pull_request']['paths']))
+        self.assertIn('scripts/reproducible_pdf_id.py', ' '.join(parsed['on']['pull_request']['paths']))
         stamp = parsed['jobs']['stamp-v1']
         restore = parsed['jobs']['fresh-verify']
         self.assertEqual(restore['needs'], ['stamp-v1'])
