@@ -1,6 +1,6 @@
 # OpenPreprint Kit — 現在の受入状態
 
-更新日: **2026-11-21 JST**。記録時の基準コミット: `5cd621e5be001f106260541a8cd303c3d6f1c750`（最新 main は GitHub で確認）。
+更新日: **2026-11-21 JST**。この更新は PR #66 の技術候補と発行経路を再確認したもの。最新 main `f2e27950de50a497ca48351b985d60a0eb0a517a`、PR #66 head `f1f3c3562e039ffd7d4f107ce0548f21e833ee5e`（未merge）を確認。
 
 **第1論文v1 (P1) は正式公開済み。正式4版（2実論文repo×各2版）も公開・再検証済み。キットv1.0.0 (P4) は、2026-11-21 の受入基準緩和により所有者の最終承認で公開判断が可能。**
 独立性は `UNPROVEN`（独立人間レビューは未実施）。ソフトウェアの試験合格を、第三者監査・長期保存の証明と混同しない。緩和の詳細は [ACCEPTANCE_RELAXATION_2026-11-21.md](ACCEPTANCE_RELAXATION_2026-11-21.md)。
@@ -31,19 +31,24 @@
 | G3 TSA・否定試験 | PASS（独立性 UNPROVEN） | 5版のRFC 3161再検証 PASS、2環境8回以上の正常検証、固定20否定ケース誤受理0 |
 | G4 公開観測 | PASS（独立性 UNPROVEN） | 観測記録・署名・RFC 3161 を確認。独立観測者ではないことを明示 |
 | G5 複製・オフライン復元 | PASS（独立性 UNPROVEN） | GitHub非接続4版復元ログ・台帳を確認。別管理保管者ではないことを明示 |
-| G6 人間の編集・個人情報管理 | PASS | ライセンス分離、権利/COI確認、レビュー1件・訂正/撤回演習を記録 |
+| G6 人間の編集・個人情報管理 | OWNER-ASSESSED PASS / EVIDENCE LOCATOR UNCONFIRMED | 2026-11-21 の所有者判定はPASS。今回確認したIssue #5と作業コピーには、G6で要求する人間のレビュー記録・訂正演習・撤回演習の実行記録の個別URI/ハッシュが見つからなかった。受入基準は変えず、公開物でこれらの原証拠を参照できるようにする必要がある。独立性はUNPROVEN。 |
 | G7 セキュリティ・証拠寿命 | PASS（独立性 UNPROVEN） | 固定SHAへの評価、失効/CA更新/復旧の試験、責任者と継続点検手順を確認。外部監査ではないことを明示 |
 
-**P1 PASS。P2（G2）PASS。P3 PASS（独立性 UNPROVEN）。P4 は全ゲート PASS／独立性 UNPROVEN の明示付きで、所有者の最終承認により公開判断可能。**
+**所有者の2026-11-21記録上はG0〜G7全PASS（独立性 UNPROVEN）。ただし今回の原証拠照合ではG6のレビュー/訂正/撤回演習ログの個別URI/指紋を特定できず、PR #66も未マージであるため、この更新作業の判定はP4 NO-GO。G6原証拠の位置を確定し、PR #66統合後SHAのCI/証拠を固定してから最終発行判断を行う。**
 
-## 残る作業
+## ソフトウェア v1.0.0 のRelease手順と残件
 
-1. **発行入力とTSA信頼設定を完成する。** 2026-11-21 の main read-back (`f2e27950de50a497ca48351b985d60a0eb0a517a`) では root `preprint.yaml` は `Untitled Preprint` / `v0` / `UNSPECIFIED` のまま、`timestamp-policy.json` は未配置。Publish workflow の必須入力なので、実際に発行する論文のmetadataと、所有者が選んだtrusted CA/policy/CRLを main に配置し、PR経由で検証する。`OPK_ADMIN_READ_TOKEN` は secret名の存在を確認済みだが、値は読んでいないため有効性・実効scopeは未確認。
-2. 所有者が `v1.0.0` の最終発行判断を行う。現在の受入基準では独立性 `UNPROVEN` のまま判断可能だが、その状態を公開物に明記する。
-3. 入力設定と全検証が整い、最終判断が承認された後に限り、キット本体の不変 Release を発行して全資産の匿名再取得・hash・attestation・TSA検証を行う。
-4. 独立性 UNPROVEN の事実を公開物の説明に残す（将来、実在する独立人間がレビューした場合のみ VERIFIED に更新）。
+個別プレプリント用の `.github/workflows/publish.yml` は、root `preprint.yaml` と `timestamp-policy.json` を使い論文Releaseを作るワークフローである。これはキット本体のソフトウェアReleaseではない。root `preprint.yaml` は再利用テンプレートとして `v0` / `UNSPECIFIED` のまま維持する。論文メタデータを `v1.0.0` に変更したり、TSA設定を置いてこのworkflowからキットReleaseを出したりしてはならない。
 
-上記の入力未配置は G0–G7 の既存判定を変更しないが、現時点では Publish workflow を成功完了できる状態ではない。`OPK_ADMIN_READ_TOKEN` の中身・token scopeを推測せず、実際のPublish API preflightで扱う。
+GitHubのソフトウェアReleaseは、G0–G7を確認した固定main SHAからソースアーカイブを作り、SHA256SUMS・Readiness・Master ReportとともにRelease assetとして添付する。公開時はRelease attestation、匿名取得、バイト一致、GitHubの `immutable=true` を再確認する。Release作成前に同一固定SHAの配布ZIP・外部保管用ハッシュ台帳を作り、ZIPのSHA-256を別経路でも記録する。
+
+現状の確認結果:
+
+1. main `f2e27950de50a497ca48351b985d60a0eb0a517a` の必須CI 7項目はすべてsuccess。PR #66 head `f1f3c3562e039ffd7d4f107ce0548f21e833ee5e` も必須CI、自己適用、live RFC 3161/fresh-runner restoreがsuccessだが、PRはOPENでmainに未反映。
+2. GitHub secret一覧に `OPK_ADMIN_READ_TOKEN` 名が存在する。secret値・有効性・実効scopeは未読取・未確認。
+3. Immutable Releases APIは `enabled=true`, `enforced_by_owner=false` を返した。
+4. 今回のIssue #5/リポジトリ内証拠探索では、G6の実行記録URI/ハッシュを特定できなかった。所有者の前回PASS記録は保持するが、この照合不足を明記し、G6原証拠を確認できるまでは本作業の最終発行判定をNO-GOにする。
+5. 所有者の最終発行判断は必要。独立性は `UNPROVEN` のまま公開物に明記する。
 
 独立人間の選任は 2026-11-21 の緩和により必須ではなくなった。架空のレビュアー・署名・別アカウントによる擬装は行わない。
 

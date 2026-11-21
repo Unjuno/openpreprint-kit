@@ -68,16 +68,15 @@ main `f67dff9` の check-runs。すべて `success`。
 - ローカル再確認: `python scripts/validate.py` → `PASS: metadata checked (6 warning(s)); strict=False`、`python scripts/research_package.py --check` → `PASS: research catalog validated; assets=0`
 - CI: 必須 7 チェックすべて success（§2 の原ログは `f67dff9` 時点。内容差分はドキュメントのみで、最終 main でも全件 success を確認）
 
-## 8. v1.0.0 発行に必要な所有者側設定（未配置）
+## 8. ソフトウェア v1.0.0 Release 前提の read-back
 
-- **最新 main**: `f2e27950de50a497ca48351b985d60a0eb0a517a`（2026-11-21 の read-back）。
-- `timestamp-policy.json`: main に未配置。信頼する CA と policy OID は独立に選定し、その CRL を検証して配置する必要がある。
+- **最新 main**: `f2e27950de50a497ca48351b985d60a0eb0a517a`（GitHub read-back）。
+- 個別プレプリント用 `publish.yml` は `timestamp-policy.json` と論文metadataを要求する。これはキットのソフトウェアRelease手順ではないため、それらがrootに未配置でもソフトウェアv1.0.0の発行入力の欠落とはしない。テンプレートのroot `preprint.yaml` は `v0` / `UNSPECIFIED` のまま保持する。
 - GitHub Actions secret `OPK_ADMIN_READ_TOKEN`: secret 名の登録を `gh secret list` で確認。値は読み取っていないため、token の有効性・実効 scope はこの確認だけでは証明しない。
-- root `preprint.yaml`: `Untitled Preprint` / `v0` / `UNSPECIFIED` のテンプレート状態。公開する論文の実メタデータと発行版に更新する必要がある。
 - Immutable Releases: GitHub REST API `GET /repos/Unjuno/openpreprint-kit/immutable-releases` の応答は `enabled=true`, `enforced_by_owner=false`。
 - toolkit Release: `gh release list` は空。v1.0.0 は未発行。
 
-Publish workflow は `timestamp-policy.json` と具体的な metadata を検証してから draft を作成する。上記の未配置項目が解消され、workflow の全検証が通るまでは v1.0.0 を起動しない。
+ソフトウェアReleaseには受入済み固定SHAのソースアーカイブ、SHA256SUMS、Readiness、Master Report、Release attestation、匿名取得・ハッシュ一致の検証記録が必要となる。`OPK_ADMIN_READ_TOKEN` の値・scopeは読み取っていない。Issue #5およびリポジトリ内の現行証拠を検索したが、G6レビュー/訂正/撤回演習の個別の原証拠URI/指紋を今回特定できなかったため、本作業ではそこを解決するまでP4をNO-GOとする。
 
 ## 9. 自己適用PDFの決定的再生成（PR #66 candidate）
 
@@ -90,4 +89,4 @@ Publish workflow は `timestamp-policy.json` と具体的な metadata を検証�
 - Fresh GitHub runner restored the preservation ZIP and passed release-bundle, timestamp and citation verification. No Release was created. GitHub artifacts retain for 14 days only; separate long-term/offsite custody is not established.
 - Locked Python 3.12 Windows run of `test_first_paper_self_application.py`: 25 total, 23 passed, 2 skipped because Windows symlink privilege was unavailable. PR CI on the recorded head passed required validate 3.10/3.12, audit, CodeQL, Lean, Windows and macOS checks; this candidate has not been merged into main.
 
-These results close the byte-level discrepancy for this tested source snapshot only. G0–G7 classifications remain those of the current readiness ledger; independence remains `UNPROVEN`. This evidence does not authorize or create toolkit v1.0.0.
+These results close the byte-level discrepancy for this tested source snapshot only. The owner-recorded G0–G7 classifications remain in the ledger with independence `UNPROVEN`; this review could not locate the underlying G6 review/correction/withdrawal exercise records. P4 issuance therefore remains NO-GO here until those records are pinned and the owner makes the final issuance decision. This evidence does not create toolkit v1.0.0.
