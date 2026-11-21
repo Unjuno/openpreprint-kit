@@ -23,7 +23,7 @@ paper repo の `main` は保護され、required checks は `validate (3.12)`, `
 
 PR #66 was merged with owner approval for exact head `c140290b167c2e46afd8c0f5a181fdf6c39aaec3`; merge commit/main is `450db84d9e35772fda6af3a24592ced58df8b3ec`. Required CI, self-application, live RFC 3161/fresh-runner all passed on this main. Reproducible PDF output across workflows: 187,504 bytes, SHA-256 `716045b0e2656d750d69a18e7ef2883d641e43c1e47b0725ba710f2b26666da9`; source-bound trailer ID `f67e968c0db6932c0395fa654a619a2c`. Four negative self-application cases were rejected. Fresh-runner offline restore passed; preservation ZIP SHA-256 `719dc0a989d4d22740d7b80bfcd4dbeef174152e754ee2d72169999a16eb6d16`. Full evidence and log URLs are indexed in Issue #5 comment https://github.com/Unjuno/openpreprint-kit/issues/5#issuecomment-7065241515 and local evidence package; scope is `APPROVED_MANUSCRIPT_EXISTENCE_ONLY`, not authorship, independent custody, or public availability.
 
-## Post-PR #67 merge recheck (current main)
+## Post-PR #67 merge recheck (historical fixed-main checkpoint)
 
 PR #67 was merged at its approved exact head `d484b647e894221bb72c94671c9ca722ea22ed0f`; current main is `a3a9972d812c73a826581686091a80c557c80b0d`. The seven required CI categories passed again on this SHA (Validate, audit, CodeQL, Lean, Windows, macOS), and the self-application and live timestamp/fresh-runner workflows were manually dispatched against this same main SHA. Machine-readable results and run IDs: [`main-a3a9972-postmerge-recheck-2026-11-22.json`](../evidence/acceptance/main-a3a9972-postmerge-recheck-2026-11-22.json), SHA-256 `62c60870f646c645704e605ffda47e5449d490ac1b27f30a8ca17d493df0f327`.
 
@@ -39,7 +39,7 @@ On 2026-11-21 UTC, unauthenticated HTTPS downloads fetched all 11 assets from ea
 
 | ゲート | 現在の再確認 | 根拠・残件 |
 |---|---|---|
-| G0 コード・配布品質 | **TECHNICAL PASS on current main `a3a9972d812c73a826581686091a80c557c80b0d`** | PR #66 exact head `c140290b167c2e46afd8c0f5a181fdf6c39aaec3` and PR #67 exact head `d484b647e894221bb72c94671c9ca722ea22ed0f` are merged. Required CI, self-application, live RFC 3161/fresh-runner passed on current main. Independent review remains `UNPROVEN`. |
+| G0 コード・配布品質 | **TECHNICAL PASS on fixed main `838a622ff14db35f93c5dca1a5028a8a1a6efe67`** | PR #68 exact approved head `22787ab49a4cc9c0cbb724ea0915d22ffade20b0` merged as this SHA. Required CI, self-application, live RFC 3161/fresh-runner passed on this SHA. Independent review remains `UNPROVEN`. |
 | G1 所有者設定・再利用 | **NOT CONFIRMED** | toolkitはpublic/template/immutable-enabled。active `protect-main` rulesetはPR・必須CI・削除/force-push禁止だが、approving review 0・required reviewersなし。paper repoは同template由来・public・immutable-enabledで、main required checksは有効だがapproval 0・rulesetなし。第2の実論文repoは現状で解決できない。詳細と設定依頼は [G1 owner settings package](operator-packages/G1-owner-settings.md)。 |
 | G2 実公開・版管理 | **NOT CONFIRMED** | 現在解決できたのはpaper repoのv1/v2の2件。第2repoの2 Releaseとそのattestation・匿名取得・資産照合を今回再検証できていない。失われたReleaseを新規発行して過去証拠の代替にしてはならない。 |
 | G3 TSA・否定試験 | OWNER-RECORDED PASS、今回未再監査 | 既存台帳は5版のRFC 3161再検証、2環境8回以上の正常検証、固定20否定ケース誤受理0を記録。正式4版の現在の識別子が解決するまで固定対象は再確定できない。独立性 `UNPROVEN`。 |
@@ -48,17 +48,18 @@ On 2026-11-21 UTC, unauthenticated HTTPS downloads fetched all 11 assets from ea
 | G6 人間の編集・個人情報管理 | **SOURCE EVIDENCE MISSING** | Issue #5と確認した作業コピーでは、人間レビュー、訂正演習、撤回演習の個別URI/hashを確認できず、`reviews/record.json` は `events: []`。所有者は第2repo/G6記録を「存在しない／不明」と回答。現行基準どおり人間の判断・演習・履歴記録が必要。 |
 | G7 セキュリティ・証拠寿命 | OWNER-RECORDED PASS、今回未再監査 | 既存台帳は固定SHA評価・失効/CA更新/復旧試験・責任者・点検手順を記録する。今回のPR候補またはmerge後main SHAに未再結合。外部監査とは主張しない。独立性 `UNPROVEN`。 |
 
-2026-11-21時点で適用された受入基準では独立人間の選任・署名は必須ではない。所有者自身の確認も有効だが、独立性を証明したように表示してはならない。G6にある「実人間によるレビュー過程」は依然必須であり、AI自己点検では代替できない。
+2026-11-21時点で適用された受入基準では全ゲートに独立人間の選任・署名を一律必須とはしていない。所有者自身の確認を認めるゲートでも、独立性は `UNPROVEN` と記録する。独立レビュー・観測・別管理保管・外部監査を証拠として主張する場合、AIや同一人物が管理する別アカウントは実在する独立担当者の代替にならない。G6の実人間によるレビュー・訂正・撤回演習は依然必須で、AI自己点検では代替できない。
 
 ## 現在の候補と公開停止
 
-- main fixed SHA: `a3a9972d812c73a826581686091a80c557c80b0d` (PR #67 merge; all required CI and self-application/TSA/fresh-runner rechecks pass).
+- main fixed SHA: `838a622ff14db35f93c5dca1a5028a8a1a6efe67` (PR #68 merge; all required CI and self-application/TSA/fresh-runner rechecks pass).
 - PR [#66](https://github.com/Unjuno/openpreprint-kit/pull/66) は承認済みの正確なhead `c140290b167c2e46afd8c0f5a181fdf6c39aaec3` から merge commit `450db84d9e35772fda6af3a24592ced58df8b3ec` として統合済み。
 - Candidate ZIPはローカルGold packageで管理し、既存ZIPを履歴として保持する。PR #66 merge後の品質証拠とGold Candidateは Issue #5 comment: https://github.com/Unjuno/openpreprint-kit/issues/5#issuecomment-7065241515 に記録済み。
+- Current Gold Candidate for main `838a622ff14db35f93c5dca1a5028a8a1a6efe67`: `Gold-Candidate-2026-11-22-main-838a622-r9-20261122T022700.zip`, SHA-256 `057b9461bd39923381ac216e37a38a1e505486841d9c00948cb8b972ca56e1f0`. Issue #5 superseding evidence: https://github.com/Unjuno/openpreprint-kit/issues/5#issuecomment-7066518649.
 - GitHub secret名 `OPK_ADMIN_READ_TOKEN` は存在するが、値・有効性・実効scopeは読まず未確認。機密値は検査・記録しない。
 - toolkit software Release数は0。正式なv1.0.0 Release/tagは作成しない。
 
-PR #67 merge後、main `a3a9972d812c73a826581686091a80c557c80b0d` でも必須CI、self-application、RFC 3161/fresh-runner、offline restoreを再実行した。G1/G2の第二repoの解決とG6の人間実施記録が揃い、全ゲートが正式基準でPASSし、所有者の最終発行承認が明示されるまでP4はNO-GO。PR #68は候補修正・証拠同梱を含む未マージPRであり、最新headのCI成功はマージ承認ではない。
+PR #68 merge後、main `838a622ff14db35f93c5dca1a5028a8a1a6efe67` で必須CI、self-application、RFC 3161/fresh-runner、offline restoreを再実行した。最新のmachine-readable evidenceは [`main-838a622-postmerge-recheck-2026-11-22.json`](../evidence/acceptance/main-838a622-postmerge-recheck-2026-11-22.json)。詳細ログとartifact URLはIssue #5の[最新台帳コメント](https://github.com/Unjuno/openpreprint-kit/issues/5#issuecomment-7066518649)にある。G1/G2の第二repoの解決とG6の人間実施記録が揃い、全ゲートが正式基準でPASSし、所有者の最終発行承認が明示されるまでP4はNO-GO。PR #68はowner承認済みの正確なheadからmerge済み。
 
 ## Releaseフローに関する注意
 
@@ -68,6 +69,8 @@ PR #67 merge後、main `a3a9972d812c73a826581686091a80c557c80b0d` でも必須CI
 
 - 2026-11-22: PR #66 merge後の固定main SHA、全必須CI・自己適用・RFC 3161/fresh-runner結果、再現可能PDF hash、否定試験、OS別件数を追記。G1/G2/G6とP4の未達状態は維持。
 - 2026-11-22: 承認済みPR #67 merge後のmain `a3a9972…` で必須CI、自己適用PDF、RFC 3161、fresh-runner復元を再実行し、証拠JSONを追加。ゲートの未達とP4 NO-GOは維持。
+- 2026-11-22: PR #68を承認済みhead `22787ab…` からmerge。main `838a622…` で必須CI、自己適用PDF、RFC 3161、fresh-runner復元を再実行し、最新証拠JSON・Issue #5 ledgerを追加。未達ゲートとP4 NO-GOは維持。
+- 2026-11-22: Gold Candidate ZIPをmain `838a622…` に再固定。別経路SHA-256とオフライン展開・134 checksum照合を記録。独立性を主張する担当作業はAIまたは同一管理者の別アカウントで代替しない旨を明記。
 - 2026-11-14: 公開Release後のER-1〜ER-3を `evidence/acceptance/erratum-2026-11-15-public-releases.md` に記録。immutable assetは変更していない。
 - 2026-11-22: 第2repoが現行GitHub一覧・APIで解決できないこと、G6原証拠が不明であることをライブ読戻しに基づき追記。過去のG1/G2 PASSを現状PASSに転記しないよう訂正。
 

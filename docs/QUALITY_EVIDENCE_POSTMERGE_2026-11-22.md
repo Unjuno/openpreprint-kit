@@ -77,3 +77,17 @@ The current fixed main for this recheck is `a3a9972d812c73a826581686091a80c557c8
 - No Release was created. This demonstrates the approved-manuscript self-application workflow, not independent review, authorship, formal G0-G7 acceptance, or long-term custody.
 
 The updated local Gold Candidate is `outputs/Gold-Candidate-2026-11-22-main-a3a9972-r7-20261122T020512.zip`, SHA-256 `e7d9478fcc673215d7749b264867474e0b4e9f365c0121e365aa5c5ef0fc5d96`. Its independent sidecar is adjacent to the ZIP; the offline audit record SHA-256 is `4a1a1f983b174e4bc3788b9d03680991d4086b548a61846252a25dcba87efa6e`. Earlier Gold ZIPs remain preserved. This is a local technical candidate package; it does not qualify as independent custody.
+
+## Superseding post-PR #68 fixed-main recheck
+
+PR #68 exact owner-approved head `22787ab49a4cc9c0cbb724ea0915d22ffade20b0` was merged as main `838a622ff14db35f93c5dca1a5028a8a1a6efe67`. Machine-readable recheck: [`main-838a622-postmerge-recheck-2026-11-22.json`](../evidence/acceptance/main-838a622-postmerge-recheck-2026-11-22.json), SHA-256 `8012e4d39dd3fa39f5485febaf1c75079934bdcc090fd808e1cc9591da8de4d2`. Source-tree archive SHA-256 `657f9c7fe7eaa96d173945f0353eac3f3900ed842d35fd621b4f7642486ace8e`. Run IDs: validate `44929110267`; quality/audit/Windows/macOS `44929110382`; CodeQL `44929110325`; Lean `44929110275`; self-application `44929173591`; live timestamp/fresh-runner `44929176037`.
+
+- Required CI: all 7 categories passed. Python 3.10: 440 total = 427 PASS + 13 SKIP + 0 FAIL + 0 ERROR. Python 3.12 validate, Ubuntu audit, Windows and macOS each 440 = 434 PASS + 6 SKIP + 0 FAIL + 0 ERROR.
+- Skip reasons: Python 3.10 skips 7 optional Hypothesis tests because its test-only dependency is absent and 6 Windows-only tests. Ubuntu/macOS each skip the 6 Windows-only tests; Windows skips 6 POSIX shell integration tests, which run on Unix. No required test is skipped on all supporting platforms.
+- Self-application and live timestamp runs produced byte-identical PDFs (187,504 bytes; SHA-256 `1d79581a7e543d95162991d98b251077f0062da9339d1c9e98d0401ce91c0811`); four negative cases were rejected.
+- RFC 3161 token status `VERIFIED` at `2026-11-21T17:18:46Z`; manifest SHA-256 `45c20926b70965274ee69ba8974581326d59e08c7ffe8236a5da7e94a8ed93ee`. Fresh-runner offline restore passed; preservation ZIP SHA-256 `4da83d9380e2e5d4641adeb21267cbb7b840381ff50477eac94aa7b66af9b508`. Neither workflow created a Release.
+- Four previously preserved archive candidates still have only one-host technical verification; no G2/G3/G5 formal gate upgrade is claimed.
+- New local Gold Candidate ZIP SHA-256 `057b9461bd39923381ac216e37a38a1e505486841d9c00948cb8b972ca56e1f0`. ZIP measured independently by PowerShell and Python, extracted offline, 135 file members and 134 checksum entries matched with zero mismatches. Previous ZIPs remain retained.
+- G0 technical PASS on fixed main; G1/G2 NOT CONFIRMED; G3/G4/G5/G7 owner-recorded but not fully re-audited to the current formal four-release target; G6 human review/correction/withdrawal evidence missing or unknown. Independence remains UNPROVEN and P4 stays NO-GO.
+
+Issue #5 ledger: https://github.com/Unjuno/openpreprint-kit/issues/5#issuecomment-7066518649. This is technical evidence only: it does not establish authorship, human acceptance, independent custody, formal G0-G7 acceptance, or long-term retention.
