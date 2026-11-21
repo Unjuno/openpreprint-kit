@@ -4,6 +4,8 @@ The controlling acceptance table is [`docs/V1_ACCEPTANCE.md`](../V1_ACCEPTANCE.m
 
 Current scope by gate:
 
+- **G1:** [G1-owner-settings.md](G1-owner-settings.md) records current live readbacks and the owner actions needed for template reuse, immutable settings, branch protection, required CI/human review, and a second actual paper repository. No permission or publication operation has been carried out by creating this package.
+
 - **G4:** the owner may perform anonymous retrieval and create signed, timestamped observation records. The records must cover every formal G2 release and its assets. Record independence as `UNPROVEN` when the operator is the owner.
 - **G5:** the owner may manage the mirror and offline recovery. Preserve immutable copies, separately recorded fingerprints, and successful GitHub-disconnected restore evidence for the formal target set. Do not claim separate custody unless demonstrated.
 - **G6:** actual human rights/consent/COI decisions, one human review process, one correction exercise, and one withdrawal exercise remain required. AI-generated statements or tests do not substitute for these actions. [G6-human-review.md](G6-human-review.md) is the operative handoff checklist.
