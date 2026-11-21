@@ -179,7 +179,25 @@
         }
       ],
       "prior_record_sha256": "1430b1197e6b85af29b29e1de24cc5ad4d52ab76e4041bd57ad1bcb633b6bdbd",
-      "matches_prior_recorded_asset_digests": true
+      "matches_prior_recorded_asset_digests": true,
+      "timestamp_reverification": {
+        "accuracy_microseconds": null,
+        "authorship": "NOT_PROVEN",
+        "basis": "caller_supplied_trust_policy",
+        "ca_sha256": "2151b61137ffa86bf664691ba67e7da0b19f98c758e3d228d5d8ebf27e044438",
+        "certificate_time_policy": "valid_now_and_at_token_time",
+        "existence_upper_bound_utc": null,
+        "manifest_sha256": "4ec582630b9ca2ae7c8f9abe519ff613e852840bb5c75856eef15bccedbb9f56",
+        "message_sha256": "4ec582630b9ca2ae7c8f9abe519ff613e852840bb5c75856eef15bccedbb9f56",
+        "openssl": "OpenSSL 3.5.6 7 Apr 2026 (Library: OpenSSL 3.5.6 7 Apr 2026)",
+        "policy_oid": "1.2.3.4.1",
+        "public_availability": "NOT_PROVEN",
+        "revocation": "checked_current_crls_full_chain",
+        "schema_version": 1,
+        "status": "VERIFIED",
+        "tsa_time_utc": "2026-11-13T19:39:35+00:00",
+        "verified_at_utc": "2026-11-21T16:19:12.940048+00:00"
+      }
     },
     {
       "tag": "v2",
@@ -358,7 +376,59 @@
       ],
       "prior_record_sha256": "1430b1197e6b85af29b29e1de24cc5ad4d52ab76e4041bd57ad1bcb633b6bdbd",
       "matches_prior_recorded_asset_digests": null,
-      "prior_comparison_note": "No entry for this tag in the preserved release-matrix.json; current digest was checked against GitHub API asset digest and SHA256SUMS only."
+      "prior_comparison_note": "No entry for this tag in the preserved release-matrix.json; current digest was checked against GitHub API asset digest and SHA256SUMS only.",
+      "timestamp_reverification": {
+        "accuracy_microseconds": null,
+        "authorship": "NOT_PROVEN",
+        "basis": "caller_supplied_trust_policy",
+        "ca_sha256": "2151b61137ffa86bf664691ba67e7da0b19f98c758e3d228d5d8ebf27e044438",
+        "certificate_time_policy": "valid_now_and_at_token_time",
+        "existence_upper_bound_utc": null,
+        "manifest_sha256": "8ab5e61a3dbda404f5934d565186df0876aeef1534e12a126946c01c49394db1",
+        "message_sha256": "8ab5e61a3dbda404f5934d565186df0876aeef1534e12a126946c01c49394db1",
+        "openssl": "OpenSSL 3.5.6 7 Apr 2026 (Library: OpenSSL 3.5.6 7 Apr 2026)",
+        "policy_oid": "1.2.3.4.1",
+        "public_availability": "NOT_PROVEN",
+        "revocation": "checked_current_crls_full_chain",
+        "schema_version": 1,
+        "status": "VERIFIED",
+        "tsa_time_utc": "2026-11-14T16:48:12+00:00",
+        "verified_at_utc": "2026-11-21T16:19:13.415266+00:00"
+      }
     }
-  ]
+  ],
+  "trust_material": {
+    "policy_source": "workflow source-pinned FreeTSA profile in .github/workflows/first-paper-live-timestamp.yml at main 450db84d9e35772fda6af3a24592ced58df8b3ec",
+    "policy_sha256": "f47d84fd4721e430bde09201754424a043438f98eafc9e3dce260de4e7ccf120",
+    "ca_sha256": "2151b61137ffa86bf664691ba67e7da0b19f98c758e3d228d5d8ebf27e044438",
+    "expected_ca_pin": "2151b61137ffa86bf664691ba67e7da0b19f98c758e3d228d5d8ebf27e044438",
+    "crl_sha256": "13d85acc0dd6a7ace445822b09dcba0de4236e84d60494dcbe6d7a6c97031935",
+    "crl_signature_verification": "verify OK",
+    "crl_validity": [
+      "lastUpdate=Sep 18 10:30:55 2026 GMT",
+      "nextUpdate=Sep 18 10:30:55 2027 GMT"
+    ],
+    "openssl_version": "OpenSSL 3.5.6 7 Apr 2026 (Library: OpenSSL 3.5.6 7 Apr 2026)",
+    "limitations": "Both signatures were verified on one Windows host with the source-pinned caller-supplied policy; this does not meet the two-environment/four-release G3 matrix."
+  },
+  "verification_summary": {
+    "github_release_verify": {
+      "v1": "PASS",
+      "v2": "PASS",
+      "method": "gh release verify; GitHub release attestations verified"
+    },
+    "verify_release_py": {
+      "v1": "PASS; internal assets/SHA256SUMS and supplied paper fingerprint matched",
+      "v2": "PASS; internal assets/SHA256SUMS and supplied paper fingerprint matched"
+    },
+    "citation_validation_py": {
+      "v1": "PASS; CFF schema and BibTeX parsing; citation truth not certified",
+      "v2": "PASS; CFF schema and BibTeX parsing; citation truth not certified"
+    },
+    "timestamp_py": {
+      "v1": "VERIFIED",
+      "v2": "VERIFIED"
+    },
+    "limitations": "G2 only partially evidenced because no second actual-paper repository is currently resolvable. G3 matrix remains incomplete: only 2 of the formal 4 actual-paper releases were reverified here, both on one Windows host; this does not satisfy 2-environment/8-normal-run and 20-negative-case requirements."
+  }
 }

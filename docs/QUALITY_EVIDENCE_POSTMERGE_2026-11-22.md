@@ -49,11 +49,11 @@
 
 ## Current paper v1/v2 anonymous readback (partial G2 evidence)
 
-- Readback report: [`evidence/acceptance/paper-v1-v2-anonymous-readback-2026-11-22.json`](../evidence/acceptance/paper-v1-v2-anonymous-readback-2026-11-22.json), SHA-256 `D1946DA65BAD5579B20EA6FE80B2342A176BCFA22CC16D60D5532FF69B70E18D`. The downloader used unauthenticated HTTPS GET requests and recorded the transport and per-asset digests.
+- Readback report: [`evidence/acceptance/paper-v1-v2-anonymous-readback-2026-11-22.json`](../evidence/acceptance/paper-v1-v2-anonymous-readback-2026-11-22.json), SHA-256 `AD5ACFBF87E34E6C7AADFB2177FC7755EF790E849F146A416DE93079C7F5C3FB`. The downloader used unauthenticated HTTPS GET requests and recorded the transport and per-asset digests.
 - `gh release verify v1` and `gh release verify v2` both passed and verified GitHub attestations. Both releases read back as `immutable=true`, `draft=false`, 11 assets.
 - Anonymous downloads: all 11 asset digests for each release matched the GitHub Releases API. All 8 entries in each release's `SHA256SUMS` also matched. The existing 2026-11-14 release matrix's 11 recorded v1 digests match the current v1 download; that historical matrix does not contain an entry for paper v2.
 - With dependencies installed from the repository's hash-locked `requirements.lock`, `scripts/verify_release.py` passed for both releases with separately recorded PDF fingerprints; `scripts/citation_validation.py` passed CFF schema and BibTeX parsing. These checks do not establish truth of citation metadata, authorship, or peer review.
-- RFC 3161 timestamp files are present, but **these two paper Releases' timestamps were not reverified in this readback** because the working tree has no current independently trusted CA/CRL policy for those releases. This is not a G3 pass.
+- RFC 3161 re-verification on this Windows host returned `VERIFIED` for both manifests using the source-pinned FreeTSA caller-supplied policy (CA SHA-256 `2151b61137ffa86bf664691ba67e7da0b19f98c758e3d228d5d8ebf27e044438`, policy OID `1.2.3.4.1`). OpenSSL 3.5.6 verified the downloaded CRL signature; CRL validity was 2026-09-18 through 2027-09-18. The TSA times were v1 `2026-11-13T19:39:35Z`, v2 `2026-11-14T16:48:12Z`. This verifies only 2/4 actual-paper Releases in one environment, so it does not satisfy the full G3 matrix (4 releases, 8 normal verifications over 2 environments, and 20 negative cases).
 - This verifies only the currently resolvable `openpreprint-kit-paper` v1/v2. It does not resolve the second actual-paper repository or meet the two-paper/two-version G2 requirement. No Release or asset was changed.
 
 ## Acceptance status
