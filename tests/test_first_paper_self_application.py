@@ -271,9 +271,11 @@ class FirstPaperLiveTimestampWorkflowTests(unittest.TestCase):
         self.assertTrue(workflow.is_file())
         parsed = yaml.load(workflow.read_text('utf-8'), Loader=yaml.BaseLoader)
         self.assertEqual(parsed['permissions'], {'contents': 'read'})
-        self.assertEqual(set(parsed['on']), {'push', 'workflow_dispatch'})
+        self.assertEqual(set(parsed['on']), {'pull_request', 'push', 'workflow_dispatch'})
         self.assertEqual(parsed['on']['push']['branches'], ['main'])
         self.assertIn('first-paper-live-timestamp.yml', ' '.join(parsed['on']['push']['paths']))
+        self.assertIn('first-paper-selftest.yml', ' '.join(parsed['on']['pull_request']['paths']))
+        self.assertIn('scripts/reproducible_pdf_id.py', ' '.join(parsed['on']['pull_request']['paths']))
         stamp = parsed['jobs']['stamp-v1']
         restore = parsed['jobs']['fresh-verify']
         self.assertEqual(restore['needs'], ['stamp-v1'])

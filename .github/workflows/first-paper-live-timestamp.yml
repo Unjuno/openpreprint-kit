@@ -2,6 +2,13 @@ name: First-paper v1 timestamp (user-approved metadata; no publication)
 
 # Never publish a Release or assert independently verified authorship from this workflow.
 on:
+  pull_request:
+    paths:
+      - '.github/workflows/first-paper-live-timestamp.yml'
+      - '.github/workflows/first-paper-selftest.yml'
+      - 'scripts/reproducible_pdf_id.py'
+      - 'manuscripts/openpreprint-kit/**'
+      - 'requirements*.lock'
   push:
     branches: [main]
     paths:
