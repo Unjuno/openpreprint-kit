@@ -31,4 +31,3 @@ The main toolkit repository's separate active `protect-main` ruleset does not es
 - G2 is separately `NOT CONFIRMED`: only the paper repo's v1/v2 actual-paper Releases are currently resolvable. Historical demo repos cannot replace the formal two-paper/two-version requirement.
 - No permission change, new repository, paper Release, or toolkit v1.0.0 Release was made while preparing this handoff.
 - The local manuscript `manuscripts/openpreprint-kit-robustness-eval/` is marked owner-approval-pending; its presence does not supply the required public repository or author approval.
-
