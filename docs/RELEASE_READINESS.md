@@ -45,7 +45,7 @@ On 2026-11-21 UTC, unauthenticated HTTPS downloads fetched all 11 assets from ea
 | G3 TSA・否定試験 | OWNER-RECORDED PASS、今回未再監査 | 既存台帳は5版のRFC 3161再検証、2環境8回以上の正常検証、固定20否定ケース誤受理0を記録。正式4版の現在の識別子が解決するまで固定対象は再確定できない。独立性 `UNPROVEN`。 |
 | G4 公開観測 | OWNER-RECORDED PASS、今回未再監査 | 既存台帳に署名観測・RFC 3161を記録。G2の正式対象4版との対応を再確認する。独立性 `UNPROVEN`。 |
 | G5 複製・オフライン復元 | OWNER-RECORDED PASS、今回未再監査 | 既存台帳に4版のGitHub非接続復元を記録。復元対象とG2正式4版の対応を再確認する。別管理の独立性 `UNPROVEN`。 |
-| G6 人間の編集・個人情報管理 | **SOURCE EVIDENCE MISSING** | Issue #5と確認した作業コピーでは、人間レビュー、訂正演習、撤回演習の個別URI/hashを確認できず、`reviews/record.json` は `events: []`。所有者は第2repo/G6記録を「存在しない／不明」と回答。現行基準どおり人間の判断・演習・履歴記録が必要。 |
+| G6 人間の編集・個人情報管理 | **SOURCE EVIDENCE MISSING** | Issue #5と確認した作業コピーでは、人間レビュー、訂正演習、撤回演習の個別URI/hashを確認できず、`reviews/record.json` は `events: []`。所有者は第2repo/G6記録を「存在しない／不明」と回答。現行基準どおり人間の判断・演習・履歴記録が必要。実施者に渡す固定対象・42ファイル指紋目録は [G6 human review handoff](operator-packages/G6-human-review-handoff-2026-11-22.md) と [input manifest](../evidence/acceptance/G6-review-inputs-2026-11-22.json)。 |
 | G7 セキュリティ・証拠寿命 | OWNER-RECORDED PASS、今回未再監査 | 既存台帳は固定SHA評価・失効/CA更新/復旧試験・責任者・点検手順を記録する。今回のPR候補またはmerge後main SHAに未再結合。外部監査とは主張しない。独立性 `UNPROVEN`。 |
 
 2026-11-21時点で適用された受入基準では全ゲートに独立人間の選任・署名を一律必須とはしていない。所有者自身の確認を認めるゲートでも、独立性は `UNPROVEN` と記録する。独立レビュー・観測・別管理保管・外部監査を証拠として主張する場合、AIや同一人物が管理する別アカウントは実在する独立担当者の代替にならない。G6の実人間によるレビュー・訂正・撤回演習は依然必須で、AI自己点検では代替できない。
