@@ -55,3 +55,4 @@
 - G6: `BLOCKED / SOURCE EVIDENCE MISSING`. Human review, correction exercise, and withdrawal exercise records were not found; owner reports second repo or G6 records absent/unknown. AI review cannot substitute.
 - P4 and toolkit v1.0.0: `NO-GO`. No Release or tag was created.
 - The two GitHub accounts are controlled by the same owner and do not count as independent human reviewers.
+- G0 security/dependency readback on 2026-11-22: GitHub Code Scanning alerts API returned 0 open alerts; Dependabot alerts API returned 0 open alerts. `requirements.lock` at this fixed source contains 27 pinned distributions and 324 SHA-256 wheel hash entries. These alert counts describe the state at readback time.
