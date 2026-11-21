@@ -4,6 +4,16 @@
 
 **現在の判定: P4 / toolkit v1.0.0 = NO-GO。** 2026-11-21 の所有者記録はG0–G7全PASS（独立性 `UNPROVEN`）として保持するが、今回のGitHub現状読戻しでG1/G2と食い違う状態が確認された。G6の人間レビュー・訂正演習・撤回演習の個別証拠も見つかっていない。これらが解決するまで、過去のPASS記録を現状PASSとして再利用しない。
 
+## Latest fixed-main checkpoint — PR #70
+
+PR #70's owner-approved head `85aa296088c3c3a4d30804c619c5375d74174647` merged to main as `74f88fdb7942c793185600e4d2fcd076944596e1`. All seven required CI categories passed on that exact SHA. The self-application and live RFC 3161/fresh-runner workflows also passed on the same SHA, without publishing any Release. Detailed run IDs, 441-test per-job totals and skip reasons are in [post-merge quality evidence](QUALITY_EVIDENCE_POSTMERGE_PR70_2026-11-22.md).
+
+The two workflow PDFs are byte-identical (187,504 bytes, SHA-256 `d892d100ce5cbae994b7547570828eba280b62e716123e2ffd26edf56e0026bc`). RFC 3161 status was `VERIFIED` at `2026-11-21T20:55:17Z`; a separate runner restored and verified the preservation archive. This proves approved-metadata evidence existence under the supplied trust policy, not authorship, public availability, independent observation or durable retention; TSA accuracy was unspecified.
+
+Current public GitHub discovery found only `Unjuno/openpreprint-kit` and `Unjuno/openpreprint-kit-paper` as OpenPreprint repositories. The second account's private repositories are not visible to this credential, so absence is not inferred. The paper repository has only two resolvable immutable releases (v1/v2); main requires CI checks but zero approving reviews. Current code-scanning, Dependabot and secret-scanning alert endpoints each returned zero open alerts, which does not replace a human security/privacy assessment. Current status remains G1/G2/G6 **BLOCKED**, G3/G4/G5/G7 **PARTIAL EVIDENCE / NOT PASS**, P4 **NO-GO**.
+
+The current local Gold Candidate is r36, main `74f88fdb7942c793185600e4d2fcd076944596e1`, ZIP SHA-256 `7245a0fc99ffd07d5846093b14512bb39701a4dc1df2651f57cd170f4b874b2c`. It includes a fixed-SHA G1/G2/G6 handoff, and 42/42 human-review input files were rehashed against the exact source archive. This is not a human review or publication approval. Issue #5 records the [main verification](https://github.com/Unjuno/openpreprint-kit/issues/5#issuecomment-7069164453), [live gate/security readback](https://github.com/Unjuno/openpreprint-kit/issues/5#issuecomment-7069233390), and [current-SHA handoff](https://github.com/Unjuno/openpreprint-kit/issues/5#issuecomment-7069268972).
+
 ## 2026-11-14 の公開記録と 2026-11-22 の読戻し
 
 次の表は当時の記録を履歴として残したもの。2026-11-22にライブGitHubで読み戻せた対象は、paper repo の v1/v2のみだった。第二repoとそのReleaseは現在のowner repo一覧・Release API・公開repo検索から解決できなかったため、当時の記録だけでは現在のG1/G2をPASSにできない。
@@ -39,16 +49,20 @@ On 2026-11-21 UTC, unauthenticated HTTPS downloads fetched all 11 assets from ea
 
 | ゲート | 現在の再確認 | 根拠・残件 |
 |---|---|---|
-| G0 コード・配布品質 | **TECHNICAL PASS on fixed main `838a622ff14db35f93c5dca1a5028a8a1a6efe67`** | PR #68 exact approved head `22787ab49a4cc9c0cbb724ea0915d22ffade20b0` merged as this SHA. Required CI, self-application, live RFC 3161/fresh-runner passed on this SHA. Independent review remains `UNPROVEN`. |
-| G1 所有者設定・再利用 | **NOT CONFIRMED** | toolkitはpublic/template/immutable-enabled。active `protect-main` rulesetはPR・必須CI・削除/force-push禁止だが、approving review 0・required reviewersなし。paper repoは同template由来・public・immutable-enabledで、main required checksは有効だがapproval 0・rulesetなし。第2の実論文repoは現状で解決できない。詳細と設定依頼は [G1 owner settings package](operator-packages/G1-owner-settings.md)。 |
-| G2 実公開・版管理 | **NOT CONFIRMED** | 現在解決できたのはpaper repoのv1/v2の2件。第2repoの2 Releaseとそのattestation・匿名取得・資産照合を今回再検証できていない。失われたReleaseを新規発行して過去証拠の代替にしてはならない。 |
-| G3 TSA・否定試験 | OWNER-RECORDED PASS、今回未再監査 | 既存台帳は5版のRFC 3161再検証、2環境8回以上の正常検証、固定20否定ケース誤受理0を記録。正式4版の現在の識別子が解決するまで固定対象は再確定できない。独立性 `UNPROVEN`。 |
-| G4 公開観測 | OWNER-RECORDED PASS、今回未再監査 | 既存台帳に署名観測・RFC 3161を記録。G2の正式対象4版との対応を再確認する。独立性 `UNPROVEN`。 |
-| G5 複製・オフライン復元 | OWNER-RECORDED PASS、今回未再監査 | 既存台帳に4版のGitHub非接続復元を記録。復元対象とG2正式4版の対応を再確認する。別管理の独立性 `UNPROVEN`。 |
-| G6 人間の編集・個人情報管理 | **SOURCE EVIDENCE MISSING** | Issue #5と確認した作業コピーでは、人間レビュー、訂正演習、撤回演習の個別URI/hashを確認できず、`reviews/record.json` は `events: []`。所有者は第2repo/G6記録を「存在しない／不明」と回答。現行基準どおり人間の判断・演習・履歴記録が必要。実施者に渡す固定対象・42ファイル指紋目録は [G6 human review handoff](operator-packages/G6-human-review-handoff-2026-11-22.md) と [input manifest](../evidence/acceptance/G6-review-inputs-2026-11-22.json)。 |
-| G7 セキュリティ・証拠寿命 | OWNER-RECORDED PASS、今回未再監査 | 既存台帳は固定SHA評価・失効/CA更新/復旧試験・責任者・点検手順を記録する。今回のPR候補またはmerge後main SHAに未再結合。外部監査とは主張しない。独立性 `UNPROVEN`。 |
+| G0 コード・配布品質 | **TECHNICAL PASS on fixed main `74f88fdb7942c793185600e4d2fcd076944596e1`** | PR #70後の必須CI・自己適用・RFC 3161/fresh-runnerが同一SHAで成功。独立性は `UNPROVEN`。|
+| G1 所有者設定・再利用 | **BLOCKED** | toolkitはpublic/templateでactive `protect-main` rulesetあり。公開repo検索で確認できる論文repoは1つだけ。paper mainは必須CI 3件だがapproving review count 0。第2の論文repoは未解決。|
+| G2 実公開・版管理 | **BLOCKED** | 現在解決できる実論文Releaseはpaper v1/v2の2/4。別論文repoの2版・asset attestation・匿名取得・版間不変性を検証できていない。|
+| G3 TSA・否定試験 | **PARTIAL EVIDENCE / NOT PASS** | v1/v2で追加の正常・否定試験を実施したが、正式な4公開版が揃わず、現在の8回試験は同一Windows host。|
+| G4 公開観測 | **PARTIAL EVIDENCE / NOT PASS** | 現在確認できる4版対応の署名観測対象が2版に留まる。独立性は `UNPROVEN`。|
+| G5 複製・オフライン復元 | **PARTIAL EVIDENCE / NOT PASS** | 現在解決できる実Releaseは2版のみ。正式4版の復元行列・別保管責任は未確認。|
+| G6 人間の編集・個人情報管理 | **BLOCKED** | `reviews/record.json` は `events: []`。レビュー、訂正演習、撤回演習の人間記録なし。最新42-file input handoff is in local r36 candidate and Issue #5; handoff is not review evidence.|
+| G7 セキュリティ・証拠寿命 | **PARTIAL EVIDENCE / NOT PASS** | Current main CI, PR #70 revoked-origin preservation regression and zero open GitHub alert readbacks add evidence. Owner fixed-SHA security/privacy decision, lifecycle responsibility and maintenance confirmation remain outstanding.|
 
 2026-11-21時点で適用された受入基準では全ゲートに独立人間の選任・署名を一律必須とはしていない。所有者自身の確認を認めるゲートでも、独立性は `UNPROVEN` と記録する。独立レビュー・観測・別管理保管・外部監査を証拠として主張する場合、AIや同一人物が管理する別アカウントは実在する独立担当者の代替にならない。G6の実人間によるレビュー・訂正・撤回演習は依然必須で、AI自己点検では代替できない。
+
+## Historical checkpoint: main 838a622
+
+The following checkpoint details are retained as historical evidence and are superseded by the PR #70 fixed-main checkpoint above.
 
 ## 現在の候補と公開停止
 
@@ -66,6 +80,8 @@ PR #68 merge後、main `838a622ff14db35f93c5dca1a5028a8a1a6efe67` で必須CI、
 個別プレプリント用 `.github/workflows/publish.yml` はkit本体のソフトウェアReleaseではない。root `preprint.yaml` は再利用テンプレートとして `v0` / `UNSPECIFIED` のまま維持する。kit v1.0.0は、全ゲートと最終承認後、固定main SHAからソースアーカイブ、SHA256SUMS、Readiness、Master Reportを組み立て、attestation・匿名取得・byte一致・immutableを確認して発行する。
 
 ## 訂正履歴
+
+- 2026-11-22: PR #70 approved head `85aa296088c3c3a4d30804c619c5375d74174647` merged as `74f88fdb7942c793185600e4d2fcd076944596e1`. Required CI, self-application and live RFC 3161/fresh-runner passed. Cross-workflow PDF SHA, G1/G2 live readback, zero alert counts, G7 revoked-origin regression, and current-SHA human handoff were recorded; P4 remains NO-GO.
 
 - 2026-11-22: PR #66 merge後の固定main SHA、全必須CI・自己適用・RFC 3161/fresh-runner結果、再現可能PDF hash、否定試験、OS別件数を追記。G1/G2/G6とP4の未達状態は維持。
 - 2026-11-22: 承認済みPR #67 merge後のmain `a3a9972…` で必須CI、自己適用PDF、RFC 3161、fresh-runner復元を再実行し、証拠JSONを追加。ゲートの未達とP4 NO-GOは維持。
