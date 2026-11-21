@@ -1,0 +1,77 @@
+{
+  "schema_version": 1,
+  "observed_at_utc": "2026-11-21T17:24:59.7887930Z",
+  "repository": "Unjuno/openpreprint-kit",
+  "fixed_main_sha": "838a622ff14db35f93c5dca1a5028a8a1a6efe67",
+  "main_tree_sha": "f7a61bde704c4e96c66d4d36bc604d1e813b48c0",
+  "pr68_merge_commit": "838a622ff14db35f93c5dca1a5028a8a1a6efe67",
+  "pr68_head_sha": "22787ab49a4cc9c0cbb724ea0915d22ffade20b0",
+  "required_ci": {
+    "all_success": true,
+    "runs": {
+      "validate": "44929110267",
+      "quality_audit_windows_macos": "44929110382",
+      "codeql": "44929110325",
+      "lean": "44929110275"
+    },
+    "required_categories": [
+      "validate (3.10)",
+      "validate (3.12)",
+      "audit",
+      "CodeQL Python",
+      "lean",
+      "windows-regression (3.12)",
+      "macos-regression (3.12)"
+    ],
+    "test_counts": {
+      "python_3_10_validate": "440 total, 427 PASS, 13 SKIP, 0 FAIL, 0 ERROR",
+      "python_3_12_validate": "440 total, 434 PASS, 6 SKIP, 0 FAIL, 0 ERROR",
+      "ubuntu_audit": "440 total, 434 PASS, 6 SKIP, 0 FAIL, 0 ERROR",
+      "windows_regression": "440 total, 434 PASS, 6 SKIP, 0 FAIL, 0 ERROR",
+      "macos_regression": "440 total, 434 PASS, 6 SKIP, 0 FAIL, 0 ERROR"
+    },
+    "skip_reasons": {
+      "python_3_10": "7 optional Hypothesis tests (test-only dependency absent) + 6 Windows-only cases",
+      "ubuntu_macos": "6 Windows-only cases; executed on Windows runner",
+      "windows": "6 POSIX shell integration cases; executed on Unix runner",
+      "required_skips": 0
+    }
+  },
+  "self_application": {
+    "run_id": "44929173591",
+    "verdict": "PASS",
+    "four_negative_cases_rejected": true,
+    "pdf_sha256": "1d79581a7e543d95162991d98b251077f0062da9339d1c9e98d0401ce91c0811",
+    "pdf_bytes": 187504,
+    "pages": 3,
+    "selftest_pdf_matches_timestamp_pdf": true,
+    "trailer_id_hex": "e266364a4208f9be43f167157644373e",
+    "expected_source_bound_id": "e266364a4208f9be43f167157644373e",
+    "release_published": false
+  },
+  "live_timestamp": {
+    "run_id": "44929176037",
+    "fresh_runner_job": "https://github.com/Unjuno/openpreprint-kit/actions/runs/44929176037/job/136922326273",
+    "status": "VERIFIED",
+    "timestamp_utc": "2026-11-21T17:18:46+00:00",
+    "ca_sha256": "2151b61137ffa86bf664691ba67e7da0b19f98c758e3d228d5d8ebf27e044438",
+    "manifest_sha256": "45c20926b70965274ee69ba8974581326d59e08c7ffe8236a5da7e94a8ed93ee",
+    "preservation_zip_sha256": "4da83d9380e2e5d4641adeb21267cbb7b840381ff50477eac94aa7b66af9b508",
+    "fresh_runner_verdict": "PASS",
+    "fresh_runner_source_commit": "838a622ff14db35f93c5dca1a5028a8a1a6efe67",
+    "release_published": false,
+    "scope": "APPROVED_MANUSCRIPT_EXISTENCE_ONLY"
+  },
+  "source_archive": {
+    "path": "source/openpreprint-kit-838a622ff14db35f93c5dca1a5028a8a1a6efe67.zip",
+    "sha256": "657f9c7fe7eaa96d173945f0353eac3f3900ed842d35fd621b4f7642486ace8e",
+    "bytes": 3317295
+  },
+  "formal_four_recheck": {
+    "prior_evidence_sha256": "fd274cb4b3cd920d855b19168ad8398e8c06176f153ffc09b8dc9fa383b509d6",
+    "result": "4/4 restores; 4/4 RFC 3161 VERIFIED; 44/44 prior local file byte matches",
+    "environment": "one Windows host only",
+    "formal_gate_effect": "Does not prove four qualifying public immutable Releases or independent custody; no G2/G3/G5 upgrade"
+  },
+  "scope": "Post-merge technical evidence only. Does not establish authorship, independent review/custody, formal G0-G7 acceptance or long-term retention. P4 remains NO-GO."
+}
