@@ -217,6 +217,81 @@ class RenewalTests(unittest.TestCase):
                 post=self.responder(self.new_authority_1))
         self.assertFalse(self.recorded_requests)
 
+    def test_revoked_origin_evidence_is_preserved_but_never_renewed(self):
+        """Keep the old proof bytes, but fail closed once its signer is revoked."""
+        authority = test_timestamp.Authority(self.work / 'revoked-source-authority')
+        source_policy = self.work / 'revoked-source-policy.json'
+        source_policy.write_text(json.dumps(authority.policy()), encoding='utf-8')
+        builder = test_release.ReleaseBundleTests()
+        builder.setUp()
+        self.addCleanup(builder.tearDown)
+        builder.make_bundle()
+        bundle = builder.bundle
+
+        query = self.work / 'revoked-source.tsq'
+        response = self.work / 'revoked-source.tsr'
+        requested = subprocess.run(
+            [sys.executable, str(ROOT / 'scripts' / 'timestamp.py'), 'request',
+             str(bundle), '--policy', str(source_policy), '--out', str(query)],
+            capture_output=True, text=True, timeout=45)
+        self.assertEqual(requested.returncode, 0, requested.stderr)
+        authority.sign(query, response)
+        attached = subprocess.run(
+            [sys.executable, str(ROOT / 'scripts' / 'timestamp.py'), 'attach',
+             str(bundle), '--policy', str(source_policy), '--query', str(query),
+             '--response', str(response)],
+            capture_output=True, text=True, timeout=45)
+        self.assertEqual(attached.returncode, 0, attached.stderr)
+
+        archive = self.work / 'revoked-source.opk.zip'
+        packed = subprocess.run(
+            [sys.executable, str(ROOT / 'scripts' / 'preserve.py'), 'pack',
+             str(bundle), '--out', str(archive), '--policy', str(source_policy)],
+            capture_output=True, text=True, timeout=45)
+        self.assertEqual(packed.returncode, 0, packed.stderr)
+        archive_before = archive.read_bytes()
+        response_before = (bundle / 'timestamp.tsr').read_bytes()
+        archive_sha = hashlib.sha256(archive_before).hexdigest()
+
+        test_timestamp.ssl('ca', '-batch', '-config', authority.config,
+                           '-revoke', authority.root / 'tsa.pem')
+        authority.make_crl()
+        test_timestamp.ssl('crl', '-in', authority.crl, '-noout', '-verify',
+                           '-CAfile', authority.ca)
+
+        verification = subprocess.run(
+            [sys.executable, str(ROOT / 'scripts' / 'timestamp.py'), 'verify',
+             str(bundle), '--policy', str(source_policy)],
+            capture_output=True, text=True, timeout=45)
+        self.assertNotEqual(verification.returncode, 0, 'revoked signer was accepted')
+
+        restored = self.work / 'revoked-source-restored'
+        restore = subprocess.run(
+            [sys.executable, str(ROOT / 'scripts' / 'preserve.py'), 'restore',
+             str(archive), '--out', str(restored), '--expected-sha256', archive_sha,
+             '--policy', str(source_policy)],
+            capture_output=True, text=True, timeout=45)
+        self.assertNotEqual(restore.returncode, 0, 'revoked source archive restored as valid')
+        self.assertFalse(restored.exists(), 'failed restore left a partial output')
+
+        renewal_requests = []
+
+        def unexpected_tsa_request(*args):
+            renewal_requests.append(args)
+            raise AssertionError('TSA must not be contacted for revoked source evidence')
+
+        with self.assertRaises(ValueError):
+            self.module().issue_chain(
+                archive, archive_sha, source_policy, self.policy1,
+                'example/science-paper', 'v1', self.output,
+                post=unexpected_tsa_request)
+        self.assertFalse(renewal_requests)
+        self.assertFalse(self.output.exists(), 'failed renewal left partial evidence')
+        self.assertEqual(archive.read_bytes(), archive_before,
+                         'the original preservation archive must remain byte-identical')
+        self.assertEqual((bundle / 'timestamp.tsr').read_bytes(), response_before,
+                         'the original RFC 3161 response must remain preserved')
+
     def test_git_hub_release_zip_roundtrip_is_byte_exact(self):
         result = self.first()
         package = self.work / 'renewal-evidence.zip'
