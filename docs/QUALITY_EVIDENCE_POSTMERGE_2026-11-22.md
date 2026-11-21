@@ -47,6 +47,15 @@
 - Append-only archive ledger continuation SHA-256: `5d74114f4fcd84272bc87e674ab8316e259a7aace6344b0983f09c2b144d570f`.
 - Earlier ZIPs remain preserved; this is a new candidate and does not modify prior archives or immutable paper releases.
 
+## Current paper v1/v2 anonymous readback (partial G2 evidence)
+
+- Readback report: [`evidence/acceptance/paper-v1-v2-anonymous-readback-2026-11-22.json`](../evidence/acceptance/paper-v1-v2-anonymous-readback-2026-11-22.json), SHA-256 `D1946DA65BAD5579B20EA6FE80B2342A176BCFA22CC16D60D5532FF69B70E18D`. The downloader used unauthenticated HTTPS GET requests and recorded the transport and per-asset digests.
+- `gh release verify v1` and `gh release verify v2` both passed and verified GitHub attestations. Both releases read back as `immutable=true`, `draft=false`, 11 assets.
+- Anonymous downloads: all 11 asset digests for each release matched the GitHub Releases API. All 8 entries in each release's `SHA256SUMS` also matched. The existing 2026-11-14 release matrix's 11 recorded v1 digests match the current v1 download; that historical matrix does not contain an entry for paper v2.
+- With dependencies installed from the repository's hash-locked `requirements.lock`, `scripts/verify_release.py` passed for both releases with separately recorded PDF fingerprints; `scripts/citation_validation.py` passed CFF schema and BibTeX parsing. These checks do not establish truth of citation metadata, authorship, or peer review.
+- RFC 3161 timestamp files are present, but **these two paper Releases' timestamps were not reverified in this readback** because the working tree has no current independently trusted CA/CRL policy for those releases. This is not a G3 pass.
+- This verifies only the currently resolvable `openpreprint-kit-paper` v1/v2. It does not resolve the second actual-paper repository or meet the two-paper/two-version G2 requirement. No Release or asset was changed.
+
 ## Acceptance status
 
 - G0: technical pass on the fixed main SHA above; independent review status remains `UNPROVEN`.

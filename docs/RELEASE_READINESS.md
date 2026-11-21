@@ -25,6 +25,10 @@ PR #66 was merged with owner approval for exact head `c140290b167c2e46afd8c0f5a1
 
 Main runs: validate 3.10 `44920715884`; quality/audit/Windows/macOS `44920715891`; CodeQL `44920715892`; Lean `44920715881`; self-application `44920715900`; live timestamp/fresh-runner `44920715887`. All concluded success. GitHub Code Scanning and Dependabot alert API readbacks on 2026-11-22 each returned 0 open alerts; `requirements.lock` at this SHA contains 27 pinned distributions and 324 SHA-256 wheel hashes. These alert counts reflect their readback time. OS matrix: Python 3.10 440 = 427 pass + 13 skip; Python 3.12 validation/audit/Windows/macOS each 440 = 434 pass + 6 skip; no failures or errors. Skips are optional Hypothesis tests (7 on Python 3.10), Windows-specific ACL/junction/Win32 tests on non-Windows runners, and POSIX shell integration tests on Windows. Windows-specific tests run on Windows; POSIX launcher tests run on Unix. No required test was skipped on every supporting platform. Raw logs and artifact hashes are in the linked evidence record.
 
+## Current public paper v1/v2 readback (partial G2 evidence)
+
+On 2026-11-21 UTC, unauthenticated HTTPS downloads fetched all 11 assets from each currently resolvable actual-paper Release. `gh release verify` passed for v1/v2; both read back immutable and non-draft; GitHub API digests matched all files, and all eight entries in each `SHA256SUMS` matched. The hash-locked local `verify_release.py` and `citation_validation.py` also passed with independent v1/v2 PDF fingerprints. The recorded JSON report is [`evidence/acceptance/paper-v1-v2-anonymous-readback-2026-11-22.json`](../evidence/acceptance/paper-v1-v2-anonymous-readback-2026-11-22.json). This is partial G2 evidence only: second actual-paper repo is unresolved. The RFC 3161 tokens on those two releases were not reverified in this readback because no current trusted CA/CRL policy for them is present; do not count this as current G3 verification.
+
 ## G0–G7 判定
 
 | ゲート | 現在の再確認 | 根拠・残件 |

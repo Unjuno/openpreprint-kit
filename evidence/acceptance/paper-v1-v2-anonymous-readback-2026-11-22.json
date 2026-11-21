@@ -1,0 +1,364 @@
+{
+  "observed_at_utc": "2026-11-21T16:13:03.079848+00:00",
+  "repository": "Unjuno/openpreprint-kit-paper",
+  "transport": "urllib HTTPS GET with no Authorization header",
+  "releases": [
+    {
+      "tag": "v1",
+      "release_id": 444659219,
+      "api_status": 200,
+      "immutable": true,
+      "draft": false,
+      "published_at": "2026-11-13T19:39:48Z",
+      "target_commitish": "804cb76a4cf5eea65349fc7a8f01e2ce00e1176d",
+      "anonymous": true,
+      "asset_count": 11,
+      "all_github_digests_match": true,
+      "sha256sums_entries": 8,
+      "all_sha256sums_match": true,
+      "assets": [
+        {
+          "name": "citation.bib",
+          "bytes": 321,
+          "anonymous_http_status": 200,
+          "api_bytes": 321,
+          "github_digest": "c8c9920650fc39eab5ef58bc0f3145d791ecf3f62b99a78cb53c0d501150907f",
+          "download_sha256": "c8c9920650fc39eab5ef58bc0f3145d791ecf3f62b99a78cb53c0d501150907f",
+          "digest_matches": true,
+          "download_host": "release-assets.githubusercontent.com"
+        },
+        {
+          "name": "CITATION.cff",
+          "bytes": 744,
+          "anonymous_http_status": 200,
+          "api_bytes": 744,
+          "github_digest": "6a7cce39b4d000dcdfc0bccff7b6020d1662e24f5031377519f1ff09348f1043",
+          "download_sha256": "6a7cce39b4d000dcdfc0bccff7b6020d1662e24f5031377519f1ff09348f1043",
+          "digest_matches": true,
+          "download_host": "release-assets.githubusercontent.com"
+        },
+        {
+          "name": "manifest.json",
+          "bytes": 1094,
+          "anonymous_http_status": 200,
+          "api_bytes": 1094,
+          "github_digest": "4ec582630b9ca2ae7c8f9abe519ff613e852840bb5c75856eef15bccedbb9f56",
+          "download_sha256": "4ec582630b9ca2ae7c8f9abe519ff613e852840bb5c75856eef15bccedbb9f56",
+          "digest_matches": true,
+          "download_host": "release-assets.githubusercontent.com"
+        },
+        {
+          "name": "paper.pdf",
+          "bytes": 187502,
+          "anonymous_http_status": 200,
+          "api_bytes": 187502,
+          "github_digest": "0860b735379fb1b9b223f5d535442dae8421f456d7ae1c6bf6ce8d3141a1b07c",
+          "download_sha256": "0860b735379fb1b9b223f5d535442dae8421f456d7ae1c6bf6ce8d3141a1b07c",
+          "digest_matches": true,
+          "download_host": "release-assets.githubusercontent.com"
+        },
+        {
+          "name": "preprint-metadata.json",
+          "bytes": 1017,
+          "anonymous_http_status": 200,
+          "api_bytes": 1017,
+          "github_digest": "2f804f6930ea0a0fb80105304524013a784cae6fd411db4204986dc3de76f2e5",
+          "download_sha256": "2f804f6930ea0a0fb80105304524013a784cae6fd411db4204986dc3de76f2e5",
+          "digest_matches": true,
+          "download_host": "release-assets.githubusercontent.com"
+        },
+        {
+          "name": "RELEASE_NOTES.md",
+          "bytes": 565,
+          "anonymous_http_status": 200,
+          "api_bytes": 565,
+          "github_digest": "9ca2c9d78d998f7e8a9a1d3ee9eb27a70eeead19b87af7f8d0e1c85c37c24208",
+          "download_sha256": "9ca2c9d78d998f7e8a9a1d3ee9eb27a70eeead19b87af7f8d0e1c85c37c24208",
+          "digest_matches": true,
+          "download_host": "release-assets.githubusercontent.com"
+        },
+        {
+          "name": "research-assets.json",
+          "bytes": 2990,
+          "anonymous_http_status": 200,
+          "api_bytes": 2990,
+          "github_digest": "cd481c0726f119ace1741bca85e3d46a80837b7c0af1d692d183b344107d2aaa",
+          "download_sha256": "cd481c0726f119ace1741bca85e3d46a80837b7c0af1d692d183b344107d2aaa",
+          "digest_matches": true,
+          "download_host": "release-assets.githubusercontent.com"
+        },
+        {
+          "name": "research-assets.tar",
+          "bytes": 40960,
+          "anonymous_http_status": 200,
+          "api_bytes": 40960,
+          "github_digest": "9677fe710de86972f343efae69f1fde62374a1bee3891d0b3806a1a2c4754498",
+          "download_sha256": "9677fe710de86972f343efae69f1fde62374a1bee3891d0b3806a1a2c4754498",
+          "digest_matches": true,
+          "download_host": "release-assets.githubusercontent.com"
+        },
+        {
+          "name": "SHA256SUMS",
+          "bytes": 667,
+          "anonymous_http_status": 200,
+          "api_bytes": 667,
+          "github_digest": "aa8b45af4f9304ce0a54daaaf3250487cb0b3855268a1f0e9670f233a83cf3c2",
+          "download_sha256": "aa8b45af4f9304ce0a54daaaf3250487cb0b3855268a1f0e9670f233a83cf3c2",
+          "digest_matches": true,
+          "download_host": "release-assets.githubusercontent.com"
+        },
+        {
+          "name": "timestamp.tsq",
+          "bytes": 84,
+          "anonymous_http_status": 200,
+          "api_bytes": 84,
+          "github_digest": "99ec9d2608024e7402f12362264ed4020c7b2d14b884af26eb41c83a18acdcff",
+          "download_sha256": "99ec9d2608024e7402f12362264ed4020c7b2d14b884af26eb41c83a18acdcff",
+          "digest_matches": true,
+          "download_host": "release-assets.githubusercontent.com"
+        },
+        {
+          "name": "timestamp.tsr",
+          "bytes": 4653,
+          "anonymous_http_status": 200,
+          "api_bytes": 4653,
+          "github_digest": "ca0695caa687e952871ad9b8cd69d9370604bc1f303b412ed7c6287ce18ce737",
+          "download_sha256": "ca0695caa687e952871ad9b8cd69d9370604bc1f303b412ed7c6287ce18ce737",
+          "digest_matches": true,
+          "download_host": "release-assets.githubusercontent.com"
+        }
+      ],
+      "sha256sums_checks": [
+        {
+          "name": "CITATION.cff",
+          "expected": "6a7cce39b4d000dcdfc0bccff7b6020d1662e24f5031377519f1ff09348f1043",
+          "actual": "6a7cce39b4d000dcdfc0bccff7b6020d1662e24f5031377519f1ff09348f1043",
+          "matches": true
+        },
+        {
+          "name": "RELEASE_NOTES.md",
+          "expected": "9ca2c9d78d998f7e8a9a1d3ee9eb27a70eeead19b87af7f8d0e1c85c37c24208",
+          "actual": "9ca2c9d78d998f7e8a9a1d3ee9eb27a70eeead19b87af7f8d0e1c85c37c24208",
+          "matches": true
+        },
+        {
+          "name": "citation.bib",
+          "expected": "c8c9920650fc39eab5ef58bc0f3145d791ecf3f62b99a78cb53c0d501150907f",
+          "actual": "c8c9920650fc39eab5ef58bc0f3145d791ecf3f62b99a78cb53c0d501150907f",
+          "matches": true
+        },
+        {
+          "name": "manifest.json",
+          "expected": "4ec582630b9ca2ae7c8f9abe519ff613e852840bb5c75856eef15bccedbb9f56",
+          "actual": "4ec582630b9ca2ae7c8f9abe519ff613e852840bb5c75856eef15bccedbb9f56",
+          "matches": true
+        },
+        {
+          "name": "paper.pdf",
+          "expected": "0860b735379fb1b9b223f5d535442dae8421f456d7ae1c6bf6ce8d3141a1b07c",
+          "actual": "0860b735379fb1b9b223f5d535442dae8421f456d7ae1c6bf6ce8d3141a1b07c",
+          "matches": true
+        },
+        {
+          "name": "preprint-metadata.json",
+          "expected": "2f804f6930ea0a0fb80105304524013a784cae6fd411db4204986dc3de76f2e5",
+          "actual": "2f804f6930ea0a0fb80105304524013a784cae6fd411db4204986dc3de76f2e5",
+          "matches": true
+        },
+        {
+          "name": "research-assets.json",
+          "expected": "cd481c0726f119ace1741bca85e3d46a80837b7c0af1d692d183b344107d2aaa",
+          "actual": "cd481c0726f119ace1741bca85e3d46a80837b7c0af1d692d183b344107d2aaa",
+          "matches": true
+        },
+        {
+          "name": "research-assets.tar",
+          "expected": "9677fe710de86972f343efae69f1fde62374a1bee3891d0b3806a1a2c4754498",
+          "actual": "9677fe710de86972f343efae69f1fde62374a1bee3891d0b3806a1a2c4754498",
+          "matches": true
+        }
+      ],
+      "prior_record_sha256": "1430b1197e6b85af29b29e1de24cc5ad4d52ab76e4041bd57ad1bcb633b6bdbd",
+      "matches_prior_recorded_asset_digests": true
+    },
+    {
+      "tag": "v2",
+      "release_id": 445442340,
+      "api_status": 200,
+      "immutable": true,
+      "draft": false,
+      "published_at": "2026-11-14T16:48:30Z",
+      "target_commitish": "6ec47ec58e9dc733956615343aad16caca4bb8ee",
+      "anonymous": true,
+      "asset_count": 11,
+      "all_github_digests_match": true,
+      "sha256sums_entries": 8,
+      "all_sha256sums_match": true,
+      "assets": [
+        {
+          "name": "citation.bib",
+          "bytes": 349,
+          "anonymous_http_status": 200,
+          "api_bytes": 349,
+          "github_digest": "065313ffd2e315a195113468036d36e7e22ecf89a28c8353198ae52be1861c52",
+          "download_sha256": "065313ffd2e315a195113468036d36e7e22ecf89a28c8353198ae52be1861c52",
+          "digest_matches": true,
+          "download_host": "release-assets.githubusercontent.com"
+        },
+        {
+          "name": "CITATION.cff",
+          "bytes": 836,
+          "anonymous_http_status": 200,
+          "api_bytes": 836,
+          "github_digest": "f8b6f9032db334748a1afb848647c790fd107a0b77707ebb46f18fe6e23a3044",
+          "download_sha256": "f8b6f9032db334748a1afb848647c790fd107a0b77707ebb46f18fe6e23a3044",
+          "digest_matches": true,
+          "download_host": "release-assets.githubusercontent.com"
+        },
+        {
+          "name": "manifest.json",
+          "bytes": 1095,
+          "anonymous_http_status": 200,
+          "api_bytes": 1095,
+          "github_digest": "8ab5e61a3dbda404f5934d565186df0876aeef1534e12a126946c01c49394db1",
+          "download_sha256": "8ab5e61a3dbda404f5934d565186df0876aeef1534e12a126946c01c49394db1",
+          "digest_matches": true,
+          "download_host": "release-assets.githubusercontent.com"
+        },
+        {
+          "name": "paper.pdf",
+          "bytes": 1101848,
+          "anonymous_http_status": 200,
+          "api_bytes": 1101848,
+          "github_digest": "18e13ff3ccf37632cc86ede322687a32d2f959494672df52d78901cabe745805",
+          "download_sha256": "18e13ff3ccf37632cc86ede322687a32d2f959494672df52d78901cabe745805",
+          "digest_matches": true,
+          "download_host": "release-assets.githubusercontent.com"
+        },
+        {
+          "name": "preprint-metadata.json",
+          "bytes": 1115,
+          "anonymous_http_status": 200,
+          "api_bytes": 1115,
+          "github_digest": "0e0e0a80b9cd8623805c465657961558b148901cf03a30d4535570ce7edece5b",
+          "download_sha256": "0e0e0a80b9cd8623805c465657961558b148901cf03a30d4535570ce7edece5b",
+          "digest_matches": true,
+          "download_host": "release-assets.githubusercontent.com"
+        },
+        {
+          "name": "RELEASE_NOTES.md",
+          "bytes": 593,
+          "anonymous_http_status": 200,
+          "api_bytes": 593,
+          "github_digest": "1c789d3700fcedcc8c6649fe1a6b99458ceaa9086873cc4e3446e6b74c7f9314",
+          "download_sha256": "1c789d3700fcedcc8c6649fe1a6b99458ceaa9086873cc4e3446e6b74c7f9314",
+          "digest_matches": true,
+          "download_host": "release-assets.githubusercontent.com"
+        },
+        {
+          "name": "research-assets.json",
+          "bytes": 2350,
+          "anonymous_http_status": 200,
+          "api_bytes": 2350,
+          "github_digest": "703b2c513925fbd20651febf02f1362ed2a21a1e2bcee07d8811a146923a94e6",
+          "download_sha256": "703b2c513925fbd20651febf02f1362ed2a21a1e2bcee07d8811a146923a94e6",
+          "digest_matches": true,
+          "download_host": "release-assets.githubusercontent.com"
+        },
+        {
+          "name": "research-assets.tar",
+          "bytes": 40960,
+          "anonymous_http_status": 200,
+          "api_bytes": 40960,
+          "github_digest": "4288bf8b0c5cb41f379e289ba2c93857a159517d984c08b9e6f7c5116da2de35",
+          "download_sha256": "4288bf8b0c5cb41f379e289ba2c93857a159517d984c08b9e6f7c5116da2de35",
+          "digest_matches": true,
+          "download_host": "release-assets.githubusercontent.com"
+        },
+        {
+          "name": "SHA256SUMS",
+          "bytes": 667,
+          "anonymous_http_status": 200,
+          "api_bytes": 667,
+          "github_digest": "29b2bd3fe612d668ce94e6b596ba983f662b52c3e64809122203afa6fd7bd114",
+          "download_sha256": "29b2bd3fe612d668ce94e6b596ba983f662b52c3e64809122203afa6fd7bd114",
+          "digest_matches": true,
+          "download_host": "release-assets.githubusercontent.com"
+        },
+        {
+          "name": "timestamp.tsq",
+          "bytes": 84,
+          "anonymous_http_status": 200,
+          "api_bytes": 84,
+          "github_digest": "afcb0f707d9a4cc1aa9429825f747564dd2842d08b5df5a1c41b9cf8503ac89d",
+          "download_sha256": "afcb0f707d9a4cc1aa9429825f747564dd2842d08b5df5a1c41b9cf8503ac89d",
+          "digest_matches": true,
+          "download_host": "release-assets.githubusercontent.com"
+        },
+        {
+          "name": "timestamp.tsr",
+          "bytes": 4653,
+          "anonymous_http_status": 200,
+          "api_bytes": 4653,
+          "github_digest": "8456c1a52cecfcd27e89030fefaeed6af45dfa976ee702d62117614dda50ad19",
+          "download_sha256": "8456c1a52cecfcd27e89030fefaeed6af45dfa976ee702d62117614dda50ad19",
+          "digest_matches": true,
+          "download_host": "release-assets.githubusercontent.com"
+        }
+      ],
+      "sha256sums_checks": [
+        {
+          "name": "CITATION.cff",
+          "expected": "f8b6f9032db334748a1afb848647c790fd107a0b77707ebb46f18fe6e23a3044",
+          "actual": "f8b6f9032db334748a1afb848647c790fd107a0b77707ebb46f18fe6e23a3044",
+          "matches": true
+        },
+        {
+          "name": "RELEASE_NOTES.md",
+          "expected": "1c789d3700fcedcc8c6649fe1a6b99458ceaa9086873cc4e3446e6b74c7f9314",
+          "actual": "1c789d3700fcedcc8c6649fe1a6b99458ceaa9086873cc4e3446e6b74c7f9314",
+          "matches": true
+        },
+        {
+          "name": "citation.bib",
+          "expected": "065313ffd2e315a195113468036d36e7e22ecf89a28c8353198ae52be1861c52",
+          "actual": "065313ffd2e315a195113468036d36e7e22ecf89a28c8353198ae52be1861c52",
+          "matches": true
+        },
+        {
+          "name": "manifest.json",
+          "expected": "8ab5e61a3dbda404f5934d565186df0876aeef1534e12a126946c01c49394db1",
+          "actual": "8ab5e61a3dbda404f5934d565186df0876aeef1534e12a126946c01c49394db1",
+          "matches": true
+        },
+        {
+          "name": "paper.pdf",
+          "expected": "18e13ff3ccf37632cc86ede322687a32d2f959494672df52d78901cabe745805",
+          "actual": "18e13ff3ccf37632cc86ede322687a32d2f959494672df52d78901cabe745805",
+          "matches": true
+        },
+        {
+          "name": "preprint-metadata.json",
+          "expected": "0e0e0a80b9cd8623805c465657961558b148901cf03a30d4535570ce7edece5b",
+          "actual": "0e0e0a80b9cd8623805c465657961558b148901cf03a30d4535570ce7edece5b",
+          "matches": true
+        },
+        {
+          "name": "research-assets.json",
+          "expected": "703b2c513925fbd20651febf02f1362ed2a21a1e2bcee07d8811a146923a94e6",
+          "actual": "703b2c513925fbd20651febf02f1362ed2a21a1e2bcee07d8811a146923a94e6",
+          "matches": true
+        },
+        {
+          "name": "research-assets.tar",
+          "expected": "4288bf8b0c5cb41f379e289ba2c93857a159517d984c08b9e6f7c5116da2de35",
+          "actual": "4288bf8b0c5cb41f379e289ba2c93857a159517d984c08b9e6f7c5116da2de35",
+          "matches": true
+        }
+      ],
+      "prior_record_sha256": "1430b1197e6b85af29b29e1de24cc5ad4d52ab76e4041bd57ad1bcb633b6bdbd",
+      "matches_prior_recorded_asset_digests": null,
+      "prior_comparison_note": "No entry for this tag in the preserved release-matrix.json; current digest was checked against GitHub API asset digest and SHA256SUMS only."
+    }
+  ]
+}
