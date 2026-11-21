@@ -1,57 +1,54 @@
 # OpenPreprint Kit — 現在の受入状態
 
-更新日: **2026-11-21 JST**。PR #66 の技術候補と発行経路を再確認した。最新mainのread-backは `f2e27950de50a497ca48351b985d60a0eb0a517a`。PR #66はOPENで未merge（正確なheadとCIはGitHub PRリンクで確認）。
+更新日: **2026-11-22 JST**。基準は [V1_ACCEPTANCE.md](V1_ACCEPTANCE.md) (G0–G7)。完了台帳は [Issue #5](https://github.com/Unjuno/openpreprint-kit/issues/5)。
 
-**第1論文v1 (P1) は正式公開済み。正式4版（2実論文repo×各2版）も公開・再検証済み。キットv1.0.0 (P4) は、2026-11-21 の受入基準緩和により所有者の最終承認で公開判断が可能。**
-独立性は `UNPROVEN`（独立人間レビューは未実施）。ソフトウェアの試験合格を、第三者監査・長期保存の証明と混同しない。緩和の詳細は [ACCEPTANCE_RELAXATION_2026-11-21.md](ACCEPTANCE_RELAXATION_2026-11-21.md)。
+**現在の判定: P4 / toolkit v1.0.0 = NO-GO。** 2026-11-21 の所有者記録はG0–G7全PASS（独立性 `UNPROVEN`）として保持するが、今回のGitHub現状読戻しでG1/G2と食い違う状態が確認された。G6の人間レビュー・訂正演習・撤回演習の個別証拠も見つかっていない。これらが解決するまで、過去のPASS記録を現状PASSとして再利用しない。
 
-基準: [V1_ACCEPTANCE.md](V1_ACCEPTANCE.md) (G0–G7)。工程: [ROADMAP.md](ROADMAP.md)。完了台帳: [Issue #5](https://github.com/Unjuno/openpreprint-kit/issues/5)。過去のスナップショット [2026-11-13 manual status](../evidence/acceptance/release-status.json) は履歴としてのみ参照し、現在の判定には用いない。
+## 2026-11-14 の公開記録と 2026-11-22 の読戻し
 
-## 実公開リリース（2026-11-14）
+次の表は当時の記録を履歴として残したもの。2026-11-22にライブGitHubで読み戻せた対象は、paper repo の v1/v2のみだった。第二repoとそのReleaseは現在のowner repo一覧・Release API・公開repo検索から解決できなかったため、当時の記録だけでは現在のG1/G2をPASSにできない。
 
-| # | Repository | Release | Release ID / タグ SHA | 公開時刻 | Immutable |
-|---|---|---|---|---|---|
-| 1 | [openpreprint-kit-paper](https://github.com/Unjuno/openpreprint-kit-paper) | **v1**（承認済み本短報、変更禁止） | 444659219 / `804cb76a4cf5eea65349fc7a8f01e2ce00e1176d` | 2026-11-13T19:39:48Z | ✓ |
-| 2 | openpreprint-kit-paper | **v2**（実運用評価、AI支援執筆・所有者承認） | RE_kwDOVtdYwc4ajOkk / `6ec47ec58e9dc733956615343aad16caca4bb8ee` | 2026-11-14T16:48:30Z | ✓ |
-| 3 | [openpreprint-kit-robustness-eval](https://github.com/Unjuno/openpreprint-kit-robustness-eval) | **v1**（改変検出の実証評価） | RE_kwDOVubJxs4ajPQ0 / `940bd77d02318e9d95fa5cb7db568804de2d1860` | 2026-11-14T16:53:04Z | ✓ |
-| 4 | openpreprint-kit-robustness-eval | **v2**（追加実験: CRL鮮度対照・前方TSA更新） | RE_kwDOVubJxs4ajPhz / `2631782a109bf47572e4310ae0da32f26aec3de9` | 2026-11-14T16:54:53Z | ✓ |
+| # | 履歴上のRepository | Release / ID / tag SHA | 履歴上の公開時刻 | 2026-11-22の確認 |
+|---|---|---|---|---|
+| 1 | `openpreprint-kit-paper` | v1 / `444659219` / `804cb76a4cf5eea65349fc7a8f01e2ce00e1176d` | 2026-11-13T19:39:48Z | repoでRelease v1を確認 |
+| 2 | `openpreprint-kit-paper` | v2 / `RE_kwDOVtdYwc4ajOkk` / `6ec47ec58e9dc733956615343aad16caca4bb8ee` | 2026-11-14T16:48:30Z | repoでRelease v2を確認 |
+| 3 | `openpreprint-kit-robustness-eval` | v1 / `RE_kwDOVubJxs4ajPQ0` / `940bd77d02318e9d95fa5cb7db568804de2d1860` | 2026-11-14T16:53:04Z | repo/Releaseを解決できず |
+| 4 | `openpreprint-kit-robustness-eval` | v2 / `RE_kwDOVubJxs4ajPhz` / `2631782a109bf47572e4310ae0da32f26aec3de9` | 2026-11-14T16:54:53Z | repo/Releaseを解決できず |
 
-- 各Releaseの全11資産の attestation（`gh release verify` / `verify-asset` ×11）・匿名DL byte一致・オフライン復元・TSA再検証は再実測済み。
-- 論文 repo は事後的に branch protection を設定（deletion/force-push禁止、PR必須、必須 checks `validate (3.12)/(3.10)/audit`, strict=true）。事後設定は公開前保護の証明ではない。
-- 第1論文専用ランナーの初回失敗（cffconvert PATH）は owner 承認後の同一コード経路継続で完了。FAIL 記録は保持。
-- `publish_manuscript.py`（汎用ランナー）を PR #42 で統合。pre-flight 順序欠陥を PR #45 で修正。回帰テスト分離を PR #46 で完了。
+2026-11-22のowner repo一覧（`gh repo list Unjuno --limit 300`）で `openpreprint` に一致したものは `openpreprint-kit` と `openpreprint-kit-paper` の2件だった。`openpreprint-kit-robustness-eval` はRelease APIで解決できず、公開repo検索でも結果がなかった。これはrepoが削除されたと断定するものではなく、現在の場所・可視性・名前が不明という観測である。
 
-## G0–G7 の判定（2026-11-21 緩和基準、所有者確認＋実測証拠）
+paper repo の `main` は保護され、required checks は `validate (3.12)`, `validate (3.10)`, `audit`。`required_approving_review_count=0`。toolkit repo は `is_template=true`。Immutable Releases API は `enabled=true`, `enforced_by_owner=false`。これらの設定値だけでは、存在不明な第二repoのテンプレート由来・保護・公開前Immutable設定を証明できない。
 
-| ゲート | 判定 | 残る証拠・形
+## G0–G7 判定
+
+| ゲート | 現在の再確認 | 根拠・残件 |
 |---|---|---|
-| G0 コード・配布品質 | PASS（独立性 UNPROVEN） | main CI 全成功（Validate 3.10/3.12・Quality/audit/CodeQL・Lean・Windows/macOS regression・portable smoke）。Actions SHA固定、依存ハッシュロック、CodeQL 0 alerts、重大・高リスク未解決0 |
-| G1 所有者設定・再利用 | PASS（独立性 UNPROVEN） | 2つの論文 repo（paper / robustness-eval）＋ toolkit template を読戻し。Immutable=true、branch protection 設定済み。Required approvals=0 は所有者選択 |
-| G2 実公開・版管理 | PASS（独立性 UNPROVEN） | 正式4版公開・attestation・匿名DL一致・v2後もv1不変を実証 |
-| G3 TSA・否定試験 | PASS（独立性 UNPROVEN） | 5版のRFC 3161再検証 PASS、2環境8回以上の正常検証、固定20否定ケース誤受理0 |
-| G4 公開観測 | PASS（独立性 UNPROVEN） | 観測記録・署名・RFC 3161 を確認。独立観測者ではないことを明示 |
-| G5 複製・オフライン復元 | PASS（独立性 UNPROVEN） | GitHub非接続4版復元ログ・台帳を確認。別管理保管者ではないことを明示 |
-| G6 人間の編集・個人情報管理 | OWNER-ASSESSED PASS / EVIDENCE LOCATOR UNCONFIRMED | 2026-11-21 の所有者判定はPASS。今回確認したIssue #5と作業コピーには、G6で要求する人間のレビュー記録・訂正演習・撤回演習の実行記録の個別URI/ハッシュが見つからなかった。受入基準は変えず、公開物でこれらの原証拠を参照できるようにする必要がある。独立性はUNPROVEN。 |
-| G7 セキュリティ・証拠寿命 | PASS（独立性 UNPROVEN） | 固定SHAへの評価、失効/CA更新/復旧の試験、責任者と継続点検手順を確認。外部監査ではないことを明示 |
+| G0 コード・配布品質 | PR候補は技術PASS。最終mainは未固定 | PR #66 head `a8880b8e3e7988369d7f49328c7b0c8c7770e98f` の必須CI 7カテゴリ、自己適用、live RFC 3161/fresh-runnerがsuccess。PR未mergeのため、マージ後main SHAで再実行が必要。独立性 `UNPROVEN`。 |
+| G1 所有者設定・再利用 | **NOT CONFIRMED** | toolkit templateは有効、paper repoの保護設定を読戻した。一方、必要な第2のtemplate-derived公開paper repoを現状で解決できず、同repoの設定も読戻せていない。 |
+| G2 実公開・版管理 | **NOT CONFIRMED** | 現在解決できたのはpaper repoのv1/v2の2件。第2repoの2 Releaseとそのattestation・匿名取得・資産照合を今回再検証できていない。失われたReleaseを新規発行して過去証拠の代替にしてはならない。 |
+| G3 TSA・否定試験 | OWNER-RECORDED PASS、今回未再監査 | 既存台帳は5版のRFC 3161再検証、2環境8回以上の正常検証、固定20否定ケース誤受理0を記録。正式4版の現在の識別子が解決するまで固定対象は再確定できない。独立性 `UNPROVEN`。 |
+| G4 公開観測 | OWNER-RECORDED PASS、今回未再監査 | 既存台帳に署名観測・RFC 3161を記録。G2の正式対象4版との対応を再確認する。独立性 `UNPROVEN`。 |
+| G5 複製・オフライン復元 | OWNER-RECORDED PASS、今回未再監査 | 既存台帳に4版のGitHub非接続復元を記録。復元対象とG2正式4版の対応を再確認する。別管理の独立性 `UNPROVEN`。 |
+| G6 人間の編集・個人情報管理 | **SOURCE EVIDENCE MISSING** | Issue #5と確認した作業コピーでは、人間レビュー、訂正演習、撤回演習の個別URI/hashを確認できず、`reviews/record.json` は `events: []`。所有者は第2repo/G6記録を「存在しない／不明」と回答。現行基準どおり人間の判断・演習・履歴記録が必要。 |
+| G7 セキュリティ・証拠寿命 | OWNER-RECORDED PASS、今回未再監査 | 既存台帳は固定SHA評価・失効/CA更新/復旧試験・責任者・点検手順を記録する。今回のPR候補またはmerge後main SHAに未再結合。外部監査とは主張しない。独立性 `UNPROVEN`。 |
 
-**所有者の2026-11-21記録上はG0〜G7全PASS（独立性 UNPROVEN）。ただし今回の原証拠照合ではG6のレビュー/訂正/撤回演習ログの個別URI/指紋を特定できず、PR #66も未マージであるため、この更新作業の判定はP4 NO-GO。G6原証拠の位置を確定し、PR #66統合後SHAのCI/証拠を固定してから最終発行判断を行う。**
+2026-11-21の受入基準緩和により独立人間の選任・署名は必須ではない。所有者自身の確認も有効だが、独立性を証明したように表示してはならない。G6にある「実人間によるレビュー過程」は依然必須であり、AI自己点検では代替できない。
 
-## ソフトウェア v1.0.0 のRelease手順と残件
+## 現在のPR候補と公開停止
 
-個別プレプリント用の `.github/workflows/publish.yml` は、root `preprint.yaml` と `timestamp-policy.json` を使い論文Releaseを作るワークフローである。これはキット本体のソフトウェアReleaseではない。root `preprint.yaml` は再利用テンプレートとして `v0` / `UNSPECIFIED` のまま維持する。論文メタデータを `v1.0.0` に変更したり、TSA設定を置いてこのworkflowからキットReleaseを出したりしてはならない。
+- main read-back: `f2e27950de50a497ca48351b985d60a0eb0a517a`。
+- PR [#66](https://github.com/Unjuno/openpreprint-kit/pull/66) はOPEN・未merge。最新読戻しhead `a8880b8e3e7988369d7f49328c7b0c8c7770e98f`。必須CI7カテゴリ、self-application、live RFC3161/fresh-runnerがsuccess。明示merge承認待ち。
+- Candidate ZIPはローカルGold packageで管理し、既存ZIPを履歴として保持する。現在の再確認メモは `outputs/ACCEPTANCE_RECHECK_2026-11-22.md`、そのSHA-256は `c0eec79856651df3ca95c913629f315dbcbdade8a2113ec25836f885bfc06cec`。Issue #5 comment: https://github.com/Unjuno/openpreprint-kit/issues/5#issuecomment-7064783145。
+- GitHub secret名 `OPK_ADMIN_READ_TOKEN` は存在するが、値・有効性・実効scopeは読まず未確認。機密値は検査・記録しない。
+- toolkit software Release数は0。正式なv1.0.0 Release/tagは作成しない。
 
-GitHubのソフトウェアReleaseは、G0–G7を確認した固定main SHAからソースアーカイブを作り、SHA256SUMS・Readiness・Master ReportとともにRelease assetとして添付する。公開時はRelease attestation、匿名取得、バイト一致、GitHubの `immutable=true` を再確認する。Release作成前に同一固定SHAの配布ZIP・外部保管用ハッシュ台帳を作り、ZIPのSHA-256を別経路でも記録する。
+PR merge後は新main SHAで全必須CI、self-application、必要な署名・TSA・匿名取得・offline restore証拠を再固定する。G1/G2の第二repoの解決とG6の人間実施記録が揃い、全ゲートが正式基準でPASSし、所有者の最終発行承認が明示されるまでP4はNO-GO。
 
-現状の確認結果:
+## Releaseフローに関する注意
 
-1. main `f2e27950de50a497ca48351b985d60a0eb0a517a` の必須CI 7項目はすべてsuccess。PR #66 head `f1f3c3562e039ffd7d4f107ce0548f21e833ee5e` も必須CI、自己適用、live RFC 3161/fresh-runner restoreがsuccessだが、PRはOPENでmainに未反映。
-2. GitHub secret一覧に `OPK_ADMIN_READ_TOKEN` 名が存在する。secret値・有効性・実効scopeは未読取・未確認。
-3. Immutable Releases APIは `enabled=true`, `enforced_by_owner=false` を返した。
-4. 今回のIssue #5/リポジトリ内証拠探索では、G6の実行記録URI/ハッシュを特定できなかった。所有者の前回PASS記録は保持するが、この照合不足を明記し、G6原証拠を確認できるまでは本作業の最終発行判定をNO-GOにする。
-5. 所有者の最終発行判断は必要。独立性は `UNPROVEN` のまま公開物に明記する。
+個別プレプリント用 `.github/workflows/publish.yml` はkit本体のソフトウェアReleaseではない。root `preprint.yaml` は再利用テンプレートとして `v0` / `UNSPECIFIED` のまま維持する。kit v1.0.0は、全ゲートと最終承認後、固定main SHAからソースアーカイブ、SHA256SUMS、Readiness、Master Reportを組み立て、attestation・匿名取得・byte一致・immutableを確認して発行する。
 
-独立人間の選任は 2026-11-21 の緩和により必須ではなくなった。架空のレビュアー・署名・別アカウントによる擬装は行わない。
+## 訂正履歴
 
-## 文書の訂正履歴
-
-- 2026-11-14: paper A v2 公開後の ER-1（解析集計ラベル誤り）・ER-2（B v2再現手順）・ER-3（ランナー pre-flight 順序欠陥）は `evidence/acceptance/erratum-2026-11-15-public-releases.md` に記録。公開済み asset は変更せず。
+- 2026-11-14: 公開Release後のER-1〜ER-3を `evidence/acceptance/erratum-2026-11-15-public-releases.md` に記録。immutable assetは変更していない。
+- 2026-11-22: 第2repoが現行GitHub一覧・APIで解決できないこと、G6原証拠が不明であることをライブ読戻しに基づき追記。過去のG1/G2 PASSを現状PASSに転記しないよう訂正。

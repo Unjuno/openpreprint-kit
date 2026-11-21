@@ -1,21 +1,20 @@
-# Operator acceptance packages (G4–G7) and current verdict
+# Operator packages — current acceptance basis
 
-This directory contains the concrete, ready-to-send packages for the
-owner-designated **independent humans** required by the v1.0.0 gates.
-No human has been selected yet (owner, 2026-11-14). Until a real person
-performs each task and records it in Issue #5, the corresponding gate is
-NOT PASS — not even with AI assistance.
+The controlling acceptance table is [`docs/V1_ACCEPTANCE.md`](../V1_ACCEPTANCE.md), based on the owner-approved 2026-11-21 criteria. The detailed G4/G5/G7 files in this directory were written for the stricter 2026-11-14 process. They remain useful as optional high-assurance procedures, but any requirement in them for a separate independent witness, separately managed custodian, or external auditor is **not a current mandatory gate**. Do not represent optional independence as achieved unless it is evidenced; otherwise record `UNPROVEN`.
 
-- [G4-independent-observer.md](G4-independent-observer.md) — independent observer (different key/environment), anonymous retrieval, signature + RFC 3161 receipts
-- [G5-custodian-handover.md](G5-custodian-handover.md) — separately managed custodian: receipt, re-hash, immutable GitHub mirror, offline restore without GitHub
-- [G6-human-review.md](G6-human-review.md) — human editorial/privacy review, rights/COI consent, 1 review + 1 correction + 1 withdrawal exercise
-- [G7-external-audit.md](G7-external-audit.md) — external security/privacy audit of pinned SHA the SHA current at audit time (as of writing: `84ca91cd…` / `b735988e…`; auditor MUST re-pin to the SHA current when the audit starts, e.g., the v1.0.0 tag)
+Current scope by gate:
 
-**G2 A案は所有者選択済み**：正式条件を維持し、既存のpaper v1に加えてpaper v2**かつ**第2実論文v1/v2が必要。[G2-optionA-publication.md](G2-optionA-publication.md)を最初に確認する。既存のSynthetic 4版は技術的な先行実証であり、G4/G5の正式4版の代替にはならない。観測者・保管者向けの対象一覧はG2実公開後に確定し、別管理者に引き渡す。
+- **G4:** the owner may perform anonymous retrieval and create signed, timestamped observation records. The records must cover every formal G2 release and its assets. Record independence as `UNPROVEN` when the operator is the owner.
+- **G5:** the owner may manage the mirror and offline recovery. Preserve immutable copies, separately recorded fingerprints, and successful GitHub-disconnected restore evidence for the formal target set. Do not claim separate custody unless demonstrated.
+- **G6:** actual human rights/consent/COI decisions, one human review process, one correction exercise, and one withdrawal exercise remain required. AI-generated statements or tests do not substitute for these actions. [G6-human-review.md](G6-human-review.md) is the operative handoff checklist.
+- **G7:** an owner-confirmed security/privacy assessment against the fixed source SHA, lifecycle/renewal/recovery exercises, no unresolved critical/high finding, and an assigned maintenance owner are required. A third-party external audit is optional under the current criteria; never claim one unless it was actually performed.
+- **G2 dependency:** G4/G5 evidence must match the formal four-release target. Current Readiness reports that `openpreprint-kit-robustness-eval` is not resolvable; resolve that discrepancy before using the old target list.
 
-Current verdict (2026-11-14): **P4 = NO-GO**. P1 = PASS. P2 = PARTIAL. P3 = BLOCKED.
+| File | Use |
+|---|---|
+| [G4-independent-observer.md](G4-independent-observer.md) | Optional independent observation procedure; current owner-operated route is described above. |
+| [G5-custodian-handover.md](G5-custodian-handover.md) | Optional separately managed custody procedure; current owner-operated route is described above. |
+| [G6-human-review.md](G6-human-review.md) | Required human editorial/privacy actions and record contents. |
+| [G7-external-audit.md](G7-external-audit.md) | Optional external assessment procedure; current owner-confirmed G7 scope is described above. |
 
-See `evidence/acceptance/gate-evidence-matrix-2026-11-14.md` for what is verified,
-`evidence/acceptance/g2-criterion-impact-2026-11-14.md` for the G2 criterion
-mismatch and options A/B, and `evidence/acceptance/unresolved-blockers-2026-11-14.md`
-for the full blocker list.
+Current live verdict: **P4 = NO-GO**. G1/G2 were not reconfirmed because the second publication repository cannot currently be resolved; G6 source records are absent or unknown. See [RELEASE_READINESS.md](../RELEASE_READINESS.md) and [Issue #5](https://github.com/Unjuno/openpreprint-kit/issues/5).
