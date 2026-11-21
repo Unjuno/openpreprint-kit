@@ -19,11 +19,17 @@
 
 paper repo の `main` は保護され、required checks は `validate (3.12)`, `validate (3.10)`, `audit`。`required_approving_review_count=0`。toolkit repo は `is_template=true`。Immutable Releases API は `enabled=true`, `enforced_by_owner=false`。これらの設定値だけでは、存在不明な第二repoのテンプレート由来・保護・公開前Immutable設定を証明できない。
 
+## 2026-11-22 post-merge technical evidence (PR #66)
+
+PR #66 was merged with owner approval for exact head `c140290b167c2e46afd8c0f5a181fdf6c39aaec3`; merge commit/main is `450db84d9e35772fda6af3a24592ced58df8b3ec`. Required CI, self-application, live RFC 3161/fresh-runner all passed on this main. Reproducible PDF output across workflows: 187,504 bytes, SHA-256 `716045b0e2656d750d69a18e7ef2883d641e43c1e47b0725ba710f2b26666da9`; source-bound trailer ID `f67e968c0db6932c0395fa654a619a2c`. Four negative self-application cases were rejected. Fresh-runner offline restore passed; preservation ZIP SHA-256 `719dc0a989d4d22740d7b80bfcd4dbeef174152e754ee2d72169999a16eb6d16`. Full evidence and log URLs are indexed in Issue #5 comment https://github.com/Unjuno/openpreprint-kit/issues/5#issuecomment-7065241515 and local evidence package; scope is `APPROVED_MANUSCRIPT_EXISTENCE_ONLY`, not authorship, independent custody, or public availability.
+
+Main runs: validate 3.10 `44920715884`; quality/audit/Windows/macOS `44920715891`; CodeQL `44920715892`; Lean `44920715881`; self-application `44920715900`; live timestamp/fresh-runner `44920715887`. All concluded success. OS matrix: Python 3.10 440 = 427 pass + 13 skip; Python 3.12 validation/audit/Windows/macOS each 440 = 434 pass + 6 skip; no failures or errors. Skips are optional Hypothesis tests (7 on Python 3.10), Windows-specific ACL/junction/Win32 tests on non-Windows runners, and POSIX shell integration tests on Windows. Windows-specific tests run on Windows; POSIX launcher tests run on Unix. No required test was skipped on every supporting platform. Raw logs and artifact hashes are in the linked evidence record.
+
 ## G0–G7 判定
 
 | ゲート | 現在の再確認 | 根拠・残件 |
 |---|---|---|
-| G0 コード・配布品質 | PR候補は技術PASS。最終mainは未固定 | PR #66 head `a8880b8e3e7988369d7f49328c7b0c8c7770e98f` の必須CI 7カテゴリ、自己適用、live RFC 3161/fresh-runnerがsuccess。PR未mergeのため、マージ後main SHAで再実行が必要。独立性 `UNPROVEN`。 |
+| G0 コード・配布品質 | **TECHNICAL PASS on main `450db84d9e35772fda6af3a24592ced58df8b3ec`** | PR #66 exact head `c140290b167c2e46afd8c0f5a181fdf6c39aaec3` merged with owner approval. All required CI, self-application, live RFC 3161/fresh-runner passed on fixed main. Independent review remains `UNPROVEN`. |
 | G1 所有者設定・再利用 | **NOT CONFIRMED** | toolkit templateは有効、paper repoの保護設定を読戻した。一方、必要な第2のtemplate-derived公開paper repoを現状で解決できず、同repoの設定も読戻せていない。 |
 | G2 実公開・版管理 | **NOT CONFIRMED** | 現在解決できたのはpaper repoのv1/v2の2件。第2repoの2 Releaseとそのattestation・匿名取得・資産照合を今回再検証できていない。失われたReleaseを新規発行して過去証拠の代替にしてはならない。 |
 | G3 TSA・否定試験 | OWNER-RECORDED PASS、今回未再監査 | 既存台帳は5版のRFC 3161再検証、2環境8回以上の正常検証、固定20否定ケース誤受理0を記録。正式4版の現在の識別子が解決するまで固定対象は再確定できない。独立性 `UNPROVEN`。 |
@@ -32,17 +38,17 @@ paper repo の `main` は保護され、required checks は `validate (3.12)`, `
 | G6 人間の編集・個人情報管理 | **SOURCE EVIDENCE MISSING** | Issue #5と確認した作業コピーでは、人間レビュー、訂正演習、撤回演習の個別URI/hashを確認できず、`reviews/record.json` は `events: []`。所有者は第2repo/G6記録を「存在しない／不明」と回答。現行基準どおり人間の判断・演習・履歴記録が必要。 |
 | G7 セキュリティ・証拠寿命 | OWNER-RECORDED PASS、今回未再監査 | 既存台帳は固定SHA評価・失効/CA更新/復旧試験・責任者・点検手順を記録する。今回のPR候補またはmerge後main SHAに未再結合。外部監査とは主張しない。独立性 `UNPROVEN`。 |
 
-2026-11-21の受入基準緩和により独立人間の選任・署名は必須ではない。所有者自身の確認も有効だが、独立性を証明したように表示してはならない。G6にある「実人間によるレビュー過程」は依然必須であり、AI自己点検では代替できない。
+2026-11-21時点で適用された受入基準では独立人間の選任・署名は必須ではない。所有者自身の確認も有効だが、独立性を証明したように表示してはならない。G6にある「実人間によるレビュー過程」は依然必須であり、AI自己点検では代替できない。
 
-## 現在のPR候補と公開停止
+## 現在の候補と公開停止
 
-- main read-back: `f2e27950de50a497ca48351b985d60a0eb0a517a`。
-- PR [#66](https://github.com/Unjuno/openpreprint-kit/pull/66) はOPEN・未merge。最新読戻しhead `a8880b8e3e7988369d7f49328c7b0c8c7770e98f`。必須CI7カテゴリ、self-application、live RFC3161/fresh-runnerがsuccess。明示merge承認待ち。
-- Candidate ZIPはローカルGold packageで管理し、既存ZIPを履歴として保持する。現在の再確認メモは `outputs/ACCEPTANCE_RECHECK_2026-11-22.md`、そのSHA-256は `c0eec79856651df3ca95c913629f315dbcbdade8a2113ec25836f885bfc06cec`。Issue #5 comment: https://github.com/Unjuno/openpreprint-kit/issues/5#issuecomment-7064783145。
+- main fixed SHA: `450db84d9e35772fda6af3a24592ced58df8b3ec`。
+- PR [#66](https://github.com/Unjuno/openpreprint-kit/pull/66) は承認済みの正確なhead `c140290b167c2e46afd8c0f5a181fdf6c39aaec3` から merge commit `450db84d9e35772fda6af3a24592ced58df8b3ec` として統合済み。
+- Candidate ZIPはローカルGold packageで管理し、既存ZIPを履歴として保持する。PR #66 merge後の品質証拠とGold Candidateは Issue #5 comment: https://github.com/Unjuno/openpreprint-kit/issues/5#issuecomment-7065241515 に記録済み。
 - GitHub secret名 `OPK_ADMIN_READ_TOKEN` は存在するが、値・有効性・実効scopeは読まず未確認。機密値は検査・記録しない。
 - toolkit software Release数は0。正式なv1.0.0 Release/tagは作成しない。
 
-PR merge後は新main SHAで全必須CI、self-application、必要な署名・TSA・匿名取得・offline restore証拠を再固定する。G1/G2の第二repoの解決とG6の人間実施記録が揃い、全ゲートが正式基準でPASSし、所有者の最終発行承認が明示されるまでP4はNO-GO。
+PR #66 merge後、main `450db84d9e35772fda6af3a24592ced58df8b3ec` で必須CI、self-application、RFC 3161/fresh-runner、offline restoreを再実行して固定済み。今後mainが変わる場合は対象SHAで再実行する。G1/G2の第二repoの解決とG6の人間実施記録が揃い、全ゲートが正式基準でPASSし、所有者の最終発行承認が明示されるまでP4はNO-GO。
 
 ## Releaseフローに関する注意
 
@@ -50,5 +56,6 @@ PR merge後は新main SHAで全必須CI、self-application、必要な署名・T
 
 ## 訂正履歴
 
+- 2026-11-22: PR #66 merge後の固定main SHA、全必須CI・自己適用・RFC 3161/fresh-runner結果、再現可能PDF hash、否定試験、OS別件数を追記。G1/G2/G6とP4の未達状態は維持。
 - 2026-11-14: 公開Release後のER-1〜ER-3を `evidence/acceptance/erratum-2026-11-15-public-releases.md` に記録。immutable assetは変更していない。
 - 2026-11-22: 第2repoが現行GitHub一覧・APIで解決できないこと、G6原証拠が不明であることをライブ読戻しに基づき追記。過去のG1/G2 PASSを現状PASSに転記しないよう訂正。
