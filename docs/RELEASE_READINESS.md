@@ -1,6 +1,6 @@
 # OpenPreprint Kit — 現在の受入状態
 
-更新日: **2026-11-21 JST**。この更新は PR #66 の技術候補と発行経路を再確認したもの。最新 main `f2e27950de50a497ca48351b985d60a0eb0a517a`、PR #66 head `f1f3c3562e039ffd7d4f107ce0548f21e833ee5e`（未merge）を確認。
+更新日: **2026-11-21 JST**。PR #66 の技術候補と発行経路を再確認した。最新mainのread-backは `f2e27950de50a497ca48351b985d60a0eb0a517a`。PR #66はOPENで未merge（正確なheadとCIはGitHub PRリンクで確認）。
 
 **第1論文v1 (P1) は正式公開済み。正式4版（2実論文repo×各2版）も公開・再検証済み。キットv1.0.0 (P4) は、2026-11-21 の受入基準緩和により所有者の最終承認で公開判断が可能。**
 独立性は `UNPROVEN`（独立人間レビューは未実施）。ソフトウェアの試験合格を、第三者監査・長期保存の証明と混同しない。緩和の詳細は [ACCEPTANCE_RELAXATION_2026-11-21.md](ACCEPTANCE_RELAXATION_2026-11-21.md)。
