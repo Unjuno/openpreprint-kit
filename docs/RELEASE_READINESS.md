@@ -38,9 +38,12 @@
 
 ## 残る作業
 
-1. 所有者による最終承認（v1.0.0 を出すかどうかの意思決定）
-2. 承認後に、キット本体 `v1.0.0` 不変 Release の発行と全資産の再取得検証
-3. 独立性 UNPROVEN の事実を公開物の説明に残す（将来、実在する独立人間がレビューした場合のみ VERIFIED に更新）
+1. **発行入力とTSA信頼設定を完成する。** 2026-11-21 の main read-back (`f2e27950de50a497ca48351b985d60a0eb0a517a`) では root `preprint.yaml` は `Untitled Preprint` / `v0` / `UNSPECIFIED` のまま、`timestamp-policy.json` は未配置。Publish workflow の必須入力なので、実際に発行する論文のmetadataと、所有者が選んだtrusted CA/policy/CRLを main に配置し、PR経由で検証する。`OPK_ADMIN_READ_TOKEN` は secret名の存在を確認済みだが、値は読んでいないため有効性・実効scopeは未確認。
+2. 所有者が `v1.0.0` の最終発行判断を行う。現在の受入基準では独立性 `UNPROVEN` のまま判断可能だが、その状態を公開物に明記する。
+3. 入力設定と全検証が整い、最終判断が承認された後に限り、キット本体の不変 Release を発行して全資産の匿名再取得・hash・attestation・TSA検証を行う。
+4. 独立性 UNPROVEN の事実を公開物の説明に残す（将来、実在する独立人間がレビューした場合のみ VERIFIED に更新）。
+
+上記の入力未配置は G0–G7 の既存判定を変更しないが、現時点では Publish workflow を成功完了できる状態ではない。`OPK_ADMIN_READ_TOKEN` の中身・token scopeを推測せず、実際のPublish API preflightで扱う。
 
 独立人間の選任は 2026-11-21 の緩和により必須ではなくなった。架空のレビュアー・署名・別アカウントによる擬装は行わない。
 
