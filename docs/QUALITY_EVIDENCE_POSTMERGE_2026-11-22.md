@@ -65,3 +65,15 @@
 - P4 and toolkit v1.0.0: `NO-GO`. No Release or tag was created.
 - The two GitHub accounts are controlled by the same owner and do not count as independent human reviewers.
 - G0 security/dependency readback on 2026-11-22: GitHub Code Scanning alerts API returned 0 open alerts; Dependabot alerts API returned 0 open alerts. `requirements.lock` at this fixed source contains 27 pinned distributions and 324 SHA-256 wheel hash entries. These alert counts describe the state at readback time.
+
+## Superseding post-PR #67 fixed-main recheck
+
+The current fixed main for this recheck is `a3a9972d812c73a826581686091a80c557c80b0d` (PR #67 merge). The machine-readable record is [`main-a3a9972-postmerge-recheck-2026-11-22.json`](../evidence/acceptance/main-a3a9972-postmerge-recheck-2026-11-22.json), SHA-256 `62c60870f646c645704e605ffda47e5449d490ac1b27f30a8ca17d493df0f327`.
+
+- Required CI passed: validate 3.10/3.12, audit, CodeQL Python, Lean, Windows regression, and macOS regression. Windows and macOS are separate hosted runners; WSL is not counted as an independent physical environment.
+- Test totals: Python 3.10 `440 = 427 PASS + 13 SKIP + 0 FAIL + 0 ERROR`; Python 3.12 validation, Ubuntu audit, Windows regression, and macOS regression each `440 = 434 PASS + 6 SKIP + 0 FAIL + 0 ERROR`. Skip reasons and platform scope remain as listed above.
+- Self-application and live timestamp workflows produced identical PDFs (187,504 bytes, SHA-256 `9fff4da2ca127f299b262026efff430959b9e7b56f8f403871a4d671021859a5`); four negative cases were rejected.
+- RFC 3161 token verified at `2026-11-21T16:58:31Z`; pinned CA SHA-256 `2151b61137ffa86bf664691ba67e7da0b19f98c758e3d228d5d8ebf27e044438`; manifest SHA-256 `3da6a2397785bdcecf6b8c1f6274da43eae5dc962fac0daae5aeb6183130373e`. Fresh-runner offline restore passed; preservation ZIP SHA-256 `b6bf40f6ff19d326cd2d9af990d3b34d9ed5b45dae46ce7fb1d662cc59a52432`.
+- No Release was created. This demonstrates the approved-manuscript self-application workflow, not independent review, authorship, formal G0-G7 acceptance, or long-term custody.
+
+The updated local Gold Candidate is `outputs/Gold-Candidate-2026-11-22-main-a3a9972-r7-20261122T020512.zip`, SHA-256 `e7d9478fcc673215d7749b264867474e0b4e9f365c0121e365aa5c5ef0fc5d96`. Its independent sidecar is adjacent to the ZIP; the offline audit record SHA-256 is `4a1a1f983b174e4bc3788b9d03680991d4086b548a61846252a25dcba87efa6e`. Earlier Gold ZIPs remain preserved. This is a local technical candidate package; it does not qualify as independent custody.

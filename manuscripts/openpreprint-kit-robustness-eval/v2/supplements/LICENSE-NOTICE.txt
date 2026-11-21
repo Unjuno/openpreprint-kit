@@ -1,0 +1,9 @@
+# 資産別ライセンス通知（CC BY 4.0／コード・データはMIT相当）
+
+本稿（OpenPreprint Kit 改変検出・時刻証拠・障害復旧の実証評価 v1/v2）は AI 支援で作成した未査読の候補であり、公開の可否は所有者が決定する。
+
+- 本文・原稿（PDF出力を含む）: Creative Commons Attribution 4.0 International (CC BY 4.0)
+- 解析コード・集計スクリプト: MIT License
+- データ（spec・results・実測JSON）: CC BY 4.0
+
+公開前に Unjuno 所有者の承認が必要。本通知は公開を許可するものではない。

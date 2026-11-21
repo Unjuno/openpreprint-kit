@@ -5,40 +5,40 @@ public_assets:
   role: dataset
   description: CRL lifecycle contrast experiment (fresh CRL VERIFIED / stale CRL REJECTED)
   license: CC-BY-4.0
-  public_confirmed: true
+  public_confirmed: false
 - path: data/renewal-experiment.json
   role: dataset
   description: Forward RFC 3161 renewal experiment (issue + verify PASS)
   license: CC-BY-4.0
-  public_confirmed: true
+  public_confirmed: false
 - path: data/negative-suite-spec.json
   role: dataset
   description: Pre-fixed 20-case negative test specification (shared with v1)
   license: CC-BY-4.0
-  public_confirmed: true
+  public_confirmed: false
 - path: data/negative-suite-results.json
   role: dataset
   description: Execution results of the 20-case negative suite (23 judgments, 0 false accepts)
   license: CC-BY-4.0
-  public_confirmed: true
+  public_confirmed: false
 - path: data/incident-analysis.json
   role: dataset
   description: Two real incidents encountered during the first publication (INC-1, INC-2)
   license: CC-BY-4.0
-  public_confirmed: true
+  public_confirmed: false
 - path: analysis/reverify_v2.py
   role: analysis_code
   description: Standard-library-only recomputation of v2 experiment records
   license: MIT
-  public_confirmed: true
+  public_confirmed: false
 - path: supplements/paper.md
   role: supplementary
   description: Manuscript source of the tamper-detection evaluation (added experiments, v2)
   license: CC-BY-4.0
-  public_confirmed: true
+  public_confirmed: false
 - path: supplements/LICENSE-NOTICE.txt
   role: supplementary
   description: Per-file license notice for the manuscript and assets
   license: CC-BY-4.0
-  public_confirmed: true
+  public_confirmed: false
 relations: []

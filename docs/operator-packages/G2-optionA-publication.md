@@ -1,43 +1,54 @@
-# G2 A案 — 実論文2リポジトリ×各2版の受入実行手順
+# G2 — 正式4版の現状、実論文B候補、受入手順
 
-**正式基準を維持。既存のP1は再公開せず、A案を採用する。** 本書は準備資料であり、実論文の著者・権利・内容の承認や新規公開操作を認可するものではない。
+**正式なG2基準は変更しない。G2は現時点で `NOT CONFIRMED`。** この手順書は公開承認ではなく、原稿・権利・設定・実Releaseがそろう前に公開しない。既存Immutable Releaseは削除・変更しない。
 
-## 最終受入対象（不足する3 Releaseを明確化）
+## 正式基準と現在確認できたRelease
 
-| 実論文リポジトリ | v1 | v2 | 合格条件 |
-|---|---|---|---|
-| `Unjuno/openpreprint-kit-paper` | **既存・承認済み**、Release ID `444659219`、変更禁止 | **未発行**。著者承認の新しい内容が必要 | v2公開後もv1の11資産・タグ・ダイジェストが不変 |
-| 新しい第2実論文repo（Template由来） | **未発行**。著者承認が必要 | **未発行**。正当な新版内容と著者承認が必要 | v2公開後もv1の資産が不変 |
+現行基準は [`V1_ACCEPTANCE.md`](../V1_ACCEPTANCE.md) のG1/G2。2つの実論文リポジトリに各2版、計4件以上のimmutable Releaseを要求し、最低1件は著者承認済み本短報である。v2後もv1資産を変えず、全Release・全資産のattestation、匿名取得、引用・研究資産の一致を検証する。所有者が判定できる。独立性は `UNPROVEN` と記録し、同一所有者の別アカウントを独立レビューに数えない。
 
-**両方必須**：第1論文v2 **かつ** 第2実論文v1・v2。`paper v2 または 第2原稿`という一方のみの作業では、正式G2の「2論文リポジトリに各2版、うち最低1件は承認済み本短報」を満たせない。新規に必要なのは計3件の実論文Release。Synthetic A/Bの公開4版は機構試験の証拠だが、A案におけるこの4件の代替にはしない。
+| 実論文リポジトリ | Version | 状態と証拠 |
+|---|---|---|
+| `Unjuno/openpreprint-kit-paper` | v1 | Release ID `444659219`、target `804cb76a4cf5eea65349fc7a8f01e2ce00e1176d`。immutable/non-draft。2026-11-21 UTCの読戻しで11 assets、GitHub attestation、匿名asset digest、SHA256SUMS、release verifier、citation validation、RFC 3161が再検証済み。 |
+| `Unjuno/openpreprint-kit-paper` | v2 | Release ID `445442340`、target `6ec47ec58e9dc733956615343aad16caca4bb8ee`。immutable/non-draft。上記同日読戻しで11 assets、GitHub attestation、匿名asset digest、SHA256SUMS、release verifier、citation validation、RFC 3161が再検証済み。v2の旧比較行は保存済みrelease-matrixにないため、過去matrixとの一致は主張しない。 |
+| 第2の実論文 repo | v1 | `manuscripts/openpreprint-kit-robustness-eval/v1` に原稿候補・PDF・研究資産候補はある。著者/所有者承認待ち。独立repo/Releaseは現在解決できず、未発行。 |
+| 第2の実論文 repo | v2 | 同 `v2` に追加実験を含む候補がある。著者/所有者承認待ち。独立repo/Releaseは現在解決できず、未発行。 |
 
-正式条件：[V1_ACCEPTANCE.md](../V1_ACCEPTANCE.md) の G1・G2・G3。G2は独立した検証担当の最終判定がなければPARTIAL。
+paper v1/v2の全匿名取得・ハッシュ・release verify・RFC 3161結果は [`paper-v1-v2-anonymous-readback-2026-11-22.json`](../../evidence/acceptance/paper-v1-v2-anonymous-readback-2026-11-22.json)、SHA-256 `AD5ACFBF87E34E6C7AADFB2177FC7755EF790E849F146A416DE93079C7F5C3FB`。同じ再検証はWindows 1環境だけなので、G3全体の2環境/8正常検証/20否定ケースを満たしたとはしない。
 
-## 実行前の所有者・著者判断
+既存の `opk-demo-acceptance-a/b` は合成デモである。これらのimmutable Releaseは履歴として保持するが、正式基準の「2つの実論文 repo」の代わりには数えない。過去に記録された `openpreprint-kit-robustness-eval` の repo URLは現在404で、別の場所・可視性・名前も未確認。404を削除の証拠に読み替えない。
 
-1. 第1論文v2に実質的な訂正・追試・結果追加など、版上げの根拠があることを著者が確認する。根拠のない版番号だけの増分は禁止。
-2. 第2実論文の研究対象、公開可能な本文・データ・コード、著者、引用、権利、版間差分を著者が承認する。著者・ライセンス・科学的正確性をAIの判断に置換しない。
-3. 新しいTemplate由来repoの公開範囲、Immutable設定、ブランチ保護、必須CI、人間レビューの運用を、各所有者が確認する。
-4. 認証された操作者と独立した検証担当を決める。公開・repo作成・権限変更は、操作内容を示して所有者の承認を得る。
+## 第2論文候補の技術確認と限界
 
-## 実行順
+固定main `450db84d9e35772fda6af3a24592ced58df8b3ec` 上の候補を読み、次を実測した。
 
-1. 新版の原稿・研究データ・解析コード・引用情報・ライセンスを固定し、資産別SHA-256とソースコミットを記録する。
-2. 既存の`openpreprint-kit-paper/v1`を読み取り専用で再取得し、保存済みの公認ハッシュを記録する。
-3. 第2実論文repoをTemplateから**新規**作成し、template originとPublic/Immutable/admin/ブランチ保護の読戻しが正しいことを確認する。
-4. 第2実論文v1を新規公開する。`prepare_release.py`等の既存のプリミティブを利用する場合は全CLI/依存を実コードで確認し、十分な回帰試験を経てから所有者承認の下で実行する。**第1論文専用`publish_first_paper.py --publish`を流用しない**（公開先とPDF指紋が固定され、既存repo利用を拒否する）。
-5. 第1論文の**新しいv2**を承認済み内容で公開し、第2実論文の**新しいv2**も承認済み内容で公開する。必要な一般化・新版対応コードが不足する場合、実装と回帰試験を先に行い、CI成功・所有者承認まで公開しない。
-6. 各版について、新しいsource-bound manifest/新RFC 3161時刻証拠、draftでの全資産再取得・SHA-256一致、公開前後のImmutable読戻し、GitHub Release・全資産attestation、匿名取得、引用・研究資産・ソースコミット照合、保存ZIPのオフライン復元を検証する。
-7. 各v2公開後に対応v1を再取得し、タグ・全資産・ハッシュが公開前と完全一致することを記録する。既存v1の削除・上書き・再発行は禁止。
-8. 全4版を対象にG3の別環境8回以上の検証と固定20否定ケースを確定・実施し、G4・G5の対象一覧も**この正式4版**に合わせる。
+- v1 `analyze_robustness.py`: 20 spec cases、23 judgments、false accepts 0。spec/results内部整合チェックPASS。
+- v2 `reverify_v2.py`: fresh CRL `VERIFIED`、stale CRL `REJECTED`、renewal verify PASS、negative-suite false accepts 0、内部整合チェックPASS。
+- v1 PDF: 7 pages、1,142,144 bytes、SHA-256 `c5131663c629c2214f67723005df84a8d41e2370ae0a967cdbc5055260def7ab`。v2 PDF: 5 pages、885,920 bytes、SHA-256 `ac3ac2a5211e93809ed0dd6472cda66aa91a0ccb1e79fd3bb20fc541a1f16913`。
+- 手順書の別PRで、各 `preprint.yaml` は実ファイル `paper.pdf` を指すよう訂正した。`research-assets.yaml` が指す supplements を実在させ、各資産の `public_confirmed` は全てfalseにする。strict metadata validationはPASSし、研究パッケージ生成は想定どおり `public_confirmed must be explicitly true` でBLOCKする。falseは所有者の権利・同意確認が未完了であることを表し、誰かの承認を代筆しない。
 
-## 必須の証拠と合否
+これはデータの内部整合とPDFの構文を示すだけで、科学的正確さ、著作者本人性、権利、公開同意、COI、人間レビュー、査読を証明しない。candidate filesはすでにkit repoのsource treeにあり、repoがpublicであるため、この事実を「非公開」とは主張しない。専用論文repoの公開Releaseは作成していない。所有者承認とG6記録が揃うまではrelease用 `public_confirmed: true` に変更しない。
 
-- 2つの**実論文**repoの名前、template origin、公開権限、版ごとのImmutable Release ID/URL、タグ、ソースSHA、日時、著者承認と資産ダイジェスト
-- 全Releaseと全資産の`gh release verify`・`verify-asset`結果、匿名ダウンロードのSHA-256、TSAの別選定信頼設定と署名付きCRL、引用・研究資産の整合
-- v2後のv1不変性、オフライン復元、異常発生時のFAIL/継続レポート（上書き禁止）
-- 実行者とは別の検証担当の署名付き判定とIssue #5への証拠URI
+## 所有者・著者の必須判断（公開前）
 
-**PASS**：上記を全て実証した場合のみ。**BLOCKED/PARTIAL**：原稿・権利・所有者承認・実装・外部検証担当・証拠のいずれかがない場合。SyntheticだけではA案のG2をPASSとしない。
+1. 第2候補の本文・PDF・研究データ・解析コード・引用を読んで、v1の研究内容と著者表示を承認または却下する。これはAIの検証結果から推定しない。
+2. CC BY 4.0の本文とデータ、MITの解析コードの権利・ライセンス、第三者素材、公開同意、COIを人間が確認する。実人間のレビュー過程・訂正演習・撤回演習はG6に別記する。
+3. v2が意味のある差分であること、v1/v2の版管理と公開予定を承認する。metadataの版番号だけでは十分でない。
+4. 第2 repoが存在するならURLを示し、template origin・public visibility・Immutable・protected branch・required CI/human reviewをread-onlyで再確認する。見つからないなら、templateから新規作成する具体的なrepo名・公開範囲と権限影響を確認してから操作を別途承認する。
+5. 各論文Releaseを作る直前、設定・タグ未使用・source commit・資産指紋・新TSA証拠を再固定する。v1/v2の公開操作は各々、所有者が対象と影響を見て明示承認する。
 
-この実行は第1論文v1の公開を再実行せず、既存の5件のReleaseを削除・変更しない。
+## 公開後の技術受入手順
+
+1. Template由来と設定を読み戻し、Immutable Release有効・branch protection/required CI/human review・公開可視性を記録する。G1設定が未達のままなら公開作業を始めない。
+2. source PDF/metadata/research assetsを固定し、`research_package.py --check` と strict metadata validationを実行する。権利確認後にのみ該当資産の `public_confirmed` をtrueにする。
+3. 各新しいv1/v2にsource-bound manifest/TSAを付け、draftの全assetを匿名再取得して照合する。release作成後にimmutable、attestation、匿名取得、引用・研究資産、timestampを再検証する。
+4. v2公開後にpaper v1/v2両方を再取得し、v1の11資産を公開前記録と照合する。過去のv1 assetに変更があれば停止し、変更/再発行で隠さない。
+5. 正式4版を固定してG3の全条件（別に選定した信頼設定、2環境8正常検証以上、事前固定した最低20否定ケースで誤受理0）、G4匿名観測記録、G5 4版オフライン復元をそろえる。現時点の2版partial recheckや自己適用artifactは残りの版を代替しない。
+6. Issue #5へ対象SHA/tag、Release ID/URL、各asset digest、attestation、匿名取得と復元結果、時刻・環境・operator・independenceを追記する。
+
+## 現在の判定と禁止事項
+
+- G2 `NOT CONFIRMED`: 現在検証できた実論文Releaseは第一repoのv1/v2の2件だけ。第2論文repoの実Release v1/v2がない。
+- G1 `NOT CONFIRMED`: 第2template-derived public paper repoが解決できず、現在確認したbranch rulesのrequired approvalsは0。
+- G6 source evidence missing: candidate metadataにowner approval pendingが明記されており、`reviews/record.json` は `events: []`。
+- 現行の所有者判定基準では独立検証者の署名は不要だが、人間の承認と必要なG6記録をAIや別アカウントに代行させない。独立性は `UNPROVEN` と記録する。
+- 第1repoと第2repoの各v1/v2をそろえるまでG2をPASSにしない。旧synthetic Releaseで置き換えない。G0〜G7すべての正式PASSと最終発行承認まではP4 NO-GO、kit v1.0.0を発行しない。

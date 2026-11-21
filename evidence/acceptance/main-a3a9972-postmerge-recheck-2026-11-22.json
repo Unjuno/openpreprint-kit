@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "observed_at_utc": "2026-11-21T17:06:21.554672+00:00",
+  "repository": "Unjuno/openpreprint-kit",
+  "fixed_main_sha": "a3a9972d812c73a826581686091a80c557c80b0d",
+  "main_tree_sha": "f21c5c6e0c8ce434b7d021fc699762470c05ea28",
+  "pr67_merge_commit": "a3a9972d812c73a826581686091a80c557c80b0d",
+  "pr67_head_sha": "d484b647e894221bb72c94671c9ca722ea22ed0f",
+  "required_ci": {
+    "runs": {
+      "validate": "44927214661",
+      "quality_audit_windows_macos": "44927214584",
+      "codeql": "44927214589",
+      "lean": "44927214607"
+    },
+    "all_success": true,
+    "test_counts": {
+      "python_3_10_validate": "440 total, 427 PASS, 13 SKIP, 0 FAIL, 0 ERROR",
+      "python_3_12_validate": "440 total, 434 PASS, 6 SKIP, 0 FAIL, 0 ERROR",
+      "ubuntu_audit": "440 total, 434 PASS, 6 SKIP, 0 FAIL, 0 ERROR",
+      "windows_regression": "440 total, 434 PASS, 6 SKIP, 0 FAIL, 0 ERROR",
+      "macos_regression": "440 total, 434 PASS, 6 SKIP, 0 FAIL, 0 ERROR"
+    }
+  },
+  "self_application": {
+    "run_id": 44927297541,
+    "verdict": "PASS",
+    "four_negative_cases_rejected": true,
+    "pdf_sha256": "9fff4da2ca127f299b262026efff430959b9e7b56f8f403871a4d671021859a5",
+    "pdf_bytes": 187504,
+    "pages": 3,
+    "selftest_pdf_matches_timestamp_pdf": true,
+    "trailer_id_hex": "f822d315343bff7b4b5450d89167b094",
+    "expected_source_bound_id": "f822d315343bff7b4b5450d89167b094",
+    "release_published": false
+  },
+  "live_timestamp": {
+    "run_id": 44927300025,
+    "status": "VERIFIED",
+    "timestamp_utc": "2026-11-21T16:58:31+00:00",
+    "ca_sha256": "2151b61137ffa86bf664691ba67e7da0b19f98c758e3d228d5d8ebf27e044438",
+    "manifest_sha256": "3da6a2397785bdcecf6b8c1f6274da43eae5dc962fac0daae5aeb6183130373e",
+    "preservation_zip_sha256": "b6bf40f6ff19d326cd2d9af990d3b34d9ed5b45dae46ce7fb1d662cc59a52432",
+    "fresh_runner_verdict": "PASS",
+    "fresh_runner_source_commit": "a3a9972d812c73a826581686091a80c557c80b0d",
+    "release_published": false
+  },
+  "source_archive": {
+    "path": "source/openpreprint-kit-a3a9972d812c73a826581686091a80c557c80b0d.zip",
+    "sha256": "e0bca71cc8909ed9fcb363eb7a9cab582c47654feb72c57519c5d3c4a2b05d9a",
+    "bytes": 3334314
+  },
+  "scope": "technical post-merge recheck; paper self-application does not prove authorship, independence, public availability, independent custody or G0-G7 acceptance; P4 remains NO-GO"
+}

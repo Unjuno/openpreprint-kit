@@ -12,5 +12,5 @@ keywords:
 - RFC 3161 renewal
 - incident reproducibility
 version: v2
-paper: paper/paper.pdf
+paper: paper.pdf
 license: CC-BY-4.0
