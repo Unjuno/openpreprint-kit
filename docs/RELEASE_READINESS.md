@@ -30,7 +30,7 @@ Main runs: validate 3.10 `44920715884`; quality/audit/Windows/macOS `44920715891
 | ゲート | 現在の再確認 | 根拠・残件 |
 |---|---|---|
 | G0 コード・配布品質 | **TECHNICAL PASS on main `450db84d9e35772fda6af3a24592ced58df8b3ec`** | PR #66 exact head `c140290b167c2e46afd8c0f5a181fdf6c39aaec3` merged with owner approval. All required CI, self-application, live RFC 3161/fresh-runner passed on fixed main. Independent review remains `UNPROVEN`. |
-| G1 所有者設定・再利用 | **NOT CONFIRMED** | toolkit templateは有効、paper repoの保護設定を読戻した。一方、必要な第2のtemplate-derived公開paper repoを現状で解決できず、同repoの設定も読戻せていない。 |
+| G1 所有者設定・再利用 | **NOT CONFIRMED** | toolkitはpublic/template/immutable-enabled。active `protect-main` rulesetはPR・必須CI・削除/force-push禁止だが、approving review 0・required reviewersなし。paper repoは同template由来・public・immutable-enabledで、main required checksは有効だがapproval 0・rulesetなし。第2の実論文repoは現状で解決できない。詳細と設定依頼は [G1 owner settings package](operator-packages/G1-owner-settings.md)。 |
 | G2 実公開・版管理 | **NOT CONFIRMED** | 現在解決できたのはpaper repoのv1/v2の2件。第2repoの2 Releaseとそのattestation・匿名取得・資産照合を今回再検証できていない。失われたReleaseを新規発行して過去証拠の代替にしてはならない。 |
 | G3 TSA・否定試験 | OWNER-RECORDED PASS、今回未再監査 | 既存台帳は5版のRFC 3161再検証、2環境8回以上の正常検証、固定20否定ケース誤受理0を記録。正式4版の現在の識別子が解決するまで固定対象は再確定できない。独立性 `UNPROVEN`。 |
 | G4 公開観測 | OWNER-RECORDED PASS、今回未再監査 | 既存台帳に署名観測・RFC 3161を記録。G2の正式対象4版との対応を再確認する。独立性 `UNPROVEN`。 |
