@@ -34,3 +34,14 @@ This evidence establishes the configured allowlist and successful post-change wo
 PR #72 head `b0982b447d30c5f4407dddd731d2d61226f523bf` has six of seven required contexts successful. Its required CodeQL run [45134001861](https://github.com/Unjuno/openpreprint-kit/actions/runs/45134001861) ended `startup_failure` before creating a job. The GitHub annotation states that the existing workflow references `github/codeql-action/init@33d7b85da1a04171e211befe2c739303b9a4c066` and `github/codeql-action/analyze@33d7b85da1a04171e211befe2c739303b9a4c066`, and that these are denied because the selected allowlist only contains the four `actions/*` references above. The exact SHA is the official CodeQL Action v4.39.3 commit: [GitHub source](https://github.com/github/codeql-action/commit/33d7b85da1a04171e211befe2c739303b9a4c066).
 
 The narrow proposed correction is to add only `github/codeql-action@33d7b85da1a04171e211befe2c739303b9a4c066`, keeping full-SHA pinning mandatory and both broad default checkboxes disabled. This security-sensitive permission expansion is **not yet saved**; owner action-time confirmation is pending. The allowlist correction must be read back and the seven required PR contexts rerun successfully before this evidence PR is ready to merge. G7 remains PARTIAL; no toolkit Release was created.
+
+## Current allowlist readback (2026-11-25)
+
+The owner-authorized setting was applied after the 2026-11-23 observation above. A live REST readback on 2026-11-25 reported `github_owned_allowed=false`, `verified_allowed=false`, and these additional explicit full-SHA references:
+
+- `github/codeql-action/init@33d7b85da1a04171e211befe2c739303b9a4c066`
+- `github/codeql-action/analyze@33d7b85da1a04171e211befe2c739303b9a4c066`
+
+`sha_pinning_required=true` and `allowed_actions=selected` remain enabled. The effective policy is the two exact sub-action patterns above; the earlier proposal text naming one combined `github/codeql-action@...` pattern is not the current readback.
+
+For PR #72 head `18facac1bae0c1e7f3ef8f8d663831a1ad1c4e43`, CodeQL `workflow_dispatch` run [45158561375](https://github.com/Unjuno/openpreprint-kit/actions/runs/45158561375) completed successfully. The original PR-event CodeQL run [45152140381](https://github.com/Unjuno/openpreprint-kit/actions/runs/45152140381) remains `startup_failure`; GitHub does not permit rerunning that startup-failed run. Thus the successful dispatch proves the workflow can run with the updated policy, but does not prove a fresh pull-request event succeeded. A new PR head is needed to trigger that event and verify it. No Release was created.
