@@ -53,3 +53,11 @@ The earlier note above said a new PR head was needed because the CodeQL pull-req
 GitHub's current PR check readback shows success for the CodeQL app context, CodeQL Python, audit, Lean proofs, Validate Python 3.10 and 3.12, Windows regression, and macOS regression at this head. The latest source workflow runs are [CodeQL](https://github.com/Unjuno/openpreprint-kit/actions/runs/45682418076), [quality and reproducible source](https://github.com/Unjuno/openpreprint-kit/actions/runs/45682418121), [Lean](https://github.com/Unjuno/openpreprint-kit/actions/runs/45682418068), and [validation](https://github.com/Unjuno/openpreprint-kit/actions/runs/45682419743). The app-provided CodeQL context is [also green](https://github.com/Unjuno/openpreprint-kit/runs/139447422807).
 
 Accordingly, the 2026-11-23 and 2026-11-25 startup failures remain historical evidence and are not current-head failures. No Release was created. This CI result proves workflow execution under the selected allowlist; it does not prove independent human review or satisfy other G7 human acceptance requirements.
+
+## Fresh GitHub Actions settings readback — 2026-11-26
+
+A new read-only REST readback was taken on 2026-11-26 at `2026-11-26T04:19:27Z` for repository `Unjuno/openpreprint-kit`, source main SHA `76d7d4c6fd551bb48048d774e47191ba26274cbf`. The machine-readable record is [`ACTIONS_SETTINGS_READBACK_2026-11-26.json`](ACTIONS_SETTINGS_READBACK_2026-11-26.json), SHA-256 `75259eb23718ba2901003f71a65b0aa0a5b256021f3fb5de6e1cbaf72a2929ed`.
+
+The effective settings remain: Actions enabled; `allowed_actions=selected`; `sha_pinning_required=true`; `github_owned_allowed=false`; `verified_allowed=false`; the exact six SHA-pinned action references listed in the JSON; default workflow token permission `read`; `can_approve_pull_request_reviews=false`; Immutable Releases enabled. No secret values were read.
+
+PR #72 head `6584ae61c74949900edccf30d3c58dec9d33d3d9` remains open and unmerged; its current CodeQL, CodeQL Python, audit, Lean, Python 3.10/3.12, Windows, and macOS checks pass. This settings and CI evidence supports the technical configuration claim only. Formal G7 remains PARTIAL pending full acceptance; no independent review, audit, or permanent custody is claimed. No Release was created.
