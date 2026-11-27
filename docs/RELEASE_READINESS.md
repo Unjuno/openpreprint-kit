@@ -1,8 +1,27 @@
 # OpenPreprint Kit — 現在の受入状態
 
-更新日: **2026-11-22 JST**。基準は [V1_ACCEPTANCE.md](V1_ACCEPTANCE.md) (G0–G7)。完了台帳は [Issue #5](https://github.com/Unjuno/openpreprint-kit/issues/5)。
+更新日: **2026-11-27 JST**。基準は [V1_ACCEPTANCE.md](V1_ACCEPTANCE.md) (G0–G7)。完了台帳は [Issue #5](https://github.com/Unjuno/openpreprint-kit/issues/5)。
 
-## 2026-11-26 live gate refresh (supersedes the 2026-11-22 current-state readback below)
+## 2026-11-27 post-merge current state — main `e804fb2105479cfd37ff1bd1117bcc03a7547ffd`
+
+PR #72 (`8387a9e18eddfd397e2db75f266d6f0f9d46954d`) merged to main as `e804fb2105479cfd37ff1bd1117bcc03a7547ffd`. The exact-main required CI is 7/7 success. Windows, macOS, Linux audit, and Python 3.12 each report 441 tests, 435 pass, 6 platform-specific skips, 0 failures/errors; Python 3.10 reports 441, 428 pass, 13 skips, 0 failures/errors. Self-application and live RFC 3161/fresh-runner workflows also pass on this exact main SHA. Full run links, skip names/reasons, artifact hashes, limits, and current gate findings are in [post-merge quality evidence](QUALITY_EVIDENCE_POSTMERGE_PR72_2026-11-27.md) and the [Issue #5 evidence ledger](https://github.com/Unjuno/openpreprint-kit/issues/5).
+
+### Current G0–G7 decision
+
+| Gate | 2026-11-27 result | Current evidence and remaining condition |
+|---|---|---|
+| G0 Code and distribution quality | **TECHNICAL PASS on main `e804fb2105479cfd37ff1bd1117bcc03a7547ffd`; owner evidence readback pending** | Exact-main CI, self-application, and RFC 3161/fresh-runner checks passed. The owner must confirm the exact evidence before formal PASS. |
+| G1 Owner setup and reuse | **PARTIAL / NOT PASS** | Kit ruleset has required CI but 0 required approving reviews. First-paper main requires 0 reviews and has administrator enforcement off. Second repo requires 1 review and all required CI; its same-owner Write invitation remains pending (effective permission is read). |
+| G2 Publication and version control | **BLOCKED** | First-paper immutable v1/v2 remain present; robustness-eval currently has 0 Releases. Only 2 of 4 real-paper Releases exist. |
+| G3 TSA and negative tests | **PARTIAL / NOT PASS** | Current first-paper v1 candidate timestamp and fresh-runner restore passed. Required evidence over all four published versions is incomplete; TSA accuracy is unknown. |
+| G4 Public observation | **PARTIAL / NOT PASS** | First-paper observations remain; no second-paper Release is available to observe. Independence is `UNPROVEN`. |
+| G5 Replication and offline restore | **PARTIAL / NOT PASS** | First-paper preservation evidence remains; second-paper assets are absent. Independent custody is not claimed. |
+| G6 Human editorial and privacy decisions | **BLOCKED** | `reviews/record.json` has no human review, correction, or withdrawal events. |
+| G7 Security and evidence lifetime | **PARTIAL / NOT PASS** | Kit and robustness-eval Actions are restricted to selected full-SHA references with pinning required. First-paper Actions still allow all actions and do not require SHA pinning. Human security/privacy and evidence-lifecycle decisions remain. |
+
+**P4 / toolkit v1.0.0 remains NO-GO.** The `OPK_ADMIN_READ_TOKEN` secret name is present in the kit and robustness-eval repositories; its value was not read. The same-owner accounts are not independent reviewers or custodians. No second-paper Release or toolkit v1.0.0 Release was created. Existing immutable paper Releases remain unchanged.
+
+## 2026-11-26 live gate refresh (historical pre-merge readback)
 
 Read back from GitHub on 2026-11-26. No PR has merged since the fixed main SHA `76d7d4c6fd551bb48048d774e47191ba26274cbf`. PR #72 is documentation/evidence only, OPEN and unmerged, at exact head `46484a436673e6274cffde0123c8e94544bee781`; its PR-event Quality (`45759875361`), Validate (`45759875243`), Lean (`45759875301`), CodeQL Python (`45759875404`), and GitHub CodeQL (`139709770561`) checks pass. The exact-head Windows, macOS, audit, Python 3.10/3.12 counts and skip reasons are recorded in the [2026-11-26 Issue #5 CI readback](https://github.com/Unjuno/openpreprint-kit/issues/5#issuecomment-7183618797); raw logs and the machine-readable check-run readback are preserved in Gold Candidate progress archive r74, whose SHA-256 is `1663cc6c5839ff95512b06f540e5471a70af836ad99fe8f005ac54bd00e67b4d`.
 
