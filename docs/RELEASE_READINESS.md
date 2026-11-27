@@ -2,11 +2,19 @@
 
 更新日: **2026-11-27 JST**。基準は [V1_ACCEPTANCE.md](V1_ACCEPTANCE.md) (G0–G7)。完了台帳は [Issue #5](https://github.com/Unjuno/openpreprint-kit/issues/5)。
 
-## 2026-11-27 post-merge current state — main `e804fb2105479cfd37ff1bd1117bcc03a7547ffd`
+## Latest fixed-main checkpoint — PR #77
+
+PR #77 head `b732223c8adedaca8b0485d04faade5d692b27d6` merged at 2026-11-27T11:55:39Z as main `fa279d43a1d68fb227d94194cbee739c10d2afef`. The exact-main required CI is 7/7 success. Self-application run `45994944364` and RFC 3161/fresh-runner run `45994952803` also pass on this exact main SHA. Full run links, skip reasons, artifact hashes, and the G0-G7 readback are in [post-merge quality evidence](QUALITY_EVIDENCE_POSTMERGE_PR77_2026-11-27.md) and [Issue #5](https://github.com/Unjuno/openpreprint-kit/issues/5).
+
+First-paper repository Actions were then restricted to four exact SHA-pinned actions with SHA pinning required. Self-application run `45995399456` and timestamp/fresh-runner run `45995415275` succeeded on paper main `6ec47ec58e9dc733956615343aad16caca4bb8ee`. The pre-existing first-paper immutable Releases remain unchanged. The second-paper repository has no Releases; its PR #2 still needs a technical review after the pending same-owner invitation is accepted. Secret `OPK_ADMIN_READ_TOKEN` is already configured in the kit and robustness-eval repositories; the collaborator invitation is a separate workflow.
+
+**Current G0-G7 decision:** G0 technical evidence PASS, with exact-checkpoint owner acknowledgement still to record; G1 PARTIAL; G2 BLOCKED; G3-G5 PARTIAL; G6 BLOCKED; G7 PARTIAL. Same-owner account use is technical evidence only. Independence remains `UNPROVEN` and separate custody is not claimed. **P4 / toolkit v1.0.0 remains NO-GO.** No second-paper or toolkit Release was created.
+
+## Historical checkpoint — PR #72 merge on main `e804fb2105479cfd37ff1bd1117bcc03a7547ffd` (superseded by the latest checkpoint above)
 
 PR #72 (`8387a9e18eddfd397e2db75f266d6f0f9d46954d`) merged to main as `e804fb2105479cfd37ff1bd1117bcc03a7547ffd`. The exact-main required CI is 7/7 success. Windows, macOS, Linux audit, and Python 3.12 each report 441 tests, 435 pass, 6 platform-specific skips, 0 failures/errors; Python 3.10 reports 441, 428 pass, 13 skips, 0 failures/errors. Self-application and live RFC 3161/fresh-runner workflows also pass on this exact main SHA. Full run links, skip names/reasons, artifact hashes, limits, and current gate findings are in [post-merge quality evidence](QUALITY_EVIDENCE_POSTMERGE_PR72_2026-11-27.md) and the [Issue #5 evidence ledger](https://github.com/Unjuno/openpreprint-kit/issues/5).
 
-### Current G0–G7 decision
+### G0–G7 decision at the historical PR #72 checkpoint
 
 | Gate | 2026-11-27 result | Current evidence and remaining condition |
 |---|---|---|
