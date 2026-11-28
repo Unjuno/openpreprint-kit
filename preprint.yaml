@@ -8,6 +8,6 @@ authors:
     orcid: null
 abstract: "Replace with an abstract."
 keywords: []
-version: "v0" # v0 is a draft. Use v1, v2, v1.1, etc. for public releases.
+version: "v0" # v0 is a draft. Public Releases require stable tags such as v1.0.0 or v2.0.0.
 paper: "paper/paper.pdf"
 license: "UNSPECIFIED" # e.g. CC-BY-4.0 (different from toolkit's MIT license)
