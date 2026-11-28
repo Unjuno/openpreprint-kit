@@ -73,7 +73,8 @@ class WorkflowTests(unittest.TestCase):
         workflow = yaml.load(text, Loader=yaml.BaseLoader)
         self.assertEqual(set(workflow['on']), {'pull_request', 'workflow_dispatch'})
         self.assertEqual(workflow['permissions'], {'contents':'read','attestations':'read'})
-        self.assertEqual(set(workflow['jobs']), {'retrieve-and-verify','fresh-offline-restore'})
+        self.assertEqual(set(workflow['jobs']), {'validate-review-inventory','retrieve-and-verify','fresh-offline-restore'})
+        self.assertEqual(workflow['jobs']['validate-review-inventory']['steps'][0]['with']['fetch-depth'], '0')
         jobs = workflow['jobs']
         for job in jobs.values():
             self.assertLessEqual(int(job['timeout-minutes']), 15)

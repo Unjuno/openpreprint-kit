@@ -11,7 +11,7 @@ The live Release inventory is five published Immutable Releases across two templ
 ## Current handoffs
 
 - G6 human editorial/privacy review, correction exercise, and withdrawal exercise: [`docs/operator-packages/G6-human-review-handoff-2026-11-29.md`](operator-packages/G6-human-review-handoff-2026-11-29.md).
-- Fixed manuscript sources, SHA-256 fingerprints, Release IDs, and all 55 asset digests: [`evidence/acceptance/G6-review-inputs-2026-11-29.json`](../evidence/acceptance/G6-review-inputs-2026-11-29.json). SHA-256: `B300E4E0BF969E6506194FAE4544663407ED425833E282F99FB6E84AA89948F8`.
+- Fixed manuscript sources, SHA-256 fingerprints, Release IDs, and all 55 asset digests: [`evidence/acceptance/G6-review-inputs-2026-11-29.json`](../evidence/acceptance/G6-review-inputs-2026-11-29.json). SHA-256: `C5D05B3960BDB589F8A2B4BBCD830A1E4A44BA255239B1C0A745E50A59EE1CE5`.
 - Gate-specific status and concrete remaining conditions: [`ACCEPTANCE_SNAPSHOT_2026-11-29.md`](ACCEPTANCE_SNAPSHOT_2026-11-29.md).
 - Ongoing evidence log: [Issue #5](https://github.com/Unjuno/openpreprint-kit/issues/5).
 

@@ -5,8 +5,9 @@
 ## Fixed review inputs
 
 - Kit source: `Unjuno/openpreprint-kit`, main SHA `39346736ce91371b957ddbfa9b045cbe9409494f`.
-- Complete tracked manuscript input inventory: [`G6-review-inputs-2026-11-29.json`](../../evidence/acceptance/G6-review-inputs-2026-11-29.json), SHA-256 `B300E4E0BF969E6506194FAE4544663407ED425833E282F99FB6E84AA89948F8`.
+- Complete tracked manuscript input inventory: [`G6-review-inputs-2026-11-29.json`](../../evidence/acceptance/G6-review-inputs-2026-11-29.json), SHA-256 `C5D05B3960BDB589F8A2B4BBCD830A1E4A44BA255239B1C0A745E50A59EE1CE5`.
 - The inventory contains 42 source files and the GitHub API metadata plus SHA-256 digests for every asset in all five public immutable paper Releases. Its status is explicitly `HANDOFF_INPUT_INVENTORY_ONLY_NOT_REVIEW_EVIDENCE`.
+- Manuscript byte counts and SHA-256 values are computed from the raw Git blob bytes at the fixed commit, before any platform checkout or line-ending conversion. Verify them with `python scripts/verify_review_inventory.py --inventory evidence/acceptance/G6-review-inputs-2026-11-29.json --reference docs/INDEPENDENT_REVIEW_PACKAGE.md --reference docs/operator-packages/G6-human-review-handoff-2026-11-29.md` from a full-history checkout.
 - Formal target releases: first paper v1/v2 and robustness paper v1.0.0/v2.0.1. Robustness v2.0.0 is an additional immutable intermediate release; it remains part of the inventory/history. A failed draft with ID `461075262` is recorded as historical and excluded from the review target.
 - Public release routes: [paper v1](https://github.com/Unjuno/openpreprint-kit-paper/releases/tag/v1), [paper v2](https://github.com/Unjuno/openpreprint-kit-paper/releases/tag/v2), [robustness v1.0.0](https://github.com/Unjuno/openpreprint-kit-robustness-eval/releases/tag/v1.0.0), [robustness v2.0.1](https://github.com/Unjuno/openpreprint-kit-robustness-eval/releases/tag/v2.0.1), and retained [robustness v2.0.0](https://github.com/Unjuno/openpreprint-kit-robustness-eval/releases/tag/v2.0.0).
 

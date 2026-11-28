@@ -5,6 +5,8 @@ on:
     paths:
       - '.github/workflows/verify-published-releases.yml'
       - 'docs/ACCEPTANCE_SNAPSHOT_2026-11-29.md'
+      - 'docs/INDEPENDENT_REVIEW_PACKAGE.md'
+      - 'docs/operator-packages/G6-human-review-handoff-2026-11-29.md'
       - 'evidence/acceptance/**'
       - 'requirements.lock'
       - 'requirements-build.lock'
@@ -13,6 +15,8 @@ on:
       - 'scripts/citation_validation.py'
       - 'scripts/timestamp.py'
       - 'scripts/preserve.py'
+      - 'scripts/verify_review_inventory.py'
+      - 'tests/test_review_inventory.py'
   workflow_dispatch:
 
 permissions:
@@ -20,6 +24,21 @@ permissions:
   attestations: read
 
 jobs:
+  validate-review-inventory:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Verify handoff fingerprints against fixed Git blobs
+        run: >-
+          python scripts/verify_review_inventory.py
+          --inventory evidence/acceptance/G6-review-inputs-2026-11-29.json
+          --reference docs/INDEPENDENT_REVIEW_PACKAGE.md
+          --reference docs/operator-packages/G6-human-review-handoff-2026-11-29.md
+
   retrieve-and-verify:
     runs-on: ubuntu-24.04
     timeout-minutes: 15
