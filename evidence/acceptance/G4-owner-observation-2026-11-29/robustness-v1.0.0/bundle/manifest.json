@@ -1,0 +1,34 @@
+{
+  "algorithm": "sha256",
+  "files": {
+    "CITATION.cff": {
+      "sha256": "07007461ef658574879f2c2b2fee93ddf8775386dfc288a07aa9608927b60e97",
+      "size_bytes": 853
+    },
+    "RELEASE_NOTES.md": {
+      "sha256": "be9daa5b98bf6f728a7b14a567ab04c4f7eed44c57199a7ef846de3c9f5d10f8",
+      "size_bytes": 565
+    },
+    "citation.bib": {
+      "sha256": "c1af069c1c69176471cae0e85644db02360c60dcb9a80d8e390df15779bcfea8",
+      "size_bytes": 339
+    },
+    "paper.pdf": {
+      "sha256": "92774a6552f0aaf9315baea6e9672677903a1bdb64288dfddf449cffb3de53a4",
+      "size_bytes": 197898
+    },
+    "preprint-metadata.json": {
+      "sha256": "3483d814cc682feaf822017a0c1a076b324c0159beaad46f3f09e86fda331dc0",
+      "size_bytes": 1120
+    },
+    "research-assets.json": {
+      "sha256": "273bf45c61580f9b80513892bda6255af3a579116de0dae4b2e1a66b24170a20",
+      "size_bytes": 3617
+    },
+    "research-assets.tar": {
+      "sha256": "0005c25532a883ee348812dc214c0f1ce5a7fd458a60d3ecfe474657965f354d",
+      "size_bytes": 61440
+    }
+  },
+  "schema_version": 1
+}

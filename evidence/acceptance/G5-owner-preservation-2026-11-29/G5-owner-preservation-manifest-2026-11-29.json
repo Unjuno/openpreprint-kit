@@ -1,0 +1,59 @@
+{
+  "schema_version": 1,
+  "captured_at_utc": "2026-11-29",
+  "state": "OWNER_OPERATED_CANDIDATE_NOT_YET_MIRRORED",
+  "source_workflow_run": 46182440809,
+  "source_workflow_url": "https://github.com/Unjuno/openpreprint-kit/actions/runs/46182440809",
+  "source_artifact_id": 15278153196,
+  "source_artifact_expires_at_utc": "2026-12-12T19:41:41Z",
+  "fresh_runner_restore": "PASS",
+  "fresh_runner": "GitHub Actions Linux runner 1000182247",
+  "network_proxy": "unreachable loopback",
+  "formal_targets": [
+    {
+      "label": "paper-v1",
+      "repository": "Unjuno/openpreprint-kit-paper",
+      "tag": "v1",
+      "release_id": 444659219,
+      "source_sha": "804cb76a4cf5eea65349fc7a8f01e2ce00e1176d",
+      "assets": 11,
+      "archive": "paper-v1.opk.zip",
+      "archive_sha256": "350e87787836a70739b376a05768431cab1dfea06c1d1fbe9b3bddf83018dcd5",
+      "size_bytes": 248871
+    },
+    {
+      "label": "paper-v2",
+      "repository": "Unjuno/openpreprint-kit-paper",
+      "tag": "v2",
+      "release_id": 445442340,
+      "source_sha": "6ec47ec58e9dc733956615343aad16caca4bb8ee",
+      "assets": 11,
+      "archive": "paper-v2.opk.zip",
+      "archive_sha256": "795658e72a3826e7a779a4a1a053ce69a03a748239152ed0f3cb0ba7c1c4d0f1",
+      "size_bytes": 1162825
+    },
+    {
+      "label": "robustness-v1.0.0",
+      "repository": "Unjuno/openpreprint-kit-robustness-eval",
+      "tag": "v1.0.0",
+      "release_id": 461207056,
+      "source_sha": "dedadf3b2e95090439ec10aa4298db72f048caab",
+      "assets": 11,
+      "archive": "robustness-v1.0.0.opk.zip",
+      "archive_sha256": "9b9bd400046ef4afc23c669ccf6eac27c34a1dd47cd690ff59f6ce1e541ab257",
+      "size_bytes": 280562
+    },
+    {
+      "label": "robustness-v2.0.1",
+      "repository": "Unjuno/openpreprint-kit-robustness-eval",
+      "tag": "v2.0.1",
+      "release_id": 461370251,
+      "source_sha": "256e4743963a3ffb955b017bb3ecb1d91316e602",
+      "assets": 11,
+      "archive": "robustness-v2.0.1.opk.zip",
+      "archive_sha256": "8e9ace748310fb4ed1f4f03b23e238cfb7fef7a4dc6eb4b2c2b2aa0975e03026",
+      "size_bytes": 245897
+    }
+  ],
+  "additional_intermediate": "robustness-v2.0.0 retained as non-target history"
+}

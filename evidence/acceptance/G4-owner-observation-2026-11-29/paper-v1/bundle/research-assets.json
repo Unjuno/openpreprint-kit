@@ -1,0 +1,83 @@
+{
+  "archive": "research-assets.tar",
+  "entries": [
+    {
+      "description": "First-paper public engineering evidence; no personal records; paper CC BY 4.0.",
+      "license": "MIT",
+      "path": "analysis/summarize_ci.py",
+      "public_confirmed": true,
+      "role": "analysis_code",
+      "sha256": "a95fb8e202e06150340b56366229ca81fe0fbf985f6edda6c22a4c2f0399bfb6",
+      "size_bytes": 3468
+    },
+    {
+      "description": "First-paper public engineering evidence; no personal records; paper CC BY 4.0.",
+      "license": "MIT",
+      "path": "data/baseline-ci.txt.gz",
+      "public_confirmed": true,
+      "role": "dataset",
+      "sha256": "d0b75905c403659ed75b462a65f1234830ab0667af1b1be974311a7749a21c14",
+      "size_bytes": 6929
+    },
+    {
+      "description": "First-paper public engineering evidence; no personal records; paper CC BY 4.0.",
+      "license": "MIT",
+      "path": "data/provenance.json",
+      "public_confirmed": true,
+      "role": "dataset",
+      "sha256": "b7751f046be4c95ccafd69fc34fbf3e5d2347d14c1010ed49a865475774906c5",
+      "size_bytes": 829
+    },
+    {
+      "description": "First-paper public engineering evidence; no personal records; paper CC BY 4.0.",
+      "license": "MIT",
+      "path": "data/results.json",
+      "public_confirmed": true,
+      "role": "dataset",
+      "sha256": "daa95e20a9e43614f7f83c29b5daccc83810f5158725500cb7b9f51bfb00dc04",
+      "size_bytes": 1226
+    },
+    {
+      "description": "First-paper public engineering evidence; no personal records; paper CC BY 4.0.",
+      "license": "MIT",
+      "path": "data/test-counts.csv",
+      "public_confirmed": true,
+      "role": "dataset",
+      "sha256": "6f9604937b668db378dcfd516409667fb16c09113a4b515d090d32474aedd5a6",
+      "size_bytes": 567
+    },
+    {
+      "description": "First-paper public engineering evidence; no personal records; paper CC BY 4.0.",
+      "license": "CC-BY-4.0",
+      "path": "supplements/LICENSE-NOTICE.txt",
+      "public_confirmed": true,
+      "role": "supplementary",
+      "sha256": "212f3d35a7b100832658907f491b4ac8b75b88cf66ab102b8678799682687626",
+      "size_bytes": 604
+    },
+    {
+      "description": "First-paper public engineering evidence; no personal records; paper CC BY 4.0.",
+      "license": "CC-BY-4.0",
+      "path": "supplements/paper.md",
+      "public_confirmed": true,
+      "role": "supplementary",
+      "sha256": "1f17b4cc6f57ba271154e2cab7d8e92a5d5baea8d2c1e7da86b1b1b503bf9a7c",
+      "size_bytes": 12300
+    }
+  ],
+  "paper_sha256": "0860b735379fb1b9b223f5d535442dae8421f456d7ae1c6bf6ce8d3141a1b07c",
+  "relations": [
+    {
+      "kind": "analyzes",
+      "source": "analysis/summarize_ci.py",
+      "target": "data/baseline-ci.txt.gz"
+    },
+    {
+      "kind": "produced_by",
+      "source": "data/test-counts.csv",
+      "target": "analysis/summarize_ci.py"
+    }
+  ],
+  "schema_version": 1,
+  "version": "v1"
+}

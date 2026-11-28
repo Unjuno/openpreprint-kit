@@ -4,7 +4,7 @@
 
 ## Formal condition
 
-The controlling criteria are G2 in [`V1_ACCEPTANCE.md`](../V1_ACCEPTANCE.md): at least two template-derived paper repositories, two immutable versions per repository (four formal targets), at least one owner-approved substantive paper, and verification of every Release and asset for attestations, anonymous retrieval, citation and research payload consistency, and preservation of v1 after v2. Gate status is not changed merely because the files below exist. The owner reviews and confirms the evidence; independence remains `UNPROVEN` because both GitHub accounts are controlled by the same owner.
+The controlling criteria are G2 in [`V1_ACCEPTANCE.md`](../V1_ACCEPTANCE.md): at least two template-derived paper repositories, two immutable versions per repository (**計4件以上** formal target Releases), at least one owner-approved substantive paper, and verification of every Release and asset for attestations, anonymous retrieval, citation and research payload consistency, and preservation of v1 after v2. Gate status is not changed merely because the files below exist. The owner reviews and confirms the evidence; independence remains `UNPROVEN` because both GitHub accounts are controlled by the same owner.
 
 ## Formal target Releases
 

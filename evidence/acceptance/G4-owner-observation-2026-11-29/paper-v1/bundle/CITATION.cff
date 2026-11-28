@@ -1,0 +1,16 @@
+cff-version: 1.2.0
+message: Please cite this preprint using these metadata and its version-specific release URL.
+title: 'OpenPreprint Kit: GitHub上の論文・研究データを検証可能にする公開キット'
+authors:
+- name: Unjuno
+abstract: GitHubを公開基盤とし、論文・研究データ・コードをハッシュとRFC 3161時刻証拠で結合するキットの設計報告。固定した実装のCIログ274件を再集計し、本稿への自己適用と信頼上の限界を示す。
+version: v1
+license: CC-BY-4.0
+keywords:
+- preprint
+- research data
+- RFC 3161
+- GitHub
+- reproducibility
+repository-code: https://github.com/Unjuno/openpreprint-kit-paper
+commit: 804cb76a4cf5eea65349fc7a8f01e2ce00e1176d

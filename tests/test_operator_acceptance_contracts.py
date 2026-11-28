@@ -28,19 +28,20 @@ class OperatorAcceptanceContracts(unittest.TestCase):
 
     def test_g2_option_a_is_two_real_papers_with_two_versions_each(self):
         self.assertIn("2論文リポジトリに各2版", self.canonical)
-        # The current ledger records the first paper's v1/v2 as live and
-        # immutable, so only the second paper's v1/v2 remain missing. Keep the
-        # four-slot formal requirement explicit without preserving stale
-        # planning text that said three releases were still needed.
+        # Keep the frozen four-release requirement explicit and anchor this
+        # handoff to the two live template-derived paper repositories. Do not
+        # preserve the former "second repository missing" state as a test
+        # requirement after the actual repository and Releases exist.
         self.assertIn("計4件以上", self.g2)
-        self.assertIn("| `Unjuno/openpreprint-kit-paper` | v1 |", self.g2)
-        self.assertIn("| `Unjuno/openpreprint-kit-paper` | v2 |", self.g2)
-        self.assertIn("| 第2の実論文 repo | v1 |", self.g2)
-        self.assertIn("| 第2の実論文 repo | v2 |", self.g2)
-        self.assertIn("G2 `NOT CONFIRMED`", self.g2)
-        self.assertIn("合成デモ", self.g2)
-        self.assertIn("実論文2repo×各2版", self.g5)
-        self.assertIn("第2実論文v1・v2", self.g5)
+        self.assertIn("| [`openpreprint-kit-paper`](https://github.com/Unjuno/openpreprint-kit-paper) | v1 |", self.g2)
+        self.assertIn("| [`openpreprint-kit-paper`](https://github.com/Unjuno/openpreprint-kit-paper) | v2 |", self.g2)
+        self.assertIn("| [`openpreprint-kit-robustness-eval`](https://github.com/Unjuno/openpreprint-kit-robustness-eval) | v1.0.0 |", self.g2)
+        self.assertIn("| [`openpreprint-kit-robustness-eval`](https://github.com/Unjuno/openpreprint-kit-robustness-eval) | v2.0.1 |", self.g2)
+        self.assertIn("G2 remains **PARTIAL**", self.g2)
+        self.assertIn("Keep the three synthetic-demo Releases as historical mechanism tests", self.g2)
+        self.assertIn("two immutable versions per repository", self.g2)
+        self.assertIn("robustness-v1.0.0.opk.zip", self.g5)
+        self.assertIn("robustness-v2.0.1.opk.zip", self.g5)
 
     def test_observer_example_uses_implemented_cli_flags(self):
         defined = set()

@@ -1,0 +1,117 @@
+{
+  "archive": "research-assets.tar",
+  "entries": [
+    {
+      "description": "Standard-library-only recomputation of negative-suite facts (shared with v1)",
+      "license": "MIT",
+      "path": "analysis/analyze_robustness.py",
+      "public_confirmed": true,
+      "role": "analysis_code",
+      "sha256": "401e51e9d6ef173d3c0317812d9d8c875a72e2f8530268c9178bb80137c7dd5f",
+      "size_bytes": 4516
+    },
+    {
+      "description": "Standard-library-only recomputation of v2 experiment records",
+      "license": "MIT",
+      "path": "analysis/reverify_v2.py",
+      "public_confirmed": true,
+      "role": "analysis_code",
+      "sha256": "be8ab3a5e0423f1b0d0b42743477c3c8f613022161fbd8b147ca85aaa6259028",
+      "size_bytes": 2027
+    },
+    {
+      "description": "CRL lifecycle contrast experiment (fresh CRL VERIFIED / stale CRL REJECTED)",
+      "license": "CC-BY-4.0",
+      "path": "data/e-v2-1-crl-lifecycle.json",
+      "public_confirmed": true,
+      "role": "dataset",
+      "sha256": "b4488a61b1c20b2884fae190048a336c1a88c6a0a067d82ee0dc7852c88ac9e5",
+      "size_bytes": 1122
+    },
+    {
+      "description": "Two real incidents encountered during the first publication (INC-1, INC-2)",
+      "license": "CC-BY-4.0",
+      "path": "data/incident-analysis.json",
+      "public_confirmed": true,
+      "role": "dataset",
+      "sha256": "00283f16879a7cbe817809e14e1f1ecc78a8528458262e00a2a6e7a7e52e306d",
+      "size_bytes": 1367
+    },
+    {
+      "description": "Execution results of the 20-case negative suite (23 judgments, 0 false accepts)",
+      "license": "CC-BY-4.0",
+      "path": "data/negative-suite-results.json",
+      "public_confirmed": true,
+      "role": "dataset",
+      "sha256": "fb7c64500c01e19f0bc85f336d63d461d742c604ed6462b8172f9db458338afd",
+      "size_bytes": 5942
+    },
+    {
+      "description": "Pre-fixed 20-case negative test specification (shared with v1)",
+      "license": "CC-BY-4.0",
+      "path": "data/negative-suite-spec.json",
+      "public_confirmed": true,
+      "role": "dataset",
+      "sha256": "814ca9ddc01f5ec086f7e57c624beaa8659946d3cc1e917b67a2e131c67636a9",
+      "size_bytes": 4437
+    },
+    {
+      "description": "Per-case verdict summary for the shared negative suite",
+      "license": "CC-BY-4.0",
+      "path": "data/negative-suite-summary.json",
+      "public_confirmed": true,
+      "role": "dataset",
+      "sha256": "124e8e7573e33d208952c343f8a37c4574cbb0b0b0da111e5a57ce357883df7b",
+      "size_bytes": 3047
+    },
+    {
+      "description": "Measured IDs, commits, and attestation verification for the published releases",
+      "license": "CC-BY-4.0",
+      "path": "data/release-matrix.json",
+      "public_confirmed": true,
+      "role": "dataset",
+      "sha256": "ebd8ae4ed1db12a414f9ceff6360fd49be4ae4aa92269c1c4b0411bf381c33ef",
+      "size_bytes": 10870
+    },
+    {
+      "description": "Forward RFC 3161 renewal experiment (issue + verify PASS)",
+      "license": "CC-BY-4.0",
+      "path": "data/renewal-experiment.json",
+      "public_confirmed": true,
+      "role": "dataset",
+      "sha256": "d9f93fe1605e6b86b8573edbaeb77bad28cafd8afb9d02553aac9a9beee78e55",
+      "size_bytes": 663
+    },
+    {
+      "description": "Re-verification results of RFC 3161 proofs for the five published releases",
+      "license": "CC-BY-4.0",
+      "path": "data/tsa-reverification.json",
+      "public_confirmed": true,
+      "role": "dataset",
+      "sha256": "670852ed238158dc214cdb1922d7eb6a0050784c986705b615ef7f570278bdcd",
+      "size_bytes": 2347
+    },
+    {
+      "description": "Per-file license notice for the manuscript and assets",
+      "license": "CC-BY-4.0",
+      "path": "supplements/LICENSE-NOTICE.txt",
+      "public_confirmed": true,
+      "role": "supplementary",
+      "sha256": "b7c2bf7498fbe0cdc192388e2dd68acfb867c83c97112fba9e9a580673838393",
+      "size_bytes": 683
+    },
+    {
+      "description": "Manuscript source of the tamper-detection evaluation (added experiments, v2)",
+      "license": "CC-BY-4.0",
+      "path": "supplements/paper.md",
+      "public_confirmed": true,
+      "role": "supplementary",
+      "sha256": "551ebd41d28ef6d633ad680b0306507ad3584269b31eabc1a2fed94902bdf8e9",
+      "size_bytes": 8563
+    }
+  ],
+  "paper_sha256": "d63876e1f83c2b6bd39c48ef7b7779c88679f3b95faaedbc29d31dc6194d5676",
+  "relations": [],
+  "schema_version": 1,
+  "version": "v2.0.1"
+}

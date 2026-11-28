@@ -1,0 +1,28 @@
+{
+  "abstract": "v1のCRL鮮度ケースを同一PKI・同一TSA証明書・同一問合せで対照実験（fresh=VERIFIED / stale=Verify error: CRL has expired）。保存ZIPへの前方RFC 3161更新（issue/verify PASS、chain 1eaae7e2…）を実測として追加する。",
+  "authors": [
+    {
+      "name": "Unjuno",
+      "orcid": null
+    }
+  ],
+  "keywords": [
+    "CRL freshness",
+    "revocation checking",
+    "RFC 3161 renewal",
+    "incident reproducibility"
+  ],
+  "license": "CC-BY-4.0",
+  "paper_asset": "paper.pdf",
+  "paper_sha256": "d63876e1f83c2b6bd39c48ef7b7779c88679f3b95faaedbc29d31dc6194d5676",
+  "paper_size_bytes": 162563,
+  "paper_source_path": "paper.pdf",
+  "schema_version": 1,
+  "source_claim": {
+    "commit": "256e4743963a3ffb955b017bb3ecb1d91316e602",
+    "repository": "Unjuno/openpreprint-kit-robustness-eval"
+  },
+  "time_attestation": null,
+  "title": "OpenPreprint Kitにおける改変検出・時刻証拠・障害復旧の実証評価 — 追加実験（v2）",
+  "version": "v2.0.1"
+}
