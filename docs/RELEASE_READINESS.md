@@ -1,6 +1,6 @@
 # OpenPreprint Kit — 現在の受入状態
 
-> **Live status update — 2026-11-29:** The authoritative fixed-source snapshot is [ACCEPTANCE_SNAPSHOT_2026-11-29.md](ACCEPTANCE_SNAPSHOT_2026-11-29.md), based on main `39346736ce91371b957ddbfa9b045cbe9409494f`. The second paper repository exists and has three published immutable releases; the old paragraphs below that say the second repository or Releases are missing are historical and superseded. Current formal status remains G0–G3 PARTIAL, G4–G7 BLOCKED, and P4 NO-GO. No Kit v1.0.0 Release exists.
+> **Live status update — 2026-11-29:** The authoritative fixed-source snapshot is [ACCEPTANCE_SNAPSHOT_2026-11-29.md](ACCEPTANCE_SNAPSHOT_2026-11-29.md), based on main `39346736ce91371b957ddbfa9b045cbe9409494f`. The second paper repository exists and has three published immutable releases; the old paragraphs below that say the second repository or Releases are missing are historical and superseded. Current formal status remains G0–G5 PARTIAL, G6–G7 BLOCKED, and P4 NO-GO. Kit PR #80 head `07c78948873f91b5ac66241823ec9e27d3a3a5d2` has all CI successful, but remains unmerged without an approving review; its evidence does not silently promote any gate. No Kit v1.0.0 Release exists.
 
 The frozen acceptance criteria are in [V1_ACCEPTANCE.md](V1_ACCEPTANCE.md). This notice corrects the current-state narrative without changing a gate or rewriting prior evidence.
 
