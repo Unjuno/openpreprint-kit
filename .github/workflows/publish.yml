@@ -56,6 +56,8 @@ jobs:
           python scripts/prepare_release.py --output dist --repository "$PREPRINT_REPOSITORY" --commit "$PREPRINT_COMMIT"
           python scripts/verify_release.py dist
           python scripts/citation_validation.py dist
+      - name: Require a stable SemVer version for the public Release
+        run: python scripts/release_tag.py dist/preprint-metadata.json
       - name: Verify publication preconditions through GitHub API
         env:
           GH_TOKEN: ${{ secrets.OPK_ADMIN_READ_TOKEN }}
