@@ -1,6 +1,54 @@
 # OpenPreprint Kit — 現在の受入状態
 
-更新日: **2026-11-22 JST**。基準は [V1_ACCEPTANCE.md](V1_ACCEPTANCE.md) (G0–G7)。完了台帳は [Issue #5](https://github.com/Unjuno/openpreprint-kit/issues/5)。
+更新日: **2026-11-27 JST**。基準は [V1_ACCEPTANCE.md](V1_ACCEPTANCE.md) (G0–G7)。完了台帳は [Issue #5](https://github.com/Unjuno/openpreprint-kit/issues/5)。
+
+## Latest fixed-main checkpoint — PR #77
+
+PR #77 head `b732223c8adedaca8b0485d04faade5d692b27d6` merged at 2026-11-27T11:55:39Z as main `fa279d43a1d68fb227d94194cbee739c10d2afef`. The exact-main required CI is 7/7 success. Self-application run `45994944364` and RFC 3161/fresh-runner run `45994952803` also pass on this exact main SHA. Full run links, skip reasons, artifact hashes, and the G0-G7 readback are in [post-merge quality evidence](QUALITY_EVIDENCE_POSTMERGE_PR77_2026-11-27.md) and [Issue #5](https://github.com/Unjuno/openpreprint-kit/issues/5).
+
+First-paper repository Actions were then restricted to four exact SHA-pinned actions with SHA pinning required. Self-application run `45995399456` and timestamp/fresh-runner run `45995415275` succeeded on paper main `6ec47ec58e9dc733956615343aad16caca4bb8ee`. The pre-existing first-paper immutable Releases remain unchanged. The second-paper repository has no Releases; its PR #2 still needs a technical review after the pending same-owner invitation is accepted. Secret `OPK_ADMIN_READ_TOKEN` is already configured in the kit and robustness-eval repositories; the collaborator invitation is a separate workflow.
+
+**Current G0-G7 decision:** G0 technical evidence PASS, with exact-checkpoint owner acknowledgement still to record; G1 PARTIAL; G2 BLOCKED; G3-G5 PARTIAL; G6 BLOCKED; G7 PARTIAL. Same-owner account use is technical evidence only. Independence remains `UNPROVEN` and separate custody is not claimed. **P4 / toolkit v1.0.0 remains NO-GO.** No second-paper or toolkit Release was created.
+
+## Historical checkpoint — PR #72 merge on main `e804fb2105479cfd37ff1bd1117bcc03a7547ffd` (superseded by the latest checkpoint above)
+
+PR #72 (`8387a9e18eddfd397e2db75f266d6f0f9d46954d`) merged to main as `e804fb2105479cfd37ff1bd1117bcc03a7547ffd`. The exact-main required CI is 7/7 success. Windows, macOS, Linux audit, and Python 3.12 each report 441 tests, 435 pass, 6 platform-specific skips, 0 failures/errors; Python 3.10 reports 441, 428 pass, 13 skips, 0 failures/errors. Self-application and live RFC 3161/fresh-runner workflows also pass on this exact main SHA. Full run links, skip names/reasons, artifact hashes, limits, and current gate findings are in [post-merge quality evidence](QUALITY_EVIDENCE_POSTMERGE_PR72_2026-11-27.md) and the [Issue #5 evidence ledger](https://github.com/Unjuno/openpreprint-kit/issues/5).
+
+### G0–G7 decision at the historical PR #72 checkpoint
+
+| Gate | 2026-11-27 result | Current evidence and remaining condition |
+|---|---|---|
+| G0 Code and distribution quality | **TECHNICAL PASS on main `e804fb2105479cfd37ff1bd1117bcc03a7547ffd`; owner evidence readback pending** | Exact-main CI, self-application, and RFC 3161/fresh-runner checks passed. The owner must confirm the exact evidence before formal PASS. |
+| G1 Owner setup and reuse | **PARTIAL / NOT PASS** | Kit ruleset has required CI but 0 required approving reviews. First-paper main requires 0 reviews and has administrator enforcement off. Second repo requires 1 review and all required CI; its same-owner Write invitation remains pending (effective permission is read). |
+| G2 Publication and version control | **BLOCKED** | First-paper immutable v1/v2 remain present; robustness-eval currently has 0 Releases. Only 2 of 4 real-paper Releases exist. |
+| G3 TSA and negative tests | **PARTIAL / NOT PASS** | Current first-paper v1 candidate timestamp and fresh-runner restore passed. Required evidence over all four published versions is incomplete; TSA accuracy is unknown. |
+| G4 Public observation | **PARTIAL / NOT PASS** | First-paper observations remain; no second-paper Release is available to observe. Independence is `UNPROVEN`. |
+| G5 Replication and offline restore | **PARTIAL / NOT PASS** | First-paper preservation evidence remains; second-paper assets are absent. Independent custody is not claimed. |
+| G6 Human editorial and privacy decisions | **BLOCKED** | `reviews/record.json` has no human review, correction, or withdrawal events. |
+| G7 Security and evidence lifetime | **PARTIAL / NOT PASS** | Kit and robustness-eval Actions are restricted to selected full-SHA references with pinning required. First-paper Actions still allow all actions and do not require SHA pinning. Human security/privacy and evidence-lifecycle decisions remain. |
+
+**P4 / toolkit v1.0.0 remains NO-GO.** The `OPK_ADMIN_READ_TOKEN` secret name is present in the kit and robustness-eval repositories; its value was not read. The same-owner accounts are not independent reviewers or custodians. No second-paper Release or toolkit v1.0.0 Release was created. Existing immutable paper Releases remain unchanged.
+
+## 2026-11-26 live gate refresh (historical pre-merge readback)
+
+Read back from GitHub on 2026-11-26. No PR has merged since the fixed main SHA `76d7d4c6fd551bb48048d774e47191ba26274cbf`. PR #72 is documentation/evidence only, OPEN and unmerged, at exact head `46484a436673e6274cffde0123c8e94544bee781`; its PR-event Quality (`45759875361`), Validate (`45759875243`), Lean (`45759875301`), CodeQL Python (`45759875404`), and GitHub CodeQL (`139709770561`) checks pass. The exact-head Windows, macOS, audit, Python 3.10/3.12 counts and skip reasons are recorded in the [2026-11-26 Issue #5 CI readback](https://github.com/Unjuno/openpreprint-kit/issues/5#issuecomment-7183618797); raw logs and the machine-readable check-run readback are preserved in Gold Candidate progress archive r74, whose SHA-256 is `1663cc6c5839ff95512b06f540e5471a70af836ad99fe8f005ac54bd00e67b4d`.
+
+The two public paper repositories now resolve and both declare `Unjuno/openpreprint-kit` as their GitHub template source: `openpreprint-kit-paper` and `openpreprint-kit-robustness-eval`. Immutable Releases are enabled in both repositories and in the toolkit repository (`enabled=true`, `enforced_by_owner=false`). Their branch protections differ: the first paper repo has strict required checks but requires **0** approving reviews and does not enforce rules for administrators; the robustness-eval repo requires **1** approving review, strict required checks, conversation resolution, and administrator enforcement. The robustness-eval repository has no Releases yet. PR #2 (v1) is OPEN at `290868b058333f3f4118822ec8b9c07cde73b8bc`, all seven required contexts pass, but it has zero reviews and remains `REVIEW_REQUIRED`; its same-owner Write invitation is still pending. PR #5 (v2 root configuration) remains OPEN/DRAFT and stacked on PR #2. Any same-owner account review is technical workflow evidence only, not independent review.
+
+### Current G0–G7 status
+
+| Gate | 2026-11-26 result | Current evidence and remaining condition |
+|---|---|---|
+| G0 Code and distribution quality | **TECHNICAL PASS on main `76d7d4c6fd551bb48048d774e47191ba26274cbf`** | Required main checks, self-application, and timestamp/fresh-runner checks pass on the fixed source. PR #72 documentation CI also passes. This does not complete other gates. |
+| G1 Owner setup and reuse | **PARTIAL / NOT PASS** | Two public template-derived paper repos exist and Immutable Releases are enabled. The first paper repo still has 0 required approvals and does not enforce administrators; the second repo's required review invitation is pending and PR #2 is not reviewed. Record the exact rule readbacks before considering G1 complete. |
+| G2 Publication and version control | **BLOCKED** | The first paper repo has its existing immutable v1/v2. The second repo has no releases; its v1/v2 candidates are not published. Thus only 2 of the required 4 real-paper Releases are currently available. Existing immutable Releases remain unchanged. |
+| G3 TSA and negative tests | **PARTIAL / NOT PASS** | The v1 candidate has exact-head no-publication stamp/fresh-runner evidence, and local negative-suite recomputation is 20 cases / 23 judgments / 0 false accepts. The required evidence across all four actual published versions is incomplete. |
+| G4 Public observation | **PARTIAL / NOT PASS** | Observation evidence for the two existing paper versions remains; the second paper has no public Release to observe. Independence remains `UNPROVEN`. |
+| G5 Replication and offline restore | **PARTIAL / NOT PASS** | Existing v1/v2 preservation evidence remains; the second paper has no published assets to anonymously download and restore. Separate management is not claimed. |
+| G6 Human editorial and privacy decisions | **BLOCKED** | `reviews/record.json` still has `events: []`. No real human review record, correction exercise, or withdrawal exercise is present. The human handoff package is not a substitute for those records. |
+| G7 Security and evidence lifetime | **PARTIAL / NOT PASS** | Kit and robustness-eval Actions policies have selected pinned actions and mandatory SHA pinning. The first paper repo still reports `allowed_actions=all` and `sha_pinning_required=false`. A fixed-SHA owner security/privacy decision, lifecycle responsibility, and maintenance confirmation are also outstanding. |
+
+**P4 / toolkit v1.0.0 remains NO-GO.** Independence is `UNPROVEN`; no independent review, audit, or custody is claimed. No toolkit Release or second-paper Release was created in this refresh. The owner-authorized second-paper release sequence remains conditional on the PR #2 review and merge, v1 publication and verification, then rebasing/testing/publishing v2. Formal G0–G7 and final issuance approval remain required for toolkit v1.0.0.
 
 **現在の判定: P4 / toolkit v1.0.0 = NO-GO。** 2026-11-21 の所有者記録はG0–G7全PASS（独立性 `UNPROVEN`）として保持するが、今回のGitHub現状読戻しでG1/G2と食い違う状態が確認された。G6の人間レビュー・訂正演習・撤回演習の個別証拠も見つかっていない。これらが解決するまで、過去のPASS記録を現状PASSとして再利用しない。
 
