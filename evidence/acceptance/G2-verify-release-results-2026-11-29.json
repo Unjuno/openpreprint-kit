@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "observed_at_local": "2026-11-29",
+  "operator_context": "Owner-managed authenticated GitHub CLI; read-only verification; same-owner accounts are not independent reviewers.",
+  "command": "gh release verify <tag> --repo <owner/repository>",
+  "results": [
+    {"repository": "Unjuno/openpreprint-kit-paper", "tag": "v1", "release_id": "444659219", "source_sha": "804cb76a4cf5eea65349fc7a8f01e2ce00e1176d", "immutable": true, "assets": 11, "result": "PASS"},
+    {"repository": "Unjuno/openpreprint-kit-paper", "tag": "v2", "release_id": "445442340", "source_sha": "6ec47ec58e9dc733956615343aad16caca4bb8ee", "immutable": true, "assets": 11, "result": "PASS"},
+    {"repository": "Unjuno/openpreprint-kit-robustness-eval", "tag": "v1.0.0", "release_id": "461207056", "source_sha": "dedadf3b2e95090439ec10aa4298db72f048caab", "immutable": true, "assets": 11, "result": "PASS"},
+    {"repository": "Unjuno/openpreprint-kit-robustness-eval", "tag": "v2.0.0", "release_id": "461231538", "source_sha": "5b98226d9b7847f08edb8674a89a7f9ae9f1d8e0", "immutable": true, "assets": 11, "result": "PASS"},
+    {"repository": "Unjuno/openpreprint-kit-robustness-eval", "tag": "v2.0.1", "release_id": "461370251", "source_sha": "256e4743963a3ffb955b017bb3ecb1d91316e602", "immutable": true, "assets": 11, "result": "PASS"}
+  ],
+  "summary": {"published_immutable_releases_verified": 5, "assets_attested_and_verified": 55, "failed_or_draft_release_included": false},
+  "evidence_scope": "GitHub release attestation/signature verification and asset digests as observed by gh CLI. This is not a human editorial decision, independent observation, or durable custody proof."
+}

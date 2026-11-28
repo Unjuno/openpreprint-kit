@@ -1,0 +1,76 @@
+{
+  "schema_version": 1,
+  "observed_at_utc": "2026-11-28T16:38:27.2549598+00:00",
+  "fixed_kit_main_sha": "39346736ce91371b957ddbfa9b045cbe9409494f",
+  "runtime": {
+    "environment": "Ubuntu 24.04 WSL 2 runtime on the same Windows 11 physical host",
+    "python": "3.12.3",
+    "openssl": "OpenSSL 3.0.13",
+    "asn1crypto": "1.5.1",
+    "physically_independent_host": false
+  },
+  "command": "scripts/timestamp.py verify <restored bundle> --policy timestamp-policy.json",
+  "results": [
+    {
+      "release": "paper-v1",
+      "status": "VERIFIED",
+      "tsa_time_utc": "2026-11-14T04:39:35+09:00",
+      "openssl": "OpenSSL 3.0.13 30 Jan 2024 (Library: OpenSSL 3.0.13 30 Jan 2024)",
+      "revocation": "checked_current_crls_full_chain",
+      "ca_sha256": "2151b61137ffa86bf664691ba67e7da0b19f98c758e3d228d5d8ebf27e044438",
+      "policy_oid": "1.2.3.4.1",
+      "verified_at_utc": "2026-11-29T01:31:22.912566+09:00"
+    },
+    {
+      "release": "paper-v2",
+      "status": "VERIFIED",
+      "tsa_time_utc": "2026-11-15T01:48:12+09:00",
+      "openssl": "OpenSSL 3.0.13 30 Jan 2024 (Library: OpenSSL 3.0.13 30 Jan 2024)",
+      "revocation": "checked_current_crls_full_chain",
+      "ca_sha256": "2151b61137ffa86bf664691ba67e7da0b19f98c758e3d228d5d8ebf27e044438",
+      "policy_oid": "1.2.3.4.1",
+      "verified_at_utc": "2026-11-29T01:31:23.732489+09:00"
+    },
+    {
+      "release": "robustness-v1.0.0",
+      "status": "VERIFIED",
+      "tsa_time_utc": "2026-11-28T10:12:26+09:00",
+      "openssl": "OpenSSL 3.0.13 30 Jan 2024 (Library: OpenSSL 3.0.13 30 Jan 2024)",
+      "revocation": "checked_current_crls_full_chain",
+      "ca_sha256": "2151b61137ffa86bf664691ba67e7da0b19f98c758e3d228d5d8ebf27e044438",
+      "policy_oid": "1.2.3.4.1",
+      "verified_at_utc": "2026-11-29T01:31:24.38123+09:00"
+    },
+    {
+      "release": "robustness-v2.0.0",
+      "status": "VERIFIED",
+      "tsa_time_utc": "2026-11-28T11:04:20+09:00",
+      "openssl": "OpenSSL 3.0.13 30 Jan 2024 (Library: OpenSSL 3.0.13 30 Jan 2024)",
+      "revocation": "checked_current_crls_full_chain",
+      "ca_sha256": "2151b61137ffa86bf664691ba67e7da0b19f98c758e3d228d5d8ebf27e044438",
+      "policy_oid": "1.2.3.4.1",
+      "verified_at_utc": "2026-11-29T01:31:25.66417+09:00"
+    },
+    {
+      "release": "robustness-v2.0.1",
+      "status": "VERIFIED",
+      "tsa_time_utc": "2026-11-28T16:03:54+09:00",
+      "openssl": "OpenSSL 3.0.13 30 Jan 2024 (Library: OpenSSL 3.0.13 30 Jan 2024)",
+      "revocation": "checked_current_crls_full_chain",
+      "ca_sha256": "2151b61137ffa86bf664691ba67e7da0b19f98c758e3d228d5d8ebf27e044438",
+      "policy_oid": "1.2.3.4.1",
+      "verified_at_utc": "2026-11-29T01:31:25.050496+09:00"
+    }
+  ],
+  "passed": 5,
+  "failed": 0,
+  "scope": "Five RFC 3161 verifications including four formal target versions and retained robustness v2.0.0, against saved offline bundle inputs. Runtime differs from Windows but shares the same physical host; not independent physical evidence.",
+  "trust": {
+    "policy_sha256": "5747712425fb32913e08d931ff17be41ab5939e1d2fa8f8407850fa06d539fed",
+    "ca_sha256": "2151b61137ffa86bf664691ba67e7da0b19f98c758e3d228d5d8ebf27e044438",
+    "crl_sha256": "13d85acc0dd6a7ace445822b09dcba0de4236e84d60494dcbe6d7a6c97031935",
+    "crl_last_update": "2026-09-18T10:30:55Z",
+    "crl_next_update": "2027-09-18T10:30:55Z"
+  },
+  "tool_lock_sha256": "ec3b290484d0ea019d2bead5d4dddb04a0baae7efd02f1831fa881da4d6c4c67"
+}

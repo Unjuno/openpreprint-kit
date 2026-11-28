@@ -1,24 +1,33 @@
-# Operator packages — current acceptance basis
+# Operator handoffs — current acceptance state
 
-The controlling acceptance table is [`docs/V1_ACCEPTANCE.md`](../V1_ACCEPTANCE.md), based on the owner-approved 2026-11-21 criteria. The detailed G4/G5/G7 files in this directory were written for the stricter 2026-11-14 process. They remain useful as optional high-assurance procedures, but any requirement in them for a separate independent witness, separately managed custodian, or external auditor is **not a current mandatory gate**. Do not represent optional independence as achieved unless it is evidenced; otherwise record `UNPROVEN`.
+The controlling requirements are [`docs/V1_ACCEPTANCE.md`](../V1_ACCEPTANCE.md). The latest fixed-source status is [`docs/ACCEPTANCE_SNAPSHOT_2026-11-29.md`](../ACCEPTANCE_SNAPSHOT_2026-11-29.md), based on Kit main `39346736ce91371b957ddbfa9b045cbe9409494f`. Current evidence and decisions are tracked in [Issue #5](https://github.com/Unjuno/openpreprint-kit/issues/5).
 
-Current mission constraint: where a handoff calls for an **independent** human reviewer, observer, custodian, or auditor, that work must be performed by an actual separate person. AI review and a second GitHub account managed by the same owner do not satisfy it. If a gate permits owner-operated work under the 2026-11-21 baseline, report the work as owner-operated and keep independence or separate custody `UNPROVEN`; do not relabel it as independent.
+The two public paper repositories exist and declare the Kit as their template source:
 
-Current scope by gate:
+- [`openpreprint-kit-paper`](https://github.com/Unjuno/openpreprint-kit-paper)
+- [`openpreprint-kit-robustness-eval`](https://github.com/Unjuno/openpreprint-kit-robustness-eval)
 
-- **G1:** [G1-owner-settings.md](G1-owner-settings.md) records current live readbacks and the owner actions needed for template reuse, immutable settings, branch protection, required CI/human review, and a second actual paper repository. No permission or publication operation has been carried out by creating this package.
+Their live repository settings and all five currently published Immutable Releases are listed in the snapshot. Do not use older handoff text saying that the second repository or its Releases are missing.
 
-- **G4:** the owner may perform anonymous retrieval and create signed, timestamped observation records. The records must cover every formal G2 release and its assets. Record independence as `UNPROVEN` when the operator is the owner.
-- **G5:** the owner may manage the mirror and offline recovery. Preserve immutable copies, separately recorded fingerprints, and successful GitHub-disconnected restore evidence for the formal target set. Do not claim separate custody unless demonstrated.
-- **G6:** actual human rights/consent/COI decisions, one human review process, one correction exercise, and one withdrawal exercise remain required. AI-generated statements or tests do not substitute for these actions. [G6-human-review.md](G6-human-review.md) is the operative checklist; the [fixed-input handoff](G6-human-review-handoff-2026-11-22.md) and [SHA-256 inventory](../../evidence/acceptance/G6-review-inputs-2026-11-22.json) identify exact current review materials without pretending the reviewer has acted.
-- **G7:** an owner-confirmed security/privacy assessment against the fixed source SHA, lifecycle/renewal/recovery exercises, no unresolved critical/high finding, and an assigned maintenance owner are required. A third-party external audit is optional under the current criteria; never claim one unless it was actually performed.
-- **G2 dependency:** G4/G5 evidence must match the formal four-release target. Current Readiness reports that `openpreprint-kit-robustness-eval` is not resolvable; resolve that discrepancy before using the old target list.
+## Current gates
+
+- **G1 — PARTIAL:** template-derived public repositories and immutable setting are verified; the Kit and first-paper branch rules still require zero approving reviews, and first-paper admin enforcement is off.
+- **G2 — PARTIAL:** five published Immutable Releases and 55 attested assets verify; owner confirmation against the full acceptance checklist remains.
+- **G4 — BLOCKED:** complete formal public-observation records for all four target versions. Same-owner account activity is not independent observation.
+- **G5 — BLOCKED:** retain the four target offline restores and separate fingerprints, and complete the named-owner retention/maintenance readback. No independently managed custody is claimed.
+- **G6 — BLOCKED:** a real human must complete the editorial/privacy decision, review, synthetic correction exercise, and synthetic withdrawal exercise. See the [2026-11-29 handoff](G6-human-review-handoff-2026-11-29.md).
+- **G7 — BLOCKED:** owner confirmation of fixed-SHA security/privacy assessment, lifecycle/recovery evidence, residual risks, and ongoing maintenance responsibility is still needed. External audit is optional under the current formal criteria and is not claimed.
+
+Do not treat a handoff document as evidence that the requested human action occurred. `Unjuno` and `TAKAYASHIKIJUNYA` have the same owner; that activity can test technical paths but cannot be counted as independent human review/audit/custody.
+
+## Procedures
 
 | File | Use |
 |---|---|
-| [G4-independent-observer.md](G4-independent-observer.md) | Optional independent observation procedure; current owner-operated route is described above. |
-| [G5-custodian-handover.md](G5-custodian-handover.md) | Optional separately managed custody procedure; current owner-operated route is described above. |
-| [G6-human-review.md](G6-human-review.md) | Required human editorial/privacy actions and record contents. |
-| [G7-external-audit.md](G7-external-audit.md) | Optional external assessment procedure; current owner-confirmed G7 scope is described above. |
-
-Current fixed main SHA: `838a622ff14db35f93c5dca1a5028a8a1a6efe67`. Current live verdict: **P4 = NO-GO**. G1/G2 were not reconfirmed because the second publication repository cannot currently be resolved; G6 source records are absent or unknown. See [RELEASE_READINESS.md](../RELEASE_READINESS.md) and [Issue #5](https://github.com/Unjuno/openpreprint-kit/issues/5#issuecomment-7066518649).
+| [G1-owner-settings.md](G1-owner-settings.md) | Historical setup instructions; see the current snapshot for readback. |
+| [G2-optionA-publication.md](G2-optionA-publication.md) | Historical first-publication handoff; all current published releases are listed in the snapshot. |
+| [G4-independent-observer.md](G4-independent-observer.md) | Optional independent observation procedure; do not claim independence without evidence. |
+| [G5-custodian-handover.md](G5-custodian-handover.md) | Optional separate custodian procedure; the formal GitHub-only and offline-restore criteria remain in force. |
+| [G6-human-review.md](G6-human-review.md) | Formal human decisions and exercise requirements. |
+| [G6-human-review-handoff-2026-11-29.md](G6-human-review-handoff-2026-11-29.md) | Current fixed-input package ready for a real reviewer. |
+| [G7-external-audit.md](G7-external-audit.md) | Optional external-audit procedure; the current formal G7 can be owner-confirmed. |

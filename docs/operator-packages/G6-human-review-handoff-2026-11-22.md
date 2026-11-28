@@ -1,5 +1,7 @@
 # G6 人間レビュー引渡し依頼 — 2026-11-22 固定候補
 
+> **Superseded handoff:** The fixed SHA and second-paper release statements below are historical and must not be used as current inputs. Use [G6-human-review-handoff-2026-11-29.md](G6-human-review-handoff-2026-11-29.md) and its matching 2026-11-29 inventory, anchored at Kit main `39346736ce91371b957ddbfa9b045cbe9409494f`.
+
 **状態:** 引渡し用パッケージのみ。人間レビュー・同意判断・訂正演習・撤回演習は未実施。`reviews/record.json` の `events` は空のまま保持する。
 
 ## 固定対象

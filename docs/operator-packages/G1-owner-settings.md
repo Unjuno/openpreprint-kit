@@ -1,5 +1,7 @@
 # G1 owner settings and reuse — action package
 
+> **Superseded readback:** This package's table below is from 2026-11-21. The current repository, branch protection, Immutable Releases, and open review state are in [ACCEPTANCE_SNAPSHOT_2026-11-29.md](../ACCEPTANCE_SNAPSHOT_2026-11-29.md). Both paper repositories now exist and name the Kit as their template source. Current G1 remains PARTIAL because the Kit and first-paper branch rules have zero required approvals and first-paper administrator enforcement is disabled. Do not use this older table as current state.
+
 **Status:** NOT CONFIRMED. Readback snapshot: 2026-11-21 UTC (2026-11-22 JST). This package is a handoff for owner decisions; it changes no settings and publishes no repository.
 
 ## Controlling acceptance condition

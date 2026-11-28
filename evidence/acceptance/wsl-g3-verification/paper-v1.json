@@ -1,0 +1,18 @@
+{
+  "accuracy_microseconds": null,
+  "authorship": "NOT_PROVEN",
+  "basis": "caller_supplied_trust_policy",
+  "ca_sha256": "2151b61137ffa86bf664691ba67e7da0b19f98c758e3d228d5d8ebf27e044438",
+  "certificate_time_policy": "valid_now_and_at_token_time",
+  "existence_upper_bound_utc": null,
+  "manifest_sha256": "4ec582630b9ca2ae7c8f9abe519ff613e852840bb5c75856eef15bccedbb9f56",
+  "message_sha256": "4ec582630b9ca2ae7c8f9abe519ff613e852840bb5c75856eef15bccedbb9f56",
+  "openssl": "OpenSSL 3.0.13 30 Jan 2024 (Library: OpenSSL 3.0.13 30 Jan 2024)",
+  "policy_oid": "1.2.3.4.1",
+  "public_availability": "NOT_PROVEN",
+  "revocation": "checked_current_crls_full_chain",
+  "schema_version": 1,
+  "status": "VERIFIED",
+  "tsa_time_utc": "2026-11-13T19:39:35+00:00",
+  "verified_at_utc": "2026-11-28T16:31:22.912566+00:00"
+}

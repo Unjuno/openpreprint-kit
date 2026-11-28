@@ -1,8 +1,15 @@
 # OpenPreprint Kit — 現在の受入状態
 
-更新日: **2026-11-27 JST**。基準は [V1_ACCEPTANCE.md](V1_ACCEPTANCE.md) (G0–G7)。完了台帳は [Issue #5](https://github.com/Unjuno/openpreprint-kit/issues/5)。
+> **Live status update — 2026-11-29:** The authoritative fixed-source snapshot is [ACCEPTANCE_SNAPSHOT_2026-11-29.md](ACCEPTANCE_SNAPSHOT_2026-11-29.md), based on main `39346736ce91371b957ddbfa9b045cbe9409494f`. The second paper repository exists and has three published immutable releases; the old paragraphs below that say the second repository or Releases are missing are historical and superseded. Current formal status remains G0–G3 PARTIAL, G4–G7 BLOCKED, and P4 NO-GO. No Kit v1.0.0 Release exists.
 
-## Latest fixed-main checkpoint — PR #77
+The frozen acceptance criteria are in [V1_ACCEPTANCE.md](V1_ACCEPTANCE.md). This notice corrects the current-state narrative without changing a gate or rewriting prior evidence.
+
+<details>
+<summary>Historical dated snapshots through 2026-11-27 (not current readbacks)</summary>
+
+更新日: **2026-11-27 JST**。基準は [V1_ACCEPTANCE.md](V1_ACCEPTANCE.md) (G0–G7)。完了台帳は [Issue #5](https://github.com/Unjuno/openpreprint-kit/issues/5)。以下の記録は2026-11-27以前の各時点の記録であり、2026-11-29の現在状態として使わない。
+
+## Historical fixed-main checkpoint — PR #77 (2026-11-27; superseded)
 
 PR #77 head `b732223c8adedaca8b0485d04faade5d692b27d6` merged at 2026-11-27T11:55:39Z as main `fa279d43a1d68fb227d94194cbee739c10d2afef`. The exact-main required CI is 7/7 success. Self-application run `45994944364` and RFC 3161/fresh-runner run `45994952803` also pass on this exact main SHA. Full run links, skip reasons, artifact hashes, and the G0-G7 readback are in [post-merge quality evidence](QUALITY_EVIDENCE_POSTMERGE_PR77_2026-11-27.md) and [Issue #5](https://github.com/Unjuno/openpreprint-kit/issues/5).
 
@@ -52,7 +59,7 @@ The two public paper repositories now resolve and both declare `Unjuno/openprepr
 
 **現在の判定: P4 / toolkit v1.0.0 = NO-GO。** 2026-11-21 の所有者記録はG0–G7全PASS（独立性 `UNPROVEN`）として保持するが、今回のGitHub現状読戻しでG1/G2と食い違う状態が確認された。G6の人間レビュー・訂正演習・撤回演習の個別証拠も見つかっていない。これらが解決するまで、過去のPASS記録を現状PASSとして再利用しない。
 
-## Latest fixed-main checkpoint — PR #70
+## Historical fixed-main checkpoint — PR #70 (2026-11-22; superseded)
 
 PR #70's owner-approved head `85aa296088c3c3a4d30804c619c5375d74174647` merged to main as `74f88fdb7942c793185600e4d2fcd076944596e1`. All seven required CI categories passed on that exact SHA. The self-application and live RFC 3161/fresh-runner workflows also passed on the same SHA, without publishing any Release. Detailed run IDs, 441-test per-job totals and skip reasons are in [post-merge quality evidence](QUALITY_EVIDENCE_POSTMERGE_PR70_2026-11-22.md).
 
@@ -139,3 +146,5 @@ PR #68 merge後、main `838a622ff14db35f93c5dca1a5028a8a1a6efe67` で必須CI、
 - 2026-11-22: 第2repoが現行GitHub一覧・APIで解決できないこと、G6原証拠が不明であることをライブ読戻しに基づき追記。過去のG1/G2 PASSを現状PASSに転記しないよう訂正。
 
 - 2026-11-22 follow-up: PR #67 merge advanced fixed main to `a3a9972d812c73a826581686091a80c557c80b0d`. Required CI, self-application and live RFC 3161/fresh-runner verification passed on that exact SHA. Results: [`main-a3a9972-postmerge-recheck-2026-11-22.json`](../evidence/acceptance/main-a3a9972-postmerge-recheck-2026-11-22.json), SHA-256 `62c60870f646c645704e605ffda47e5449d490ac1b27f30a8ca17d493df0f327`. PDF SHA-256 `9fff4da2ca127f299b262026efff430959b9e7b56f8f403871a4d671021859a5`; preservation ZIP SHA-256 `b6bf40f6ff19d326cd2d9af990d3b34d9ed5b45dae46ce7fb1d662cc59a52432`. The corresponding local Gold Candidate ZIP SHA-256 is `e7d9478fcc673215d7749b264867474e0b4e9f365c0121e365aa5c5ef0fc5d96`; previous archives remain retained. No Release was created.
+
+</details>

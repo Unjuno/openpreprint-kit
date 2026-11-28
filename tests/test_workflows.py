@@ -66,6 +66,26 @@ class WorkflowTests(unittest.TestCase):
                     if "run" in step:
                         self.assertNotIn("${{", step["run"])
 
+    def test_published_release_readback_is_two_runner_read_only(self):
+        path = ROOT / '.github/workflows/verify-published-releases.yml'
+        self.assertTrue(path.is_file())
+        text = path.read_text(encoding='utf-8')
+        workflow = yaml.load(text, Loader=yaml.BaseLoader)
+        self.assertEqual(set(workflow['on']), {'pull_request', 'workflow_dispatch'})
+        self.assertEqual(workflow['permissions'], {'contents':'read','attestations':'read'})
+        self.assertEqual(set(workflow['jobs']), {'retrieve-and-verify','fresh-offline-restore'})
+        jobs = workflow['jobs']
+        for job in jobs.values():
+            self.assertLessEqual(int(job['timeout-minutes']), 15)
+        self.assertEqual(jobs['fresh-offline-restore']['needs'], ['retrieve-and-verify'])
+        self.assertIn('authorization_header_sent', text)
+        self.assertIn('gh release verify', text)
+        self.assertIn('sha256sum -c', text)
+        self.assertIn('HTTP_PROXY: http://127.0.0.1:9', text)
+        self.assertNotIn('contents: write', text)
+        self.assertNotIn('gh release create', text)
+        self.assertNotIn('gh release edit', text)
+
     def test_lean_installer_is_version_pinned_and_checksum_verified(self):
         text = (ROOT / '.github/workflows/lean-proofs.yml').read_text(encoding='utf-8')
         self.assertNotIn('elan/master/elan-init.sh', text)

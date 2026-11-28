@@ -1,0 +1,35 @@
+{
+  "command": "negative-suite-runner-r117.py",
+  "committed_runner_sha256": "cedd882229ff71bd75746a14133b9fe7b7d0ebdbffa6e528e51bc3190d52c596",
+  "environment": {
+    "asn1crypto": "1.5.1",
+    "openssl": "3.0.13",
+    "os": "Ubuntu WSL 2 on Windows 11",
+    "physical_host_count": 1,
+    "physically_independent": false,
+    "python": "3.12.3"
+  },
+  "input_release": "Unjuno/openpreprint-kit-paper v1 Release 444659219",
+  "limitations": "Same physical machine as Windows run; demonstrates Ubuntu runtime behavior but not independent physical environment or custody.",
+  "manifest_sha256": "4ec582630b9ca2ae7c8f9abe519ff613e852840bb5c75856eef15bccedbb9f56",
+  "observed_at_utc": "2026-11-28T16:43:15.6332055+00:00",
+  "runner_copy_note": "Committed reproducibility copy is LF-normalized and has trailing blank lines removed; Python source statements are unchanged from the executed runner input.",
+  "runner_input_sha256": "317efc94690e29c80a284e74730efb97043b93e1fe726167e65ccc1ec235b9a8",
+  "schema_version": 1,
+  "setup_attempts_not_counted": [
+    "First WSL attempt stopped before completion because test harness copies ca.pem/crl.pem from policy directory while the shared policy referenced nested trust/ paths; rerun used the same CA fingerprint and policy OID with adjusted relative paths only.",
+    "A wrapper invocation had incorrect PowerShell-to-Bash pipeline status expansion; final recorded run was rerun without a pipeline and exited 0."
+  ],
+  "suite": {
+    "declared_cases": 20,
+    "failed": 0,
+    "false_accepts": 0,
+    "github_writes": 0,
+    "judgments": 23,
+    "network_tsa_requests": 0,
+    "passed": 23,
+    "process_exit_code": 0,
+    "reason_assertions": 10
+  },
+  "tested_kit_main_sha": "39346736ce91371b957ddbfa9b045cbe9409494f"
+}

@@ -1,5 +1,7 @@
 # G2 — 正式4版の現状、実論文B候補、受入手順
 
+> **Historical state below is superseded as of 2026-11-29.** The second paper repository and three immutable Releases now exist. Current live Release IDs, tags, source SHAs, 11-asset counts, `gh release verify` results, and remaining G2 decision are in [ACCEPTANCE_SNAPSHOT_2026-11-29.md](../ACCEPTANCE_SNAPSHOT_2026-11-29.md). No existing immutable Release was changed. Do not follow the old “second repo missing / unpublished” steps as current instructions.
+
 **正式なG2基準は変更しない。G2は現時点で `NOT CONFIRMED`。** この手順書は公開承認ではなく、原稿・権利・設定・実Releaseがそろう前に公開しない。既存Immutable Releaseは削除・変更しない。
 
 ## 正式基準と現在確認できたRelease

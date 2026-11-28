@@ -1,0 +1,223 @@
+name: Verify published paper releases (read-only)
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/verify-published-releases.yml'
+      - 'docs/ACCEPTANCE_SNAPSHOT_2026-11-29.md'
+      - 'evidence/acceptance/**'
+      - 'requirements.lock'
+      - 'requirements-build.lock'
+      - 'scripts/verify_release.py'
+      - 'scripts/verify_research.py'
+      - 'scripts/citation_validation.py'
+      - 'scripts/timestamp.py'
+      - 'scripts/preserve.py'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  attestations: read
+
+jobs:
+  retrieve-and-verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: '3.12'
+      - name: Install hash-pinned verifiers
+        run: |
+          python -m pip install --require-hashes -r requirements-build.lock
+          python -m pip install --require-hashes --no-build-isolation -r requirements.lock
+      - name: Download a pinned FreeTSA trust root and signed CRL
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/opk/trust"
+          curl --proto '=https' --tlsv1.2 --fail --max-time 45 https://freetsa.org/files/cacert.pem -o "$RUNNER_TEMP/opk/trust/ca.pem"
+          echo '2151b61137ffa86bf664691ba67e7da0b19f98c758e3d228d5d8ebf27e044438' "$RUNNER_TEMP/opk/trust/ca.pem" | sha256sum -c -
+          curl --proto '=https' --tlsv1.2 --fail --max-time 45 https://www.freetsa.org/crl/root_ca.crl -o "$RUNNER_TEMP/opk/trust/crl.pem"
+          openssl crl -in "$RUNNER_TEMP/opk/trust/crl.pem" -noout -verify -CAfile "$RUNNER_TEMP/opk/trust/ca.pem"
+          openssl crl -in "$RUNNER_TEMP/opk/trust/crl.pem" -noout -lastupdate -nextupdate | tee "$RUNNER_TEMP/opk/trust/crl-validity.txt"
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          root=Path(os.environ['RUNNER_TEMP'])/'opk'/'trust'
+          policy={'schema_version':1,'tsa_url':'https://freetsa.org/tsr',
+            'ca_file':'ca.pem','ca_sha256':'2151b61137ffa86bf664691ba67e7da0b19f98c758e3d228d5d8ebf27e044438',
+            'crl_file':'crl.pem','policy_oid':'1.2.3.4.1','timeout_seconds':45}
+          (root/'policy.json').write_text(json.dumps(policy,sort_keys=True)+'\n',encoding='utf-8')
+          PY
+      - name: Anonymous asset downloads and read-only Release inventory
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/opk/releases"
+          python - <<'PY'
+          import hashlib, json, os
+          from pathlib import Path
+          from urllib.request import Request, urlopen
+
+          expected=[
+            ('paper-v1','Unjuno/openpreprint-kit-paper','v1','804cb76a4cf5eea65349fc7a8f01e2ce00e1176d','0860b735379fb1b9b223f5d535442dae8421f456d7ae1c6bf6ce8d3141a1b07c'),
+            ('paper-v2','Unjuno/openpreprint-kit-paper','v2','6ec47ec58e9dc733956615343aad16caca4bb8ee','18e13ff3ccf37632cc86ede322687a32d2f959494672df52d78901cabe745805'),
+            ('robustness-v1.0.0','Unjuno/openpreprint-kit-robustness-eval','v1.0.0','dedadf3b2e95090439ec10aa4298db72f048caab','92774a6552f0aaf9315baea6e9672677903a1bdb64288dfddf449cffb3de53a4'),
+            ('robustness-v2.0.0','Unjuno/openpreprint-kit-robustness-eval','v2.0.0','5b98226d9b7847f08edb8674a89a7f9ae9f1d8e0','d63876e1f83c2b6bd39c48ef7b7779c88679f3b95faaedbc29d31dc6194d5676'),
+            ('robustness-v2.0.1','Unjuno/openpreprint-kit-robustness-eval','v2.0.1','256e4743963a3ffb955b017bb3ecb1d91316e602','d63876e1f83c2b6bd39c48ef7b7779c88679f3b95faaedbc29d31dc6194d5676'),
+          ]
+          root=Path(os.environ['RUNNER_TEMP'])/'opk'
+          records=[]
+          def get_json(url):
+              req=Request(url,headers={'Accept':'application/vnd.github+json','User-Agent':'OpenPreprint-Kit-readonly-verifier'})
+              with urlopen(req,timeout=30) as response:
+                  return json.load(response)
+          for label,repo,tag,source_sha,paper_sha in expected:
+              release=get_json(f'https://api.github.com/repos/{repo}/releases/tags/{tag}')
+              assert release['draft'] is False and release.get('immutable') is True, (repo,tag,'release state')
+              ref=get_json(f'https://api.github.com/repos/{repo}/git/ref/tags/{tag}')
+              obj=ref['object']
+              if obj['type']=='tag':
+                  obj=get_json(f'https://api.github.com/repos/{repo}/git/tags/{obj["sha"]}')['object']
+              assert obj['type']=='commit' and obj['sha']==source_sha, (repo,tag,obj)
+              out=root/'releases'/label
+              out.mkdir(parents=True,exist_ok=False)
+              asset_records=[]
+              for asset in release['assets']:
+                  name=asset['name']
+                  assert Path(name).name==name and asset.get('digest','').startswith('sha256:'), (repo,tag,name)
+                  # No Authorization header or token is attached to this public-asset request.
+                  req=Request(asset['browser_download_url'],headers={'User-Agent':'OpenPreprint-Kit-anonymous-asset-check'})
+                  with urlopen(req,timeout=60) as response:
+                      data=response.read()
+                  actual=hashlib.sha256(data).hexdigest()
+                  assert actual==asset['digest'].split(':',1)[1], (repo,tag,name,'digest mismatch')
+                  (out/name).write_bytes(data)
+                  asset_records.append({'name':name,'bytes':len(data),'expected_sha256':asset['digest'],'actual_sha256':'sha256:'+actual,'anonymous_download':True})
+              assert len(asset_records)==11, (repo,tag,'expected 11 release assets',len(asset_records))
+              assert next(a for a in asset_records if a['name']=='paper.pdf')['actual_sha256']=='sha256:'+paper_sha
+              records.append({'label':label,'repository':repo,'tag':tag,'release_id':release['id'],'source_sha':source_sha,'immutable':True,'asset_count':len(asset_records),'assets':asset_records})
+          report={'schema_version':1,'runner_os':os.environ.get('RUNNER_OS'),'runner_name':os.environ.get('RUNNER_NAME'),
+            'source_sha':os.environ.get('GITHUB_SHA'),'anonymous_asset_downloads':True,'authorization_header_sent':False,
+            'releases':records,'all_asset_digests_match':True}
+          (root/'anonymous-release-readback.json').write_text(json.dumps(report,indent=2,sort_keys=True)+'\n',encoding='utf-8')
+          print('PASS: anonymously fetched and SHA-256 checked 55 assets across five immutable Releases')
+          PY
+      - name: Verify GitHub attestations and release payloads
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          root="$RUNNER_TEMP/opk"
+          while IFS=' ' read -r label repo tag paper_sha; do
+            echo "=== $repo $tag ==="
+            gh release verify "$tag" --repo "$repo" | tee "$root/$label-attestation.txt"
+            python scripts/verify_release.py "$root/releases/$label" --expected-paper-sha256 "$paper_sha"
+            python scripts/citation_validation.py "$root/releases/$label"
+            python scripts/timestamp.py verify "$root/releases/$label" --policy "$root/trust/policy.json" > "$root/$label-timestamp.json"
+            python - "$root/$label-timestamp.json" <<'PY'
+          import json,sys
+          report=json.load(open(sys.argv[1],encoding='utf-8'))
+          assert report['status']=='VERIFIED'
+          assert report['revocation']=='checked_current_crls_full_chain'
+          print('PASS: RFC 3161 signature, policy, source-pinned CA, certificate chain and current CRL')
+          PY
+            python scripts/preserve.py pack "$root/releases/$label" --out "$root/$label.opk.zip" --policy "$root/trust/policy.json" > "$root/$label-preservation.json"
+            (cd "$root" && sha256sum "$label.opk.zip" > "$label.opk.zip.sha256")
+          done <<'EOF'
+          paper-v1 Unjuno/openpreprint-kit-paper v1 0860b735379fb1b9b223f5d535442dae8421f456d7ae1c6bf6ce8d3141a1b07c
+          paper-v2 Unjuno/openpreprint-kit-paper v2 18e13ff3ccf37632cc86ede322687a32d2f959494672df52d78901cabe745805
+          robustness-v1.0.0 Unjuno/openpreprint-kit-robustness-eval v1.0.0 92774a6552f0aaf9315baea6e9672677903a1bdb64288dfddf449cffb3de53a4
+          robustness-v2.0.0 Unjuno/openpreprint-kit-robustness-eval v2.0.0 d63876e1f83c2b6bd39c48ef7b7779c88679f3b95faaedbc29d31dc6194d5676
+          robustness-v2.0.1 Unjuno/openpreprint-kit-robustness-eval v2.0.1 d63876e1f83c2b6bd39c48ef7b7779c88679f3b95faaedbc29d31dc6194d5676
+          EOF
+      - name: Retain first-runner results and preservation archives
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: published-release-verification-${{ github.sha }}
+          path: ${{ runner.temp }}/opk
+          if-no-files-found: error
+          retention-days: 14
+
+  fresh-offline-restore:
+    needs: [retrieve-and-verify]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: '3.12'
+      - name: Install hash-pinned verifiers before offline restore
+        run: |
+          python -m pip install --require-hashes -r requirements-build.lock
+          python -m pip install --require-hashes --no-build-isolation -r requirements.lock
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: published-release-verification-${{ github.sha }}
+          path: ${{ runner.temp }}/received
+      - name: Restore and reverify every archive with network proxies blocked
+        shell: bash
+        env:
+          HTTP_PROXY: http://127.0.0.1:9
+          HTTPS_PROXY: http://127.0.0.1:9
+          ALL_PROXY: http://127.0.0.1:9
+          http_proxy: http://127.0.0.1:9
+          https_proxy: http://127.0.0.1:9
+          all_proxy: http://127.0.0.1:9
+          NO_PROXY: ''
+          no_proxy: ''
+        run: |
+          set -euo pipefail
+          received="$RUNNER_TEMP/received"
+          result="$RUNNER_TEMP/fresh-offline"
+          mkdir -p "$result"
+          while IFS=' ' read -r label paper_sha; do
+            echo "=== fresh runner: $label ==="
+            (cd "$received" && sha256sum -c "$label.opk.zip.sha256")
+            expected=$(cut -d ' ' -f1 "$received/$label.opk.zip.sha256")
+            python scripts/preserve.py restore "$received/$label.opk.zip" --out "$result/$label" --expected-sha256 "$expected" --policy "$received/trust/policy.json" > "$result/$label-restore.json"
+            python scripts/verify_release.py "$result/$label/bundle" --expected-paper-sha256 "$paper_sha"
+            python scripts/citation_validation.py "$result/$label/bundle"
+            python scripts/timestamp.py verify "$result/$label/bundle" --policy "$received/trust/policy.json" > "$result/$label-timestamp.json"
+            find "$received/releases/$label" -maxdepth 1 -type f -print0 | while IFS= read -r -d '' file; do cmp "$file" "$result/$label/bundle/$(basename "$file")"; done
+            echo "PASS: fresh-runner offline restore and byte comparison for $label"
+          done <<'EOF'
+          paper-v1 0860b735379fb1b9b223f5d535442dae8421f456d7ae1c6bf6ce8d3141a1b07c
+          paper-v2 18e13ff3ccf37632cc86ede322687a32d2f959494672df52d78901cabe745805
+          robustness-v1.0.0 92774a6552f0aaf9315baea6e9672677903a1bdb64288dfddf449cffb3de53a4
+          robustness-v2.0.0 d63876e1f83c2b6bd39c48ef7b7779c88679f3b95faaedbc29d31dc6194d5676
+          robustness-v2.0.1 d63876e1f83c2b6bd39c48ef7b7779c88679f3b95faaedbc29d31dc6194d5676
+          EOF
+          python - <<'PY'
+          import json, os, platform
+          from pathlib import Path
+          root=Path(os.environ['RUNNER_TEMP'])/'fresh-offline'
+          reports=[]
+          for path in sorted(root.glob('*-restore.json')):
+              r=json.loads(path.read_text('utf-8'))
+              label=path.name.removesuffix('-restore.json')
+              bundle=root/label/'bundle'
+              assert r['status']=='PASS' and r['timestamp']=='VERIFIED'
+              assert len(list(bundle.iterdir()))==11
+              reports.append({'label':label,'status':r['status'],'restored_assets':11,'archive_sha256':r['archive_sha256']})
+          assert len(reports)==5
+          summary={'schema_version':1,'runner_os':os.environ.get('RUNNER_OS'),'runner_name':os.environ.get('RUNNER_NAME'),'platform':platform.platform(),'restore_network_proxy':'unreachable loopback','results':reports,'all_five_pass':True}
+          (root/'fresh-offline-summary.json').write_text(json.dumps(summary,indent=2,sort_keys=True)+'\n',encoding='utf-8')
+          print('PASS: five immutable release preservation archives restored and reverified on a fresh GitHub-hosted runner')
+          PY
+      - name: Retain fresh-runner offline restoration evidence
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: published-release-fresh-offline-${{ github.sha }}
+          path: ${{ runner.temp }}/fresh-offline
+          if-no-files-found: warn
+          retention-days: 14
