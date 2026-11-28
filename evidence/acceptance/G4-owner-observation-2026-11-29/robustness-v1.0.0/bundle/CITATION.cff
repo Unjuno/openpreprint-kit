@@ -1,0 +1,17 @@
+cff-version: 1.2.0
+message: Please cite this preprint using these metadata and its version-specific release URL.
+title: OpenPreprint Kitにおける改変検出・時刻証拠・障害復旧の実証評価
+authors:
+- name: Unjuno
+abstract: プレプリント公開物に対する意図的な改変、信頼設定の誤り、証拠失効、公開処理の途中失敗をどの範囲で検出・拒否・復旧できるかを、固定20否定ケース（23判定、誤受理0）・2環境での正常検証・ローカル合成PKI・実障害記録（INC-1/INC-2）に基づく実測で評価する。
+version: v1.0.0
+license: CC-BY-4.0
+keywords:
+- tamper detection
+- RFC 3161
+- trust boundary
+- PKI
+- restore
+- incident analysis
+repository-code: https://github.com/Unjuno/openpreprint-kit-robustness-eval
+commit: dedadf3b2e95090439ec10aa4298db72f048caab

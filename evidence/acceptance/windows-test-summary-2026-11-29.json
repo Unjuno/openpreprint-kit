@@ -1,0 +1,110 @@
+{
+  "caveat": "Local Windows test evidence only; WSL on this machine is not an independent physical host.",
+  "classification": {
+    "posix_shell_cases": {
+      "count": 6,
+      "status": "not applicable to Windows; exercised by POSIX/Ubuntu CI"
+    },
+    "windows_symlink_cases": {
+      "count": 10,
+      "status": "required in privileged Windows CI; locally skipped because this Windows session lacks symlink privilege"
+    }
+  },
+  "command": "OPK_WINDOWS_SYMLINK_TESTS=1 python -m unittest discover -s tests -v",
+  "duration_seconds": 584.926,
+  "errors": 0,
+  "failures": 0,
+  "follow_up_after_workflow_permission_change": {
+    "command": "python -m unittest tests.test_workflows -v",
+    "errors": 0,
+    "failures": 0,
+    "result": "PASS",
+    "scope": "includes read-only permissions, two-runner dependency, maximum timeouts, pinned actions, and no release mutation",
+    "tests_run": 12
+  },
+  "openssl": "OpenSSL 3.5.6 (Git for Windows)",
+  "platform": "Windows-11-10.0.26300-SP0",
+  "python": "3.12.10",
+  "raw_log": "windows-tests-2026-11-29.log",
+  "raw_log_sha256": "33b385c66c26616ea35c07a823f77f7aa7e0452b35ece3d399c59f5d37d7539c",
+  "repository": "Unjuno/openpreprint-kit",
+  "result": "PASS",
+  "run_at_local": "2026-11-29 Asia/Tokyo",
+  "run_scope": "Full baseline suite from main source SHA, before adding the new workflow-specific regression test; the Python source under test was unchanged from that commit. The new read-only workflow was present with 15-minute job limits, before the attestations:read permission line was added.",
+  "same_physical_host_as_wsl_evidence": true,
+  "schema_version": 1,
+  "skip_reasons": {
+    "POSIX shell launcher integration test": 5,
+    "Windows symlink privilege unavailable": 10,
+    "tests the POSIX owner shell launcher": 1
+  },
+  "skipped": 16,
+  "skipped_tests": [
+    {
+      "reason": "tests the POSIX owner shell launcher",
+      "test": "test_wrong_preview_pdf_is_rejected_before_authentication (test_approved_first_paper_input.ApprovedPaperInputTests.test_wrong_preview_pdf_is_rejected_before_authentication)"
+    },
+    {
+      "reason": "Windows symlink privilege unavailable",
+      "test": "test_bibtex_symlink_is_rejected (test_citation_validation.CitationValidationTests.test_bibtex_symlink_is_rejected)"
+    },
+    {
+      "reason": "Windows symlink privilege unavailable",
+      "test": "test_audit_rejects_symlink (test_custody.CustodyTests.test_audit_rejects_symlink)"
+    },
+    {
+      "reason": "POSIX shell launcher integration test",
+      "test": "test_auth_failure_does_not_start_work (test_first_paper_launcher.FirstPaperLauncherTests.test_auth_failure_does_not_start_work)"
+    },
+    {
+      "reason": "POSIX shell launcher integration test",
+      "test": "test_default_is_offline_plan (test_first_paper_launcher.FirstPaperLauncherTests.test_default_is_offline_plan)"
+    },
+    {
+      "reason": "POSIX shell launcher integration test",
+      "test": "test_fixed_inputs_and_trust_are_explicit (test_first_paper_launcher.FirstPaperLauncherTests.test_fixed_inputs_and_trust_are_explicit)"
+    },
+    {
+      "reason": "POSIX shell launcher integration test",
+      "test": "test_shell_syntax (test_first_paper_launcher.FirstPaperLauncherTests.test_shell_syntax)"
+    },
+    {
+      "reason": "POSIX shell launcher integration test",
+      "test": "test_unknown_flag_rejected (test_first_paper_launcher.FirstPaperLauncherTests.test_unknown_flag_rejected)"
+    },
+    {
+      "reason": "Windows symlink privilege unavailable",
+      "test": "test_pdf_symlink_rejected (test_first_paper_publish.FirstPaperPublishTests.test_pdf_symlink_rejected)"
+    },
+    {
+      "reason": "Windows symlink privilege unavailable",
+      "test": "test_symlinked_target_does_not_escape_or_get_overwritten (test_first_paper_self_application.ExportCandidateTests.test_symlinked_target_does_not_escape_or_get_overwritten)"
+    },
+    {
+      "reason": "Windows symlink privilege unavailable",
+      "test": "test_symlink_pdf_is_refused (test_first_paper_self_application.FirstPaperSelfApplicationTests.test_symlink_pdf_is_refused)"
+    },
+    {
+      "reason": "Windows symlink privilege unavailable",
+      "test": "test_symlink_is_rejected (test_release.ReleaseBundleTests.test_symlink_is_rejected)"
+    },
+    {
+      "reason": "Windows symlink privilege unavailable",
+      "test": "test_unknown_files_and_links_rejected (test_renewal.RenewalTests.test_unknown_files_and_links_rejected)"
+    },
+    {
+      "reason": "Windows symlink privilege unavailable",
+      "test": "test_safe_read_rejects_leaf_symlink (test_research_package.ResearchBundleTests.test_safe_read_rejects_leaf_symlink)"
+    },
+    {
+      "reason": "Windows symlink privilege unavailable",
+      "test": "test_symlinked_dataset_is_rejected (test_research_package.ResearchBundleTests.test_symlinked_dataset_is_rejected)"
+    },
+    {
+      "reason": "Windows symlink privilege unavailable",
+      "test": "test_symlink_evidence_is_rejected (test_research_record.ResearchRecordTests.test_symlink_evidence_is_rejected)"
+    }
+  ],
+  "source_commit": "39346736ce91371b957ddbfa9b045cbe9409494f",
+  "tests_run": 441
+}

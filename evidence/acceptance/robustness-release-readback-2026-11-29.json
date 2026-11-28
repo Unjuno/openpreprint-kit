@@ -1,0 +1,578 @@
+{
+  "environment": {
+    "openssl": "OpenSSL 3.5.6",
+    "os": "Windows 11",
+    "python": "3.12.10",
+    "verification_repository_sha": "5350fbfdbadbf08af28b93e2ce23ea5f137eafde"
+  },
+  "evidence_scope": "technical anonymous retrieval, bundle/citation/RFC3161 verification, and same-host offline preservation restore; not independent custody or human review",
+  "github_api_authentication": "none",
+  "limitations": [
+    "The local GitHub accounts are controlled by one owner.",
+    "This Windows restore is not an independent physical host, external audit, or independent custodian.",
+    "The public release downloads were retrieved by a new unauthenticated HTTPS client; no existing immutable Release was modified."
+  ],
+  "observed_main_sha": "6faf833e0bf7cbf4ade19da7e23f7051839adcc8",
+  "recorded_at_utc": "2026-11-28T19:37:11.416559+00:00",
+  "releases": [
+    {
+      "asset_count": 11,
+      "citation_validation": {
+        "dependencies": "requirements.lock SHA-256-locked",
+        "output": "PASS: CFF schema validated and BibTeX parsed (citation truth NOT certified)",
+        "status": "PASS"
+      },
+      "download": {
+        "assets": [
+          {
+            "authenticated_cli_byte_equality": "PASS",
+            "authenticated_cli_sha256": "c1af069c1c69176471cae0e85644db02360c60dcb9a80d8e390df15779bcfea8",
+            "github_api_digest": "sha256:c1af069c1c69176471cae0e85644db02360c60dcb9a80d8e390df15779bcfea8",
+            "name": "citation.bib",
+            "sha256": "c1af069c1c69176471cae0e85644db02360c60dcb9a80d8e390df15779bcfea8",
+            "size_bytes": 339
+          },
+          {
+            "authenticated_cli_byte_equality": "PASS",
+            "authenticated_cli_sha256": "07007461ef658574879f2c2b2fee93ddf8775386dfc288a07aa9608927b60e97",
+            "github_api_digest": "sha256:07007461ef658574879f2c2b2fee93ddf8775386dfc288a07aa9608927b60e97",
+            "name": "CITATION.cff",
+            "sha256": "07007461ef658574879f2c2b2fee93ddf8775386dfc288a07aa9608927b60e97",
+            "size_bytes": 853
+          },
+          {
+            "authenticated_cli_byte_equality": "PASS",
+            "authenticated_cli_sha256": "612df591fd92f833726dbe509e31d9103f28dae5b52c6c86ff41ed42277a41d1",
+            "github_api_digest": "sha256:612df591fd92f833726dbe509e31d9103f28dae5b52c6c86ff41ed42277a41d1",
+            "name": "manifest.json",
+            "sha256": "612df591fd92f833726dbe509e31d9103f28dae5b52c6c86ff41ed42277a41d1",
+            "size_bytes": 1060
+          },
+          {
+            "authenticated_cli_byte_equality": "PASS",
+            "authenticated_cli_sha256": "92774a6552f0aaf9315baea6e9672677903a1bdb64288dfddf449cffb3de53a4",
+            "github_api_digest": "sha256:92774a6552f0aaf9315baea6e9672677903a1bdb64288dfddf449cffb3de53a4",
+            "name": "paper.pdf",
+            "sha256": "92774a6552f0aaf9315baea6e9672677903a1bdb64288dfddf449cffb3de53a4",
+            "size_bytes": 197898
+          },
+          {
+            "authenticated_cli_byte_equality": "PASS",
+            "authenticated_cli_sha256": "3483d814cc682feaf822017a0c1a076b324c0159beaad46f3f09e86fda331dc0",
+            "github_api_digest": "sha256:3483d814cc682feaf822017a0c1a076b324c0159beaad46f3f09e86fda331dc0",
+            "name": "preprint-metadata.json",
+            "sha256": "3483d814cc682feaf822017a0c1a076b324c0159beaad46f3f09e86fda331dc0",
+            "size_bytes": 1120
+          },
+          {
+            "authenticated_cli_byte_equality": "PASS",
+            "authenticated_cli_sha256": "be9daa5b98bf6f728a7b14a567ab04c4f7eed44c57199a7ef846de3c9f5d10f8",
+            "github_api_digest": "sha256:be9daa5b98bf6f728a7b14a567ab04c4f7eed44c57199a7ef846de3c9f5d10f8",
+            "name": "RELEASE_NOTES.md",
+            "sha256": "be9daa5b98bf6f728a7b14a567ab04c4f7eed44c57199a7ef846de3c9f5d10f8",
+            "size_bytes": 565
+          },
+          {
+            "authenticated_cli_byte_equality": "PASS",
+            "authenticated_cli_sha256": "273bf45c61580f9b80513892bda6255af3a579116de0dae4b2e1a66b24170a20",
+            "github_api_digest": "sha256:273bf45c61580f9b80513892bda6255af3a579116de0dae4b2e1a66b24170a20",
+            "name": "research-assets.json",
+            "sha256": "273bf45c61580f9b80513892bda6255af3a579116de0dae4b2e1a66b24170a20",
+            "size_bytes": 3617
+          },
+          {
+            "authenticated_cli_byte_equality": "PASS",
+            "authenticated_cli_sha256": "0005c25532a883ee348812dc214c0f1ce5a7fd458a60d3ecfe474657965f354d",
+            "github_api_digest": "sha256:0005c25532a883ee348812dc214c0f1ce5a7fd458a60d3ecfe474657965f354d",
+            "name": "research-assets.tar",
+            "sha256": "0005c25532a883ee348812dc214c0f1ce5a7fd458a60d3ecfe474657965f354d",
+            "size_bytes": 61440
+          },
+          {
+            "authenticated_cli_byte_equality": "PASS",
+            "authenticated_cli_sha256": "d2958a13f51ce37c88b8012f5d9b150e45a5aefc830ad5bd5b31f73d2fa6a02f",
+            "github_api_digest": "sha256:d2958a13f51ce37c88b8012f5d9b150e45a5aefc830ad5bd5b31f73d2fa6a02f",
+            "name": "SHA256SUMS",
+            "sha256": "d2958a13f51ce37c88b8012f5d9b150e45a5aefc830ad5bd5b31f73d2fa6a02f",
+            "size_bytes": 659
+          },
+          {
+            "authenticated_cli_byte_equality": "PASS",
+            "authenticated_cli_sha256": "cc56737aa8b58136c40c194a14f3e815a41adbaca7887cbf46cc81bcca8a5936",
+            "github_api_digest": "sha256:cc56737aa8b58136c40c194a14f3e815a41adbaca7887cbf46cc81bcca8a5936",
+            "name": "timestamp.tsq",
+            "sha256": "cc56737aa8b58136c40c194a14f3e815a41adbaca7887cbf46cc81bcca8a5936",
+            "size_bytes": 84
+          },
+          {
+            "authenticated_cli_byte_equality": "PASS",
+            "authenticated_cli_sha256": "c7bb89558049f5d832e8bc52ac11d2fba0b59d20f7f55e59f91bbbc39814b845",
+            "github_api_digest": "sha256:c7bb89558049f5d832e8bc52ac11d2fba0b59d20f7f55e59f91bbbc39814b845",
+            "name": "timestamp.tsr",
+            "sha256": "c7bb89558049f5d832e8bc52ac11d2fba0b59d20f7f55e59f91bbbc39814b845",
+            "size_bytes": 4653
+          }
+        ],
+        "method": "Python urllib; no Authorization/cookie/gh credential supplied",
+        "status": "PASS"
+      },
+      "immutable": true,
+      "offline_bundle_verification": {
+        "output": "PASS: release assets and SHA256SUMS are internally consistent\nWARNING: no independent trusted fingerprint supplied; authenticity NOT established\nNOTE: timestamp files present but NOT verified; use timestamp.py verify with an independent trust policy\nNOTE: existence time, public availability and authorship are NOT verified",
+        "status": "PASS"
+      },
+      "preservation_archive": {
+        "network_proxies": "loopback port 9 during restore",
+        "pack_status": "PASS",
+        "path": "v1.0.0.opk.zip",
+        "restore_status": "PASS",
+        "restore_timestamp": "VERIFIED",
+        "restored_byte_equality": "PASS",
+        "restored_files": [
+          {
+            "name": "citation.bib",
+            "sha256": "c1af069c1c69176471cae0e85644db02360c60dcb9a80d8e390df15779bcfea8"
+          },
+          {
+            "name": "CITATION.cff",
+            "sha256": "07007461ef658574879f2c2b2fee93ddf8775386dfc288a07aa9608927b60e97"
+          },
+          {
+            "name": "manifest.json",
+            "sha256": "612df591fd92f833726dbe509e31d9103f28dae5b52c6c86ff41ed42277a41d1"
+          },
+          {
+            "name": "paper.pdf",
+            "sha256": "92774a6552f0aaf9315baea6e9672677903a1bdb64288dfddf449cffb3de53a4"
+          },
+          {
+            "name": "preprint-metadata.json",
+            "sha256": "3483d814cc682feaf822017a0c1a076b324c0159beaad46f3f09e86fda331dc0"
+          },
+          {
+            "name": "RELEASE_NOTES.md",
+            "sha256": "be9daa5b98bf6f728a7b14a567ab04c4f7eed44c57199a7ef846de3c9f5d10f8"
+          },
+          {
+            "name": "research-assets.json",
+            "sha256": "273bf45c61580f9b80513892bda6255af3a579116de0dae4b2e1a66b24170a20"
+          },
+          {
+            "name": "research-assets.tar",
+            "sha256": "0005c25532a883ee348812dc214c0f1ce5a7fd458a60d3ecfe474657965f354d"
+          },
+          {
+            "name": "SHA256SUMS",
+            "sha256": "d2958a13f51ce37c88b8012f5d9b150e45a5aefc830ad5bd5b31f73d2fa6a02f"
+          },
+          {
+            "name": "timestamp.tsq",
+            "sha256": "cc56737aa8b58136c40c194a14f3e815a41adbaca7887cbf46cc81bcca8a5936"
+          },
+          {
+            "name": "timestamp.tsr",
+            "sha256": "c7bb89558049f5d832e8bc52ac11d2fba0b59d20f7f55e59f91bbbc39814b845"
+          }
+        ],
+        "sha256": "351d516ef22d5828dde249733f3d9153a7a899eb913e13a3a23b10198632c021"
+      },
+      "published_at": "2026-11-28T01:12:31Z",
+      "release_id": 461207056,
+      "source_commit": "dedadf3b2e95090439ec10aa4298db72f048caab",
+      "tag": "v1.0.0",
+      "timestamp_verification": {
+        "accuracy_microseconds": null,
+        "authorship": "NOT_PROVEN",
+        "basis": "caller_supplied_trust_policy",
+        "ca_sha256": "2151b61137ffa86bf664691ba67e7da0b19f98c758e3d228d5d8ebf27e044438",
+        "certificate_time_policy": "valid_now_and_at_token_time",
+        "existence_upper_bound_utc": null,
+        "manifest_sha256": "612df591fd92f833726dbe509e31d9103f28dae5b52c6c86ff41ed42277a41d1",
+        "message_sha256": "612df591fd92f833726dbe509e31d9103f28dae5b52c6c86ff41ed42277a41d1",
+        "openssl": "OpenSSL 3.5.6 7 Apr 2026 (Library: OpenSSL 3.5.6 7 Apr 2026)",
+        "policy_oid": "1.2.3.4.1",
+        "public_availability": "NOT_PROVEN",
+        "revocation": "checked_current_crls_full_chain",
+        "schema_version": 1,
+        "status": "VERIFIED",
+        "tsa_time_utc": "2026-11-28T01:12:26+00:00",
+        "verified_at_utc": "2026-11-28T19:36:48.302837+00:00"
+      }
+    },
+    {
+      "asset_count": 11,
+      "citation_validation": {
+        "dependencies": "requirements.lock SHA-256-locked",
+        "output": "PASS: CFF schema validated and BibTeX parsed (citation truth NOT certified)",
+        "status": "PASS"
+      },
+      "download": {
+        "assets": [
+          {
+            "authenticated_cli_byte_equality": "PASS",
+            "authenticated_cli_sha256": "ce5cb24d1e7710de1c8e2c60214995cce824223ff247e221dcae59f3655461a9",
+            "github_api_digest": "sha256:ce5cb24d1e7710de1c8e2c60214995cce824223ff247e221dcae59f3655461a9",
+            "name": "citation.bib",
+            "sha256": "ce5cb24d1e7710de1c8e2c60214995cce824223ff247e221dcae59f3655461a9",
+            "size_bytes": 352
+          },
+          {
+            "authenticated_cli_byte_equality": "PASS",
+            "authenticated_cli_sha256": "14bc3d44b30739cc864c5aa198cd898f3b83df43c4214952dbed224daded220d",
+            "github_api_digest": "sha256:14bc3d44b30739cc864c5aa198cd898f3b83df43c4214952dbed224daded220d",
+            "name": "CITATION.cff",
+            "sha256": "14bc3d44b30739cc864c5aa198cd898f3b83df43c4214952dbed224daded220d",
+            "size_bytes": 779
+          },
+          {
+            "authenticated_cli_byte_equality": "PASS",
+            "authenticated_cli_sha256": "a65a3d512fb9c83b2a37a00a5f213540405d0c6125a9ed68c413147a9aa4b30c",
+            "github_api_digest": "sha256:a65a3d512fb9c83b2a37a00a5f213540405d0c6125a9ed68c413147a9aa4b30c",
+            "name": "manifest.json",
+            "sha256": "a65a3d512fb9c83b2a37a00a5f213540405d0c6125a9ed68c413147a9aa4b30c",
+            "size_bytes": 1060
+          },
+          {
+            "authenticated_cli_byte_equality": "PASS",
+            "authenticated_cli_sha256": "d63876e1f83c2b6bd39c48ef7b7779c88679f3b95faaedbc29d31dc6194d5676",
+            "github_api_digest": "sha256:d63876e1f83c2b6bd39c48ef7b7779c88679f3b95faaedbc29d31dc6194d5676",
+            "name": "paper.pdf",
+            "sha256": "d63876e1f83c2b6bd39c48ef7b7779c88679f3b95faaedbc29d31dc6194d5676",
+            "size_bytes": 162563
+          },
+          {
+            "authenticated_cli_byte_equality": "PASS",
+            "authenticated_cli_sha256": "4aba63af32d930b2b91fe2a92c01ea36943aad2af97248281a62458699754d76",
+            "github_api_digest": "sha256:4aba63af32d930b2b91fe2a92c01ea36943aad2af97248281a62458699754d76",
+            "name": "preprint-metadata.json",
+            "sha256": "4aba63af32d930b2b91fe2a92c01ea36943aad2af97248281a62458699754d76",
+            "size_bytes": 1028
+          },
+          {
+            "authenticated_cli_byte_equality": "PASS",
+            "authenticated_cli_sha256": "7532e2b78b1707f40dfc5f035c610e2b05c0dc9def12244711046a9cf4a7282a",
+            "github_api_digest": "sha256:7532e2b78b1707f40dfc5f035c610e2b05c0dc9def12244711046a9cf4a7282a",
+            "name": "RELEASE_NOTES.md",
+            "sha256": "7532e2b78b1707f40dfc5f035c610e2b05c0dc9def12244711046a9cf4a7282a",
+            "size_bytes": 582
+          },
+          {
+            "authenticated_cli_byte_equality": "PASS",
+            "authenticated_cli_sha256": "83276cd1a58355938e64b5441ad2da83d2989c3cbb75c4999e28a5d0ce7f0998",
+            "github_api_digest": "sha256:83276cd1a58355938e64b5441ad2da83d2989c3cbb75c4999e28a5d0ce7f0998",
+            "name": "research-assets.json",
+            "sha256": "83276cd1a58355938e64b5441ad2da83d2989c3cbb75c4999e28a5d0ce7f0998",
+            "size_bytes": 4391
+          },
+          {
+            "authenticated_cli_byte_equality": "PASS",
+            "authenticated_cli_sha256": "7c458b5e20af2cb53b1d52ec1e7fc0cc2fd53da64441ed4fb596a6331360c6d2",
+            "github_api_digest": "sha256:7c458b5e20af2cb53b1d52ec1e7fc0cc2fd53da64441ed4fb596a6331360c6d2",
+            "name": "research-assets.tar",
+            "sha256": "7c458b5e20af2cb53b1d52ec1e7fc0cc2fd53da64441ed4fb596a6331360c6d2",
+            "size_bytes": 61440
+          },
+          {
+            "authenticated_cli_byte_equality": "PASS",
+            "authenticated_cli_sha256": "6cd65835821055a389ce2afd37ef3603c49fdc2feb4b601b86c0db87916ccc95",
+            "github_api_digest": "sha256:6cd65835821055a389ce2afd37ef3603c49fdc2feb4b601b86c0db87916ccc95",
+            "name": "SHA256SUMS",
+            "sha256": "6cd65835821055a389ce2afd37ef3603c49fdc2feb4b601b86c0db87916ccc95",
+            "size_bytes": 659
+          },
+          {
+            "authenticated_cli_byte_equality": "PASS",
+            "authenticated_cli_sha256": "10c579c0ac98d643bdb2d002fe1e93990dea00e425c50a8b43a6463ae996b5a8",
+            "github_api_digest": "sha256:10c579c0ac98d643bdb2d002fe1e93990dea00e425c50a8b43a6463ae996b5a8",
+            "name": "timestamp.tsq",
+            "sha256": "10c579c0ac98d643bdb2d002fe1e93990dea00e425c50a8b43a6463ae996b5a8",
+            "size_bytes": 84
+          },
+          {
+            "authenticated_cli_byte_equality": "PASS",
+            "authenticated_cli_sha256": "b5e31debe3f065c42423491d76fb9d40e0c2dd166101dd028bf03f23375de270",
+            "github_api_digest": "sha256:b5e31debe3f065c42423491d76fb9d40e0c2dd166101dd028bf03f23375de270",
+            "name": "timestamp.tsr",
+            "sha256": "b5e31debe3f065c42423491d76fb9d40e0c2dd166101dd028bf03f23375de270",
+            "size_bytes": 4652
+          }
+        ],
+        "method": "Python urllib; no Authorization/cookie/gh credential supplied",
+        "status": "PASS"
+      },
+      "immutable": true,
+      "offline_bundle_verification": {
+        "output": "PASS: release assets and SHA256SUMS are internally consistent\nWARNING: no independent trusted fingerprint supplied; authenticity NOT established\nNOTE: timestamp files present but NOT verified; use timestamp.py verify with an independent trust policy\nNOTE: existence time, public availability and authorship are NOT verified",
+        "status": "PASS"
+      },
+      "preservation_archive": {
+        "network_proxies": "loopback port 9 during restore",
+        "pack_status": "PASS",
+        "path": "v2.0.0.opk.zip",
+        "restore_status": "PASS",
+        "restore_timestamp": "VERIFIED",
+        "restored_byte_equality": "PASS",
+        "restored_files": [
+          {
+            "name": "citation.bib",
+            "sha256": "ce5cb24d1e7710de1c8e2c60214995cce824223ff247e221dcae59f3655461a9"
+          },
+          {
+            "name": "CITATION.cff",
+            "sha256": "14bc3d44b30739cc864c5aa198cd898f3b83df43c4214952dbed224daded220d"
+          },
+          {
+            "name": "manifest.json",
+            "sha256": "a65a3d512fb9c83b2a37a00a5f213540405d0c6125a9ed68c413147a9aa4b30c"
+          },
+          {
+            "name": "paper.pdf",
+            "sha256": "d63876e1f83c2b6bd39c48ef7b7779c88679f3b95faaedbc29d31dc6194d5676"
+          },
+          {
+            "name": "preprint-metadata.json",
+            "sha256": "4aba63af32d930b2b91fe2a92c01ea36943aad2af97248281a62458699754d76"
+          },
+          {
+            "name": "RELEASE_NOTES.md",
+            "sha256": "7532e2b78b1707f40dfc5f035c610e2b05c0dc9def12244711046a9cf4a7282a"
+          },
+          {
+            "name": "research-assets.json",
+            "sha256": "83276cd1a58355938e64b5441ad2da83d2989c3cbb75c4999e28a5d0ce7f0998"
+          },
+          {
+            "name": "research-assets.tar",
+            "sha256": "7c458b5e20af2cb53b1d52ec1e7fc0cc2fd53da64441ed4fb596a6331360c6d2"
+          },
+          {
+            "name": "SHA256SUMS",
+            "sha256": "6cd65835821055a389ce2afd37ef3603c49fdc2feb4b601b86c0db87916ccc95"
+          },
+          {
+            "name": "timestamp.tsq",
+            "sha256": "10c579c0ac98d643bdb2d002fe1e93990dea00e425c50a8b43a6463ae996b5a8"
+          },
+          {
+            "name": "timestamp.tsr",
+            "sha256": "b5e31debe3f065c42423491d76fb9d40e0c2dd166101dd028bf03f23375de270"
+          }
+        ],
+        "sha256": "ba72912d81d99c8611e711634dc77ef83fd2f51e1cb2a5dd59c54d77feb7b4d8"
+      },
+      "published_at": "2026-11-28T02:16:12Z",
+      "release_id": 461231538,
+      "source_commit": "5b98226d9b7847f08edb8674a89a7f9ae9f1d8e0",
+      "tag": "v2.0.0",
+      "timestamp_verification": {
+        "accuracy_microseconds": null,
+        "authorship": "NOT_PROVEN",
+        "basis": "caller_supplied_trust_policy",
+        "ca_sha256": "2151b61137ffa86bf664691ba67e7da0b19f98c758e3d228d5d8ebf27e044438",
+        "certificate_time_policy": "valid_now_and_at_token_time",
+        "existence_upper_bound_utc": null,
+        "manifest_sha256": "a65a3d512fb9c83b2a37a00a5f213540405d0c6125a9ed68c413147a9aa4b30c",
+        "message_sha256": "a65a3d512fb9c83b2a37a00a5f213540405d0c6125a9ed68c413147a9aa4b30c",
+        "openssl": "OpenSSL 3.5.6 7 Apr 2026 (Library: OpenSSL 3.5.6 7 Apr 2026)",
+        "policy_oid": "1.2.3.4.1",
+        "public_availability": "NOT_PROVEN",
+        "revocation": "checked_current_crls_full_chain",
+        "schema_version": 1,
+        "status": "VERIFIED",
+        "tsa_time_utc": "2026-11-28T02:04:20+00:00",
+        "verified_at_utc": "2026-11-28T19:36:59.091670+00:00"
+      }
+    },
+    {
+      "asset_count": 11,
+      "citation_validation": {
+        "dependencies": "requirements.lock SHA-256-locked",
+        "output": "PASS: CFF schema validated and BibTeX parsed (citation truth NOT certified)",
+        "status": "PASS"
+      },
+      "download": {
+        "assets": [
+          {
+            "authenticated_cli_byte_equality": "PASS",
+            "authenticated_cli_sha256": "b64b399938748c58b50a97c193865366829fa494fd4fa68da382b1578d7f72cd",
+            "github_api_digest": "sha256:b64b399938748c58b50a97c193865366829fa494fd4fa68da382b1578d7f72cd",
+            "name": "citation.bib",
+            "sha256": "b64b399938748c58b50a97c193865366829fa494fd4fa68da382b1578d7f72cd",
+            "size_bytes": 364
+          },
+          {
+            "authenticated_cli_byte_equality": "PASS",
+            "authenticated_cli_sha256": "59c5893abfd9ddecb1ec3f8eb6c71f17e1cf3dfa2a5cc78be8354676b88192ee",
+            "github_api_digest": "sha256:59c5893abfd9ddecb1ec3f8eb6c71f17e1cf3dfa2a5cc78be8354676b88192ee",
+            "name": "CITATION.cff",
+            "sha256": "59c5893abfd9ddecb1ec3f8eb6c71f17e1cf3dfa2a5cc78be8354676b88192ee",
+            "size_bytes": 783
+          },
+          {
+            "authenticated_cli_byte_equality": "PASS",
+            "authenticated_cli_sha256": "ac38aa8d1fdf5171321fba9afe76d5ea8a634dab64bfb054d19ee8a16e223751",
+            "github_api_digest": "sha256:ac38aa8d1fdf5171321fba9afe76d5ea8a634dab64bfb054d19ee8a16e223751",
+            "name": "manifest.json",
+            "sha256": "ac38aa8d1fdf5171321fba9afe76d5ea8a634dab64bfb054d19ee8a16e223751",
+            "size_bytes": 1060
+          },
+          {
+            "authenticated_cli_byte_equality": "PASS",
+            "authenticated_cli_sha256": "d63876e1f83c2b6bd39c48ef7b7779c88679f3b95faaedbc29d31dc6194d5676",
+            "github_api_digest": "sha256:d63876e1f83c2b6bd39c48ef7b7779c88679f3b95faaedbc29d31dc6194d5676",
+            "name": "paper.pdf",
+            "sha256": "d63876e1f83c2b6bd39c48ef7b7779c88679f3b95faaedbc29d31dc6194d5676",
+            "size_bytes": 162563
+          },
+          {
+            "authenticated_cli_byte_equality": "PASS",
+            "authenticated_cli_sha256": "e26db0328a1e789d5ec60d617c93bb1f19844a17de1528ae32297da0b0689106",
+            "github_api_digest": "sha256:e26db0328a1e789d5ec60d617c93bb1f19844a17de1528ae32297da0b0689106",
+            "name": "preprint-metadata.json",
+            "sha256": "e26db0328a1e789d5ec60d617c93bb1f19844a17de1528ae32297da0b0689106",
+            "size_bytes": 1032
+          },
+          {
+            "authenticated_cli_byte_equality": "PASS",
+            "authenticated_cli_sha256": "2f7bbb33fd1a611c1cb81a025aeab3b5c99c451904bf4fa8c58ce997a135da11",
+            "github_api_digest": "sha256:2f7bbb33fd1a611c1cb81a025aeab3b5c99c451904bf4fa8c58ce997a135da11",
+            "name": "RELEASE_NOTES.md",
+            "sha256": "2f7bbb33fd1a611c1cb81a025aeab3b5c99c451904bf4fa8c58ce997a135da11",
+            "size_bytes": 590
+          },
+          {
+            "authenticated_cli_byte_equality": "PASS",
+            "authenticated_cli_sha256": "0d41c064801159ce2f89ce932ed49e17fb0e73831665b0a51b19607b80d96519",
+            "github_api_digest": "sha256:0d41c064801159ce2f89ce932ed49e17fb0e73831665b0a51b19607b80d96519",
+            "name": "research-assets.json",
+            "sha256": "0d41c064801159ce2f89ce932ed49e17fb0e73831665b0a51b19607b80d96519",
+            "size_bytes": 4395
+          },
+          {
+            "authenticated_cli_byte_equality": "PASS",
+            "authenticated_cli_sha256": "7c458b5e20af2cb53b1d52ec1e7fc0cc2fd53da64441ed4fb596a6331360c6d2",
+            "github_api_digest": "sha256:7c458b5e20af2cb53b1d52ec1e7fc0cc2fd53da64441ed4fb596a6331360c6d2",
+            "name": "research-assets.tar",
+            "sha256": "7c458b5e20af2cb53b1d52ec1e7fc0cc2fd53da64441ed4fb596a6331360c6d2",
+            "size_bytes": 61440
+          },
+          {
+            "authenticated_cli_byte_equality": "PASS",
+            "authenticated_cli_sha256": "bf2a4a5f18c8d91d7926ea418f52d24409095eefdd138fbd7ca2eb00e7d25cfd",
+            "github_api_digest": "sha256:bf2a4a5f18c8d91d7926ea418f52d24409095eefdd138fbd7ca2eb00e7d25cfd",
+            "name": "SHA256SUMS",
+            "sha256": "bf2a4a5f18c8d91d7926ea418f52d24409095eefdd138fbd7ca2eb00e7d25cfd",
+            "size_bytes": 659
+          },
+          {
+            "authenticated_cli_byte_equality": "PASS",
+            "authenticated_cli_sha256": "681da727adc366e754b87272f9d542d26d5664871f633f08358b6750e06458ea",
+            "github_api_digest": "sha256:681da727adc366e754b87272f9d542d26d5664871f633f08358b6750e06458ea",
+            "name": "timestamp.tsq",
+            "sha256": "681da727adc366e754b87272f9d542d26d5664871f633f08358b6750e06458ea",
+            "size_bytes": 84
+          },
+          {
+            "authenticated_cli_byte_equality": "PASS",
+            "authenticated_cli_sha256": "75bb80626527844684e98a649be176a05c88524894154d17a2a47471a2eb8073",
+            "github_api_digest": "sha256:75bb80626527844684e98a649be176a05c88524894154d17a2a47471a2eb8073",
+            "name": "timestamp.tsr",
+            "sha256": "75bb80626527844684e98a649be176a05c88524894154d17a2a47471a2eb8073",
+            "size_bytes": 4653
+          }
+        ],
+        "method": "Python urllib; no Authorization/cookie/gh credential supplied",
+        "status": "PASS"
+      },
+      "immutable": true,
+      "offline_bundle_verification": {
+        "output": "PASS: release assets and SHA256SUMS are internally consistent\nWARNING: no independent trusted fingerprint supplied; authenticity NOT established\nNOTE: timestamp files present but NOT verified; use timestamp.py verify with an independent trust policy\nNOTE: existence time, public availability and authorship are NOT verified",
+        "status": "PASS"
+      },
+      "preservation_archive": {
+        "network_proxies": "loopback port 9 during restore",
+        "pack_status": "PASS",
+        "path": "v2.0.1.opk.zip",
+        "restore_status": "PASS",
+        "restore_timestamp": "VERIFIED",
+        "restored_byte_equality": "PASS",
+        "restored_files": [
+          {
+            "name": "citation.bib",
+            "sha256": "b64b399938748c58b50a97c193865366829fa494fd4fa68da382b1578d7f72cd"
+          },
+          {
+            "name": "CITATION.cff",
+            "sha256": "59c5893abfd9ddecb1ec3f8eb6c71f17e1cf3dfa2a5cc78be8354676b88192ee"
+          },
+          {
+            "name": "manifest.json",
+            "sha256": "ac38aa8d1fdf5171321fba9afe76d5ea8a634dab64bfb054d19ee8a16e223751"
+          },
+          {
+            "name": "paper.pdf",
+            "sha256": "d63876e1f83c2b6bd39c48ef7b7779c88679f3b95faaedbc29d31dc6194d5676"
+          },
+          {
+            "name": "preprint-metadata.json",
+            "sha256": "e26db0328a1e789d5ec60d617c93bb1f19844a17de1528ae32297da0b0689106"
+          },
+          {
+            "name": "RELEASE_NOTES.md",
+            "sha256": "2f7bbb33fd1a611c1cb81a025aeab3b5c99c451904bf4fa8c58ce997a135da11"
+          },
+          {
+            "name": "research-assets.json",
+            "sha256": "0d41c064801159ce2f89ce932ed49e17fb0e73831665b0a51b19607b80d96519"
+          },
+          {
+            "name": "research-assets.tar",
+            "sha256": "7c458b5e20af2cb53b1d52ec1e7fc0cc2fd53da64441ed4fb596a6331360c6d2"
+          },
+          {
+            "name": "SHA256SUMS",
+            "sha256": "bf2a4a5f18c8d91d7926ea418f52d24409095eefdd138fbd7ca2eb00e7d25cfd"
+          },
+          {
+            "name": "timestamp.tsq",
+            "sha256": "681da727adc366e754b87272f9d542d26d5664871f633f08358b6750e06458ea"
+          },
+          {
+            "name": "timestamp.tsr",
+            "sha256": "75bb80626527844684e98a649be176a05c88524894154d17a2a47471a2eb8073"
+          }
+        ],
+        "sha256": "ab99c9941c271b73b4981ef7912cc475872be90b865bf83f9879fab9c53ad64d"
+      },
+      "published_at": "2026-11-28T07:04:01Z",
+      "release_id": 461370251,
+      "source_commit": "256e4743963a3ffb955b017bb3ecb1d91316e602",
+      "tag": "v2.0.1",
+      "timestamp_verification": {
+        "accuracy_microseconds": null,
+        "authorship": "NOT_PROVEN",
+        "basis": "caller_supplied_trust_policy",
+        "ca_sha256": "2151b61137ffa86bf664691ba67e7da0b19f98c758e3d228d5d8ebf27e044438",
+        "certificate_time_policy": "valid_now_and_at_token_time",
+        "existence_upper_bound_utc": null,
+        "manifest_sha256": "ac38aa8d1fdf5171321fba9afe76d5ea8a634dab64bfb054d19ee8a16e223751",
+        "message_sha256": "ac38aa8d1fdf5171321fba9afe76d5ea8a634dab64bfb054d19ee8a16e223751",
+        "openssl": "OpenSSL 3.5.6 7 Apr 2026 (Library: OpenSSL 3.5.6 7 Apr 2026)",
+        "policy_oid": "1.2.3.4.1",
+        "public_availability": "NOT_PROVEN",
+        "revocation": "checked_current_crls_full_chain",
+        "schema_version": 1,
+        "status": "VERIFIED",
+        "tsa_time_utc": "2026-11-28T07:03:54+00:00",
+        "verified_at_utc": "2026-11-28T19:37:09.434323+00:00"
+      }
+    }
+  ],
+  "repository": "Unjuno/openpreprint-kit-robustness-eval",
+  "schema_version": 1,
+  "trust": {
+    "ca_sha256": "2151b61137ffa86bf664691ba67e7da0b19f98c758e3d228d5d8ebf27e044438",
+    "policy_oid": "1.2.3.4.1",
+    "source": "fixed Git blob evidence/acceptance/trust-r139/trust/{ca,crl}.pem; LF bytes preserved"
+  }
+}

@@ -1,0 +1,166 @@
+{
+  "schema_version": 1,
+  "repository": "Unjuno/openpreprint-kit",
+  "branch": "codex/fix-review-inventory-blob-hashes-20261129",
+  "base_commit": "ae9cbb0526cda700661cab45d765785313686b9e",
+  "scope": "full local working tree before evidence-summary commit",
+  "host_os": "Windows 11",
+  "python": "3.12.10 locked verification venv",
+  "openssl": "OpenSSL 3.5.6 from Git for Windows",
+  "command": "python -m unittest discover -s tests -v",
+  "environment": "C:\\Program Files\\Git\\usr\\bin prepended to PATH for OpenSSL",
+  "result": {
+    "discovered": 444,
+    "passed": 421,
+    "skipped": 23,
+    "failures": 0,
+    "errors": 0,
+    "status": "PASS"
+  },
+  "skip_classification": {
+    "windows_symlink_privilege": {
+      "count": 10,
+      "classification": "required on privileged Windows CI; local Windows session lacks symlink privilege",
+      "ci_flag": "OPK_WINDOWS_SYMLINK_TESTS=1 in quality.yml"
+    },
+    "posix_shell_integration": {
+      "count": 6,
+      "classification": "platform-specific, exercised by relevant POSIX CI"
+    },
+    "hypothesis_property_tests": {
+      "count": 7,
+      "classification": "test-only dependency absent from this local venv and unavailable to Python 3.10; locked dependency is installed by the Python 3.12 CI jobs, which execute these cases"
+    }
+  },
+  "skipped_tests": [
+    {
+      "test": "test_wrong_preview_pdf_is_rejected_before_authentication (test_approved_first_paper_input.ApprovedPaperInputTests.test_wrong_preview_pdf_is_rejected_before_authentication)",
+      "reason": "tests the POSIX owner shell launcher"
+    },
+    {
+      "test": "test_bibtex_symlink_is_rejected (test_citation_validation.CitationValidationTests.test_bibtex_symlink_is_rejected)",
+      "reason": "Windows symlink privilege unavailable"
+    },
+    {
+      "test": "test_audit_rejects_symlink (test_custody.CustodyTests.test_audit_rejects_symlink)",
+      "reason": "Windows symlink privilege unavailable"
+    },
+    {
+      "test": "test_auth_failure_does_not_start_work (test_first_paper_launcher.FirstPaperLauncherTests.test_auth_failure_does_not_start_work)",
+      "reason": "POSIX shell launcher integration test"
+    },
+    {
+      "test": "test_default_is_offline_plan (test_first_paper_launcher.FirstPaperLauncherTests.test_default_is_offline_plan)",
+      "reason": "POSIX shell launcher integration test"
+    },
+    {
+      "test": "test_fixed_inputs_and_trust_are_explicit (test_first_paper_launcher.FirstPaperLauncherTests.test_fixed_inputs_and_trust_are_explicit)",
+      "reason": "POSIX shell launcher integration test"
+    },
+    {
+      "test": "test_shell_syntax (test_first_paper_launcher.FirstPaperLauncherTests.test_shell_syntax)",
+      "reason": "POSIX shell launcher integration test"
+    },
+    {
+      "test": "test_unknown_flag_rejected (test_first_paper_launcher.FirstPaperLauncherTests.test_unknown_flag_rejected)",
+      "reason": "POSIX shell launcher integration test"
+    },
+    {
+      "test": "test_pdf_symlink_rejected (test_first_paper_publish.FirstPaperPublishTests.test_pdf_symlink_rejected)",
+      "reason": "Windows symlink privilege unavailable"
+    },
+    {
+      "test": "test_symlinked_target_does_not_escape_or_get_overwritten (test_first_paper_self_application.ExportCandidateTests.test_symlinked_target_does_not_escape_or_get_overwritten)",
+      "reason": "Windows symlink privilege unavailable"
+    },
+    {
+      "test": "test_symlink_pdf_is_refused (test_first_paper_self_application.FirstPaperSelfApplicationTests.test_symlink_pdf_is_refused)",
+      "reason": "Windows symlink privilege unavailable"
+    },
+    {
+      "test": "test_bibtex_normalization_is_idempotent (test_hypothesis_properties.HypothesisBoundaryTests.test_bibtex_normalization_is_idempotent)",
+      "reason": "hypothesis not installed (test-only dependency)"
+    },
+    {
+      "test": "test_hex_sha256_pattern_is_exact (test_hypothesis_properties.HypothesisBoundaryTests.test_hex_sha256_pattern_is_exact)",
+      "reason": "hypothesis not installed (test-only dependency)"
+    },
+    {
+      "test": "Differential property: production preflight PASS iff the verified",
+      "reason": "hypothesis not installed (test-only dependency)"
+    },
+    {
+      "test": "test_receipt_digest_binds_data_and_signature (test_hypothesis_properties.HypothesisBoundaryTests.test_receipt_digest_binds_data_and_signature)",
+      "reason": "hypothesis not installed (test-only dependency)"
+    },
+    {
+      "test": "test_repository_validation_properties (test_hypothesis_properties.HypothesisBoundaryTests.test_repository_validation_properties)",
+      "reason": "hypothesis not installed (test-only dependency)"
+    },
+    {
+      "test": "test_safe_https_properties (test_hypothesis_properties.HypothesisBoundaryTests.test_safe_https_properties)",
+      "reason": "hypothesis not installed (test-only dependency)"
+    },
+    {
+      "test": "test_unique_object_rejects_any_duplicate_key (test_hypothesis_properties.HypothesisBoundaryTests.test_unique_object_rejects_any_duplicate_key)",
+      "reason": "hypothesis not installed (test-only dependency)"
+    },
+    {
+      "test": "test_symlink_is_rejected (test_release.ReleaseBundleTests.test_symlink_is_rejected)",
+      "reason": "Windows symlink privilege unavailable"
+    },
+    {
+      "test": "test_unknown_files_and_links_rejected (test_renewal.RenewalTests.test_unknown_files_and_links_rejected)",
+      "reason": "Windows symlink privilege unavailable"
+    },
+    {
+      "test": "test_safe_read_rejects_leaf_symlink (test_research_package.ResearchBundleTests.test_safe_read_rejects_leaf_symlink)",
+      "reason": "Windows symlink privilege unavailable"
+    },
+    {
+      "test": "test_symlinked_dataset_is_rejected (test_research_package.ResearchBundleTests.test_symlinked_dataset_is_rejected)",
+      "reason": "enable OPK_WINDOWS_SYMLINK_TESTS on a Windows runner with symlink privilege"
+    },
+    {
+      "test": "test_symlink_evidence_is_rejected (test_research_record.ResearchRecordTests.test_symlink_evidence_is_rejected)",
+      "reason": "enable OPK_WINDOWS_SYMLINK_TESTS on a Windows runner with symlink privilege"
+    }
+  ],
+  "full_log_sha256": "03873b8aac9e153a4c297cb27df956f67b9325101e087dd85aecfe221a4259be",
+  "tested_input_file_sha256": [
+    {
+      "path": "tests/test_operator_acceptance_contracts.py",
+      "sha256": "0b1b4be986c1351581234dd5b2bf44646c18d114f43d78d87adfb3da876169a1"
+    },
+    {
+      "path": "docs/operator-packages/G2-optionA-publication.md",
+      "sha256": "352f5406b2580777229ebd339e54b397e0e00465f07ccf79c5753fb91787d686"
+    },
+    {
+      "path": "docs/operator-packages/G4-independent-observer.md",
+      "sha256": "e097a430899ec14210ab7344c15793f87eeed27ccc6cd3f8e652ffd1f6f51ea9"
+    },
+    {
+      "path": "docs/operator-packages/G5-custodian-handover.md",
+      "sha256": "d9457aa09818a37b516ad4ae55edaf49e444831869d8cc50a61da834e0ff5833"
+    },
+    {
+      "path": "docs/operator-packages/G7-external-audit.md",
+      "sha256": "b3e714e2c75e77ce536c117ad95c35e9db89b0cc9e4b4b53e76a7d9b4e060494"
+    },
+    {
+      "path": "docs/V1_ACCEPTANCE.md",
+      "sha256": "baf5dc1f9020002e5458237dc2ce8f041049a0967dbd762a9aa5bf98cb6555ba"
+    },
+    {
+      "path": "scripts/observation.py",
+      "sha256": "88d14e5f230e8ef60009113659971ff2427b434ce81283d15cdcd50efb23b88d"
+    }
+  ],
+  "limitations": [
+    "Local result is from the named working-tree state based on ae9cbb0; it is not GitHub Actions evidence.",
+    "The same-owner Windows host is not an independent physical environment.",
+    "PR exact-head required CI remains authoritative for merge readiness."
+  ],
+  "execution_completed_at_utc": "2026-11-28T20:42:09.1222124Z"
+}

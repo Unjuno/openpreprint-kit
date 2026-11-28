@@ -1,0 +1,197 @@
+{
+  "fails": 0,
+  "false_accepts": 0,
+  "fixed_spec": "negative-suite-spec.json",
+  "kind": "negative-suite-results",
+  "passes": 23,
+  "reason_assertions": 10,
+  "results": [
+    {
+      "detail": "checksum/size mismatch: paper.pdf; SHA256SUMS does not match the manifest and assets; metadata paper_sha256 is inconsistent with paper.pdf; research catalog is not bound to this paper version",
+      "expected": "REJECTED",
+      "id": 1,
+      "name": "PDF改変 (bundle integrity)",
+      "rejected": true,
+      "verdict": "PASS"
+    },
+    {
+      "detail": "checksum/size mismatch: research-assets.tar; SHA256SUMS does not match the manifest and assets; research member checksum mismatch: data/test-counts.csv",
+      "expected": "REJECTED",
+      "id": 2,
+      "name": "データ改変 (a: verify)",
+      "rejected": true,
+      "verdict": "PASS"
+    },
+    {
+      "detail": "invalid RFC 3161 evidence: timestamp imprint does not match the expected SHA-256 digest",
+      "expected": "REJECTED",
+      "id": 2,
+      "name": "データ改変 (b: TSA imprint) — variant",
+      "rejected": true,
+      "verdict": "PASS"
+    },
+    {
+      "detail": "checksum/size mismatch: research-assets.tar; SHA256SUMS does not match the manifest and assets; research member checksum mismatch: analysis/summarize_ci.py",
+      "expected": "REJECTED",
+      "id": 3,
+      "name": "コード改変 (a: verify)",
+      "rejected": true,
+      "verdict": "PASS"
+    },
+    {
+      "detail": "invalid RFC 3161 evidence: timestamp imprint does not match the expected SHA-256 digest",
+      "expected": "REJECTED",
+      "id": 3,
+      "name": "コード改変 (b: TSA imprint) — variant",
+      "rejected": true,
+      "verdict": "PASS"
+    },
+    {
+      "detail": "checksum/size mismatch: CITATION.cff; SHA256SUMS does not match the manifest and assets",
+      "expected": "REJECTED",
+      "id": 4,
+      "name": "manifest改変 (a: verify)",
+      "rejected": true,
+      "verdict": "PASS"
+    },
+    {
+      "detail": "invalid RFC 3161 evidence: timestamp imprint does not match the expected SHA-256 digest",
+      "expected": "REJECTED",
+      "id": 4,
+      "name": "manifest改変 (b: TSA imprint) — variant",
+      "rejected": true,
+      "verdict": "PASS"
+    },
+    {
+      "detail": "unexpected bundle contents; missing=['citation.bib'], extra=['timestamp.tsq', 'timestamp.tsr']",
+      "expected": "REJECTED",
+      "id": 5,
+      "name": "資産欠落 (citation.bib 欠落)",
+      "rejected": true,
+      "verdict": "PASS"
+    },
+    {
+      "detail": "unexpected bundle contents; missing=[], extra=['extra.txt', 'timestamp.tsq', 'timestamp.tsr']",
+      "expected": "REJECTED",
+      "id": 6,
+      "name": "余計なファイル (extra.txt)",
+      "rejected": true,
+      "verdict": "PASS"
+    },
+    {
+      "detail": "source identity mismatch: release does not declare requested repository/version",
+      "expected": "REJECTED",
+      "id": 7,
+      "name": "別リポジトリ",
+      "rejected": true,
+      "verdict": "PASS"
+    },
+    {
+      "detail": "source identity mismatch: release does not declare requested repository/version",
+      "expected": "REJECTED",
+      "id": 8,
+      "name": "別版 (v2 扱い)",
+      "rejected": true,
+      "verdict": "PASS"
+    },
+    {
+      "detail": "CA bundle SHA-256 does not match the independently trusted pin",
+      "expected": "REJECTED",
+      "id": 9,
+      "name": "誤CA指紋",
+      "rejected": true,
+      "verdict": "PASS"
+    },
+    {
+      "detail": "invalid RFC 3161 evidence: timestamp policy OID mismatch",
+      "expected": "REJECTED",
+      "id": 10,
+      "name": "誤policy OID",
+      "rejected": true,
+      "verdict": "PASS"
+    },
+    {
+      "detail": "invalid RFC 3161 evidence: timestamp request/response nonce or certificate request mismatch",
+      "expected": "REJECTED",
+      "id": 11,
+      "name": "nonce不一致",
+      "rejected": true,
+      "verdict": "PASS"
+    },
+    {
+      "detail": "OpenSSL verification failed: Using configuration from /usr/lib/ssl/openssl.cnf\n4007939BD1740000:error:10800069:PKCS7 routines:PKCS7_signatureVerify:signature failure:../crypto/pkcs7/pk7_doit.c:1137:\n4007939BD1740000:error:1780006D:time stamp routines:TS_RESP_verify_signature:signature failure:../crypto/ts/ts_rsp_verify.c:148:",
+      "expected": "REJECTED",
+      "id": 12,
+      "name": "署名偽造",
+      "rejected": true,
+      "verdict": "PASS"
+    },
+    {
+      "detail": "OpenSSL verification failed: Using configuration from /usr/lib/ssl/openssl.cnf\n40B742F47D7B0000:error:17800064:time stamp routines:ts_verify_cert:certificate verify error:../crypto/ts/ts_rsp_verify.c:190:Verify error:certificate revoked",
+      "expected": "REJECTED",
+      "id": 13,
+      "name": "失効TSA",
+      "rejected": true,
+      "verdict": "PASS"
+    },
+    {
+      "detail": "OpenSSL verification failed: Using configuration from /usr/lib/ssl/openssl.cnf\n4067200B537E0000:error:17800064:time stamp routines:ts_verify_cert:certificate verify error:../crypto/ts/ts_rsp_verify.c:190:Verify error:certificate has expired",
+      "expected": "REJECTED",
+      "id": 14,
+      "name": "期限切れTSA",
+      "rejected": true,
+      "verdict": "PASS"
+    },
+    {
+      "detail": "verify_digest rejected stale CRL: OpenSSL verification failed: Using configuration from /usr/lib/ssl/openssl.cnf\n40E7E71F27740000:error:17800064:time stamp routines:ts_verify_cert:certificate verify error:../crypto/ts/ts_rsp_verify.c:; CRL: lastUpdate=Dec  1 00:00:00 2019 GMT | nextUpdate=Jan  1 00:00:00 2020 GMT",
+      "expected": "REJECTED",
+      "id": 15,
+      "name": "古いCRL",
+      "rejected": true,
+      "verdict": "PASS"
+    },
+    {
+      "detail": "unexpected, duplicate, or unsafe archive member",
+      "expected": "REJECTED",
+      "id": 16,
+      "name": "ZIPパストラバーサル",
+      "rejected": true,
+      "verdict": "PASS"
+    },
+    {
+      "detail": "unexpected, duplicate, or unsafe archive member",
+      "expected": "REJECTED",
+      "id": 17,
+      "name": "重複member",
+      "rejected": true,
+      "verdict": "PASS"
+    },
+    {
+      "detail": "compressed, encrypted, linked, or oversized archive member",
+      "expected": "REJECTED",
+      "id": 18,
+      "name": "symlink member",
+      "rejected": true,
+      "verdict": "PASS"
+    },
+    {
+      "detail": "external-witness Ed25519 signature does not verify",
+      "expected": "REJECTED",
+      "id": 19,
+      "name": "誤観測鍵",
+      "rejected": true,
+      "verdict": "PASS"
+    },
+    {
+      "detail": "witness assertion does not match fetched content",
+      "expected": "REJECTED",
+      "id": 20,
+      "name": "観測後の再署名",
+      "rejected": true,
+      "verdict": "PASS"
+    }
+  ],
+  "schema_version": 1,
+  "toolkit_main": "39346736ce91371b957ddbfa9b045cbe9409494f",
+  "total": 23
+}

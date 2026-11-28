@@ -1,0 +1,628 @@
+{
+  "schema_version": 1,
+  "observed_at_utc": "2026-11-28T16:18:41.2221419+00:00",
+  "status": "HANDOFF_INPUT_INVENTORY_ONLY_NOT_REVIEW_EVIDENCE",
+  "repository": "Unjuno/openpreprint-kit",
+  "fixed_main_sha": "39346736ce91371b957ddbfa9b045cbe9409494f",
+  "manuscript_sources": [
+    {
+      "path": "manuscripts/openpreprint-kit-robustness-eval/README.md",
+      "bytes": 1759,
+      "sha256": "77ae101a4c28de091650ea7d30421ede196fe6ae9b48261849cdf0f73c75cb18"
+    },
+    {
+      "path": "manuscripts/openpreprint-kit-robustness-eval/v1/LICENSE-NOTICE.txt",
+      "bytes": 601,
+      "sha256": "2a815f356c1c0e1f6c8594f3d6b358b889d5e89b62fa8a63fee7b05dba8e88e7"
+    },
+    {
+      "path": "manuscripts/openpreprint-kit-robustness-eval/v1/analysis/analyze_robustness.py",
+      "bytes": 2193,
+      "sha256": "647f613c781bb57b1797fc47fdbd115b6542faac79aadd604598aafeab8b5ed8"
+    },
+    {
+      "path": "manuscripts/openpreprint-kit-robustness-eval/v1/data/incident-analysis.json",
+      "bytes": 1367,
+      "sha256": "00283f16879a7cbe817809e14e1f1ecc78a8528458262e00a2a6e7a7e52e306d"
+    },
+    {
+      "path": "manuscripts/openpreprint-kit-robustness-eval/v1/data/negative-suite-results.json",
+      "bytes": 5942,
+      "sha256": "fb7c64500c01e19f0bc85f336d63d461d742c604ed6462b8172f9db458338afd"
+    },
+    {
+      "path": "manuscripts/openpreprint-kit-robustness-eval/v1/data/negative-suite-spec.json",
+      "bytes": 4437,
+      "sha256": "814ca9ddc01f5ec086f7e57c624beaa8659946d3cc1e917b67a2e131c67636a9"
+    },
+    {
+      "path": "manuscripts/openpreprint-kit-robustness-eval/v1/data/negative-suite-summary.json",
+      "bytes": 3047,
+      "sha256": "124e8e7573e33d208952c343f8a37c4574cbb0b0b0da111e5a57ce357883df7b"
+    },
+    {
+      "path": "manuscripts/openpreprint-kit-robustness-eval/v1/data/release-matrix.json",
+      "bytes": 10870,
+      "sha256": "ebd8ae4ed1db12a414f9ceff6360fd49be4ae4aa92269c1c4b0411bf381c33ef"
+    },
+    {
+      "path": "manuscripts/openpreprint-kit-robustness-eval/v1/data/renewal-experiment.json",
+      "bytes": 663,
+      "sha256": "d9f93fe1605e6b86b8573edbaeb77bad28cafd8afb9d02553aac9a9beee78e55"
+    },
+    {
+      "path": "manuscripts/openpreprint-kit-robustness-eval/v1/data/tsa-reverification.json",
+      "bytes": 2347,
+      "sha256": "670852ed238158dc214cdb1922d7eb6a0050784c986705b615ef7f570278bdcd"
+    },
+    {
+      "path": "manuscripts/openpreprint-kit-robustness-eval/v1/paper.md",
+      "bytes": 11619,
+      "sha256": "b9eaf2eb839a4bd755d33185efc4908d27ede8c9d251dcd8e5aafdb617a9d5bf"
+    },
+    {
+      "path": "manuscripts/openpreprint-kit-robustness-eval/v1/paper.pdf",
+      "bytes": 1142144,
+      "sha256": "c5131663c629c2214f67723005df84a8d41e2370ae0a967cdbc5055260def7ab"
+    },
+    {
+      "path": "manuscripts/openpreprint-kit-robustness-eval/v1/preprint.yaml",
+      "bytes": 793,
+      "sha256": "a646b1aa5b70e32e07f83d378dfb8b3f0b252779e40eec55ff1ad59196968100"
+    },
+    {
+      "path": "manuscripts/openpreprint-kit-robustness-eval/v1/research-assets.yaml",
+      "bytes": 1892,
+      "sha256": "53fa4bba0bb6d3d6f4a4c6b2c805b9eb572254e5126a88a431d5c5eacc996655"
+    },
+    {
+      "path": "manuscripts/openpreprint-kit-robustness-eval/v1/supplements/LICENSE-NOTICE.txt",
+      "bytes": 601,
+      "sha256": "2a815f356c1c0e1f6c8594f3d6b358b889d5e89b62fa8a63fee7b05dba8e88e7"
+    },
+    {
+      "path": "manuscripts/openpreprint-kit-robustness-eval/v1/supplements/paper.md",
+      "bytes": 11619,
+      "sha256": "b9eaf2eb839a4bd755d33185efc4908d27ede8c9d251dcd8e5aafdb617a9d5bf"
+    },
+    {
+      "path": "manuscripts/openpreprint-kit-robustness-eval/v2/LICENSE-NOTICE.txt",
+      "bytes": 601,
+      "sha256": "2a815f356c1c0e1f6c8594f3d6b358b889d5e89b62fa8a63fee7b05dba8e88e7"
+    },
+    {
+      "path": "manuscripts/openpreprint-kit-robustness-eval/v2/analysis/reverify_v2.py",
+      "bytes": 2027,
+      "sha256": "be8ab3a5e0423f1b0d0b42743477c3c8f613022161fbd8b147ca85aaa6259028"
+    },
+    {
+      "path": "manuscripts/openpreprint-kit-robustness-eval/v2/data/e-v2-1-crl-lifecycle.json",
+      "bytes": 1122,
+      "sha256": "b4488a61b1c20b2884fae190048a336c1a88c6a0a067d82ee0dc7852c88ac9e5"
+    },
+    {
+      "path": "manuscripts/openpreprint-kit-robustness-eval/v2/data/incident-analysis.json",
+      "bytes": 1367,
+      "sha256": "00283f16879a7cbe817809e14e1f1ecc78a8528458262e00a2a6e7a7e52e306d"
+    },
+    {
+      "path": "manuscripts/openpreprint-kit-robustness-eval/v2/data/negative-suite-results.json",
+      "bytes": 5942,
+      "sha256": "fb7c64500c01e19f0bc85f336d63d461d742c604ed6462b8172f9db458338afd"
+    },
+    {
+      "path": "manuscripts/openpreprint-kit-robustness-eval/v2/data/negative-suite-spec.json",
+      "bytes": 4437,
+      "sha256": "814ca9ddc01f5ec086f7e57c624beaa8659946d3cc1e917b67a2e131c67636a9"
+    },
+    {
+      "path": "manuscripts/openpreprint-kit-robustness-eval/v2/data/renewal-experiment.json",
+      "bytes": 663,
+      "sha256": "d9f93fe1605e6b86b8573edbaeb77bad28cafd8afb9d02553aac9a9beee78e55"
+    },
+    {
+      "path": "manuscripts/openpreprint-kit-robustness-eval/v2/paper.md",
+      "bytes": 8257,
+      "sha256": "af3b2b77c2a8516acaabf82bef211fbe167425d0892b49dad0f7828c9a9d3636"
+    },
+    {
+      "path": "manuscripts/openpreprint-kit-robustness-eval/v2/paper.pdf",
+      "bytes": 885920,
+      "sha256": "ac3ac2a5211e93809ed0dd6472cda66aa91a0ccb1e79fd3bb20fc541a1f16913"
+    },
+    {
+      "path": "manuscripts/openpreprint-kit-robustness-eval/v2/preprint.yaml",
+      "bytes": 725,
+      "sha256": "f8ae1ca61736b30033b299967e912b8683107469dc9090bb5188a4431ed2cb41"
+    },
+    {
+      "path": "manuscripts/openpreprint-kit-robustness-eval/v2/research-assets.yaml",
+      "bytes": 1595,
+      "sha256": "efedb576636cc7b564ca915fe8d3a39900c193861a23ffb818358024228ab78b"
+    },
+    {
+      "path": "manuscripts/openpreprint-kit-robustness-eval/v2/supplements/LICENSE-NOTICE.txt",
+      "bytes": 601,
+      "sha256": "2a815f356c1c0e1f6c8594f3d6b358b889d5e89b62fa8a63fee7b05dba8e88e7"
+    },
+    {
+      "path": "manuscripts/openpreprint-kit-robustness-eval/v2/supplements/paper.md",
+      "bytes": 8257,
+      "sha256": "af3b2b77c2a8516acaabf82bef211fbe167425d0892b49dad0f7828c9a9d3636"
+    },
+    {
+      "path": "manuscripts/openpreprint-kit/LICENSE-NOTICE.txt",
+      "bytes": 596,
+      "sha256": "4b21aaeacc9151d0a7ca209856031b634f51d66a935cd45b000eb075b58e081d"
+    },
+    {
+      "path": "manuscripts/openpreprint-kit/README.md",
+      "bytes": 4881,
+      "sha256": "8ab056fd5a98d22eb147c073b98b5ad4194e7ffda85fffa3b33a92a8ef5b8715"
+    },
+    {
+      "path": "manuscripts/openpreprint-kit/analysis/summarize_ci.py",
+      "bytes": 3394,
+      "sha256": "a1a17236b5ce2c7db27b837747811ef1617e6ea76ae308a163de3b584f8adbee"
+    },
+    {
+      "path": "manuscripts/openpreprint-kit/approved-v1/paper.pdf",
+      "bytes": 187502,
+      "sha256": "0860b735379fb1b9b223f5d535442dae8421f456d7ae1c6bf6ce8d3141a1b07c"
+    },
+    {
+      "path": "manuscripts/openpreprint-kit/data/baseline-ci.txt.gz",
+      "bytes": 6929,
+      "sha256": "d0b75905c403659ed75b462a65f1234830ab0667af1b1be974311a7749a21c14"
+    },
+    {
+      "path": "manuscripts/openpreprint-kit/data/provenance.json",
+      "bytes": 812,
+      "sha256": "11881182a0ab586aa3905ca5c7e46c0fb8411cddc8bcc011ef34a9e975234b3e"
+    },
+    {
+      "path": "manuscripts/openpreprint-kit/data/results.json",
+      "bytes": 1187,
+      "sha256": "c42810ec50dfeedc8a64ffba3e7c0d9b4d0ddf245aedce54096b3fca9f3abfb1"
+    },
+    {
+      "path": "manuscripts/openpreprint-kit/data/test-counts.csv",
+      "bytes": 540,
+      "sha256": "34b82567ccb4b9df364518e147c5a9f28bf8ccfaf47e2f8b12d32df15b3dabb6"
+    },
+    {
+      "path": "manuscripts/openpreprint-kit/notes/self-application.json",
+      "bytes": 2627,
+      "sha256": "95aa39419cb8b28b6b721c78ef58e1c158dac5b3650633081d6eba910afb7fda"
+    },
+    {
+      "path": "manuscripts/openpreprint-kit/paper.md",
+      "bytes": 12191,
+      "sha256": "684e41e7c1870b02ea123e4bf37c17a795e01d5d79b471dc5f9d6545d4c6174b"
+    },
+    {
+      "path": "manuscripts/openpreprint-kit/preprint.yaml",
+      "bytes": 726,
+      "sha256": "15cc8159a795d066fed9001168b0ebe8d112096bf13599c00cee45b03a1066d8"
+    },
+    {
+      "path": "manuscripts/openpreprint-kit/proposed-preprint.yaml",
+      "bytes": 708,
+      "sha256": "02b921d23c2df48c25b88578f71ace0d7fa6f8c8e7029abf50c020725daa973c"
+    },
+    {
+      "path": "manuscripts/openpreprint-kit/research-assets.yaml",
+      "bytes": 1513,
+      "sha256": "5da51d961aa64e28d9d12968194ba24088026c9a43f850c46c60301251ea633d"
+    }
+  ],
+  "published_releases": [
+    {
+      "repository": "Unjuno/openpreprint-kit-paper",
+      "id": "445442340",
+      "tag": "v2",
+      "source_sha": "6ec47ec58e9dc733956615343aad16caca4bb8ee",
+      "html_url": "https://github.com/Unjuno/openpreprint-kit-paper/releases/tag/v2",
+      "published_at_utc": "2026-11-14T16:48:30Z",
+      "immutable": true,
+      "draft": false,
+      "asset_count": 11,
+      "assets": [
+        {
+          "name": "citation.bib",
+          "bytes": 349,
+          "sha256": "sha256:065313ffd2e315a195113468036d36e7e22ecf89a28c8353198ae52be1861c52",
+          "url": "https://github.com/Unjuno/openpreprint-kit-paper/releases/download/v2/citation.bib"
+        },
+        {
+          "name": "CITATION.cff",
+          "bytes": 836,
+          "sha256": "sha256:f8b6f9032db334748a1afb848647c790fd107a0b77707ebb46f18fe6e23a3044",
+          "url": "https://github.com/Unjuno/openpreprint-kit-paper/releases/download/v2/CITATION.cff"
+        },
+        {
+          "name": "manifest.json",
+          "bytes": 1095,
+          "sha256": "sha256:8ab5e61a3dbda404f5934d565186df0876aeef1534e12a126946c01c49394db1",
+          "url": "https://github.com/Unjuno/openpreprint-kit-paper/releases/download/v2/manifest.json"
+        },
+        {
+          "name": "paper.pdf",
+          "bytes": 1101848,
+          "sha256": "sha256:18e13ff3ccf37632cc86ede322687a32d2f959494672df52d78901cabe745805",
+          "url": "https://github.com/Unjuno/openpreprint-kit-paper/releases/download/v2/paper.pdf"
+        },
+        {
+          "name": "preprint-metadata.json",
+          "bytes": 1115,
+          "sha256": "sha256:0e0e0a80b9cd8623805c465657961558b148901cf03a30d4535570ce7edece5b",
+          "url": "https://github.com/Unjuno/openpreprint-kit-paper/releases/download/v2/preprint-metadata.json"
+        },
+        {
+          "name": "RELEASE_NOTES.md",
+          "bytes": 593,
+          "sha256": "sha256:1c789d3700fcedcc8c6649fe1a6b99458ceaa9086873cc4e3446e6b74c7f9314",
+          "url": "https://github.com/Unjuno/openpreprint-kit-paper/releases/download/v2/RELEASE_NOTES.md"
+        },
+        {
+          "name": "research-assets.json",
+          "bytes": 2350,
+          "sha256": "sha256:703b2c513925fbd20651febf02f1362ed2a21a1e2bcee07d8811a146923a94e6",
+          "url": "https://github.com/Unjuno/openpreprint-kit-paper/releases/download/v2/research-assets.json"
+        },
+        {
+          "name": "research-assets.tar",
+          "bytes": 40960,
+          "sha256": "sha256:4288bf8b0c5cb41f379e289ba2c93857a159517d984c08b9e6f7c5116da2de35",
+          "url": "https://github.com/Unjuno/openpreprint-kit-paper/releases/download/v2/research-assets.tar"
+        },
+        {
+          "name": "SHA256SUMS",
+          "bytes": 667,
+          "sha256": "sha256:29b2bd3fe612d668ce94e6b596ba983f662b52c3e64809122203afa6fd7bd114",
+          "url": "https://github.com/Unjuno/openpreprint-kit-paper/releases/download/v2/SHA256SUMS"
+        },
+        {
+          "name": "timestamp.tsq",
+          "bytes": 84,
+          "sha256": "sha256:afcb0f707d9a4cc1aa9429825f747564dd2842d08b5df5a1c41b9cf8503ac89d",
+          "url": "https://github.com/Unjuno/openpreprint-kit-paper/releases/download/v2/timestamp.tsq"
+        },
+        {
+          "name": "timestamp.tsr",
+          "bytes": 4653,
+          "sha256": "sha256:8456c1a52cecfcd27e89030fefaeed6af45dfa976ee702d62117614dda50ad19",
+          "url": "https://github.com/Unjuno/openpreprint-kit-paper/releases/download/v2/timestamp.tsr"
+        }
+      ]
+    },
+    {
+      "repository": "Unjuno/openpreprint-kit-paper",
+      "id": "444659219",
+      "tag": "v1",
+      "source_sha": "804cb76a4cf5eea65349fc7a8f01e2ce00e1176d",
+      "html_url": "https://github.com/Unjuno/openpreprint-kit-paper/releases/tag/v1",
+      "published_at_utc": "2026-11-13T19:39:48Z",
+      "immutable": true,
+      "draft": false,
+      "asset_count": 11,
+      "assets": [
+        {
+          "name": "citation.bib",
+          "bytes": 321,
+          "sha256": "sha256:c8c9920650fc39eab5ef58bc0f3145d791ecf3f62b99a78cb53c0d501150907f",
+          "url": "https://github.com/Unjuno/openpreprint-kit-paper/releases/download/v1/citation.bib"
+        },
+        {
+          "name": "CITATION.cff",
+          "bytes": 744,
+          "sha256": "sha256:6a7cce39b4d000dcdfc0bccff7b6020d1662e24f5031377519f1ff09348f1043",
+          "url": "https://github.com/Unjuno/openpreprint-kit-paper/releases/download/v1/CITATION.cff"
+        },
+        {
+          "name": "manifest.json",
+          "bytes": 1094,
+          "sha256": "sha256:4ec582630b9ca2ae7c8f9abe519ff613e852840bb5c75856eef15bccedbb9f56",
+          "url": "https://github.com/Unjuno/openpreprint-kit-paper/releases/download/v1/manifest.json"
+        },
+        {
+          "name": "paper.pdf",
+          "bytes": 187502,
+          "sha256": "sha256:0860b735379fb1b9b223f5d535442dae8421f456d7ae1c6bf6ce8d3141a1b07c",
+          "url": "https://github.com/Unjuno/openpreprint-kit-paper/releases/download/v1/paper.pdf"
+        },
+        {
+          "name": "preprint-metadata.json",
+          "bytes": 1017,
+          "sha256": "sha256:2f804f6930ea0a0fb80105304524013a784cae6fd411db4204986dc3de76f2e5",
+          "url": "https://github.com/Unjuno/openpreprint-kit-paper/releases/download/v1/preprint-metadata.json"
+        },
+        {
+          "name": "RELEASE_NOTES.md",
+          "bytes": 565,
+          "sha256": "sha256:9ca2c9d78d998f7e8a9a1d3ee9eb27a70eeead19b87af7f8d0e1c85c37c24208",
+          "url": "https://github.com/Unjuno/openpreprint-kit-paper/releases/download/v1/RELEASE_NOTES.md"
+        },
+        {
+          "name": "research-assets.json",
+          "bytes": 2990,
+          "sha256": "sha256:cd481c0726f119ace1741bca85e3d46a80837b7c0af1d692d183b344107d2aaa",
+          "url": "https://github.com/Unjuno/openpreprint-kit-paper/releases/download/v1/research-assets.json"
+        },
+        {
+          "name": "research-assets.tar",
+          "bytes": 40960,
+          "sha256": "sha256:9677fe710de86972f343efae69f1fde62374a1bee3891d0b3806a1a2c4754498",
+          "url": "https://github.com/Unjuno/openpreprint-kit-paper/releases/download/v1/research-assets.tar"
+        },
+        {
+          "name": "SHA256SUMS",
+          "bytes": 667,
+          "sha256": "sha256:aa8b45af4f9304ce0a54daaaf3250487cb0b3855268a1f0e9670f233a83cf3c2",
+          "url": "https://github.com/Unjuno/openpreprint-kit-paper/releases/download/v1/SHA256SUMS"
+        },
+        {
+          "name": "timestamp.tsq",
+          "bytes": 84,
+          "sha256": "sha256:99ec9d2608024e7402f12362264ed4020c7b2d14b884af26eb41c83a18acdcff",
+          "url": "https://github.com/Unjuno/openpreprint-kit-paper/releases/download/v1/timestamp.tsq"
+        },
+        {
+          "name": "timestamp.tsr",
+          "bytes": 4653,
+          "sha256": "sha256:ca0695caa687e952871ad9b8cd69d9370604bc1f303b412ed7c6287ce18ce737",
+          "url": "https://github.com/Unjuno/openpreprint-kit-paper/releases/download/v1/timestamp.tsr"
+        }
+      ]
+    },
+    {
+      "repository": "Unjuno/openpreprint-kit-robustness-eval",
+      "id": "461370251",
+      "tag": "v2.0.1",
+      "source_sha": "256e4743963a3ffb955b017bb3ecb1d91316e602",
+      "html_url": "https://github.com/Unjuno/openpreprint-kit-robustness-eval/releases/tag/v2.0.1",
+      "published_at_utc": "2026-11-28T07:04:01Z",
+      "immutable": true,
+      "draft": false,
+      "asset_count": 11,
+      "assets": [
+        {
+          "name": "citation.bib",
+          "bytes": 364,
+          "sha256": "sha256:b64b399938748c58b50a97c193865366829fa494fd4fa68da382b1578d7f72cd",
+          "url": "https://github.com/Unjuno/openpreprint-kit-robustness-eval/releases/download/v2.0.1/citation.bib"
+        },
+        {
+          "name": "CITATION.cff",
+          "bytes": 783,
+          "sha256": "sha256:59c5893abfd9ddecb1ec3f8eb6c71f17e1cf3dfa2a5cc78be8354676b88192ee",
+          "url": "https://github.com/Unjuno/openpreprint-kit-robustness-eval/releases/download/v2.0.1/CITATION.cff"
+        },
+        {
+          "name": "manifest.json",
+          "bytes": 1060,
+          "sha256": "sha256:ac38aa8d1fdf5171321fba9afe76d5ea8a634dab64bfb054d19ee8a16e223751",
+          "url": "https://github.com/Unjuno/openpreprint-kit-robustness-eval/releases/download/v2.0.1/manifest.json"
+        },
+        {
+          "name": "paper.pdf",
+          "bytes": 162563,
+          "sha256": "sha256:d63876e1f83c2b6bd39c48ef7b7779c88679f3b95faaedbc29d31dc6194d5676",
+          "url": "https://github.com/Unjuno/openpreprint-kit-robustness-eval/releases/download/v2.0.1/paper.pdf"
+        },
+        {
+          "name": "preprint-metadata.json",
+          "bytes": 1032,
+          "sha256": "sha256:e26db0328a1e789d5ec60d617c93bb1f19844a17de1528ae32297da0b0689106",
+          "url": "https://github.com/Unjuno/openpreprint-kit-robustness-eval/releases/download/v2.0.1/preprint-metadata.json"
+        },
+        {
+          "name": "RELEASE_NOTES.md",
+          "bytes": 590,
+          "sha256": "sha256:2f7bbb33fd1a611c1cb81a025aeab3b5c99c451904bf4fa8c58ce997a135da11",
+          "url": "https://github.com/Unjuno/openpreprint-kit-robustness-eval/releases/download/v2.0.1/RELEASE_NOTES.md"
+        },
+        {
+          "name": "research-assets.json",
+          "bytes": 4395,
+          "sha256": "sha256:0d41c064801159ce2f89ce932ed49e17fb0e73831665b0a51b19607b80d96519",
+          "url": "https://github.com/Unjuno/openpreprint-kit-robustness-eval/releases/download/v2.0.1/research-assets.json"
+        },
+        {
+          "name": "research-assets.tar",
+          "bytes": 61440,
+          "sha256": "sha256:7c458b5e20af2cb53b1d52ec1e7fc0cc2fd53da64441ed4fb596a6331360c6d2",
+          "url": "https://github.com/Unjuno/openpreprint-kit-robustness-eval/releases/download/v2.0.1/research-assets.tar"
+        },
+        {
+          "name": "SHA256SUMS",
+          "bytes": 659,
+          "sha256": "sha256:bf2a4a5f18c8d91d7926ea418f52d24409095eefdd138fbd7ca2eb00e7d25cfd",
+          "url": "https://github.com/Unjuno/openpreprint-kit-robustness-eval/releases/download/v2.0.1/SHA256SUMS"
+        },
+        {
+          "name": "timestamp.tsq",
+          "bytes": 84,
+          "sha256": "sha256:681da727adc366e754b87272f9d542d26d5664871f633f08358b6750e06458ea",
+          "url": "https://github.com/Unjuno/openpreprint-kit-robustness-eval/releases/download/v2.0.1/timestamp.tsq"
+        },
+        {
+          "name": "timestamp.tsr",
+          "bytes": 4653,
+          "sha256": "sha256:75bb80626527844684e98a649be176a05c88524894154d17a2a47471a2eb8073",
+          "url": "https://github.com/Unjuno/openpreprint-kit-robustness-eval/releases/download/v2.0.1/timestamp.tsr"
+        }
+      ]
+    },
+    {
+      "repository": "Unjuno/openpreprint-kit-robustness-eval",
+      "id": "461231538",
+      "tag": "v2.0.0",
+      "source_sha": "5b98226d9b7847f08edb8674a89a7f9ae9f1d8e0",
+      "html_url": "https://github.com/Unjuno/openpreprint-kit-robustness-eval/releases/tag/v2.0.0",
+      "published_at_utc": "2026-11-28T02:16:12Z",
+      "immutable": true,
+      "draft": false,
+      "asset_count": 11,
+      "assets": [
+        {
+          "name": "citation.bib",
+          "bytes": 352,
+          "sha256": "sha256:ce5cb24d1e7710de1c8e2c60214995cce824223ff247e221dcae59f3655461a9",
+          "url": "https://github.com/Unjuno/openpreprint-kit-robustness-eval/releases/download/v2.0.0/citation.bib"
+        },
+        {
+          "name": "CITATION.cff",
+          "bytes": 779,
+          "sha256": "sha256:14bc3d44b30739cc864c5aa198cd898f3b83df43c4214952dbed224daded220d",
+          "url": "https://github.com/Unjuno/openpreprint-kit-robustness-eval/releases/download/v2.0.0/CITATION.cff"
+        },
+        {
+          "name": "manifest.json",
+          "bytes": 1060,
+          "sha256": "sha256:a65a3d512fb9c83b2a37a00a5f213540405d0c6125a9ed68c413147a9aa4b30c",
+          "url": "https://github.com/Unjuno/openpreprint-kit-robustness-eval/releases/download/v2.0.0/manifest.json"
+        },
+        {
+          "name": "paper.pdf",
+          "bytes": 162563,
+          "sha256": "sha256:d63876e1f83c2b6bd39c48ef7b7779c88679f3b95faaedbc29d31dc6194d5676",
+          "url": "https://github.com/Unjuno/openpreprint-kit-robustness-eval/releases/download/v2.0.0/paper.pdf"
+        },
+        {
+          "name": "preprint-metadata.json",
+          "bytes": 1028,
+          "sha256": "sha256:4aba63af32d930b2b91fe2a92c01ea36943aad2af97248281a62458699754d76",
+          "url": "https://github.com/Unjuno/openpreprint-kit-robustness-eval/releases/download/v2.0.0/preprint-metadata.json"
+        },
+        {
+          "name": "RELEASE_NOTES.md",
+          "bytes": 582,
+          "sha256": "sha256:7532e2b78b1707f40dfc5f035c610e2b05c0dc9def12244711046a9cf4a7282a",
+          "url": "https://github.com/Unjuno/openpreprint-kit-robustness-eval/releases/download/v2.0.0/RELEASE_NOTES.md"
+        },
+        {
+          "name": "research-assets.json",
+          "bytes": 4391,
+          "sha256": "sha256:83276cd1a58355938e64b5441ad2da83d2989c3cbb75c4999e28a5d0ce7f0998",
+          "url": "https://github.com/Unjuno/openpreprint-kit-robustness-eval/releases/download/v2.0.0/research-assets.json"
+        },
+        {
+          "name": "research-assets.tar",
+          "bytes": 61440,
+          "sha256": "sha256:7c458b5e20af2cb53b1d52ec1e7fc0cc2fd53da64441ed4fb596a6331360c6d2",
+          "url": "https://github.com/Unjuno/openpreprint-kit-robustness-eval/releases/download/v2.0.0/research-assets.tar"
+        },
+        {
+          "name": "SHA256SUMS",
+          "bytes": 659,
+          "sha256": "sha256:6cd65835821055a389ce2afd37ef3603c49fdc2feb4b601b86c0db87916ccc95",
+          "url": "https://github.com/Unjuno/openpreprint-kit-robustness-eval/releases/download/v2.0.0/SHA256SUMS"
+        },
+        {
+          "name": "timestamp.tsq",
+          "bytes": 84,
+          "sha256": "sha256:10c579c0ac98d643bdb2d002fe1e93990dea00e425c50a8b43a6463ae996b5a8",
+          "url": "https://github.com/Unjuno/openpreprint-kit-robustness-eval/releases/download/v2.0.0/timestamp.tsq"
+        },
+        {
+          "name": "timestamp.tsr",
+          "bytes": 4652,
+          "sha256": "sha256:b5e31debe3f065c42423491d76fb9d40e0c2dd166101dd028bf03f23375de270",
+          "url": "https://github.com/Unjuno/openpreprint-kit-robustness-eval/releases/download/v2.0.0/timestamp.tsr"
+        }
+      ]
+    },
+    {
+      "repository": "Unjuno/openpreprint-kit-robustness-eval",
+      "id": "461207056",
+      "tag": "v1.0.0",
+      "source_sha": "dedadf3b2e95090439ec10aa4298db72f048caab",
+      "html_url": "https://github.com/Unjuno/openpreprint-kit-robustness-eval/releases/tag/v1.0.0",
+      "published_at_utc": "2026-11-28T01:12:31Z",
+      "immutable": true,
+      "draft": false,
+      "asset_count": 11,
+      "assets": [
+        {
+          "name": "citation.bib",
+          "bytes": 339,
+          "sha256": "sha256:c1af069c1c69176471cae0e85644db02360c60dcb9a80d8e390df15779bcfea8",
+          "url": "https://github.com/Unjuno/openpreprint-kit-robustness-eval/releases/download/v1.0.0/citation.bib"
+        },
+        {
+          "name": "CITATION.cff",
+          "bytes": 853,
+          "sha256": "sha256:07007461ef658574879f2c2b2fee93ddf8775386dfc288a07aa9608927b60e97",
+          "url": "https://github.com/Unjuno/openpreprint-kit-robustness-eval/releases/download/v1.0.0/CITATION.cff"
+        },
+        {
+          "name": "manifest.json",
+          "bytes": 1060,
+          "sha256": "sha256:612df591fd92f833726dbe509e31d9103f28dae5b52c6c86ff41ed42277a41d1",
+          "url": "https://github.com/Unjuno/openpreprint-kit-robustness-eval/releases/download/v1.0.0/manifest.json"
+        },
+        {
+          "name": "paper.pdf",
+          "bytes": 197898,
+          "sha256": "sha256:92774a6552f0aaf9315baea6e9672677903a1bdb64288dfddf449cffb3de53a4",
+          "url": "https://github.com/Unjuno/openpreprint-kit-robustness-eval/releases/download/v1.0.0/paper.pdf"
+        },
+        {
+          "name": "preprint-metadata.json",
+          "bytes": 1120,
+          "sha256": "sha256:3483d814cc682feaf822017a0c1a076b324c0159beaad46f3f09e86fda331dc0",
+          "url": "https://github.com/Unjuno/openpreprint-kit-robustness-eval/releases/download/v1.0.0/preprint-metadata.json"
+        },
+        {
+          "name": "RELEASE_NOTES.md",
+          "bytes": 565,
+          "sha256": "sha256:be9daa5b98bf6f728a7b14a567ab04c4f7eed44c57199a7ef846de3c9f5d10f8",
+          "url": "https://github.com/Unjuno/openpreprint-kit-robustness-eval/releases/download/v1.0.0/RELEASE_NOTES.md"
+        },
+        {
+          "name": "research-assets.json",
+          "bytes": 3617,
+          "sha256": "sha256:273bf45c61580f9b80513892bda6255af3a579116de0dae4b2e1a66b24170a20",
+          "url": "https://github.com/Unjuno/openpreprint-kit-robustness-eval/releases/download/v1.0.0/research-assets.json"
+        },
+        {
+          "name": "research-assets.tar",
+          "bytes": 61440,
+          "sha256": "sha256:0005c25532a883ee348812dc214c0f1ce5a7fd458a60d3ecfe474657965f354d",
+          "url": "https://github.com/Unjuno/openpreprint-kit-robustness-eval/releases/download/v1.0.0/research-assets.tar"
+        },
+        {
+          "name": "SHA256SUMS",
+          "bytes": 659,
+          "sha256": "sha256:d2958a13f51ce37c88b8012f5d9b150e45a5aefc830ad5bd5b31f73d2fa6a02f",
+          "url": "https://github.com/Unjuno/openpreprint-kit-robustness-eval/releases/download/v1.0.0/SHA256SUMS"
+        },
+        {
+          "name": "timestamp.tsq",
+          "bytes": 84,
+          "sha256": "sha256:cc56737aa8b58136c40c194a14f3e815a41adbaca7887cbf46cc81bcca8a5936",
+          "url": "https://github.com/Unjuno/openpreprint-kit-robustness-eval/releases/download/v1.0.0/timestamp.tsq"
+        },
+        {
+          "name": "timestamp.tsr",
+          "bytes": 4653,
+          "sha256": "sha256:c7bb89558049f5d832e8bc52ac11d2fba0b59d20f7f55e59f91bbbc39814b845",
+          "url": "https://github.com/Unjuno/openpreprint-kit-robustness-eval/releases/download/v1.0.0/timestamp.tsr"
+        }
+      ]
+    }
+  ],
+  "retained_failed_draft": {
+    "repository": "Unjuno/openpreprint-kit-robustness-eval",
+    "id": "461075262",
+    "tag": "v1",
+    "draft": true,
+    "immutable": false,
+    "modified": false,
+    "html_url": "https://github.com/Unjuno/openpreprint-kit-robustness-eval/releases/tag/untagged-3497c05c66b655267566",
+    "note": "Retained historical failed attempt; excluded from acceptance release target."
+  },
+  "limitation": "Hashes and release metadata identify review inputs only. They are not a human review, rights/consent decision, editorial decision, or independent audit.",
+  "manuscript_hash_basis": "SHA-256 over raw Git blob bytes at fixed_main_sha before checkout line-ending conversion"
+}

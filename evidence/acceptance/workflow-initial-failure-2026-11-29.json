@@ -1,0 +1,13 @@
+{
+  "correction": "Removed lowercase duplicates; uppercase proxy variables remain pointed to unreachable loopback, with uppercase NO_PROXY empty.",
+  "event": "push",
+  "github_annotation": "Line 172: http_proxy already defined; line 173 https_proxy already defined; line 174 all_proxy already defined; line 176 no_proxy already defined.",
+  "head_sha": "9ab87723c47091bd1ad5fb1f0da503b7ca2cca02",
+  "jobs_created": 0,
+  "result": "STARTUP_FAILURE_INVALID_WORKFLOW",
+  "root_cause": "GitHub workflow parser treats case-different YAML environment names as duplicate keys.",
+  "run_id": 46169064644,
+  "schema_version": 1,
+  "verification": "Pending rerun at updated PR head. The failed startup is retained as history and is not counted as a test result.",
+  "workflow": "verify-published-releases.yml"
+}

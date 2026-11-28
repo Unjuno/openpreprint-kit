@@ -1,0 +1,30 @@
+{
+  "abstract": "プレプリント公開物に対する意図的な改変、信頼設定の誤り、証拠失効、公開処理の途中失敗をどの範囲で検出・拒否・復旧できるかを、固定20否定ケース（23判定、誤受理0）・2環境での正常検証・ローカル合成PKI・実障害記録（INC-1/INC-2）に基づく実測で評価する。",
+  "authors": [
+    {
+      "name": "Unjuno",
+      "orcid": null
+    }
+  ],
+  "keywords": [
+    "tamper detection",
+    "RFC 3161",
+    "trust boundary",
+    "PKI",
+    "restore",
+    "incident analysis"
+  ],
+  "license": "CC-BY-4.0",
+  "paper_asset": "paper.pdf",
+  "paper_sha256": "92774a6552f0aaf9315baea6e9672677903a1bdb64288dfddf449cffb3de53a4",
+  "paper_size_bytes": 197898,
+  "paper_source_path": "paper/paper.pdf",
+  "schema_version": 1,
+  "source_claim": {
+    "commit": "dedadf3b2e95090439ec10aa4298db72f048caab",
+    "repository": "Unjuno/openpreprint-kit-robustness-eval"
+  },
+  "time_attestation": null,
+  "title": "OpenPreprint Kitにおける改変検出・時刻証拠・障害復旧の実証評価",
+  "version": "v1.0.0"
+}

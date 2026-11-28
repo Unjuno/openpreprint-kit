@@ -1,0 +1,63 @@
+{
+  "archive": "research-assets.tar",
+  "entries": [
+    {
+      "description": "Standard-library-only recomputation of release/TSA/incident facts",
+      "license": "MIT",
+      "path": "analysis/summarize_releases.py",
+      "public_confirmed": true,
+      "role": "analysis_code",
+      "sha256": "8b2575532c72a820a2b35defef4600a7180739ecad783e642edc670a21e50ebd",
+      "size_bytes": 2304
+    },
+    {
+      "description": "Two real incidents encountered during the first publication (INC-1, INC-2)",
+      "license": "CC-BY-4.0",
+      "path": "data/incident-analysis.json",
+      "public_confirmed": true,
+      "role": "dataset",
+      "sha256": "42f4063e871a8e910797d23a3ef4b27fd65b3e6b36092634fef4675cc219def0",
+      "size_bytes": 1387
+    },
+    {
+      "description": "Measured IDs, commits, attestation verification for the five published releases",
+      "license": "CC-BY-4.0",
+      "path": "data/release-matrix.json",
+      "public_confirmed": true,
+      "role": "dataset",
+      "sha256": "1430b1197e6b85af29b29e1de24cc5ad4d52ab76e4041bd57ad1bcb633b6bdbd",
+      "size_bytes": 11167
+    },
+    {
+      "description": "Re-verification results of RFC 3161 proofs for the five published releases",
+      "license": "CC-BY-4.0",
+      "path": "data/tsa-reverification.json",
+      "public_confirmed": true,
+      "role": "dataset",
+      "sha256": "c1d3ac8ce7107571337cf13a110cf8d8a460969b920a16065029d1b464a7dba7",
+      "size_bytes": 2413
+    },
+    {
+      "description": "Per-file license notice for the v2 manuscript and assets",
+      "license": "CC-BY-4.0",
+      "path": "supplements/LICENSE-NOTICE.txt",
+      "public_confirmed": true,
+      "role": "supplementary",
+      "sha256": "302a1a0abff16f3a3e01eadf8c5c550c48bcd5a102e9eb43ea08de6ff0d044f9",
+      "size_bytes": 721
+    },
+    {
+      "description": "Manuscript source of the v2 operational evaluation",
+      "license": "CC-BY-4.0",
+      "path": "supplements/paper.md",
+      "public_confirmed": true,
+      "role": "supplementary",
+      "sha256": "bc5ac8863c75c2f2cdd214c473960d32c2b2eeb775ef471dccadc61215fd5f2d",
+      "size_bytes": 11680
+    }
+  ],
+  "paper_sha256": "18e13ff3ccf37632cc86ede322687a32d2f959494672df52d78901cabe745805",
+  "relations": [],
+  "schema_version": 1,
+  "version": "v2"
+}

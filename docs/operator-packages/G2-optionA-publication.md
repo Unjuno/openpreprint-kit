@@ -1,54 +1,40 @@
-# G2 — 正式4版の現状、実論文B候補、受入手順
+# G2 — formal four-release publication and verification record
 
-**正式なG2基準は変更しない。G2は現時点で `NOT CONFIRMED`。** この手順書は公開承認ではなく、原稿・権利・設定・実Releaseがそろう前に公開しない。既存Immutable Releaseは削除・変更しない。
+**Readback date:** 2026-11-29. The second paper repository and its public Releases now exist. Older statements below earlier historical snapshots that it was unresolved or unpublished are superseded by this record and [`ACCEPTANCE_SNAPSHOT_2026-11-29.md`](../ACCEPTANCE_SNAPSHOT_2026-11-29.md). This package records evidence and remaining owner confirmation; it does not change an immutable Release.
 
-## 正式基準と現在確認できたRelease
+## Formal condition
 
-現行基準は [`V1_ACCEPTANCE.md`](../V1_ACCEPTANCE.md) のG1/G2。2つの実論文リポジトリに各2版、計4件以上のimmutable Releaseを要求し、最低1件は著者承認済み本短報である。v2後もv1資産を変えず、全Release・全資産のattestation、匿名取得、引用・研究資産の一致を検証する。所有者が判定できる。独立性は `UNPROVEN` と記録し、同一所有者の別アカウントを独立レビューに数えない。
+The controlling criteria are G2 in [`V1_ACCEPTANCE.md`](../V1_ACCEPTANCE.md): at least two template-derived paper repositories, two immutable versions per repository (**計4件以上** formal target Releases), at least one owner-approved substantive paper, and verification of every Release and asset for attestations, anonymous retrieval, citation and research payload consistency, and preservation of v1 after v2. Gate status is not changed merely because the files below exist. The owner reviews and confirms the evidence; independence remains `UNPROVEN` because both GitHub accounts are controlled by the same owner.
 
-| 実論文リポジトリ | Version | 状態と証拠 |
-|---|---|---|
-| `Unjuno/openpreprint-kit-paper` | v1 | Release ID `444659219`、target `804cb76a4cf5eea65349fc7a8f01e2ce00e1176d`。immutable/non-draft。2026-11-21 UTCの読戻しで11 assets、GitHub attestation、匿名asset digest、SHA256SUMS、release verifier、citation validation、RFC 3161が再検証済み。 |
-| `Unjuno/openpreprint-kit-paper` | v2 | Release ID `445442340`、target `6ec47ec58e9dc733956615343aad16caca4bb8ee`。immutable/non-draft。上記同日読戻しで11 assets、GitHub attestation、匿名asset digest、SHA256SUMS、release verifier、citation validation、RFC 3161が再検証済み。v2の旧比較行は保存済みrelease-matrixにないため、過去matrixとの一致は主張しない。 |
-| 第2の実論文 repo | v1 | `manuscripts/openpreprint-kit-robustness-eval/v1` に原稿候補・PDF・研究資産候補はある。著者/所有者承認待ち。独立repo/Releaseは現在解決できず、未発行。 |
-| 第2の実論文 repo | v2 | 同 `v2` に追加実験を含む候補がある。著者/所有者承認待ち。独立repo/Releaseは現在解決できず、未発行。 |
+## Formal target Releases
 
-paper v1/v2の全匿名取得・ハッシュ・release verify・RFC 3161結果は [`paper-v1-v2-anonymous-readback-2026-11-22.json`](../../evidence/acceptance/paper-v1-v2-anonymous-readback-2026-11-22.json)、SHA-256 `AD5ACFBF87E34E6C7AADFB2177FC7755EF790E849F146A416DE93079C7F5C3FB`。同じ再検証はWindows 1環境だけなので、G3全体の2環境/8正常検証/20否定ケースを満たしたとはしない。
+| Paper repository | Version | Release ID / source SHA | Current readback |
+|---|---|---|---|
+| [`openpreprint-kit-paper`](https://github.com/Unjuno/openpreprint-kit-paper) | v1 | `444659219` / `804cb76a4cf5eea65349fc7a8f01e2ce00e1176d` | Published, immutable; 11 assets; `gh release verify` PASS; anonymous asset digest readback PASS |
+| [`openpreprint-kit-paper`](https://github.com/Unjuno/openpreprint-kit-paper) | v2 | `445442340` / `6ec47ec58e9dc733956615343aad16caca4bb8ee` | Published, immutable; 11 assets; `gh release verify` PASS; anonymous asset digest readback PASS |
+| [`openpreprint-kit-robustness-eval`](https://github.com/Unjuno/openpreprint-kit-robustness-eval) | v1.0.0 | `461207056` / `dedadf3b2e95090439ec10aa4298db72f048caab` | Published, immutable; 11 assets; `gh release verify` PASS; anonymous asset digest readback PASS |
+| [`openpreprint-kit-robustness-eval`](https://github.com/Unjuno/openpreprint-kit-robustness-eval) | v2.0.1 | `461370251` / `256e4743963a3ffb955b017bb3ecb1d91316e602` | Published, immutable; 11 assets; `gh release verify` PASS; anonymous asset digest readback PASS |
 
-既存の `opk-demo-acceptance-a/b` は合成デモである。これらのimmutable Releaseは履歴として保持するが、正式基準の「2つの実論文 repo」の代わりには数えない。過去に記録された `openpreprint-kit-robustness-eval` の repo URLは現在404で、別の場所・可視性・名前も未確認。404を削除の証拠に読み替えない。
+Robustness `v2.0.0`, Release ID `461231538`, source `5b98226d9b7847f08edb8674a89a7f9ae9f1d8e0`, is an additional immutable intermediate retained and verified in the evidence. Failed draft ID `461075262` is historical, remains a draft, and is not counted. No existing immutable Release was modified.
 
-## 第2論文候補の技術確認と限界
+## Evidence already collected
 
-固定main `450db84d9e35772fda6af3a24592ced58df8b3ec` 上の候補を読み、次を実測した。
+- [`G2-verify-release-results-2026-11-29.json`](../../evidence/acceptance/G2-verify-release-results-2026-11-29.json): `gh release verify` PASS for all five published Releases, 55 attested assets.
+- [`first-paper-anonymous-readback-2026-11-29.json`](../../evidence/acceptance/first-paper-anonymous-readback-2026-11-29.json): 22 v1/v2 asset digests matched.
+- [`robustness-release-readback-2026-11-29.json`](../../evidence/acceptance/robustness-release-readback-2026-11-29.json), SHA-256 `bf878b49138035098b9ecbbc65a24d74c3438668a6186aeeb64ff73b97932762`: fresh unauthenticated HTTPS retrieval of the three robustness Releases; all 33 asset hashes match GitHub digest where available and authenticated CLI bytes; CFF/BibTeX validation, manifest verification, RFC 3161 chain/signature/current CRL verification, preservation packing, offline restore, and restored-byte equality PASS. Restoration ran on the same Windows host with proxies pointed at unreachable loopback; it is not separate physical custody.
+- [`Issue #5 R117`](https://github.com/Unjuno/openpreprint-kit/issues/5#issuecomment-7239222043) and [`R136`](https://github.com/Unjuno/openpreprint-kit/issues/5#issuecomment-7241822635): four-target offline verification/restore and robustness publication evidence.
+- [`Issue #5 R151`](https://github.com/Unjuno/openpreprint-kit/issues/5#issuecomment-7244711555): detailed robustness readback, failures, per-asset digests and archive hashes.
+- Kit PR #80 [exact head `73d1ddfd92e95f101be270f619c5342a4dc6ec5e`](https://github.com/Unjuno/openpreprint-kit/pull/80/checks), run `46182440809`: anonymous download and verify of all five immutable Releases/55 assets followed by restore on a separate fresh GitHub-hosted Linux runner with network proxies blocked; 5/5 archives and 55/55 restored assets PASS. This is PR evidence until merged; its Actions artifacts are temporary and do not establish long-term custody.
 
-- v1 `analyze_robustness.py`: 20 spec cases、23 judgments、false accepts 0。spec/results内部整合チェックPASS。
-- v2 `reverify_v2.py`: fresh CRL `VERIFIED`、stale CRL `REJECTED`、renewal verify PASS、negative-suite false accepts 0、内部整合チェックPASS。
-- v1 PDF: 7 pages、1,142,144 bytes、SHA-256 `c5131663c629c2214f67723005df84a8d41e2370ae0a967cdbc5055260def7ab`。v2 PDF: 5 pages、885,920 bytes、SHA-256 `ac3ac2a5211e93809ed0dd6472cda66aa91a0ccb1e79fd3bb20fc541a1f16913`。
-- 手順書の別PRで、各 `preprint.yaml` は実ファイル `paper.pdf` を指すよう訂正した。`research-assets.yaml` が指す supplements を実在させ、各資産の `public_confirmed` は全てfalseにする。strict metadata validationはPASSし、研究パッケージ生成は想定どおり `public_confirmed must be explicitly true` でBLOCKする。falseは所有者の権利・同意確認が未完了であることを表し、誰かの承認を代筆しない。
+The source lineage, Release IDs, all 55 asset hashes, and immutable status are collated in the linked machine-readable readback. Citation parser success does not certify citation truth, manuscript quality, authorship, rights, publication consent, peer review, or scientific correctness.
 
-これはデータの内部整合とPDFの構文を示すだけで、科学的正確さ、著作者本人性、権利、公開同意、COI、人間レビュー、査読を証明しない。candidate filesはすでにkit repoのsource treeにあり、repoがpublicであるため、この事実を「非公開」とは主張しない。専用論文repoの公開Releaseは作成していない。所有者承認とG6記録が揃うまではrelease用 `public_confirmed: true` に変更しない。
+## Owner confirmation still required for G2
 
-## 所有者・著者の必須判断（公開前）
+G2 remains **PARTIAL** in the formal ledger until the owner checks the complete four-target evidence against the frozen condition and records the decision in Issue #5. In particular, the owner should confirm the formal target selection, owner-approved substantive paper, citation and research-payload comparison, and post-v2 preservation of both v1 Releases. Do not infer these judgments from AI or GitHub activity alone. If any asset differs from its fixed digest, stop and record the discrepancy; do not replace or reissue an immutable Release to hide it.
 
-1. 第2候補の本文・PDF・研究データ・解析コード・引用を読んで、v1の研究内容と著者表示を承認または却下する。これはAIの検証結果から推定しない。
-2. CC BY 4.0の本文とデータ、MITの解析コードの権利・ライセンス、第三者素材、公開同意、COIを人間が確認する。実人間のレビュー過程・訂正演習・撤回演習はG6に別記する。
-3. v2が意味のある差分であること、v1/v2の版管理と公開予定を承認する。metadataの版番号だけでは十分でない。
-4. 第2 repoが存在するならURLを示し、template origin・public visibility・Immutable・protected branch・required CI/human reviewをread-onlyで再確認する。見つからないなら、templateから新規作成する具体的なrepo名・公開範囲と権限影響を確認してから操作を別途承認する。
-5. 各論文Releaseを作る直前、設定・タグ未使用・source commit・資産指紋・新TSA証拠を再固定する。v1/v2の公開操作は各々、所有者が対象と影響を見て明示承認する。
+## Restrictions
 
-## 公開後の技術受入手順
-
-1. Template由来と設定を読み戻し、Immutable Release有効・branch protection/required CI/human review・公開可視性を記録する。G1設定が未達のままなら公開作業を始めない。
-2. source PDF/metadata/research assetsを固定し、`research_package.py --check` と strict metadata validationを実行する。権利確認後にのみ該当資産の `public_confirmed` をtrueにする。
-3. 各新しいv1/v2にsource-bound manifest/TSAを付け、draftの全assetを匿名再取得して照合する。release作成後にimmutable、attestation、匿名取得、引用・研究資産、timestampを再検証する。
-4. v2公開後にpaper v1/v2両方を再取得し、v1の11資産を公開前記録と照合する。過去のv1 assetに変更があれば停止し、変更/再発行で隠さない。
-5. 正式4版を固定してG3の全条件（別に選定した信頼設定、2環境8正常検証以上、事前固定した最低20否定ケースで誤受理0）、G4匿名観測記録、G5 4版オフライン復元をそろえる。現時点の2版partial recheckや自己適用artifactは残りの版を代替しない。
-6. Issue #5へ対象SHA/tag、Release ID/URL、各asset digest、attestation、匿名取得と復元結果、時刻・環境・operator・independenceを追記する。
-
-## 現在の判定と禁止事項
-
-- G2 `NOT CONFIRMED`: 現在検証できた実論文Releaseは第一repoのv1/v2の2件だけ。第2論文repoの実Release v1/v2がない。
-- G1 `NOT CONFIRMED`: 第2template-derived public paper repoが解決できず、現在確認したbranch rulesのrequired approvalsは0。
-- G6 source evidence missing: candidate metadataにowner approval pendingが明記されており、`reviews/record.json` は `events: []`。
-- 現行の所有者判定基準では独立検証者の署名は不要だが、人間の承認と必要なG6記録をAIや別アカウントに代行させない。独立性は `UNPROVEN` と記録する。
-- 第1repoと第2repoの各v1/v2をそろえるまでG2をPASSにしない。旧synthetic Releaseで置き換えない。G0〜G7すべての正式PASSと最終発行承認まではP4 NO-GO、kit v1.0.0を発行しない。
+- Preserve all immutable Releases, including the additional robustness `v2.0.0` intermediate and the failed historical draft.
+- Keep the three synthetic-demo Releases as historical mechanism tests; do not count them as either paper repository.
+- Same-owner account switching is technical evidence only and never an independent review.
+- This record does not authorize new publication or the Kit `v1.0.0` Release. P4 remains NO-GO until every G0–G7 gate is PASS and the owner gives explicit final issuance approval.

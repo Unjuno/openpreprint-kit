@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-11-28T20:28:15Z",
+  "platform": "Windows 11, same physical host as the earlier Windows/WSL runs",
+  "python_version": "3.12.10",
+  "openssl": "OpenSSL 3.5.6 7 Apr 2026 (Library: OpenSSL 3.5.6 7 Apr 2026)",
+  "operation": "scripts/preserve.py restore",
+  "timestamp_policy": "verification/trust-lf-2026-11-29/timestamp-policy.json",
+  "network_proxy": "HTTP(S)_PROXY and ALL_PROXY set to http://127.0.0.1:9",
+  "formal_targets": [
+    {
+      "archive_sha256": "350e87787836a70739b376a05768431cab1dfea06c1d1fbe9b3bddf83018dcd5",
+      "manifest_sha256": "4ec582630b9ca2ae7c8f9abe519ff613e852840bb5c75856eef15bccedbb9f56",
+      "status": "PASS",
+      "timestamp": "VERIFIED",
+      "tsa_time_utc": "2026-11-14T04:39:35+09:00",
+      "trust_ca_sha256": "2151b61137ffa86bf664691ba67e7da0b19f98c758e3d228d5d8ebf27e044438",
+      "revocation": "checked_current_crls_full_chain"
+    },
+    {
+      "archive_sha256": "795658e72a3826e7a779a4a1a053ce69a03a748239152ed0f3cb0ba7c1c4d0f1",
+      "manifest_sha256": "8ab5e61a3dbda404f5934d565186df0876aeef1534e12a126946c01c49394db1",
+      "status": "PASS",
+      "timestamp": "VERIFIED",
+      "tsa_time_utc": "2026-11-15T01:48:12+09:00",
+      "trust_ca_sha256": "2151b61137ffa86bf664691ba67e7da0b19f98c758e3d228d5d8ebf27e044438",
+      "revocation": "checked_current_crls_full_chain"
+    },
+    {
+      "archive_sha256": "9b9bd400046ef4afc23c669ccf6eac27c34a1dd47cd690ff59f6ce1e541ab257",
+      "manifest_sha256": "612df591fd92f833726dbe509e31d9103f28dae5b52c6c86ff41ed42277a41d1",
+      "status": "PASS",
+      "timestamp": "VERIFIED",
+      "tsa_time_utc": "2026-11-28T10:12:26+09:00",
+      "trust_ca_sha256": "2151b61137ffa86bf664691ba67e7da0b19f98c758e3d228d5d8ebf27e044438",
+      "revocation": "checked_current_crls_full_chain"
+    },
+    {
+      "archive_sha256": "8e9ace748310fb4ed1f4f03b23e238cfb7fef7a4dc6eb4b2c2b2aa0975e03026",
+      "manifest_sha256": "ac38aa8d1fdf5171321fba9afe76d5ea8a634dab64bfb054d19ee8a16e223751",
+      "status": "PASS",
+      "timestamp": "VERIFIED",
+      "tsa_time_utc": "2026-11-28T16:03:54+09:00",
+      "trust_ca_sha256": "2151b61137ffa86bf664691ba67e7da0b19f98c758e3d228d5d8ebf27e044438",
+      "revocation": "checked_current_crls_full_chain"
+    }
+  ],
+  "result": "4/4 PASS; all four archive hashes matched independently recorded expected digests; TSA and full-chain/current-CRL verification passed",
+  "limitations": [
+    "Owner-managed same physical Windows host; Windows and WSL are not separate physical environments.",
+    "This local restore verifies the included timestamp evidence and archive contents; it is not an immutable mirror download or separate custody proof.",
+    "The independent GitHub-hosted fresh Linux runner result is separately recorded in the linked PR #80 workflow evidence."
+  ]
+}

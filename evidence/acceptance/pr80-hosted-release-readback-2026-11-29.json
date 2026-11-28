@@ -1,0 +1,60 @@
+{
+  "schema_version": 1,
+  "captured_at_utc": "2026-11-28T20:01:35Z",
+  "repository": "Unjuno/openpreprint-kit",
+  "pull_request": 80,
+  "head_sha": "73d1ddfd92e95f101be270f619c5342a4dc6ec5e",
+  "base_sha": "39346736ce91371b957ddbfa9b045cbe9409494f",
+  "workflow_run": {
+    "id": 46182440809,
+    "url": "https://github.com/Unjuno/openpreprint-kit/actions/runs/46182440809",
+    "conclusion": "success",
+    "jobs": [
+      {"id": 141094799696, "name": "validate-review-inventory", "conclusion": "success"},
+      {"id": 141094799975, "name": "retrieve-and-verify", "conclusion": "success"},
+      {"id": 141095012468, "name": "fresh-offline-restore", "conclusion": "success"}
+    ]
+  },
+  "anonymous_readback": {
+    "authorization_header_sent": false,
+    "anonymous_asset_downloads": true,
+    "all_asset_digests_match": true,
+    "release_count": 5,
+    "asset_count": 55,
+    "report_path_in_artifact": "anonymous-release-readback.json",
+    "report_sha256": "b6b912186411f9dd850933098cd9ebec88c27cb86197ea9397b5159903d8dac0",
+    "releases": [
+      {"repository": "Unjuno/openpreprint-kit-paper", "tag": "v1", "release_id": 444659219, "source_sha": "804cb76a4cf5eea65349fc7a8f01e2ce00e1176d", "assets": 11, "immutable": true},
+      {"repository": "Unjuno/openpreprint-kit-paper", "tag": "v2", "release_id": 445442340, "source_sha": "6ec47ec58e9dc733956615343aad16caca4bb8ee", "assets": 11, "immutable": true},
+      {"repository": "Unjuno/openpreprint-kit-robustness-eval", "tag": "v1.0.0", "release_id": 461207056, "source_sha": "dedadf3b2e95090439ec10aa4298db72f048caab", "assets": 11, "immutable": true},
+      {"repository": "Unjuno/openpreprint-kit-robustness-eval", "tag": "v2.0.0", "release_id": 461231538, "source_sha": "5b98226d9b7847f08edb8674a89a7f9ae9f1d8e0", "assets": 11, "immutable": true},
+      {"repository": "Unjuno/openpreprint-kit-robustness-eval", "tag": "v2.0.1", "release_id": 461370251, "source_sha": "256e4743963a3ffb955b017bb3ecb1d91316e602", "assets": 11, "immutable": true}
+    ]
+  },
+  "fresh_runner_restore": {
+    "runner_name": "GitHub Actions 1000182247",
+    "runner_os": "Linux",
+    "network_proxy": "unreachable loopback",
+    "all_five_pass": true,
+    "restored_assets": 55,
+    "summary_path_in_artifact": "fresh-offline-summary.json",
+    "summary_sha256": "bafcbbaddcc407658565d871fcc7221431abf89a6a127e77c47e1f62daf50f9d",
+    "archives": [
+      {"name": "paper-v1", "sha256": "350e87787836a70739b376a05768431cab1dfea06c1d1fbe9b3bddf83018dcd5", "assets": 11},
+      {"name": "paper-v2", "sha256": "795658e72a3826e7a779a4a1a053ce69a03a748239152ed0f3cb0ba7c1c4d0f1", "assets": 11},
+      {"name": "robustness-v1.0.0", "sha256": "9b9bd400046ef4afc23c669ccf6eac27c34a1dd47cd690ff59f6ce1e541ab257", "assets": 11},
+      {"name": "robustness-v2.0.0", "sha256": "cc0085e6b450c44a52ad91c7784bf477bd24479e62d32e6f8686abb6068162ac", "assets": 11},
+      {"name": "robustness-v2.0.1", "sha256": "8e9ace748310fb4ed1f4f03b23e238cfb7fef7a4dc6eb4b2c2b2aa0975e03026", "assets": 11}
+    ]
+  },
+  "github_artifacts": [
+    {"id": 15278153196, "name": "published-release-verification-a227ea46ea62c15ae27825d61cf0ce952cf3b796", "size_bytes": 3368141, "digest": "sha256:9d2722c53a7a1448e783b39f5379b96ad3f9c0665b4b11a3cf2d90d596ceb853", "expires_at_utc": "2026-12-12T19:41:41Z"},
+    {"id": 15277964742, "name": "published-release-fresh-offline-a227ea46ea62c15ae27825d61cf0ce952cf3b796", "size_bytes": 1698522, "digest": "sha256:002c985070706780065797b86bb3492fe98a002e1f656ebadf89d54601907678", "expires_at_utc": "2026-12-12T19:42:14Z"}
+  ],
+  "limitations": [
+    "This is evidence from an open PR until merged to main.",
+    "GitHub Actions artifacts expire on 2026-12-12 UTC; this committed summary preserves their API digests and the locally downloaded report/summary hashes, not the artifact contents themselves.",
+    "The fresh runner is GitHub-hosted and does not constitute an independently managed custodian.",
+    "Technical retrieval, verification and restoration do not establish authorship, scientific correctness, human editorial approval or long-term custody."
+  ]
+}

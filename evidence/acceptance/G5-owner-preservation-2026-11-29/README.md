@@ -1,0 +1,7 @@
+# G5 owner-operated preservation candidate (2026-11-29)
+
+This folder contains the four exact formal G2 target preservation ZIPs, copied from the successful GitHub Actions run recorded in `../pr80-hosted-release-readback-2026-11-29.json`. The source job fetched five published Releases and the separate fresh Linux job restored all five with HTTP(S) proxies pointing to unreachable loopback; 55/55 assets matched. This folder retains only the four formal minimum-version targets. The extra immutable robustness `v2.0.0` remains historical and is intentionally not substituted for `v2.0.1`.
+
+The machine-readable manifest records Release IDs, source commits, archive byte lengths, SHA-256 values, and the temporary artifact expiry. The artifacts expire 2026-12-12 UTC, while these ZIP copies are committed in this pull request for durable review and subsequent owner-directed mirroring.
+
+**Status: candidate evidence only.** This PR branch is not yet an immutable mirror Release. No second immutable preservation Release has been created. The expected archive hashes have not yet been recorded in a separate channel outside this repository. Owner confirmation of retention location, access, review cycle, and recovery responsibility is pending. Same-owner operation is technical evidence only; independent custody is `UNPROVEN`. G5 remains PARTIAL until the formal criteria in `docs/V1_ACCEPTANCE.md` are fulfilled and the owner records acceptance in Issue #5.

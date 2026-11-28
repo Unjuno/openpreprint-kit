@@ -1,0 +1,62 @@
+{
+  "anonymous_https": true,
+  "authorship": "NOT_PROVEN",
+  "files": {
+    "CITATION.cff": {
+      "sha256": "07007461ef658574879f2c2b2fee93ddf8775386dfc288a07aa9608927b60e97",
+      "size_bytes": 853
+    },
+    "RELEASE_NOTES.md": {
+      "sha256": "be9daa5b98bf6f728a7b14a567ab04c4f7eed44c57199a7ef846de3c9f5d10f8",
+      "size_bytes": 565
+    },
+    "SHA256SUMS": {
+      "sha256": "d2958a13f51ce37c88b8012f5d9b150e45a5aefc830ad5bd5b31f73d2fa6a02f",
+      "size_bytes": 659
+    },
+    "citation.bib": {
+      "sha256": "c1af069c1c69176471cae0e85644db02360c60dcb9a80d8e390df15779bcfea8",
+      "size_bytes": 339
+    },
+    "manifest.json": {
+      "sha256": "612df591fd92f833726dbe509e31d9103f28dae5b52c6c86ff41ed42277a41d1",
+      "size_bytes": 1060
+    },
+    "paper.pdf": {
+      "sha256": "92774a6552f0aaf9315baea6e9672677903a1bdb64288dfddf449cffb3de53a4",
+      "size_bytes": 197898
+    },
+    "preprint-metadata.json": {
+      "sha256": "3483d814cc682feaf822017a0c1a076b324c0159beaad46f3f09e86fda331dc0",
+      "size_bytes": 1120
+    },
+    "research-assets.json": {
+      "sha256": "273bf45c61580f9b80513892bda6255af3a579116de0dae4b2e1a66b24170a20",
+      "size_bytes": 3617
+    },
+    "research-assets.tar": {
+      "sha256": "0005c25532a883ee348812dc214c0f1ce5a7fd458a60d3ecfe474657965f354d",
+      "size_bytes": 61440
+    },
+    "timestamp.tsq": {
+      "sha256": "cc56737aa8b58136c40c194a14f3e815a41adbaca7887cbf46cc81bcca8a5936",
+      "size_bytes": 84
+    },
+    "timestamp.tsr": {
+      "sha256": "c7bb89558049f5d832e8bc52ac11d2fba0b59d20f7f55e59f91bbbc39814b845",
+      "size_bytes": 4653
+    }
+  },
+  "first_publication": "NOT_PROVEN",
+  "manifest_sha256": "612df591fd92f833726dbe509e31d9103f28dae5b52c6c86ff41ed42277a41d1",
+  "observed_interval_end_utc": "2026-11-28T20:11:05.510374+00:00",
+  "observed_interval_start_utc": "2026-11-28T20:11:00.571921+00:00",
+  "paper_sha256": "92774a6552f0aaf9315baea6e9672677903a1bdb64288dfddf449cffb3de53a4",
+  "public_availability": "WITNESS_ASSERTS_ANONYMOUS_RETRIEVAL",
+  "repository": "Unjuno/openpreprint-kit-robustness-eval",
+  "schema_version": 1,
+  "signature_algorithm": "Ed25519",
+  "timestamp_verified": true,
+  "version": "v1.0.0",
+  "witness_clock": "SELF_REPORTED_NOT_A_TRUSTED_TIMESTAMP"
+}
